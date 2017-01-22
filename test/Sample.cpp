@@ -11,7 +11,7 @@
 
 #include "Sample.h"
 
-namespace lynx { namespace retromud {
+namespace lynx { namespace legacymud { namespace test {
 
 Sample::Sample() {
     _value = 0;
@@ -32,5 +32,5 @@ int Sample::divideByZero() {
     return _value / 0;
 }
 
-}}
+}}}
 
