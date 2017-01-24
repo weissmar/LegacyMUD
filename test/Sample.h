@@ -11,7 +11,7 @@
 #ifndef LYNX_RETROMUD_SAMPLE_H
 #define LYNX_RETROMUD_SAMPLE_H
 
-namespace lynx { namespace legacymud { namespace test {
+namespace legacymud { namespace test {
 
 /*!
   \brief A sample class to demonstrate how to use gtest.
@@ -37,7 +37,7 @@ class Sample {
         int _value;
 };
 
-}}}
+}}
 
 #endif
 
