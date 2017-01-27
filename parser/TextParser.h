@@ -23,8 +23,8 @@ namespace legacymud { namespace parser {
   \enum legacymud::parser::TextParseStatus
   \brief Enumerates the results of the text parsing operation.
 
-  This enumerated type is returned by the TextParser.parse() function
-  to communicate the result of the operation to the caller.
+  This enumerated type is returned by the legacymud::parser::TextParser::parse()
+  function to communicate the result of the operation to the caller.
 */
 enum class TextParseStatus {
     VALID,              //!< Input string contains all valid words.
@@ -39,7 +39,7 @@ enum class TextParseStatus {
 
   This structure stores the parsing result of the TextParser.parse() function.
   The data is only valid if the TextParser.parse() function returns
-  TextParseStatus::VALID.
+  \c TextParseStatus::VALID.
 */
 struct TextParseResult {
     /*!
