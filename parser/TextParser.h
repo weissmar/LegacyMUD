@@ -20,6 +20,14 @@
 namespace legacymud { namespace parser {
 
 /*!
+  \typedef VerbMap
+
+  \brief Defines the multimap type used to associate each verb with 
+         pointers to compatible InteractiveNoun objects.
+*/
+typedef std::multimap<std::string, legacymud::engine::InteractiveNoun *> VerbMap;
+
+/*!
   \enum legacymud::parser::TextParseStatus
   \brief Enumerates the results of the text parsing operation.
 
@@ -120,7 +128,7 @@ public:
     */
     TextParseStatus parse(
         const std::string &input, 
-        const std::map<std::string, legacymud::engine::InteractiveNoun *> &areaVerbs,
+        const VerbMap &areaVerbs,
         std::list<TextParseResult> &candidates
                          );
 

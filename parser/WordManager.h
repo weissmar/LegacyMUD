@@ -20,6 +20,8 @@
 #include <mutex>
 #include <string>
 
+namespace legacymud { namespace parser {
+
 class WordManager {
 public:
     static void addGlobalVerb(const std::string &verb, legacymud::engine::ActionType);
@@ -58,5 +60,7 @@ private:
     static std::map<std::string, unsigned int> _verbsInUse;
 
 };
+
+}}
 
 #endif
