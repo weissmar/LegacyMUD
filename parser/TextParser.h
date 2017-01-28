@@ -81,6 +81,13 @@ struct TextParseResult {
     legacymud::engine::PositionType position;
 };
 
+/*!
+  \brief Contains a function for parsing text input to determine which command to run.
+
+  This class is used for parsing text commands entered by players. The actual lexical
+  data is provided by the game engine or the WordManager class. This class merely encapsulates
+  the parsing logic. Each thread should have its own instance of this class.
+*/
 class TextParser {
 public:
     TextParser();
