@@ -1,63 +1,262 @@
-/*************************************************************************
- * Author:        David Rigert
- * Date Created:  01/26/2017
- * Last Modified: 
- * Course:        CS467, Winter 2017
- * Filename:      WordManager.h
- *
- * Overview:
- *     The WordManager class keeps track of all verbs and nouns in use
- *     by objects in the game world. It also stores global verbs that
- *     are supported anywhere in the game world, and which prepositions
- *     map to which position.
- *     This class should not be instantiated. All member functions are static.
- ************************************************************************/
+/*!
+  \file    WordManager.h
+  \author  David Rigert
+  \date    01/28/2017
+  \course  CS467, Winter 2017
+ 
+  \details This file contains the declarations for the WordManager class.
+           The WordManager class keeps track of all verbs and nouns in use
+           by objects in the game world.
+*/
 #ifndef LEGACYMUD_PARSER_WORDMANAGER_H
 #define LEGACYMUD_PARSER_WORDMANAGER_H
 
 #include <list>
 #include <map>
-#include <mutex>
 #include <string>
 
 namespace legacymud { namespace parser {
 
+/*!
+  \brief Stores and manages all verbs and nouns supported by the game world.
+
+  The WordManager class keeps track of all verbs and nouns in use
+  by objects in the game world. It also stores global verbs that
+  are supported anywhere in the game world, and which prepositions
+  map to which position.
+  This class should not be instantiated. All member functions are static.
+*/
 class WordManager {
 public:
-    static void addGlobalVerb(const std::string &verb, legacymud::engine::ActionType);
+    /*!
+      \brief Adds an entry to the list of global verbs.
 
-    static void addPreposition(const std::string &preposition, legacymud::engine::PositionType);
+      This function adds the specified string and corresponding ActionType
+      to the list of global verbs that can be used in any area.
+      
+      \note     Local verbs have priority over global verbs. Matches for these
+                verbs will not be returned if there are any matching local verbs.
 
+      \warning  If \a verb is already in the global verb list, the previous entry
+                will be overwritten.
+
+      \param[in]  verb      Specifies the text to use as the verb.
+      \param[in]  action    Specifies the ActionType that corresponds to the 
+                            \a verb text.
+
+      \pre \a verb is a valid, non-empty string.
+
+      \post The specified verb and action pair is added to the global verb list.
+    */
+    static void addGlobalVerb(const std::string &verb, legacymud::engine::ActionType action);
+
+    /*!
+      \brief Adds an entry to the list of supported prepositions.
+
+      This function adds the specified string and corresponding PositionType
+      to the list of prepositions supported by the game engine.
+      
+      \warning  If \a preposition is already in the global verb list,
+                the previous entry will be overwritten.
+
+      \param[in]  preposition   Specifies the text to use as the verb.
+      \param[in]  position      Specifies the PositionType that corresponds to
+                                the \a preposition text.
+
+      \pre \a preposition is a valid, non-empty string.
+
+      \post The specified preposition and position pair is added to the preposition list.
+    */
+    static void addPreposition(const std::string &preposition, legacymud::engine::PositionType position);
+
+    /*!
+      \brief Adds an entry to the list of noun aliases in use.
+
+      This function adds the specified string to the list of all noun aliases that
+      are in use in the game world. The same noun can (and should) be added to the list
+      for every object it is used in.
+      
+      \param[in]  noun  Specifies the text to use as the noun.
+
+      \pre \a noun is a valid, non-empty string.
+
+      \post The specified \a noun has been added to the noun alias list.
+    */
     static void addNoun(const std::string &noun);
 
+    /*!
+      \brief Adds a list of noun aliases to the list of noun aliases in use.
+
+      This function adds all of the strings in the specified list to the list 
+      of all noun aliases that are in use in the game world. The same noun can 
+      (and should) be added to the list for every object it is used in.
+      
+      \param[in]  nouns     Specifies a list of strings to use as nouns.
+
+      \pre \a nouns is a valid list of strings.
+      \pre each string in \a nouns is a valid, non-empty string.
+
+      \post All of the strings in \a nouns have been added to the noun alias list.
+    */
     static void addNouns(const std::list<const std::string> &nouns);
 
+    /*!
+      \brief Adds an entry to the list of verb aliases in use.
+
+      This function adds the specified string to the list of all verb aliases that
+      are in use in the game world. The same verb can (and should) be added to the list
+      for every object it is used in.
+      
+      \param[in]  verb  Specifies the text to use as the verb.
+
+      \pre \a verb is a valid, non-empty string.
+
+      \post The specified \a verb has been added to the verb alias list.
+    */
     static void addVerb(const std::string &verb);
 
+    /*!
+      \brief Adds a list of verb aliases to the list of verb aliases in use.
+
+      This function adds all of the strings in the specified list to the list 
+      of all verb aliases that are in use in the game world. The same verb can 
+      (and should) be added to the list for every object it is used in.
+      
+      \param[in]  verbs     Specifies a list of strings to use as verbs.
+
+      \pre \a verbs is a valid list of strings.
+      \pre Each string in \a verbs is a valid, non-empty string.
+
+      \post All of the strings in \a verbs have been added to the verb alias list.
+    */
     static void addVerbs(const std::list<const std::string> &verbs);
 
+    /*!
+      \brief Gets the list of all noun aliases in use.
+
+      This function gets a reference to the list of all noun aliases that are 
+      in use in the game world, mapped to the number of times that alias is in 
+      use.
+      
+      \return Returns a reference to the list of all noun aliases mapped to
+              the number of objects that use the alias.
+    */
     static const std::map<const std::string, unsigned int> &getAllNouns();
 
+    /*!
+      \brief Gets the list of all verb aliases in use.
+
+      This function gets a reference to the list of all verb aliases that are 
+      in use in the game world, mapped to the number of times that alias is in 
+      use.
+      
+      \return Returns a constant reference to the list of all verb aliases
+              mapped to the number of objects that use the alias.
+    */
     static const std::map<const std::string, unsigned int> &getAllVerbs();
 
+    /*!
+      \brief Gets the list of global verbs.
+
+      This function gets a reference to the list of global verbs,
+      mapped to the corresponding ActionType.
+      
+      \return Returns a constant reference to the list of global verbs and the
+              correspoding ActionType.
+    */
     static const std::map<const std::string, legacymud::engine::ActionType> &getGlobalVerbs();
 
+    /*!
+      \brief Removes one use of a noun from the list of noun aliases in use.
+
+      This function decrements the usage counter for the specified \a noun.
+      The same noun can (and should) be removed every time an object that uses
+      the noun is destroyed.
+      
+      \param[in]  noun  Specifies the noun alias to remove.
+
+      \pre \a noun is a valid, non-empty string.
+      \pre \a noun exists in the list of noun aliases in use.
+
+      \post The use count for the specified \a noun has been decremented by 1.
+            If the use count becomes 0, the entry is removed.
+    */
     static void removeNoun(const std::string &noun);
 
+    /*!
+      \brief Removes one use of each string from the list of noun aliases in use.
+
+      This function decrements the usage counter for each string in the specified
+      \a nouns list. The same noun can (and should) be removed every time an object 
+      that uses the noun is destroyed.
+      
+      \param[in]  nouns     Specifies the noun aliases to remove.
+
+      \pre \a nouns is a valid list of strings.
+      \pre Each string in \a nouns is a valid, non-empty string.
+      \pre Each string in \a nouns exists in the list of noun aliases in use.
+      \pre If an alias appears multiple times in \a nouns, the counter must be
+           at least that number.
+
+      \post The use count for each alias in the specified \a nouns list has 
+            been decremented by 1. If the use count becomes 0, the entry is 
+            removed.
+    */
     static void removeNouns(const std::list<const std::string> &nouns);
 
+    /*!
+      \brief Removes one use of a verb from the list of verb aliases in use.
+
+      This function decrements the usage counter for the specified \a verb.
+      The same verb can (and should) be removed every time an object that uses
+      the verb is destroyed.
+      
+      \param[in]  verb  Specifies the verb alias to remove.
+
+      \pre \a verb is a valid, non-empty string.
+      \pre \a verb exists in the list of verb aliases in use.
+
+      \post The use count for the specified \a verb has been decremented by 1.
+            If the use count becomes 0, the entry is removed.
+    */
     static void removeVerb(const std::string &verb);
 
+    /*!
+      \brief Removes one use of each string from the list of verb aliases in use.
+
+      This function decrements the usage counter for each string in the specified
+      \a verbs list. The same verb can (and should) be removed every time an object 
+      that uses the verb is destroyed.
+      
+      \param[in]  verbs     Specifies the verb aliases to remove.
+
+      \pre \a verbs is a valid list of strings.
+      \pre Each string in \a verbs is a valid, non-empty string.
+      \pre Each string in \a verbs exists in the list of verb aliases in use.
+      \pre If an alias appears multiple times in \a verbs, the counter must be
+           at least that number.
+
+      \post The use count for each alias in the specified \a verbs list has 
+            been decremented by 1. If the use count becomes 0, the entry is 
+            removed.
+    */
     static void removeVerbs(const std::list<const std::string> &verbs);
 
 private:
     // Use a private constructor to prevent instantiation.
     WordManager() {}
 
+    // Store all global verbs here.
     static std::map<std::string, legacymud::engine::ActionType> _globalVerbs;
+
+    // Store all prepositions and the corresponding PositionType here.
     static std::map<std::string, legacymud::engine::PositionType> _prepositions;
-    static std::map<std::string, unsigned int> _nounsInUse;
-    static std::map<std::string, unsigned int> _verbsInUse;
+
+    // Store all nouns in the game world here.
+    static std::map<std::string, unsigned int> _nounAliases;
+
+    // Store all verbs in the game world here (not including global verbs).
+    static std::map<std::string, unsigned int> _verbAliases;
 
 };
 

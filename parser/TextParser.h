@@ -84,7 +84,7 @@ struct TextParseResult {
       \brief Stores any message text associated with the action.
 
       This value is only used when the action is associated with a message,
-      such as SAY, WHISPER and SHOUT.
+      such as SPEAK, WHISPER and SHOUT.
     */
     std::string message;
 };
