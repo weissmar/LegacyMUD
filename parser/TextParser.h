@@ -125,6 +125,10 @@ public:
       \param[out] candidates    Holds the valid actions and matching objects found
                                 by the parser.
 
+      \pre \a input, \a areaVerbs, and \a candidates must point to valid objects.
+
+      \post \a candidates contains a TextParseResult for each potential match.
+
       \return Returns whether the input text was successfully converted into an action.
 
       \retval TextParseStatus::VALID            There is at least one successful
