@@ -79,6 +79,14 @@ struct TextParseResult {
       This value is determined by the preposition of the input text.
     */
     legacymud::engine::PositionType position;
+
+    /*!
+      \brief Stores any message text associated with the action.
+
+      This value is only used when the action is associated with a message,
+      such as SAY, WHISPER and SHOUT.
+    */
+    std::string message;
 };
 
 /*!
