@@ -137,21 +137,33 @@ legacymud::engine::ActionType WordManager::getGlobalVerbAction(std::string verb)
 
 // Gets whether the specified noun is in use.
 bool WordManager::hasNoun(std::string noun) {
+    // Convert string to lowercase
+    std::transform(noun.begin(), noun.end(), noun.begin(), ::tolower);
+
     return _nounAliases.find(noun) != _nounAliases.end();
 }
 
 // Gets whether the specified verb is in use.
 bool WordManager::hasVerb(std::string verb) {
+    // Convert string to lowercase
+    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+
     return _verbAliases.find(verb) != _verbAliases.end();
 }
 
 // Gets whether the specified global verb has been added.
 bool WordManager::hasGlobalVerb(std::string verb) {
+    // Convert string to lowercase
+    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+
     return _globalVerbs.find(verb) != _globalVerbs.end();
 }
 
 // Gets whether the specified preposition has been added.
 bool WordManager::hasPreposition(std::string preposition) {
+    // Convert string to lowercase
+    std::transform(preposition.begin(), preposition.end(), preposition.begin(), ::tolower);
+
     return _prepositions.find(preposition) != _prepositions.end();
 }
 
