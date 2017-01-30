@@ -13,6 +13,8 @@
 #ifndef LEGACYMUD_PARSER_TEXTPARSER_H
 #define LEGACYMUD_PARSER_TEXTPARSER_H
 
+#include <engine.h>
+
 #include <list>
 #include <map>
 #include <string>
