@@ -180,6 +180,70 @@ public:
     static const std::map<std::string, legacymud::engine::PositionType> &getPrepositions();
 
     /*!
+      \brief Gets whether the specified noun is in use.
+      
+      This function gets whether the specified noun is currently in use by at least one object.
+
+      \param[in] noun   Specifies the noun to check for.
+
+      \return Returns whether \a noun is in use.
+    */
+    static bool hasNoun(std::string noun);
+
+    /*!
+      \brief Gets whether the specified verb is in use.
+
+      This function gets whether the specified verb is currently in use by at least one object.
+
+      \param[in] verb   Specifies the verb to check for.
+
+      \return Returns whether \a verb is in use.
+    */
+    static bool hasVerb(std::string verb);
+
+    /*!
+      \brief Gets whether the specified global verb has been added.
+
+      \param[in] verb   Specifies the global verb to check for.
+
+      \return Returns whether \a verb has been added.
+    */
+    static bool hasGlobalVerb(std::string verb);
+
+    /*!
+      \brief Gets whether the specified preposition has been added.
+
+      \param[in] preposition  Specifies the preposition to check for.
+
+      \return Returns whether \a preposition has been added.
+    */
+    static bool hasPreposition(std::string preposition);
+
+    /*!
+      \brief Gets the PositionType of the specified preposition.
+
+      This function gets the PositionType that corresponds to the specified
+      preposition. This function asserts if \a preposition does not exist.
+
+      \param[in] preposition  Specifies the preposition for which to get the PositionType.
+      
+      \return Returns the PositionType that corresponds to \a preposition.
+    */
+    static legacymud::engine::PositionType getPreposition(std::string preposition);
+
+    /*!
+      \brief Gets the ActionType of the specified global verb.
+
+      This function gets the ActionType that corresponds to the specified
+      global verb. This function asserts if \a verb does not exist.
+
+      \param[in] verb   Specifies the verb for which to get the ActionType.
+      
+      \return Returns the ActionType that corresponds to \a verb.
+    */
+    static legacymud::engine::ActionType getGlobalVerb(std::string verb);
+
+    /*!
       \brief Removes one use of a noun from the list of noun aliases in use.
 
       This function decrements the usage counter for the specified \a noun.
