@@ -19,7 +19,7 @@ EXT_INC_DIRS = ../external/headers
 # List the names of external libraries here
 EXT_LIB_NAMES = gtest
 # Append the include paths for the libraries to the g++ flags
-CXXFLAGS += $(foreach include_dir, $(INCLUDE_DIRS), -I$(include_dir))
+CXXFLAGS += $(foreach include_dir, $(LIB_DIRS), -I$(include_dir))
 # Add the external header directory as an include path
 CXXFLAGS += $(foreach ext_inc_dir, $(EXT_INC_DIRS), -I$(ext_inc_dir))
 # Add the external binary directory as a search target for the linker
