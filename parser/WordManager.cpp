@@ -137,6 +137,44 @@ const std::map<std::string, legacymud::engine::PositionType> &WordManager::getPr
     return _prepositions;
 }
 
+// Gets whether the specified noun is in use.
+bool WordManager::hasNoun(std::string noun) {
+    return _nounAliases.find(noun) != _nounAliases.end();
+}
+
+// Gets whether the specified verb is in use.
+bool WordManager::hasVerb(std::string verb) {
+    return _verbAliases.find(verb) != _verbAliases.end();
+}
+
+// Gets whether the specified global verb has been added.
+bool WordManager::hasGlobalVerb(std::string verb) {
+    return _globalVerbs.find(verb) != _globalVerbs.end();
+}
+
+// Gets whether the specified preposition has been added.
+bool WordManager::hasPreposition(std::string preposition) {
+    return _prepositions.find(preposition) != _prepositions.end();
+}
+
+// Gets the PositionType of the specified preposition.
+legacymud::engine::PositionType WordManager::getPreposition(std::string preposition) {
+    // Precondition: value must be in map
+    auto it = _prepositions.find(preposition);
+    assert(it != _prepositions.end());
+
+    return _prepositions.at(preposition);
+}
+
+// Gets the ActionType of the specified global verb.
+legacymud::engine::ActionType WordManager::getGlobalVerb(std::string verb) {
+    // Precondition: value must be in map
+    auto it = _globalVerbs.find(verb);
+    assert(it != _globalVerbs.end());
+
+    return _globalVerbs.at(verb);
+}
+
 // Removes one use of a noun from the list of noun aliases in use.
 void WordManager::removeNoun(std::string noun) {
     // Precondition: noun is non-empty string
