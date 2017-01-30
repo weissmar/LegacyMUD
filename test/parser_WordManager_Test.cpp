@@ -17,6 +17,7 @@
 namespace {
 
 namespace parser = legacymud::parser;
+namespace engine = legacymud::engine;
 
 // Test fixture to clear the WordManager after every test
 class WordManagerTest : public :: testing::Test {
@@ -29,8 +30,8 @@ public:
 // Verify reset functionality
 TEST_F(WordManagerTest, ResetTest) {
     std::string word = "foo";
-    parser::WordManager::addGlobalVerb(word, legacymud::engine::ActionType::NONE);
-    parser::WordManager::addPreposition(word, legacymud::engine::PositionType::NONE);
+    parser::WordManager::addGlobalVerb(word, engine::ActionType::NONE);
+    parser::WordManager::addPreposition(word, engine::PositionType::NONE);
     parser::WordManager::addNoun(word);
     parser::WordManager::addVerb(word);
 
@@ -51,18 +52,18 @@ TEST_F(WordManagerTest, ResetTest) {
 TEST_F(WordManagerTest, AddGlobalVerbTest) {
     std::string word = "eat";
     EXPECT_FALSE(parser::WordManager::hasGlobalVerb(word));
-    parser::WordManager::addGlobalVerb(word, legacymud::engine::ActionType::NONE);
+    parser::WordManager::addGlobalVerb(word, engine::ActionType::NONE);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(legacymud::engine::ActionType::NONE, parser::WordManager::getGlobalVerbAction(word));
+    EXPECT_EQ(engine::ActionType::NONE, parser::WordManager::getGlobalVerbAction(word));
 }
 
 // Verify that a word can correctly be added to the preposition list
 TEST_F(WordManagerTest, AddPrepositionTest) {
     std::string word = "to";
     EXPECT_FALSE(parser::WordManager::hasPreposition(word));
-    parser::WordManager::addPreposition(word, legacymud::engine::PositionType::NONE);
+    parser::WordManager::addPreposition(word, engine::PositionType::NONE);
     EXPECT_TRUE(parser::WordManager::hasPreposition(word));
-    EXPECT_EQ(legacymud::engine::PositionType::NONE, parser::WordManager::getPrepositionPosition(word));
+    EXPECT_EQ(engine::PositionType::NONE, parser::WordManager::getPrepositionPosition(word));
 }
 
 // Verify that a word can correctly be added to and removed from the list of verbs in use
@@ -230,8 +231,8 @@ TEST_F(WordManagerTest, RemoveNounsTooManyTimesTest) {
 // Verify case insensitivity
 TEST_F(WordManagerTest, CaseInsensitivityTest) {
     std::string word = "FooBar";
-    parser::WordManager::addGlobalVerb(word, legacymud::engine::ActionType::NONE);
-    parser::WordManager::addPreposition(word, legacymud::engine::PositionType::NONE);
+    parser::WordManager::addGlobalVerb(word, engine::ActionType::NONE);
+    parser::WordManager::addPreposition(word, engine::PositionType::NONE);
     parser::WordManager::addNoun(word);
     parser::WordManager::addVerb(word);
 
