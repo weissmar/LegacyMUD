@@ -143,7 +143,7 @@ public:
       
       \return Returns the PositionType that corresponds to \a preposition.
     */
-    static legacymud::engine::PositionType getPreposition(std::string preposition);
+    static legacymud::engine::PositionType getPrepositionPosition(std::string preposition);
 
     /*!
       \brief Gets the ActionType of the specified global verb.
@@ -155,7 +155,7 @@ public:
       
       \return Returns the ActionType that corresponds to \a verb.
     */
-    static legacymud::engine::ActionType getGlobalVerb(std::string verb);
+    static legacymud::engine::ActionType getGlobalVerbAction(std::string verb);
 
     /*!
       \brief Gets whether the specified noun is in use.

@@ -118,7 +118,7 @@ void WordManager::addVerbs(const std::list<std::string> &verbs) {
 }
 
 // Gets the PositionType of the specified preposition.
-legacymud::engine::PositionType WordManager::getPreposition(std::string preposition) {
+legacymud::engine::PositionType WordManager::getPrepositionPosition(std::string preposition) {
     // Precondition: value must be in map
     auto it = _prepositions.find(preposition);
     assert(it != _prepositions.end());
@@ -127,7 +127,7 @@ legacymud::engine::PositionType WordManager::getPreposition(std::string preposit
 }
 
 // Gets the ActionType of the specified global verb.
-legacymud::engine::ActionType WordManager::getGlobalVerb(std::string verb) {
+legacymud::engine::ActionType WordManager::getGlobalVerbAction(std::string verb) {
     // Precondition: value must be in map
     auto it = _globalVerbs.find(verb);
     assert(it != _globalVerbs.end());
