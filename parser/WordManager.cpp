@@ -117,24 +117,22 @@ void WordManager::addVerbs(const std::list<std::string> &verbs) {
     }
 }
 
-// Gets the list of all noun aliases in use.
-const std::map<std::string, unsigned int> &WordManager::getAllNouns() {
-    return _nounAliases;
+// Gets the PositionType of the specified preposition.
+legacymud::engine::PositionType WordManager::getPreposition(std::string preposition) {
+    // Precondition: value must be in map
+    auto it = _prepositions.find(preposition);
+    assert(it != _prepositions.end());
+
+    return _prepositions.at(preposition);
 }
 
-// Gets the list of all verb aliases in use.
-const std::map<std::string, unsigned int> &WordManager::getAllVerbs() {
-    return _verbAliases;
-}
+// Gets the ActionType of the specified global verb.
+legacymud::engine::ActionType WordManager::getGlobalVerb(std::string verb) {
+    // Precondition: value must be in map
+    auto it = _globalVerbs.find(verb);
+    assert(it != _globalVerbs.end());
 
-// Gets the list of global verbs.
-const std::map<std::string, legacymud::engine::ActionType> &WordManager::getGlobalVerbs() {
-    return _globalVerbs;
-}
-
-// Gets the list of all prepositions.
-const std::map<std::string, legacymud::engine::PositionType> &WordManager::getPrepositions() {
-    return _prepositions;
+    return _globalVerbs.at(verb);
 }
 
 // Gets whether the specified noun is in use.
@@ -155,24 +153,6 @@ bool WordManager::hasGlobalVerb(std::string verb) {
 // Gets whether the specified preposition has been added.
 bool WordManager::hasPreposition(std::string preposition) {
     return _prepositions.find(preposition) != _prepositions.end();
-}
-
-// Gets the PositionType of the specified preposition.
-legacymud::engine::PositionType WordManager::getPreposition(std::string preposition) {
-    // Precondition: value must be in map
-    auto it = _prepositions.find(preposition);
-    assert(it != _prepositions.end());
-
-    return _prepositions.at(preposition);
-}
-
-// Gets the ActionType of the specified global verb.
-legacymud::engine::ActionType WordManager::getGlobalVerb(std::string verb) {
-    // Precondition: value must be in map
-    auto it = _globalVerbs.find(verb);
-    assert(it != _globalVerbs.end());
-
-    return _globalVerbs.at(verb);
 }
 
 // Removes one use of a noun from the list of noun aliases in use.

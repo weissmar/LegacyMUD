@@ -134,50 +134,28 @@ public:
     static void addVerbs(const std::list<std::string> &verbs);
 
     /*!
-      \brief Gets the list of all noun aliases in use.
+      \brief Gets the PositionType of the specified preposition.
 
-      This function gets a reference to the list of all noun aliases that are 
-      in use in the game world, mapped to the number of times that alias is in 
-      use.
+      This function gets the PositionType that corresponds to the specified
+      preposition. This function asserts if \a preposition does not exist.
+
+      \param[in] preposition  Specifies the preposition for which to get the PositionType.
       
-      \return Returns a reference to the list of all noun aliases mapped to
-              the number of objects that use the alias.
+      \return Returns the PositionType that corresponds to \a preposition.
     */
-    static const std::map<std::string, unsigned int> &getAllNouns();
+    static legacymud::engine::PositionType getPreposition(std::string preposition);
 
     /*!
-      \brief Gets the list of all verb aliases in use.
+      \brief Gets the ActionType of the specified global verb.
 
-      This function gets a reference to the list of all verb aliases that are 
-      in use in the game world, mapped to the number of times that alias is in 
-      use.
+      This function gets the ActionType that corresponds to the specified
+      global verb. This function asserts if \a verb does not exist.
+
+      \param[in] verb   Specifies the verb for which to get the ActionType.
       
-      \return Returns a constant reference to the list of all verb aliases
-              mapped to the number of objects that use the alias.
+      \return Returns the ActionType that corresponds to \a verb.
     */
-    static const std::map<std::string, unsigned int> &getAllVerbs();
-
-    /*!
-      \brief Gets the list of global verbs.
-
-      This function gets a reference to the list of global verbs,
-      mapped to the corresponding ActionType.
-      
-      \return Returns a constant reference to the list of global verbs and the
-              correspoding ActionType.
-    */
-    static const std::map<std::string, legacymud::engine::ActionType> &getGlobalVerbs();
-
-    /*!
-      \brief Gets the list of all prepositions.
-
-      This function gets a reference to the list of supported prepositions,
-      mapped to the corresponding PositionType.
-      
-      \return Returns a constant reference to the list of prepositions and the
-              correspoding PositionType.
-    */
-    static const std::map<std::string, legacymud::engine::PositionType> &getPrepositions();
+    static legacymud::engine::ActionType getGlobalVerb(std::string verb);
 
     /*!
       \brief Gets whether the specified noun is in use.
@@ -218,30 +196,6 @@ public:
       \return Returns whether \a preposition has been added.
     */
     static bool hasPreposition(std::string preposition);
-
-    /*!
-      \brief Gets the PositionType of the specified preposition.
-
-      This function gets the PositionType that corresponds to the specified
-      preposition. This function asserts if \a preposition does not exist.
-
-      \param[in] preposition  Specifies the preposition for which to get the PositionType.
-      
-      \return Returns the PositionType that corresponds to \a preposition.
-    */
-    static legacymud::engine::PositionType getPreposition(std::string preposition);
-
-    /*!
-      \brief Gets the ActionType of the specified global verb.
-
-      This function gets the ActionType that corresponds to the specified
-      global verb. This function asserts if \a verb does not exist.
-
-      \param[in] verb   Specifies the verb for which to get the ActionType.
-      
-      \return Returns the ActionType that corresponds to \a verb.
-    */
-    static legacymud::engine::ActionType getGlobalVerb(std::string verb);
 
     /*!
       \brief Removes one use of a noun from the list of noun aliases in use.
