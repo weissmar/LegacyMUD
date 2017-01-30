@@ -11,6 +11,8 @@
 #ifndef LEGACYMUD_PARSER_WORDMANAGER_H
 #define LEGACYMUD_PARSER_WORDMANAGER_H
 
+#include <engine.h>
+
 #include <list>
 #include <map>
 #include <string>
@@ -48,7 +50,7 @@ public:
 
       \post The specified verb and action pair is added to the global verb list.
     */
-    static void addGlobalVerb(const std::string &verb, legacymud::engine::ActionType action);
+    static void addGlobalVerb(std::string verb, legacymud::engine::ActionType action);
 
     /*!
       \brief Adds an entry to the list of supported prepositions.
@@ -67,7 +69,7 @@ public:
 
       \post The specified preposition and position pair is added to the preposition list.
     */
-    static void addPreposition(const std::string &preposition, legacymud::engine::PositionType position);
+    static void addPreposition(std::string preposition, legacymud::engine::PositionType position);
 
     /*!
       \brief Adds an entry to the list of noun aliases in use.
@@ -82,7 +84,7 @@ public:
 
       \post The specified \a noun has been added to the noun alias list.
     */
-    static void addNoun(const std::string &noun);
+    static void addNoun(std::string noun);
 
     /*!
       \brief Adds a list of noun aliases to the list of noun aliases in use.
@@ -98,7 +100,7 @@ public:
 
       \post All of the strings in \a nouns have been added to the noun alias list.
     */
-    static void addNouns(const std::list<const std::string> &nouns);
+    static void addNouns(const std::list<std::string> &nouns);
 
     /*!
       \brief Adds an entry to the list of verb aliases in use.
@@ -113,7 +115,7 @@ public:
 
       \post The specified \a verb has been added to the verb alias list.
     */
-    static void addVerb(const std::string &verb);
+    static void addVerb(std::string verb);
 
     /*!
       \brief Adds a list of verb aliases to the list of verb aliases in use.
@@ -129,7 +131,7 @@ public:
 
       \post All of the strings in \a verbs have been added to the verb alias list.
     */
-    static void addVerbs(const std::list<const std::string> &verbs);
+    static void addVerbs(const std::list<std::string> &verbs);
 
     /*!
       \brief Gets the list of all noun aliases in use.
@@ -141,7 +143,7 @@ public:
       \return Returns a reference to the list of all noun aliases mapped to
               the number of objects that use the alias.
     */
-    static const std::map<const std::string, unsigned int> &getAllNouns();
+    static const std::map<std::string, unsigned int> &getAllNouns();
 
     /*!
       \brief Gets the list of all verb aliases in use.
@@ -153,7 +155,7 @@ public:
       \return Returns a constant reference to the list of all verb aliases
               mapped to the number of objects that use the alias.
     */
-    static const std::map<const std::string, unsigned int> &getAllVerbs();
+    static const std::map<std::string, unsigned int> &getAllVerbs();
 
     /*!
       \brief Gets the list of global verbs.
@@ -164,7 +166,18 @@ public:
       \return Returns a constant reference to the list of global verbs and the
               correspoding ActionType.
     */
-    static const std::map<const std::string, legacymud::engine::ActionType> &getGlobalVerbs();
+    static const std::map<std::string, legacymud::engine::ActionType> &getGlobalVerbs();
+
+    /*!
+      \brief Gets the list of all prepositions.
+
+      This function gets a reference to the list of supported prepositions,
+      mapped to the corresponding PositionType.
+      
+      \return Returns a constant reference to the list of prepositions and the
+              correspoding PositionType.
+    */
+    static const std::map<std::string, legacymud::engine::PositionType> &getPrepositions();
 
     /*!
       \brief Removes one use of a noun from the list of noun aliases in use.
@@ -181,7 +194,7 @@ public:
       \post The use count for the specified \a noun has been decremented by 1.
             If the use count becomes 0, the entry is removed.
     */
-    static void removeNoun(const std::string &noun);
+    static void removeNoun(std::string noun);
 
     /*!
       \brief Removes one use of each string from the list of noun aliases in use.
@@ -202,7 +215,7 @@ public:
             been decremented by 1. If the use count becomes 0, the entry is 
             removed.
     */
-    static void removeNouns(const std::list<const std::string> &nouns);
+    static void removeNouns(const std::list<std::string> &nouns);
 
     /*!
       \brief Removes one use of a verb from the list of verb aliases in use.
@@ -219,7 +232,7 @@ public:
       \post The use count for the specified \a verb has been decremented by 1.
             If the use count becomes 0, the entry is removed.
     */
-    static void removeVerb(const std::string &verb);
+    static void removeVerb(std::string verb);
 
     /*!
       \brief Removes one use of each string from the list of verb aliases in use.
@@ -240,7 +253,15 @@ public:
             been decremented by 1. If the use count becomes 0, the entry is 
             removed.
     */
-    static void removeVerbs(const std::list<const std::string> &verbs);
+    static void removeVerbs(const std::list<std::string> &verbs);
+
+    /*!
+      \brief Resets the WordManager class and clears all words
+
+      This function resets the WordManager class and clears the data
+      stored in all member variables.
+    */
+    static void resetAll();
 
 private:
     // Use a private constructor to prevent instantiation.
