@@ -83,12 +83,15 @@ struct TextParseResult {
     legacymud::engine::PositionType position;
 
     /*!
-      \brief Stores any message text associated with the action.
+      \brief Stores any unparsed text after the action.
 
-      This value is only used when the action is associated with a message,
-      such as SPEAK, WHISPER and SHOUT.
+      This value holds all text that could not be parsed after the action.
+      When a message command such as SPEAK, WHISPER or SHOUT is used, this
+      holds the message.
+      When input text cannot be correctly parsed, this holds the part that
+      could not be parsed.
     */
-    std::string message;
+    std::string unparsed;
 };
 
 /*!
