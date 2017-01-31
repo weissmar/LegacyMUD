@@ -17,7 +17,8 @@ namespace legacymud { namespace engine {
         IN    = 1,
         ON    = (1 << 1),
         UNDER = (1 << 2),
-        TO    = (1 << 3)
+        TO    = (1 << 3),
+        FROM  = (1 << 4)
     };
 
     class InteractiveNoun {
