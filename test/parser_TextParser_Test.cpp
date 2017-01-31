@@ -36,8 +36,23 @@ public:
         parser::WordManager::addGlobalVerb("go", engine::ActionType::NONE);
         parser::WordManager::addGlobalVerb("help", engine::ActionType::NONE);
 
+        // Set up world builder list
+        parser::WordManager::addBuilderVerb("editmode", engine::ActionType::NONE);
+
         // Set up preposition list
-        parser::WordManager::addPreposition("to", engine::PositionType::NONE);
+        parser::WordManager::addPreposition("on", engine::PositionType::ON);
+        parser::WordManager::addPreposition("on top of", engine::PositionType::ON);
+        parser::WordManager::addPreposition("in", engine::PositionType::IN);
+        parser::WordManager::addPreposition("inside", engine::PositionType::IN);
+        parser::WordManager::addPreposition("inside of", engine::PositionType::IN);
+        parser::WordManager::addPreposition("into", engine::PositionType::IN);
+        parser::WordManager::addPreposition("under", engine::PositionType::UNDER);
+        parser::WordManager::addPreposition("underneath", engine::PositionType::UNDER);
+        parser::WordManager::addPreposition("below", engine::PositionType::UNDER);
+        parser::WordManager::addPreposition("to", engine::PositionType::TO);
+        parser::WordManager::addPreposition("toward", engine::PositionType::TO);
+        parser::WordManager::addPreposition("at", engine::PositionType::TO);
+        parser::WordManager::addPreposition("from", engine::PositionType::FROM);
     }
 
     static void TearDownTestCase() {
@@ -76,7 +91,7 @@ TEST_F(TextParserTest, HelpHappyPath) {
     EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_TRUE(candidates.begin()->message.empty());
+    EXPECT_TRUE(candidates.begin()->unparsed.empty());
 }
 
 // Test the HELP command with invalid input after
@@ -88,7 +103,7 @@ TEST_F(TextParserTest, HelpInvalidSuffix) {
     EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_STREQ(candidates.begin()->message.c_str(), "me");
+    EXPECT_STREQ(candidates.begin()->unparsed.c_str(), "me");
 }
 
 // Test the happy path of the standalone LOOK command
@@ -100,7 +115,7 @@ TEST_F(TextParserTest, LookStandaloneHappyPath) {
     EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_TRUE(candidates.begin()->message.empty());
+    EXPECT_TRUE(candidates.begin()->unparsed.empty());
 }
 
 // Test the happy path of the transitive LOOK command
@@ -116,7 +131,7 @@ TEST_F(TextParserTest, LookTransitiveHappyPath) {
     EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
     EXPECT_EQ(candidates.begin()->direct, &in);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_TRUE(candidates.begin()->message.empty());
+    EXPECT_TRUE(candidates.begin()->unparsed.empty());
 }
 
 // Test the happy path of the intransitive LOOK command
@@ -134,20 +149,24 @@ TEST_F(TextParserTest, LookIntransitiveHappyPath) {
         EXPECT_EQ(parser::TextParseStatus::VALID, result);
         ASSERT_EQ(1, candidates.size());
         EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+        EXPECT_EQ(candidates.begin()->position, engine::PositionType::TO);
         EXPECT_TRUE(candidates.begin()->direct == nullptr);
         ASSERT_EQ(1, candidates.begin()->indirect.size());
         EXPECT_TRUE(*candidates.begin()->indirect.begin() == &in);
-        EXPECT_TRUE(candidates.begin()->message.empty());
+        EXPECT_TRUE(candidates.begin()->unparsed.empty());
     }
 }
 
 // Test the happy path of the LISTEN command
 TEST_F(TextParserTest, ListenHappyPath) {
-    std::string input = "help";
+    std::string input = "listen";
     auto result = tp->parse(input, vm, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
     EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->position, engine::PositionType::NONE);
+    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    EXPECT_EQ(0, candidates.begin()->indirect.size());
 }
 
 // Test the happy path of the TAKE command
