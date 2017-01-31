@@ -53,6 +53,8 @@ public:
         parser::WordManager::addPreposition("toward", engine::PositionType::TO);
         parser::WordManager::addPreposition("at", engine::PositionType::TO);
         parser::WordManager::addPreposition("from", engine::PositionType::FROM);
+        parser::WordManager::addPreposition("with", engine::PositionType::WITH);
+        parser::WordManager::addPreposition("using", engine::PositionType::WITH);
     }
 
     static void TearDownTestCase() {
