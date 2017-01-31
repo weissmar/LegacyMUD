@@ -1,7 +1,7 @@
 /*!
   \file    WordManager.h
   \author  David Rigert
-  \date    01/28/2017
+  \date    01/30/2017
   \course  CS467, Winter 2017
  
   \details This file contains the declarations for the WordManager class.
