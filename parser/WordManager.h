@@ -53,6 +53,28 @@ public:
     static void addGlobalVerb(std::string verb, legacymud::engine::ActionType action);
 
     /*!
+      \brief Adds an entry to the list of world builder verbs.
+
+      This function adds the specified string and corresponding ActionType
+      to the list of verbs that can only be used while in world builder mode.
+      
+      \note     World builder verbs have priority over all other verbs. Matches 
+                for this verb type will always be first in the returned list.
+
+      \warning  If \a verb is already in the builder verb list, the previous entry
+                will be overwritten.
+
+      \param[in]  verb      Specifies the text to use as the verb.
+      \param[in]  action    Specifies the ActionType that corresponds to the 
+                            \a verb text.
+
+      \pre \a verb is a valid, non-empty string.
+
+      \post The specified verb and action pair is added to the builder verb list.
+    */
+    static void addBuilderVerb(std::string verb, legacymud::engine::ActionType action);
+
+    /*!
       \brief Adds an entry to the list of supported prepositions.
 
       This function adds the specified string and corresponding PositionType
@@ -146,6 +168,18 @@ public:
     static legacymud::engine::PositionType getPrepositionPosition(std::string preposition);
 
     /*!
+      \brief Gets the ActionType of the specified world builder verb.
+
+      This function gets the ActionType that corresponds to the specified
+      global verb. This function asserts if \a verb does not exist.
+
+      \param[in] verb   Specifies the verb for which to get the ActionType.
+      
+      \return Returns the ActionType that corresponds to \a verb.
+    */
+    static legacymud::engine::ActionType getBuilderVerbAction(std::string verb);
+
+    /*!
       \brief Gets the ActionType of the specified global verb.
 
       This function gets the ActionType that corresponds to the specified
@@ -178,6 +212,15 @@ public:
       \return Returns whether \a verb is in use.
     */
     static bool hasVerb(std::string verb);
+
+    /*!
+      \brief Gets whether the specified global verb has been added.
+
+      \param[in] verb   Specifies the global verb to check for.
+
+      \return Returns whether \a verb has been added.
+    */
+    static bool hasBuilderVerb(std::string verb);
 
     /*!
       \brief Gets whether the specified global verb has been added.
@@ -284,6 +327,9 @@ public:
 private:
     // Use a private constructor to prevent instantiation.
     WordManager() {}
+
+    // Store all world builder verbs here.
+    static std::map<std::string, legacymud::engine::ActionType> _builderVerbs;
 
     // Store all global verbs here.
     static std::map<std::string, legacymud::engine::ActionType> _globalVerbs;

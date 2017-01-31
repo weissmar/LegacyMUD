@@ -1,7 +1,7 @@
 /*!
   \file    WordManager.h
   \author  David Rigert
-  \date    01/29/2017
+  \date    01/30/2017
   \course  CS467, Winter 2017
  
   \details This file contains the implementation code for the WordManager class.
@@ -20,6 +20,9 @@ namespace {
 // Mutex for global verbs
 std::mutex globalVerbLock;
 
+// Mutex for builder verbs
+std::mutex builderVerbLock;
+
 // Mutex for prepositions
 std::mutex prepositionLock;
 
@@ -35,6 +38,7 @@ namespace legacymud { namespace parser {
 
 // Static initialization
 std::map<std::string, legacymud::engine::ActionType> WordManager::_globalVerbs;
+std::map<std::string, legacymud::engine::ActionType> WordManager::_builderVerbs;
 std::map<std::string, legacymud::engine::PositionType> WordManager::_prepositions;
 std::map<std::string, unsigned int> WordManager::_nounAliases;
 std::map<std::string, unsigned int> WordManager::_verbAliases;
@@ -52,6 +56,21 @@ void WordManager::addGlobalVerb(std::string verb, legacymud::engine::ActionType 
 
     // Add the verb-action pair to the list (or overwrite the existing one).
     _globalVerbs[verb] = action;
+}
+
+// Adds an entry to the list of world builder verbs.
+void WordManager::addBuilderVerb(std::string verb, legacymud::engine::ActionType action) {
+    // Precondition: verify non-empty string
+    assert(!verb.empty());
+
+    // Convert string to lowercase
+    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+
+    // Block any other threads from accessing _globalVerbs until operation is complete.
+    std::lock_guard<std::mutex> guard(builderVerbLock);
+
+    // Add the verb-action pair to the list (or overwrite the existing one).
+    _builderVerbs[verb] = action;
 }
 
 // Adds an entry to the list of supported prepositions.
@@ -135,6 +154,15 @@ legacymud::engine::ActionType WordManager::getGlobalVerbAction(std::string verb)
     return _globalVerbs.at(verb);
 }
 
+// Gets the ActionType of the specified builder verb.
+legacymud::engine::ActionType WordManager::getBuilderVerbAction(std::string verb) {
+    // Precondition: value must be in map
+    auto it = _builderVerbs.find(verb);
+    assert(it != _builderVerbs.end());
+
+    return _builderVerbs.at(verb);
+}
+
 // Gets whether the specified noun is in use.
 bool WordManager::hasNoun(std::string noun) {
     // Convert string to lowercase
@@ -157,6 +185,14 @@ bool WordManager::hasGlobalVerb(std::string verb) {
     std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
 
     return _globalVerbs.find(verb) != _globalVerbs.end();
+}
+
+// Gets whether the specified builder verb has been added.
+bool WordManager::hasBuilderVerb(std::string verb) {
+    // Convert string to lowercase
+    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+
+    return _builderVerbs.find(verb) != _builderVerbs.end();
 }
 
 // Gets whether the specified preposition has been added.
@@ -237,11 +273,13 @@ void WordManager::removeVerbs(const std::list<std::string> &verbs) {
 void WordManager::resetAll() {
     // Block any other threads from accessing private members until operation is complete.
     std::lock_guard<std::mutex> globalVerbGuard(globalVerbLock);
+    std::lock_guard<std::mutex> builderVerbGuard(builderVerbLock);
     std::lock_guard<std::mutex> nounGuard(nounLock);
     std::lock_guard<std::mutex> verbGuard(verbLock);
     std::lock_guard<std::mutex> prepGuard(prepositionLock);
 
     _globalVerbs.clear();
+    _builderVerbs.clear();
     _prepositions.clear();
     _nounAliases.clear();
     _verbAliases.clear();
