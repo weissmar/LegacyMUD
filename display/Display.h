@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
- * Date Created:  1/30/2017
- * Last Modified: 1/30/2017
+ * Date Created:  1/31/2017
+ * Last Modified: 1/31/2017
  * Course:        CS467, Winter 2017
  * Filename:      Display.h
  *

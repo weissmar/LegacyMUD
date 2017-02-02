@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
- * Date Created:  1/30/2017
- * Last Modified: 1/30/2017
+ * Date Created:  1/31/2017
+ * Last Modified: 1/31/2017
  * Course:        CS467, Winter 2017
  * Filename:      Display.cpp
  *
@@ -52,7 +52,7 @@ std::string Display::addStyle(std::string inStr, Display::Color foreGround) {
             outStr = "\033\[36m";       // cyan     
             break; 
         case WHITE:
-            outStr = "\033\[37m";       // cyan     
+            outStr = "\033\[37m";       // white     
             break;            
     }
     
@@ -245,7 +245,7 @@ std::string Display::addStyle(std::string inStr, Display::Color foreGround, Disp
             outStr += ";46";       // cyan     
             break;  
         case 7:
-            outStr += ";47";       // cyan     
+            outStr += ";47";       // white     
             break;                                
     }    
     
@@ -324,7 +324,7 @@ std::string Display::addStyle(std::string inStr, Display::Color foreGround, Disp
             outStr += ";46";       // cyan     
             break;  
         case 7:
-            outStr += ";47";       // cyan     
+            outStr += ";47";       // white     
             break;                                
     }    
     
@@ -411,7 +411,7 @@ std::string Display::addStyle(std::string inStr, Display::Color foreGround, Disp
             outStr += ";46";       // cyan     
             break;  
         case 7:
-            outStr += ";47";       // cyan     
+            outStr += ";47";       // white     
             break;                                
     }    
     
