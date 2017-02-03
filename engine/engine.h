@@ -12,14 +12,13 @@ namespace legacymud { namespace engine {
         SOME
     };
 
-    enum class PositionType {
-        NONE  = 0,
-        IN    = 1,
-        ON    = (1 << 1),
-        UNDER = (1 << 2),
-        TO    = (1 << 3),
-        FROM  = (1 << 4),
-        WITH  = (1 << 5)
+    enum class ItemPosition {
+        GROUND,
+        INVENTORY,
+        EQUIPPED,
+        IN,
+        ON,
+        UNDER
     };
 
     class InteractiveNoun {
