@@ -1,7 +1,7 @@
 /*!
   \file    TextParser.h
   \author  David Rigert
-  \date    01/26/2017
+  \date    02/02/2017
   \course  CS467, Winter 2017
  
   \details This file contains the declarations for the TextParser class and
@@ -20,14 +20,6 @@
 #include <string>
 
 namespace legacymud { namespace parser {
-
-/*!
-  \typedef VerbMap
-
-  \brief Defines the multimap type used to associate each verb with 
-         pointers to compatible InteractiveNoun objects.
-*/
-typedef std::multimap<std::string, legacymud::engine::InteractiveNoun *> VerbMap;
 
 /*!
   \enum legacymud::parser::TextParseStatus
@@ -61,8 +53,9 @@ struct TextParseResult {
       \brief The object that matches the direct noun of the input text.
 
       This member only points to an object if the input text has a direct noun
-      that matches one of the verb aliases of an object in the current area,
-      or a global verb. If there is no match, this is set to nullptr.
+      that matches an object in the current area and a verb that matches
+      a verb alias of the object or a global verb. If there is no match, this 
+      is set to nullptr.
     */
     legacymud::engine::InteractiveNoun *direct;
 
@@ -70,17 +63,11 @@ struct TextParseResult {
       \brief A list of objects that match the indirect noun of the input text.
 
       This list only contains objects if the input text has an indirect noun.
-      The list will contain all objects with an alias that matches the indirect noun.
+      that matches one or more objects in the current area and a verb that
+      matches a verb alias of the object or a global verb.
       If the sentence does not have an indirect noun, this list is empty.
     */
     std::list<legacymud::engine::InteractiveNoun *> indirect;
-
-    /*!
-      \brief The position of the direct object relative to the indirect object.
-
-      This value is determined by the preposition of the input text.
-    */
-    legacymud::engine::PositionType position;
 
     /*!
       \brief Stores any unparsed text after the action.
@@ -122,15 +109,17 @@ public:
 
       If any of these parts of speech are invalid, the function immediately returns 
       an unsuccessful TextParseStatus value without analyzing the rest of the text.
+      The unparsed portion of the input text is placed in the \c unparsed member of
+      the TextParseResult object.
       
       \param[in]  input         Specifies the input text to parse.
-      \param[in]  areaVerbs     Specifies a map of verbs for all objects in the current
-                                area, mapped to a pointer to the object that the verb
-                                belongs to.
+      \param[in]  areaNouns     Specifies a list of pointers to all objects in the current
+                                area.
       \param[out] candidates    Holds the valid actions and matching objects found
                                 by the parser.
 
-      \pre \a input, \a areaVerbs, and \a candidates must point to valid objects.
+      \pre \a input, \a areaNouns, and \a candidates are valid objects.
+      \pre \a candidates is empty.
 
       \post \a candidates contains a TextParseResult for each potential match.
 
@@ -152,7 +141,7 @@ public:
     */
     TextParseStatus parse(
         const std::string &input, 
-        const VerbMap &areaVerbs,
+        const std::list<legacymud::engine::InteractiveNoun *> &areaNouns,
         std::list<TextParseResult> &candidates
                          );
 

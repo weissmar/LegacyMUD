@@ -1,7 +1,7 @@
 /*!
   \file    WordManager.h
   \author  David Rigert
-  \date    01/30/2017
+  \date    02/02/2017
   \course  CS467, Winter 2017
  
   \details This file contains the declarations for the WordManager class.
@@ -12,6 +12,7 @@
 #define LEGACYMUD_PARSER_WORDMANAGER_H
 
 #include <engine.h>
+#include "Verb.h"
 
 #include <list>
 #include <map>
@@ -33,65 +34,46 @@ public:
     /*!
       \brief Adds an entry to the list of global verbs.
 
-      This function adds the specified string and corresponding ActionType
+      This function adds the specified string and corresponding Verb object
       to the list of global verbs that can be used in any area.
       
       \note     Local verbs have priority over global verbs. Matches for these
                 verbs will not be returned if there are any matching local verbs.
 
-      \warning  If \a verb is already in the global verb list, the previous entry
+      \warning  If \a name is already in the global verb list, the previous entry
                 will be overwritten.
 
-      \param[in]  verb      Specifies the text to use as the verb.
-      \param[in]  action    Specifies the ActionType that corresponds to the 
-                            \a verb text.
+      \param[in]  name      Specifies the text to use as the verb name.
+      \param[in]  verb      Specifies the Verb object that corresponds to the 
+                            \a name text.
 
-      \pre \a verb is a valid, non-empty string.
+      \pre \a name is a valid, non-empty string.
 
-      \post The specified verb and action pair is added to the global verb list.
+      \post The specified name and verb pair is added to the global verb list.
     */
-    static void addGlobalVerb(std::string verb, legacymud::engine::ActionType action);
+    static void addGlobalVerb(std::string name, Verb verb);
 
     /*!
       \brief Adds an entry to the list of world builder verbs.
 
-      This function adds the specified string and corresponding ActionType
+      This function adds the specified string and corresponding Verb object
       to the list of verbs that can only be used while in world builder mode.
       
       \note     World builder verbs have priority over all other verbs. Matches 
                 for this verb type will always be first in the returned list.
 
-      \warning  If \a verb is already in the builder verb list, the previous entry
+      \warning  If \a name is already in the builder verb list, the previous entry
                 will be overwritten.
 
-      \param[in]  verb      Specifies the text to use as the verb.
-      \param[in]  action    Specifies the ActionType that corresponds to the 
-                            \a verb text.
+      \param[in]  name      Specifies the text to use as the verb name.
+      \param[in]  verb      Specifies the Verb object that corresponds to the 
+                            \a name text.
 
-      \pre \a verb is a valid, non-empty string.
+      \pre \a name is a valid, non-empty string.
 
-      \post The specified verb and action pair is added to the builder verb list.
+      \post The specified name and verb pair is added to the builder verb list.
     */
-    static void addBuilderVerb(std::string verb, legacymud::engine::ActionType action);
-
-    /*!
-      \brief Adds an entry to the list of supported prepositions.
-
-      This function adds the specified string and corresponding PositionType
-      to the list of prepositions supported by the game engine.
-      
-      \warning  If \a preposition is already in the global verb list,
-                the previous entry will be overwritten.
-
-      \param[in]  preposition   Specifies the text to use as the verb.
-      \param[in]  position      Specifies the PositionType that corresponds to
-                                the \a preposition text.
-
-      \pre \a preposition is a valid, non-empty string.
-
-      \post The specified preposition and position pair is added to the preposition list.
-    */
-    static void addPreposition(std::string preposition, legacymud::engine::PositionType position);
+    static void addBuilderVerb(std::string name, Verb verb);
 
     /*!
       \brief Adds an entry to the list of noun aliases in use.
@@ -156,40 +138,28 @@ public:
     static void addVerbs(const std::list<std::string> &verbs);
 
     /*!
-      \brief Gets the PositionType of the specified preposition.
+      \brief Gets the Verb object of the specified world builder verb.
 
-      This function gets the PositionType that corresponds to the specified
-      preposition. This function asserts if \a preposition does not exist.
+      This function gets the Verb object that corresponds to the specified
+      global verb. This function asserts if \a name does not exist.
 
-      \param[in] preposition  Specifies the preposition for which to get the PositionType.
+      \param[in] name   Specifies the verb name for which to get the Verb.
       
-      \return Returns the PositionType that corresponds to \a preposition.
+      \return Returns the Verb object that corresponds to \a name.
     */
-    static legacymud::engine::PositionType getPrepositionPosition(std::string preposition);
+    static Verb getBuilderVerb(std::string name);
 
     /*!
-      \brief Gets the ActionType of the specified world builder verb.
+      \brief Gets the Verb object of the specified global verb.
 
-      This function gets the ActionType that corresponds to the specified
-      global verb. This function asserts if \a verb does not exist.
+      This function gets the Verb object that corresponds to the specified
+      global verb. This function asserts if \a name does not exist.
 
-      \param[in] verb   Specifies the verb for which to get the ActionType.
+      \param[in] name   Specifies the verb name for which to get the Verb.
       
-      \return Returns the ActionType that corresponds to \a verb.
+      \return Returns the Verb object that corresponds to \a name.
     */
-    static legacymud::engine::ActionType getBuilderVerbAction(std::string verb);
-
-    /*!
-      \brief Gets the ActionType of the specified global verb.
-
-      This function gets the ActionType that corresponds to the specified
-      global verb. This function asserts if \a verb does not exist.
-
-      \param[in] verb   Specifies the verb for which to get the ActionType.
-      
-      \return Returns the ActionType that corresponds to \a verb.
-    */
-    static legacymud::engine::ActionType getGlobalVerbAction(std::string verb);
+    static Verb getGlobalVerb(std::string name);
 
     /*!
       \brief Gets whether the specified noun is in use.
@@ -230,15 +200,6 @@ public:
       \return Returns whether \a verb has been added.
     */
     static bool hasGlobalVerb(std::string verb);
-
-    /*!
-      \brief Gets whether the specified preposition has been added.
-
-      \param[in] preposition  Specifies the preposition to check for.
-
-      \return Returns whether \a preposition has been added.
-    */
-    static bool hasPreposition(std::string preposition);
 
     /*!
       \brief Removes one use of a noun from the list of noun aliases in use.
@@ -329,13 +290,10 @@ private:
     WordManager() {}
 
     // Store all world builder verbs here.
-    static std::map<std::string, legacymud::engine::ActionType> _builderVerbs;
+    static std::map<std::string, Verb> _builderVerbs;
 
     // Store all global verbs here.
-    static std::map<std::string, legacymud::engine::ActionType> _globalVerbs;
-
-    // Store all prepositions and the corresponding PositionType here.
-    static std::map<std::string, legacymud::engine::PositionType> _prepositions;
+    static std::map<std::string, Verb> _globalVerbs;
 
     // Store all nouns in the game world here.
     static std::map<std::string, unsigned int> _nounAliases;
