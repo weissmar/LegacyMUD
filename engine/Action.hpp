@@ -14,8 +14,8 @@
 #define ACTION_HPP
 
 #include <string>
-#include <vector>
 #include <map>
+#include <Grammar.h>
 #include "SerializableNoun.hpp"
 #include "UniqueNoun.hpp"
 #include "CommandEnum.hpp"
@@ -35,7 +35,7 @@ class Action: public SerializableNoun, public UniqueNoun {
         bool getValid();
         std::string getFlavorText();
         EffectType getEffect();
-        std::vector<std::string> getAliases();
+        std::map<std::string, parser::Grammar*> getAliases();
         bool setValid(bool validCommand);
         bool setFlavorText(std::string flavorText);
         bool setEffect(EffectType type);
@@ -49,7 +49,7 @@ class Action: public SerializableNoun, public UniqueNoun {
         bool valid;
         std::string flavorText;
         EffectType effect;
-        std::vector<std::string> aliases;
+        std::map<std::string, parser::Grammar*> aliases;
 };
 
 }}

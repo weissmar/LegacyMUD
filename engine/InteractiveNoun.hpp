@@ -17,6 +17,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <tuple>
+#include <Grammar.h>
 #include "Action.hpp"
 #include "CommandEnum.hpp"
 
@@ -30,7 +32,7 @@ class InteractiveNoun {
         virtual ~InteractiveNoun();
         Action* getAction(CommandEnum);
         std::vector<std::string> getNounAliases();
-        std::map<std::string, CommandEnum> getVerbAliasMap();
+        std::map<std::string, std::tuple<parser::Grammar*, CommandEnum>> getVerbAliasMap();
         bool checkAction(CommandEnum);
         Action* addAction(CommandEnum);
         bool removeAction(CommandEnum);
