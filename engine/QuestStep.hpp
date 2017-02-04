@@ -15,6 +15,7 @@
 
 #include <string>
 #include "SerializableNoun.hpp"
+#include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
 #include "ItemType.hpp"
 #include "NonCombatant.hpp"
@@ -22,7 +23,7 @@
 
 namespace legacymud { namespace engine {
 
-class QuestStep: public SerializableNoun, public UniqueNoun {
+class QuestStep: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
         QuestStep();
         QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText);
@@ -43,6 +44,9 @@ class QuestStep: public SerializableNoun, public UniqueNoun {
         bool setCompletionText(std::string completionText);        
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         int ordinalNumber;

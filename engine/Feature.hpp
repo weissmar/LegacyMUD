@@ -32,6 +32,20 @@ class Feature: public ConditionalElement {
         bool setPlacement(std::string);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual std::string look();  
+        virtual std::string listen(); 
+        virtual std::string move(); 
+        virtual std::string read(Player*); 
+        virtual std::string breakIt(Player*); 
+        virtual std::string climb(Player*); 
+        virtual std::string turn(Player*); 
+        virtual std::string push(Player*); 
+        virtual std::string pull(Player*); 
+        virtual std::string eat(Player*); 
+        virtual std::string drink(Player*); 
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;

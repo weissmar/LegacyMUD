@@ -40,6 +40,28 @@ class Item: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         bool setType(ItemType *type);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual std::string look();  
+        virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool drop();
+        virtual std::string more(); 
+        virtual bool equip(Player*, Item*, InteractiveNoun*);
+        virtual bool unequip(Player*, Item*);
+        virtual bool transfer(Player*, Item*, InteractiveNoun*);
+        virtual std::string move(); 
+        virtual bool attack(Player*, Item*, InteractiveNoun*);
+        virtual bool buy(Player*, Item*);
+        virtual bool sell(Player*, Item*);
+        virtual std::string read(Player*); 
+        virtual std::string breakIt(Player*); 
+        virtual std::string climb(Player*); 
+        virtual std::string turn(Player*); 
+        virtual std::string push(Player*); 
+        virtual std::string pull(Player*); 
+        virtual std::string eat(Player*); 
+        virtual std::string drink(Player*); 
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         InteractiveNoun* location;

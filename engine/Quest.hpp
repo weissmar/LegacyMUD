@@ -17,6 +17,7 @@
 #include <vector>
 #include <tuple>
 #include "SerializableNoun.hpp"
+#include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
 #include "Item.hpp"
 #include "QuestStep.hpp"
@@ -24,7 +25,7 @@
 
 namespace legacymud { namespace engine {
 
-class Quest: public SerializableNoun, public UniqueNoun {
+class Quest: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
         Quest();
         Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem);
@@ -44,6 +45,9 @@ class Quest: public SerializableNoun, public UniqueNoun {
         bool removeStep(QuestStep *aStep);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;

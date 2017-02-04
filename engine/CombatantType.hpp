@@ -15,13 +15,14 @@
 
 #include <string>
 #include "SerializableNoun.hpp"
+#include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
 #include "SpecialSkill.hpp"
 #include "DamageType.hpp"
 
 namespace legacymud { namespace engine {
 
-class CombatantType: public SerializableNoun, public UniqueNoun {
+class CombatantType: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
         CombatantType();
         CombatantType(std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints);

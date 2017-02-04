@@ -67,6 +67,22 @@ class Player: public Combatant {
         bool updateQuest(Quest *aQuest, int step);    
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual std::string look();  
+        virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool equip(Player*, Item*, InteractiveNoun*);
+        virtual bool unequip(Player*, Item*);
+        virtual bool transfer(Player*, Item*, InteractiveNoun*);
+        virtual bool go(Player*, Area*);
+        virtual bool attack(Player*, Item*, InteractiveNoun*);
+        virtual std::string talk(Player*, NonCombatant*); 
+        virtual bool buy(Player*, Item*);
+        virtual bool sell(Player*, Item*);
+        virtual std::string search(); 
+        virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
+        virtual std::string warp(Player*, Area*); 
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         int experiencePoints;

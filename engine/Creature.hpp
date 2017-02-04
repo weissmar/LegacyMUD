@@ -35,6 +35,16 @@ class Creature: public Combatant {
         Area* move();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual std::string look();  
+        virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool equip(Player*, Item*, InteractiveNoun*);
+        virtual bool unequip(Player*, Item*);
+        virtual bool transfer(Player*, Item*, InteractiveNoun*);
+        virtual bool attack(Player*, Item*, InteractiveNoun*);
+        virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         CreatureType *type;

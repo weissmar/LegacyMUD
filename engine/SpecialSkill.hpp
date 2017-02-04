@@ -41,6 +41,12 @@ class SpecialSkill: public SerializableNoun, public InteractiveNoun, public Uniq
         bool setCooldown(int cooldown);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual std::string more(); 
+        virtual bool attack(Player*, Item*, InteractiveNoun*);
+        virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;

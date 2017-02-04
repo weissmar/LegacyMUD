@@ -57,6 +57,14 @@ class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         bool removeExit(Exit *anExit);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual std::string look();  
+        virtual std::string listen(); 
+        virtual bool go(Player*, Area*);
+        virtual std::string search(); 
+        virtual std::string warp(Player*, Area*); 
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;

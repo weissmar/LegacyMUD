@@ -32,6 +32,9 @@ class PlayerClass: public CombatantType {
         bool setPrimaryStat(int);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         int primaryStat;

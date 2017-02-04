@@ -32,6 +32,15 @@ class NonCombatant: public Character {
         bool setQuest(Quest *aQuest);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
+        virtual std::string look();  
+        virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool transfer(Player*, Item*, InteractiveNoun*);
+        virtual std::string talk(Player*, NonCombatant*); 
+        virtual bool buy(Player*, Item*);
+        virtual bool sell(Player*, Item*);
+        virtual bool copy();
+        virtual bool editAttribute(Player*, std::string);
+        virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         Quest *quest;
