@@ -1,7 +1,7 @@
 /*!
   \file    TextParser.h
   \author  David Rigert
-  \date    02/02/2017
+  \date    02/04/2017
   \course  CS467, Winter 2017
  
   \details This file contains the declarations for the TextParser class and
@@ -10,16 +10,23 @@
            converts it into an enum that the game engine uses to determine
            which action to perform.
 */
-#ifndef LEGACYMUD_PARSER_TEXTPARSER_H
-#define LEGACYMUD_PARSER_TEXTPARSER_H
+#ifndef LEGACYMUD_PARSER_TEXTPARSER_HPP
+#define LEGACYMUD_PARSER_TEXTPARSER_HPP
 
-#include <engine.h>
+#include <CommandEnum.hpp>
+#include <ItemPosition.hpp>
 
-#include <list>
+#include <vector>
 #include <map>
 #include <string>
 
+namespace legacymud { namespace engine {
+    class InteractiveNoun;
+}}
+
 namespace legacymud { namespace parser {
+
+typedef std::multimap<std::string, engine::InteractiveNoun *> VerbMap;
 
 /*!
   \enum legacymud::parser::TextParseStatus
@@ -45,9 +52,9 @@ enum class TextParseStatus {
 */
 struct TextParseResult {
     /*!
-      \brief The ActionType that the verb maps to.
+      \brief The \c CommandEnum that the verb maps to.
     */
-    legacymud::engine::ActionType action;
+    engine::CommandEnum command;
 
     /*!
       \brief The object that matches the direct noun of the input text.
@@ -57,7 +64,7 @@ struct TextParseResult {
       a verb alias of the object or a global verb. If there is no match, this 
       is set to nullptr.
     */
-    legacymud::engine::InteractiveNoun *direct;
+    engine::InteractiveNoun *direct;
 
     /*!
       \brief A list of objects that match the indirect noun of the input text.
@@ -67,7 +74,15 @@ struct TextParseResult {
       matches a verb alias of the object or a global verb.
       If the sentence does not have an indirect noun, this list is empty.
     */
-    std::list<legacymud::engine::InteractiveNoun *> indirect;
+    std::vector<engine::InteractiveNoun *> indirect;
+
+    /*!
+      \brief The position that the direct object should be placed in.
+
+      This specifies the intended position of the direct object.
+      If no position was specified, this will be ItemPosition::NONE.
+    */
+    engine::ItemPosition position;
 
     /*!
       \brief Stores any unparsed text after the action.
@@ -90,7 +105,7 @@ struct TextParseResult {
 */
 class TextParser {
 public:
-    TextParser();
+    TextParser() {}
     ~TextParser();
 
     /*!
@@ -113,10 +128,18 @@ public:
       the TextParseResult object.
       
       \param[in]  input         Specifies the input text to parse.
-      \param[in]  areaNouns     Specifies a list of pointers to all objects in the current
-                                area.
+      \param[in]  playerVerbMap Specifies a lookup table of verb aliases mapped to
+                                pointers to InteractiveNoun objects in the player's
+                                inventory.
+      \param[in]  areaVerbMap   Specifies a lookup table of verb aliases mapped to
+                                pointers to InteractiveNoun objects in the current area.
       \param[out] candidates    Holds the valid actions and matching objects found
                                 by the parser.
+      \param[in]  isAdmin       Specifies whether the player has admin permissions.
+                                Defaults to false.
+      \param[in]  editMode      Specifies whether the player is in edit mode.
+                                This is ignored if \a isAdmin is false. 
+                                Defaults to false.
 
       \pre \a input, \a areaNouns, and \a candidates are valid objects.
       \pre \a candidates is empty.
@@ -141,12 +164,12 @@ public:
     */
     TextParseStatus parse(
         const std::string &input, 
-        const std::list<legacymud::engine::InteractiveNoun *> &areaNouns,
-        std::list<TextParseResult> &candidates
+        const VerbMap &playerVerbMap,
+        const VerbMap &areaVerbMap,
+        std::vector<TextParseResult> &candidates,
+        bool isAdmin = false,
+        bool editMode = false
                          );
-
-private:
-
 };
 
 }}

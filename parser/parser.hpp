@@ -11,8 +11,8 @@
 #ifndef LEGACYMUD_PARSER_PARSER_H
 #define LEGACYMUD_PARSER_PARSER_H
 
-#include "WordManager.h"
-#include "TextParser.h"
+#include "WordManager.hpp"
+#include "TextParser.hpp"
 
 namespace legacymud {
 
