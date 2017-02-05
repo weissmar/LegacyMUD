@@ -29,12 +29,12 @@ namespace legacymud { namespace parser {
 */
 enum class PrepositionType {
     NONE      = 0,        //!< Does not have any meaning.
-    TO        = (1 << 0), //!< Conveys the meaning of \i to, \i toward, \i at.
-    WITH      = (1 << 1), //!< Conveys the meaning of \i with, \i using.
-    FROM      = (1 << 2), //!< Conveys the meaning of \i from.
-    ON        = (1 << 3), //!< Conveys the meaning of \i on, <i>on top of</i>.
-    UNDER     = (1 << 4), //!< Conveys the meaning of \i under, \i underneath, \i below.
-    IN        = (1 << 5), //!< Conveys the meaning of \i in, \i inside, \i into.
+    TO        = (1 << 0), //!< Conveys the meaning of \em to, \em toward, \em at.
+    WITH      = (1 << 1), //!< Conveys the meaning of \em with, \em using.
+    FROM      = (1 << 2), //!< Conveys the meaning of \em from.
+    ON        = (1 << 3), //!< Conveys the meaning of \em on, <i>on top of</i>.
+    UNDER     = (1 << 4), //!< Conveys the meaning of \em under, \em underneath, \em below.
+    IN        = (1 << 5), //!< Conveys the meaning of \em in, \em inside, \em into.
     ALL       = ~0        //!< All possible meanings.   
 };
 
