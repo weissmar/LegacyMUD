@@ -30,23 +30,20 @@ public:
 // Verify reset functionality
 TEST_F(WordManagerTest, ResetTest) {
     std::string word = "foo";
-    parser::WordManager::addGlobalVerb(word, engine::ActionType::NONE);
-    parser::WordManager::addBuilderVerb(word, engine::ActionType::NONE);
-    parser::WordManager::addPreposition(word, engine::PositionType::NONE);
+    //parser::WordManager::addGlobalVerb(word, engine::CommandEnum::NONE);
+    //parser::WordManager::addBuilderVerb(word, engine::CommandEnum::NONE);
     parser::WordManager::addNoun(word);
     parser::WordManager::addVerb(word);
 
-    EXPECT_TRUE(parser::WordManager::hasGlobalVerb("foo"));
-    EXPECT_TRUE(parser::WordManager::hasBuilderVerb("foo"));
-    EXPECT_TRUE(parser::WordManager::hasPreposition("foo"));
+    //EXPECT_TRUE(parser::WordManager::hasGlobalVerb("foo"));
+    //EXPECT_TRUE(parser::WordManager::hasBuilderVerb("foo"));
     EXPECT_TRUE(parser::WordManager::hasNoun("foo"));
     EXPECT_TRUE(parser::WordManager::hasVerb("foo"));
 
     parser::WordManager::resetAll();
 
-    EXPECT_FALSE(parser::WordManager::hasGlobalVerb("foo"));
-    EXPECT_FALSE(parser::WordManager::hasBuilderVerb("foo"));
-    EXPECT_FALSE(parser::WordManager::hasPreposition("foo"));
+    //EXPECT_FALSE(parser::WordManager::hasGlobalVerb("foo"));
+    //EXPECT_FALSE(parser::WordManager::hasBuilderVerb("foo"));
     EXPECT_FALSE(parser::WordManager::hasNoun("foo"));
     EXPECT_FALSE(parser::WordManager::hasVerb("foo"));
 }
@@ -55,63 +52,42 @@ TEST_F(WordManagerTest, ResetTest) {
 TEST_F(WordManagerTest, AddGlobalVerbTest) {
     std::string word = "eat";
     EXPECT_FALSE(parser::WordManager::hasGlobalVerb(word));
-    parser::WordManager::addGlobalVerb(word, engine::ActionType::NONE);
+    //parser::WordManager::addGlobalVerb(word, engine::CommandEnum::NONE);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(engine::ActionType::NONE, parser::WordManager::getGlobalVerbAction(word));
+    //EXPECT_EQ(engine::CommandEnum::NONE, parser::WordManager::getGlobalVerbAction(word));
 }
 
 // Verify that a word can correctly be added to the builder verb list
 TEST_F(WordManagerTest, AddBuilderVerbTest) {
     std::string word = "edit";
     EXPECT_FALSE(parser::WordManager::hasBuilderVerb(word));
-    parser::WordManager::addBuilderVerb(word, engine::ActionType::NONE);
+    //parser::WordManager::addBuilderVerb(word, engine::CommandEnum::NONE);
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb(word));
-    EXPECT_EQ(engine::ActionType::NONE, parser::WordManager::getBuilderVerbAction(word));
-}
-
-// Verify that a word can correctly be added to the preposition list
-TEST_F(WordManagerTest, AddPrepositionTest) {
-    std::string word = "to";
-    EXPECT_FALSE(parser::WordManager::hasPreposition(word));
-    parser::WordManager::addPreposition(word, engine::PositionType::NONE);
-    EXPECT_TRUE(parser::WordManager::hasPreposition(word));
-    EXPECT_EQ(engine::PositionType::NONE, parser::WordManager::getPrepositionPosition(word));
+    //EXPECT_EQ(engine::CommandEnum::NONE, parser::WordManager::getBuilderVerbAction(word));
 }
 
 // Verify that a word can correctly be overwritten in the global verb list
 TEST_F(WordManagerTest, OverwriteGlobalVerbTest) {
     std::string word = "eat";
     EXPECT_FALSE(parser::WordManager::hasGlobalVerb(word));
-    parser::WordManager::addGlobalVerb(word, engine::ActionType::NONE);
+    //parser::WordManager::addGlobalVerb(word, engine::CommandEnum::NONE);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(engine::ActionType::NONE, parser::WordManager::getGlobalVerbAction(word));
-    parser::WordManager::addGlobalVerb(word, engine::ActionType::SOME);
+    //EXPECT_EQ(engine::CommandEnum::NONE, parser::WordManager::getGlobalVerbAction(word));
+    //parser::WordManager::addGlobalVerb(word, engine::CommandEnum::SOME);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(engine::ActionType::SOME, parser::WordManager::getGlobalVerbAction(word));
+    //EXPECT_EQ(engine::CommandEnum::SOME, parser::WordManager::getGlobalVerbAction(word));
 }
 
 // Verify that a word can correctly be overwritten in the builder verb list
 TEST_F(WordManagerTest, OverwriteBuilderVerbTest) {
     std::string word = "edit";
     EXPECT_FALSE(parser::WordManager::hasBuilderVerb(word));
-    parser::WordManager::addBuilderVerb(word, engine::ActionType::NONE);
+    //parser::WordManager::addBuilderVerb(word, engine::CommandEnum::NONE);
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb(word));
-    EXPECT_EQ(engine::ActionType::NONE, parser::WordManager::getBuilderVerbAction(word));
-    parser::WordManager::addBuilderVerb(word, engine::ActionType::SOME);
+    //EXPECT_EQ(engine::CommandEnum::NONE, parser::WordManager::getBuilderVerbAction(word));
+    //parser::WordManager::addBuilderVerb(word, engine::CommandEnum::SOME);
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb(word));
-    EXPECT_EQ(engine::ActionType::SOME, parser::WordManager::getBuilderVerbAction(word));
-}
-
-// Verify that a word can correctly be overwritten in the preposition list
-TEST_F(WordManagerTest, OverwritePrepositionTest) {
-    std::string word = "to";
-    EXPECT_FALSE(parser::WordManager::hasPreposition(word));
-    parser::WordManager::addPreposition(word, engine::PositionType::NONE);
-    EXPECT_TRUE(parser::WordManager::hasPreposition(word));
-    EXPECT_EQ(engine::PositionType::NONE, parser::WordManager::getPrepositionPosition(word));
-    parser::WordManager::addPreposition(word, engine::PositionType::TO);
-    EXPECT_TRUE(parser::WordManager::hasPreposition(word));
-    EXPECT_EQ(engine::PositionType::TO, parser::WordManager::getPrepositionPosition(word));
+    //EXPECT_EQ(engine::CommandEnum::SOME, parser::WordManager::getBuilderVerbAction(word));
 }
 
 // Verify that a word can correctly be added to and removed from the list of verbs in use
@@ -279,9 +255,8 @@ TEST_F(WordManagerTest, RemoveNounsTooManyTimesTest) {
 // Verify case insensitivity
 TEST_F(WordManagerTest, CaseInsensitivityTest) {
     std::string word = "FooBar";
-    parser::WordManager::addGlobalVerb(word, engine::ActionType::NONE);
-    parser::WordManager::addBuilderVerb(word, engine::ActionType::NONE);
-    parser::WordManager::addPreposition(word, engine::PositionType::NONE);
+    //parser::WordManager::addGlobalVerb(word, engine::CommandEnum::NONE);
+    //parser::WordManager::addBuilderVerb(word, engine::CommandEnum::NONE);
     parser::WordManager::addNoun(word);
     parser::WordManager::addVerb(word);
 
@@ -289,8 +264,6 @@ TEST_F(WordManagerTest, CaseInsensitivityTest) {
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb("foobar"));
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb("FOOBAR"));
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb("foobar"));
-    EXPECT_TRUE(parser::WordManager::hasPreposition("FOOBAR"));
-    EXPECT_TRUE(parser::WordManager::hasPreposition("foobar"));
     EXPECT_TRUE(parser::WordManager::hasNoun("FOOBAR"));
     EXPECT_TRUE(parser::WordManager::hasNoun("foobar"));
     EXPECT_TRUE(parser::WordManager::hasVerb("FOOBAR"));

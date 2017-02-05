@@ -9,7 +9,7 @@
  *     Implementation file for unit test example.
  ************************************************************************/
 
-#include "Sample.h"
+#include "Sample.hpp"
 
 namespace legacymud { namespace test {
 

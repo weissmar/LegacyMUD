@@ -22,8 +22,8 @@ parser::TextParser *tp;
 // Store InteractiveNoun objects here
 std::list<engine::InteractiveNoun> inList;
 
-// Reuse this VerbMap for each test
-parser::VerbMap vm;
+// Reuse this list for each test
+std::list<legacymud::engine::InteractiveNoun *> areaNouns;
 
 // Reuse this list for candidates
 std::list<parser::TextParseResult> candidates;
@@ -33,28 +33,12 @@ class TextParserTest : public :: testing::Test {
 public:
     static void SetUpTestCase() {
         // Set up global verb list
-        parser::WordManager::addGlobalVerb("go", engine::ActionType::NONE);
-        parser::WordManager::addGlobalVerb("help", engine::ActionType::NONE);
+        //parser::WordManager::addGlobalVerb("go", engine::CommandEnum::NONE);
+        //parser::WordManager::addGlobalVerb("help", engine::CommandEnum::NONE);
 
         // Set up world builder list
-        parser::WordManager::addBuilderVerb("editmode", engine::ActionType::NONE);
+        //parser::WordManager::addBuilderVerb("editmode", engine::CommandEnum::NONE);
 
-        // Set up preposition list
-        parser::WordManager::addPreposition("on", engine::PositionType::ON);
-        parser::WordManager::addPreposition("on top of", engine::PositionType::ON);
-        parser::WordManager::addPreposition("in", engine::PositionType::IN);
-        parser::WordManager::addPreposition("inside", engine::PositionType::IN);
-        parser::WordManager::addPreposition("inside of", engine::PositionType::IN);
-        parser::WordManager::addPreposition("into", engine::PositionType::IN);
-        parser::WordManager::addPreposition("under", engine::PositionType::UNDER);
-        parser::WordManager::addPreposition("underneath", engine::PositionType::UNDER);
-        parser::WordManager::addPreposition("below", engine::PositionType::UNDER);
-        parser::WordManager::addPreposition("to", engine::PositionType::TO);
-        parser::WordManager::addPreposition("toward", engine::PositionType::TO);
-        parser::WordManager::addPreposition("at", engine::PositionType::TO);
-        parser::WordManager::addPreposition("from", engine::PositionType::FROM);
-        parser::WordManager::addPreposition("with", engine::PositionType::WITH);
-        parser::WordManager::addPreposition("using", engine::PositionType::WITH);
     }
 
     static void TearDownTestCase() {
@@ -75,8 +59,8 @@ public:
         // Clear the candidate list
         candidates.clear();
 
-        // Clear the VerbMap
-        vm.clear();
+        // Clear the noun list
+        areaNouns.clear();
 
         // Clear the InteractiveNoun list
         inList.clear();
@@ -87,10 +71,10 @@ public:
 // Test the happy path of the HELP command
 TEST_F(TextParserTest, HelpHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
     EXPECT_TRUE(candidates.begin()->unparsed.empty());
@@ -99,10 +83,10 @@ TEST_F(TextParserTest, HelpHappyPath) {
 // Test the HELP command with invalid input after
 TEST_F(TextParserTest, HelpInvalidSuffix) {
     std::string input = "help me";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::INVALID_NOUN, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
     EXPECT_STREQ(candidates.begin()->unparsed.c_str(), "me");
@@ -111,10 +95,10 @@ TEST_F(TextParserTest, HelpInvalidSuffix) {
 // Test the happy path of the standalone LOOK command
 TEST_F(TextParserTest, LookStandaloneHappyPath) {
     std::string input = "look";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
     EXPECT_TRUE(candidates.begin()->unparsed.empty());
@@ -127,10 +111,10 @@ TEST_F(TextParserTest, LookTransitiveHappyPath) {
     in.name = "candle";
     inList.push_back(in);
 
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
     EXPECT_EQ(candidates.begin()->direct, &in);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
     EXPECT_TRUE(candidates.begin()->unparsed.empty());
@@ -147,11 +131,10 @@ TEST_F(TextParserTest, LookIntransitiveHappyPath) {
     inList.push_back(in);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp->parse(*it, vm, candidates);
+        auto result = tp->parse(*it, areaNouns, candidates);
         EXPECT_EQ(parser::TextParseStatus::VALID, result);
         ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
-        EXPECT_EQ(candidates.begin()->position, engine::PositionType::TO);
+        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
         EXPECT_TRUE(candidates.begin()->direct == nullptr);
         ASSERT_EQ(1, candidates.begin()->indirect.size());
         EXPECT_TRUE(*candidates.begin()->indirect.begin() == &in);
@@ -162,11 +145,10 @@ TEST_F(TextParserTest, LookIntransitiveHappyPath) {
 // Test the happy path of the LISTEN command
 TEST_F(TextParserTest, ListenHappyPath) {
     std::string input = "listen";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
-    EXPECT_EQ(candidates.begin()->position, engine::PositionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
 }
@@ -174,388 +156,388 @@ TEST_F(TextParserTest, ListenHappyPath) {
 // Test the happy path of the TAKE command
 TEST_F(TextParserTest, TakeHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the DROP command
 TEST_F(TextParserTest, DropHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the INVENTORY command
 TEST_F(TextParserTest, InventoryHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the MORE command
 TEST_F(TextParserTest, MoreHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the EQUIPMENT command
 TEST_F(TextParserTest, EquipmentHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the EQUIP command
 TEST_F(TextParserTest, EquipHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the UNEQUIP command
 TEST_F(TextParserTest, UnequipHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the TRANSFER command
 TEST_F(TextParserTest, TransferHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the SPEAK command
 TEST_F(TextParserTest, SpeakHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the SHOUT command
 TEST_F(TextParserTest, ShoutHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the WHISPER command
 TEST_F(TextParserTest, WhisperHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the QUIT command
 TEST_F(TextParserTest, QuitHappyPath) {
     std::string input = "quit";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the GO command
 TEST_F(TextParserTest, GoHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the STATS command
 TEST_F(TextParserTest, StatsHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the QUESTS command
 TEST_F(TextParserTest, QuestsHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the SKILLS command
 TEST_F(TextParserTest, SkillsHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the ATTACK command
 TEST_F(TextParserTest, AttackHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the ATTACK_WITH command
 TEST_F(TextParserTest, AttackWithHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the TALK command
 TEST_F(TextParserTest, TalkHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the SHOP command
 TEST_F(TextParserTest, ShopHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the BUY command
 TEST_F(TextParserTest, BuyHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the SELL command
 TEST_F(TextParserTest, SellHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the SEARCH command
 TEST_F(TextParserTest, SearchHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the USE_SKILL command
 TEST_F(TextParserTest, UseSkillHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the MOVE command
 TEST_F(TextParserTest, MoveHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the READ command
 TEST_F(TextParserTest, ReadHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the BREAK command
 TEST_F(TextParserTest, BreakHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the CLIMB command
 TEST_F(TextParserTest, ClimbHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the TURN command
 TEST_F(TextParserTest, TurnHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the PUSH command
 TEST_F(TextParserTest, PushHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the PULL command
 TEST_F(TextParserTest, PullHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the EAT command
 TEST_F(TextParserTest, EatHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the DRINK command
 TEST_F(TextParserTest, DrinkHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the EDIT_MODE command
 TEST_F(TextParserTest, EditModeHappyPath) {
     std::string input = "editmode";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the WARP command
 TEST_F(TextParserTest, WarpHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the COPY command
 TEST_F(TextParserTest, CopyHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the CREATE command
 TEST_F(TextParserTest, CreateHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the ADD command
 TEST_F(TextParserTest, AddHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the EDIT_ATTRIBUTE command
 TEST_F(TextParserTest, EditAttributeHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the EDIT_WIZARD command
 TEST_F(TextParserTest, EditWizardHappyPath) {
     std::string input = "help";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the SAVE command
 TEST_F(TextParserTest, SaveHappyPath) {
     std::string input = "save";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the LOAD command
 TEST_F(TextParserTest, LoadHappyPath) {
     std::string input = "load";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 // Test the happy path of the DELETE command
 TEST_F(TextParserTest, DeleteHappyPath) {
     std::string input = "delete";
-    auto result = tp->parse(input, vm, candidates);
+    auto result = tp->parse(input, areaNouns, candidates);
     EXPECT_EQ(parser::TextParseStatus::VALID, result);
     ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->action, engine::ActionType::NONE);
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::NONE);
 }
 
 }
