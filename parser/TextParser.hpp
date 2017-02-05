@@ -26,6 +26,10 @@ namespace legacymud { namespace engine {
 
 namespace legacymud { namespace parser {
 
+/*!
+  \typedef legacymud::parser::VerbMap
+  \brief Specifies the type of the lookup table used for mapping verb aliases to InteractiveNoun pointers.
+*/
 typedef std::multimap<std::string, engine::InteractiveNoun *> VerbMap;
 
 /*!
