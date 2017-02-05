@@ -17,9 +17,10 @@
 #include "InteractiveNoun.hpp"
 #include "SerializableNoun.hpp"
 #include "UniqueNoun.hpp"
-#include "ItemType.hpp"
 
 namespace legacymud { namespace engine {
+
+class ItemType;
 
 class ConditionalElement: public InteractiveNoun, public SerializableNoun, public UniqueNoun {
     public:

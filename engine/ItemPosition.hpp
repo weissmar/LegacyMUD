@@ -15,6 +15,7 @@
 namespace legacymud { namespace engine {
 
 enum class ItemPosition {
+    NONE,
     GROUND,
     INVENTORY,
     EQUIPPED,

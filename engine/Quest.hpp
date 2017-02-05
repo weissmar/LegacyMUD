@@ -19,11 +19,12 @@
 #include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
-#include "Item.hpp"
-#include "QuestStep.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
+
+class Item;
+class QuestStep;
 
 class Quest: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:

@@ -14,14 +14,15 @@
 #define GAME_LOGIC_HPP
 
 #include <string>
-#include "GameObjectManager.hpp"
-#include "InteractiveNoun.hpp"
-#include "Player.hpp"
-#include "Creature.hpp"
-#include "NonCombatant.hpp"
 #include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
+
+class GameObjectManager;
+class InteractiveNoun;
+class Player;
+class Creature;
+class NonCombatant;
 
 class GameLogic {
     public:
@@ -49,12 +50,13 @@ class GameLogic {
         bool endCombat(Player *aPlayer, Creature *aCreature);
         bool startConversation(Player *aPlayer, NonCombatant *aNPC);
         bool endConversation(Player *aPlayer);
-        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam, const std::string &stringParam);
+        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam, const std::string &stringParam, ItemPosition aPosition = none);
         bool helpCommand(Player *aPlayer);
         bool lookCommand(Player *aPlayer);
         bool listenCommand(Player *aPlayer);
         bool lookAtCommand(Player *aPlayer, InteractiveNoun *firstParam);
         bool takeCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam);
+        bool putCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam, ItemPosition aPosition);
         bool dropCommand(Player *aPlayer, InteractiveNoun *firstParam);
         bool inventoryCommand(Player *aPlayer);
         bool moreCommand(Player *aPlayer, InteractiveNoun *firstParam);

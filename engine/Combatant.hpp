@@ -16,9 +16,10 @@
 #include <tuple>
 #include <string>
 #include "Character.hpp"
-#include "Area.hpp"
 
 namespace legacymud { namespace engine {
+
+class Area;
 
 class Combatant: public Character {
     public:

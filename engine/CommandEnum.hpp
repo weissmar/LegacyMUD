@@ -15,10 +15,12 @@
 namespace legacymud { namespace engine {
 
 enum class CommandEnum {
+    INVALID,
     HELP,
     LOOK,
     LISTEN,
     TAKE,
+    PUT,
     DROP,
     INVENTORY,
     MORE,

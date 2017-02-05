@@ -17,10 +17,11 @@
 #include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
-#include "SpecialSkill.hpp"
 #include "DamageType.hpp"
 
 namespace legacymud { namespace engine {
+
+class SpecialSkill;
 
 class CombatantType: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:

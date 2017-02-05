@@ -15,6 +15,7 @@
 namespace legacymud { namespace engine {
 
 enum class EffectType {
+    NONE,
     DAMAGE,
     FALL,
     LONG_FALL,

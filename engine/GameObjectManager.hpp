@@ -16,11 +16,12 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "SerializableNoun.hpp"
-#include "Creature.hpp"
-#include "Player.hpp"
 
 namespace legacymud { namespace engine {
+
+class SerializableNoun;
+class Creature;
+class Player;
 
 class GameObjectManager {
     public:

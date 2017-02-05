@@ -17,11 +17,12 @@
 #include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
-#include "ItemType.hpp"
-#include "NonCombatant.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
+
+class ItemType;
+class NonCombatant;
 
 class QuestStep: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:

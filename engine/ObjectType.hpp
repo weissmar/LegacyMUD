@@ -15,7 +15,6 @@
 namespace legacymud { namespace engine {
 
 enum class ObjectType {
-    ACTION,
     AREA,
     ARMOR_TYPE,
     CONTAINER,

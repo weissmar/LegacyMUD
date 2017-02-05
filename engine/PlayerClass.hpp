@@ -15,11 +15,12 @@
 
 #include <string>
 #include "CombatantType.hpp"
-#include "SpecialSkill.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
+
+class SpecialSkill;
 
 class PlayerClass: public CombatantType {
     public:
