@@ -15,6 +15,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include <Grammar.h>
 #include "SerializableNoun.hpp"
 #include "UniqueNoun.hpp"
@@ -35,7 +36,8 @@ class Action: public SerializableNoun, public UniqueNoun {
         bool getValid();
         std::string getFlavorText();
         EffectType getEffect();
-        std::map<std::string, parser::Grammar*> getAliases();
+        parser::Grammar* getGrammar(std::string);
+        std::vector<std::string> getAliases();
         bool setValid(bool validCommand);
         bool setFlavorText(std::string flavorText);
         bool setEffect(EffectType type);

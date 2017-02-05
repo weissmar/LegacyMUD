@@ -15,6 +15,7 @@
 namespace legacymud { namespace engine {
 
 enum class EquipmentSlot {
+    NONE,
     HEAD,
     SHOULDERS,
     NECK,

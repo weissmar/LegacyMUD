@@ -19,10 +19,11 @@
 #include <map>
 #include <tuple>
 #include <Grammar.h>
-#include "Action.hpp"
 #include "CommandEnum.hpp"
 
 namespace legacymud { namespace engine {
+
+class Action;
 
 class InteractiveNoun {
     public:
@@ -31,8 +32,9 @@ class InteractiveNoun {
         InteractiveNoun & operator=(const InteractiveNoun &otherNoun);
         virtual ~InteractiveNoun();
         Action* getAction(CommandEnum);
+        std::vector<Action*> getActions(std::string alias);
         std::vector<std::string> getNounAliases();
-        std::map<std::string, std::tuple<parser::Grammar*, CommandEnum>> getVerbAliasMap();
+        std::vector<std::string> getVerbAliases();
         bool checkAction(CommandEnum);
         Action* addAction(CommandEnum);
         bool removeAction(CommandEnum);
@@ -41,6 +43,7 @@ class InteractiveNoun {
         virtual std::string look();  
         virtual std::string listen(); 
         virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
         virtual bool drop();
         virtual std::string more(); 
         virtual bool equip(Player*, Item*, InteractiveNoun*);

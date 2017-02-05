@@ -19,14 +19,14 @@
 #include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
 #include "AreaSize.hpp"
-#include "Item.hpp"
-#include "Feature.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
 
 class Character;
 class Exit;
+class Item;
+class Feature;
 
 class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
@@ -43,6 +43,7 @@ class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         std::vector<Character*> getCharacters();
         std::vector<Feature*> getFeatures();
         std::vector<Exit*> getExits();
+        std::multimap<std::string, InteractiveNoun*> getVerbLookup();
         bool setName(std::string name);
         bool setShortDesc(std::string shortDescription);
         bool setLongDesc(std::string longDescription);
@@ -75,6 +76,7 @@ class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         std::vector<Character*> characterContents;
         std::vector<Feature*> featureContents;
         std::vector<Exit*> exitContents;
+        std::multimap<std::string, InteractiiveNoun*> verbLookup;
 };
 
 }}

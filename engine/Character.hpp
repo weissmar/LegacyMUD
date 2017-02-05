@@ -19,11 +19,12 @@
 #include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
-#include "Area.hpp"
-#include "Item.hpp"
 #include "EquipmentSlot.hpp"
 
 namespace legacymud { namespace engine {
+
+class Area;
+class Item;
 
 class Character: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
@@ -37,6 +38,8 @@ class Character: public SerializableNoun, public InteractiveNoun, public UniqueN
         int getMoney();
         Area* getLocation();
         std::vector<std::tuple<EquipmentSlot, Item*>> getInventory();
+        std::vector<Item*> getItemsInventory();
+        std::vector<std::tuple<EquipmentSlot, Item*>> getEquipped();
         int getMaxInventoryWeight();
         bool setName(std::string name);
         bool setDescription(std::string description);

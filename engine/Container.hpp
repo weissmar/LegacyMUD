@@ -40,6 +40,7 @@ class Container: public Item {
         virtual bool deserialize(std::string);
         virtual std::string look();  
         virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
         virtual bool drop();
         virtual std::string more(); 
         virtual bool equip(Player*, Item*, InteractiveNoun*);

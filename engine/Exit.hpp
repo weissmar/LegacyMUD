@@ -15,12 +15,13 @@
 
 #include <string>
 #include "ConditionalElement.hpp"
-#include "Area.hpp"
 #include "EffectType.hpp"
 #include "ExitDirection.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
+
+class Area;
 
 class Exit: public ConditionalElement {
     public:

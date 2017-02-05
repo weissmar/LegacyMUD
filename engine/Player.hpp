@@ -17,17 +17,18 @@
 #include <queue>
 #include <vector>
 #include <tuple>
-#include "Area.hpp"
 #include "Combatant.hpp"
-#include "Quest.hpp"
 #include "CharacterSize.hpp"
-#include "PlayerClass.hpp"
-#include "NonCombatant.hpp"
-#include "InteractiveNoun.hpp"
 #include "CommandEnum.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
+
+class Area;
+class Quest;
+class NonCombatant;
+class PlayerClass;
+class InteractiveNoun;
 
 struct Command {
     CommandEnum commandE;
@@ -53,6 +54,7 @@ class Player: public Combatant {
         bool queueIsEmpty();
         bool isEditMode();
         std::vector<std::tuple<Quest*, int>> getQuestList();
+        std::multimap<std::string, InteractiveNoun*> getVerbLookup();
         int addToExperiencePts(int gainedXP);
         bool levelUp();
         bool setSize(CharacterSize size);
@@ -64,11 +66,14 @@ class Player: public Combatant {
         bool addCommand(Command *aCommand);
         bool setEditMode(bool editing);
         bool addQuest(Quest *aQuest, int step);
-        bool updateQuest(Quest *aQuest, int step);    
+        bool updateQuest(Quest *aQuest, int step); 
+        bool addVerbs(std::vector<std::string>, InteractiveNoun*);
+        bool removeVerbs(InteractiveNoun*);
         virtual std::string serialize();
         virtual bool deserialize(std::string);
         virtual std::string look();  
         virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
         virtual bool equip(Player*, Item*, InteractiveNoun*);
         virtual bool unequip(Player*, Item*);
         virtual bool transfer(Player*, Item*, InteractiveNoun*);
@@ -96,6 +101,7 @@ class Player: public Combatant {
         std::queue<Command*> combatQueue;
         bool editMode;
         std::vector<std::tuple<Quest*, int>> questList;
+        std::multimap<std::string, InteractiiveNoun*> verbLookup;
 };
 
 }}

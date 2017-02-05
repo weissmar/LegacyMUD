@@ -14,12 +14,13 @@
 #define NON_COMBATANT_HPP
 
 #include <string>
-#include "Area.hpp"
-#include "Quest.hpp"
 #include "Character.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
+
+class Area;
+class Quest;
 
 class NonCombatant: public Character {
     public:

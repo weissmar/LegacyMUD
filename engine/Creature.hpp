@@ -15,11 +15,12 @@
 
 #include <string>
 #include "Combatant.hpp"
-#include "Area.hpp"
-#include "CreatureType.hpp"
 #include "DataType.hpp"
 
 namespace legacymud { namespace engine {
+
+class Area;
+class CreatureType;
 
 class Creature: public Combatant {
     public:
@@ -37,6 +38,7 @@ class Creature: public Combatant {
         virtual bool deserialize(std::string);
         virtual std::string look();  
         virtual bool take(Player*, Item*, InteractiveNoun*);
+        virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
         virtual bool equip(Player*, Item*, InteractiveNoun*);
         virtual bool unequip(Player*, Item*);
         virtual bool transfer(Player*, Item*, InteractiveNoun*);
