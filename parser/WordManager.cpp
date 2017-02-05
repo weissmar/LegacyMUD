@@ -135,10 +135,10 @@ void WordManager::addVerbs(const std::vector<std::string> &verbs) {
 // Gets the VerbInfo of the specified edit mode verb.
 VerbInfo WordManager::getEditModeVerb(std::string verb) {
     // Precondition: value must be in map
-    auto it = _globalVerbs.find(verb);
-    assert(it != _globalVerbs.end());
+    auto it = _editModeVerbs.find(verb);
+    assert(it != _editModeVerbs.end());
 
-    return _globalVerbs.at(verb);
+    return _editModeVerbs.at(verb);
 }
 
 // Gets the VerbInfo of the specified global verb.
