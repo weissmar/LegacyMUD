@@ -27,10 +27,10 @@ namespace legacymud { namespace engine {
 namespace legacymud { namespace parser {
 
 /*!
-  \typedef legacymud::parser::VerbMap
-  \brief Specifies the type of the lookup table used for mapping verb aliases to InteractiveNoun pointers.
+  \typedef legacymud::parser::WordMap
+  \brief Specifies the type of the lookup table used for mapping aliases to InteractiveNoun pointers.
 */
-typedef std::multimap<std::string, engine::InteractiveNoun *> VerbMap;
+typedef std::multimap<std::string, engine::InteractiveNoun *> WordMap;
 
 /*!
   \enum legacymud::parser::TextParseStatus
@@ -135,7 +135,12 @@ public:
       \param[in]  playerVerbMap Specifies a lookup table of verb aliases mapped to
                                 pointers to InteractiveNoun objects in the player's
                                 inventory.
+      \param[in]  playerNounMap Specifies a lookup table of noun aliases mapped to
+                                pointers to InteractiveNoun objects in the player's
+                                inventory.
       \param[in]  areaVerbMap   Specifies a lookup table of verb aliases mapped to
+                                pointers to InteractiveNoun objects in the current area.
+      \param[in]  areaNounMap   Specifies a lookup table of noun aliases mapped to
                                 pointers to InteractiveNoun objects in the current area.
       \param[out] candidates    Holds the valid actions and matching objects found
                                 by the parser.
@@ -168,8 +173,10 @@ public:
     */
     TextParseStatus parse(
         const std::string &input, 
-        const VerbMap &playerVerbMap,
-        const VerbMap &areaVerbMap,
+        const WordMap &playerVerbMap,
+        const WordMap &playerNounMap,
+        const WordMap &areaVerbMap,
+        const WordMap &areaNounMap,
         std::vector<TextParseResult> &candidates,
         bool isAdmin = false,
         bool editMode = false

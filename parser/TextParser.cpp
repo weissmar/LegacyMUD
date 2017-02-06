@@ -18,8 +18,10 @@ TextParser::~TextParser() {
 // Converts text input from players into potential commands to be run.
 TextParseStatus TextParser::parse(
         const std::string &input, 
-        const VerbMap &playerVerbMap, 
-        const VerbMap &areaVerbMap,
+        const WordMap &playerVerbMap,
+        const WordMap &playerNounMap,
+        const WordMap &areaVerbMap,
+        const WordMap &areaNounMap,
         std::vector<TextParseResult> &candidates, 
         bool isAdmin, 
         bool editMode
