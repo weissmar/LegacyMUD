@@ -1,7 +1,7 @@
 /*!
-  \file    Verb.cpp
+  \file    Grammar.cpp
   \author  David Rigert
-  \date    02/02/2017
+  \date    02/05/2017
   \course  CS467, Winter 2017
  
   \details This file contains the implementation code for the Grammar class.
@@ -11,8 +11,7 @@
 
 namespace legacymud { namespace parser {
 
-Grammar::Grammar(engine::CommandEnum command, Support directObject, Support indirectObject) {
-    _command = command;
+Grammar::Grammar(Support directObject, Support indirectObject) {
     _directObject = directObject;
     _indirectObject = indirectObject;
 }
@@ -27,6 +26,11 @@ PrepositionType Grammar::getPrepositionType(std::string prep) const {
         return it->second;
     else
         return PrepositionType::NONE;
+}
+
+void Grammar::setObjectSupport(Support directObject, Support indirectObject) {
+    _directObject = directObject;
+    _indirectObject = indirectObject;
 }
 
 Grammar::Support Grammar::takesIndirectObject() const {
