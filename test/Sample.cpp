@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        David Rigert
  * Date Created:  1/14/2017
- * Last Modified: 1/14/2017
+ * Last Modified: 2/5/2017
  * Course:        CS467, Winter 2017
  * Filename:      Sample.cpp
  *
