@@ -38,6 +38,7 @@ std::mutex nounLock;
 namespace legacymud { namespace parser {
 
 // Static initialization
+GlobalVerbMap WordManager::_editModeVerbs;
 GlobalVerbMap WordManager::_globalVerbs;
 GlobalVerbMap WordManager::_builderVerbs;
 WordCountMap WordManager::_nounAliases;
@@ -180,7 +181,7 @@ bool WordManager::hasEditModeVerb(std::string verb) {
     // Convert string to lowercase
     std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
 
-    return _globalVerbs.find(verb) != _globalVerbs.end();
+    return _editModeVerbs.find(verb) != _editModeVerbs.end();
 }
 
 // Gets whether the specified global verb has been added.
@@ -268,11 +269,13 @@ void WordManager::removeVerbs(const std::vector<std::string> &verbs) {
 // Reset all member variables.
 void WordManager::resetAll() {
     // Block any other threads from accessing private members until operation is complete.
+    std::lock_guard<std::mutex> editModeVerbGuard(editModeVerbLock);
     std::lock_guard<std::mutex> globalVerbGuard(globalVerbLock);
     std::lock_guard<std::mutex> builderVerbGuard(builderVerbLock);
     std::lock_guard<std::mutex> nounGuard(nounLock);
     std::lock_guard<std::mutex> verbGuard(verbLock);
 
+    _editModeVerbs.clear();
     _globalVerbs.clear();
     _builderVerbs.clear();
     _nounAliases.clear();

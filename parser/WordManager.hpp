@@ -13,6 +13,8 @@
 
 #include "Grammar.hpp"
 
+#include <CommandEnum.hpp>
+
 #include <vector>
 #include <map>
 #include <string>
@@ -26,6 +28,7 @@ namespace legacymud { namespace parser {
 struct VerbInfo {
     Grammar grammar;              //!< Stores the grammar supported by the verb.
     engine::CommandEnum command;  //!< Stores the command mapped to the verb.
+    std::string description;      //!< Stores the description of the verb shown in help.
 };
 
 /*! 
