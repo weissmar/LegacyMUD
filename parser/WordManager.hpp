@@ -145,7 +145,7 @@ public:
 
       \post The specified \a alias has been mapped to \a pObj in the noun lookup table.
     */
-    static void addNoun(std::string alias, engine::InteractiveNoun *nounObject);
+    static void addNoun(std::string alias, engine::InteractiveNoun *pObj);
 
     /*!
       \brief Adds an entry to the lookup table of verb aliases in use.
@@ -163,7 +163,7 @@ public:
 
       \post The specified \a alias has been mapped to \a pObj in the verb lookup table.
     */
-    static void addVerb(std::string alias, engine::InteractiveNoun *nounObject);
+    static void addVerb(std::string alias, engine::InteractiveNoun *pObj);
 
     /*!
       \brief Gets the VerbInfo object of the specified edit mode verb.
