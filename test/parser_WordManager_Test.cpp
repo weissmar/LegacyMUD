@@ -11,6 +11,7 @@
 */
 
 #include <WordManager.hpp>
+#include <InteractiveNoun.hpp>
 
 #include <gtest/gtest.h>
 
@@ -18,6 +19,7 @@ namespace {
 
 namespace parser = legacymud::parser;
 namespace engine = legacymud::engine;
+
 
 // Test fixture to clear the WordManager after every test
 class WordManagerTest : public :: testing::Test {
@@ -35,11 +37,12 @@ public:
 TEST_F(WordManagerTest, ResetTest) {
     std::string word = "foo";
     parser::VerbInfo vi;
+    engine::InteractiveNoun in;
     parser::WordManager::addEditModeVerb(word, vi);
     parser::WordManager::addGlobalVerb(word, vi);
     parser::WordManager::addBuilderVerb(word, vi);
-    parser::WordManager::addNoun(word);
-    parser::WordManager::addVerb(word);
+    parser::WordManager::addNoun(word, &in);
+    parser::WordManager::addVerb(word, &in);
 
     EXPECT_TRUE(parser::WordManager::hasEditModeVerb("foo"));
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb("foo"));
@@ -147,72 +150,52 @@ TEST_F(WordManagerTest, OverwriteBuilderVerbTest) {
 // Verify that a word can correctly be added to and removed from the list of verbs in use
 TEST_F(WordManagerTest, AddRemoveVerbTest) {
     std::string word = "eat";
+    engine::InteractiveNoun in;
     EXPECT_FALSE(parser::WordManager::hasVerb(word));
-    parser::WordManager::addVerb(word);
+    parser::WordManager::addVerb(word, &in);
     EXPECT_TRUE(parser::WordManager::hasVerb(word));
-    parser::WordManager::removeVerb(word);
+    parser::WordManager::removeVerb(word, &in);
     EXPECT_FALSE(parser::WordManager::hasVerb(word));
 }
 
 // Verify that a word can correctly be added to and removed from the list of nouns in use
 TEST_F(WordManagerTest, AddRemoveNounTest) {
     std::string word = "food";
+    engine::InteractiveNoun in;
     EXPECT_FALSE(parser::WordManager::hasNoun(word));
-    parser::WordManager::addNoun(word);
+    parser::WordManager::addNoun(word, &in);
     EXPECT_TRUE(parser::WordManager::hasNoun(word));
-    parser::WordManager::removeNoun(word);
+    parser::WordManager::removeNoun(word, &in);
     EXPECT_FALSE(parser::WordManager::hasNoun(word));
-}
-
-// Verify that the addVerbs and removeVerbs functions work
-TEST_F(WordManagerTest, AddRemoveVerbsTest) {
-    std::vector<std::string> words = {"eat", "drink", "eat"};
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_FALSE(parser::WordManager::hasVerb(*it));
-    parser::WordManager::addVerbs(words);
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_TRUE(parser::WordManager::hasVerb(*it));
-    parser::WordManager::removeVerbs(words);
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_FALSE(parser::WordManager::hasVerb(*it));
-}
-
-// Verify that the addNouns and removeNouns functions work
-TEST_F(WordManagerTest, AddRemoveNounsTest) {
-    std::vector<std::string> words = {"food", "soda", "food"};
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_FALSE(parser::WordManager::hasNoun(*it));
-    parser::WordManager::addNouns(words);
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_TRUE(parser::WordManager::hasNoun(*it));
-    parser::WordManager::removeNouns(words);
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_FALSE(parser::WordManager::hasNoun(*it));
 }
 
 // Verify support for adding and removing verbs multiple times
 TEST_F(WordManagerTest, AddRemoveMultipleVerbTest) {
     std::string word = "eat";
+    engine::InteractiveNoun in1;
+    engine::InteractiveNoun in2;
     EXPECT_FALSE(parser::WordManager::hasVerb(word));
-    parser::WordManager::addVerb(word);
-    parser::WordManager::addVerb(word);
+    parser::WordManager::addVerb(word, &in1);
+    parser::WordManager::addVerb(word, &in2);
     EXPECT_TRUE(parser::WordManager::hasVerb(word));
-    parser::WordManager::removeVerb(word);
+    parser::WordManager::removeVerb(word, &in1);
     EXPECT_TRUE(parser::WordManager::hasVerb(word));
-    parser::WordManager::removeVerb(word);
+    parser::WordManager::removeVerb(word, &in2);
     EXPECT_FALSE(parser::WordManager::hasVerb(word));
 }
 
 // Verify support for adding and removing nouns multiple times
 TEST_F(WordManagerTest, AddRemoveMultipleNounTest) {
     std::string word = "food";
+    engine::InteractiveNoun in1;
+    engine::InteractiveNoun in2;
     EXPECT_FALSE(parser::WordManager::hasNoun(word));
-    parser::WordManager::addNoun(word);
-    parser::WordManager::addNoun(word);
+    parser::WordManager::addNoun(word, &in1);
+    parser::WordManager::addNoun(word, &in2);
     EXPECT_TRUE(parser::WordManager::hasNoun(word));
-    parser::WordManager::removeNoun(word);
+    parser::WordManager::removeNoun(word, &in1);
     EXPECT_TRUE(parser::WordManager::hasNoun(word));
-    parser::WordManager::removeNoun(word);
+    parser::WordManager::removeNoun(word, &in2);
     EXPECT_FALSE(parser::WordManager::hasNoun(word));
 }
 
@@ -220,16 +203,18 @@ TEST_F(WordManagerTest, AddRemoveMultipleNounTest) {
 TEST_F(WordManagerTest, AddRemoveDifferentVerbTest) {
     std::string word1 = "eat";
     std::string word2 = "drink";
+    engine::InteractiveNoun in1;
+    engine::InteractiveNoun in2;
     EXPECT_FALSE(parser::WordManager::hasVerb(word1));
     EXPECT_FALSE(parser::WordManager::hasVerb(word2));
-    parser::WordManager::addVerb(word1);
-    parser::WordManager::addVerb(word2);
+    parser::WordManager::addVerb(word1, &in1);
+    parser::WordManager::addVerb(word2, &in2);
     EXPECT_TRUE(parser::WordManager::hasVerb(word1));
     EXPECT_TRUE(parser::WordManager::hasVerb(word2));
-    parser::WordManager::removeVerb(word1);
+    parser::WordManager::removeVerb(word1, &in1);
     EXPECT_FALSE(parser::WordManager::hasVerb(word1));
     EXPECT_TRUE(parser::WordManager::hasVerb(word2));
-    parser::WordManager::removeVerb(word2);
+    parser::WordManager::removeVerb(word2, &in2);
     EXPECT_FALSE(parser::WordManager::hasVerb(word1));
     EXPECT_FALSE(parser::WordManager::hasVerb(word2));
 }
@@ -238,84 +223,87 @@ TEST_F(WordManagerTest, AddRemoveDifferentVerbTest) {
 TEST_F(WordManagerTest, AddRemoveDifferentNounTest) {
     std::string word1 = "food";
     std::string word2 = "soda";
+    engine::InteractiveNoun in1;
+    engine::InteractiveNoun in2;
     EXPECT_FALSE(parser::WordManager::hasNoun(word1));
     EXPECT_FALSE(parser::WordManager::hasNoun(word2));
-    parser::WordManager::addNoun(word1);
-    parser::WordManager::addNoun(word2);
+    parser::WordManager::addNoun(word1, &in1);
+    parser::WordManager::addNoun(word2, &in2);
     EXPECT_TRUE(parser::WordManager::hasNoun(word1));
     EXPECT_TRUE(parser::WordManager::hasNoun(word2));
-    parser::WordManager::removeNoun(word1);
+    parser::WordManager::removeNoun(word1, &in1);
     EXPECT_FALSE(parser::WordManager::hasNoun(word1));
     EXPECT_TRUE(parser::WordManager::hasNoun(word2));
-    parser::WordManager::removeNoun(word2);
+    parser::WordManager::removeNoun(word2, &in2);
     EXPECT_FALSE(parser::WordManager::hasNoun(word1));
     EXPECT_FALSE(parser::WordManager::hasNoun(word2));
 }
 
-// Verify behavior when attempting to remove word too many times
+// Verify behavior when attempting to remove mismatched key-value
+TEST_F(WordManagerTest, RemoveMismatchedVerbTest) {
+    std::string word1 = "eat";
+    std::string word2 = "drink";
+    engine::InteractiveNoun in1;
+    engine::InteractiveNoun in2;
+    EXPECT_FALSE(parser::WordManager::hasVerb(word1));
+    EXPECT_FALSE(parser::WordManager::hasVerb(word2));
+    parser::WordManager::addVerb(word1, &in1);
+    parser::WordManager::addVerb(word2, &in2);
+    EXPECT_TRUE(parser::WordManager::hasVerb(word1));
+    EXPECT_TRUE(parser::WordManager::hasVerb(word2));
+    EXPECT_DEATH(parser::WordManager::removeVerb(word1, &in2), "");
+}
+
+// Verify behavior when attempting to remove mismatched key-value
+TEST_F(WordManagerTest, RemoveMismatchedNounTest) {
+    std::string word1 = "food";
+    std::string word2 = "soda";
+    engine::InteractiveNoun in1;
+    engine::InteractiveNoun in2;
+    EXPECT_FALSE(parser::WordManager::hasNoun(word1));
+    EXPECT_FALSE(parser::WordManager::hasNoun(word2));
+    parser::WordManager::addNoun(word1, &in1);
+    parser::WordManager::addNoun(word2, &in2);
+    EXPECT_TRUE(parser::WordManager::hasNoun(word1));
+    EXPECT_TRUE(parser::WordManager::hasNoun(word2));
+    EXPECT_DEATH(parser::WordManager::removeVerb(word1, &in2), "");
+}
+
+// Verify behavior when attempting to remove word more than once
 TEST_F(WordManagerTest, RemoveVerbTooManyTimesTest) {
     std::string word = "eat";
+    engine::InteractiveNoun in;
     EXPECT_FALSE(parser::WordManager::hasVerb(word));
-    parser::WordManager::addVerb(word);
-    parser::WordManager::addVerb(word);
+    parser::WordManager::addVerb(word, &in);
     EXPECT_TRUE(parser::WordManager::hasVerb(word));
-    parser::WordManager::removeVerb(word);
-    EXPECT_TRUE(parser::WordManager::hasVerb(word));
-    parser::WordManager::removeVerb(word);
+    parser::WordManager::removeVerb(word, &in);
     EXPECT_FALSE(parser::WordManager::hasVerb(word));
-    EXPECT_DEATH(parser::WordManager::removeVerb(word), "");
+    EXPECT_DEATH(parser::WordManager::removeVerb(word, &in), "");
 }
 
 // Verify behavior when attempting to remove word too many times
 TEST_F(WordManagerTest, RemoveNounTooManyTimesTest) {
     std::string word = "food";
+    engine::InteractiveNoun in;
     EXPECT_FALSE(parser::WordManager::hasNoun(word));
-    parser::WordManager::addNoun(word);
-    parser::WordManager::addNoun(word);
+    parser::WordManager::addNoun(word, &in);
     EXPECT_TRUE(parser::WordManager::hasNoun(word));
-    parser::WordManager::removeNoun(word);
-    EXPECT_TRUE(parser::WordManager::hasNoun(word));
-    parser::WordManager::removeNoun(word);
+    parser::WordManager::removeNoun(word, &in);
     EXPECT_FALSE(parser::WordManager::hasNoun(word));
-    EXPECT_DEATH(parser::WordManager::removeNoun(word), "");
-}
-
-// Verify behavior when attempting to use removeVerbs with word that appears more than map
-TEST_F(WordManagerTest, RemoveVerbsTooManyTimesTest) {
-    std::vector<std::string> words = {"eat", "eat"};
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_FALSE(parser::WordManager::hasVerb(*it));
-    parser::WordManager::addVerbs(words);
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_TRUE(parser::WordManager::hasVerb(*it));
-    parser::WordManager::removeVerb("eat"); // remove one manually
-    EXPECT_TRUE(parser::WordManager::hasVerb("eat"));
-    EXPECT_DEATH(parser::WordManager::removeVerbs(words), "");
-}
-
-// Verify behavior when attempting to use removeNouns with word that appears more than map
-TEST_F(WordManagerTest, RemoveNounsTooManyTimesTest) {
-    std::vector<std::string> words = {"food", "food"};
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_FALSE(parser::WordManager::hasNoun(*it));
-    parser::WordManager::addNouns(words);
-    for (auto it = words.begin(); it != words.end(); ++it)
-        EXPECT_TRUE(parser::WordManager::hasNoun(*it));
-    parser::WordManager::removeNoun("food"); // remove one manually
-    EXPECT_TRUE(parser::WordManager::hasNoun("food"));
-    EXPECT_DEATH(parser::WordManager::removeNouns(words), "");
+    EXPECT_DEATH(parser::WordManager::removeNoun(word, &in), "");
 }
 
 // Verify case insensitivity
 TEST_F(WordManagerTest, CaseInsensitivityTest) {
     std::string word = "FooBar";
     parser::VerbInfo vi;
+    engine::InteractiveNoun in;
 
     parser::WordManager::addEditModeVerb(word, vi);
     parser::WordManager::addGlobalVerb(word, vi);
     parser::WordManager::addBuilderVerb(word, vi);
-    parser::WordManager::addNoun(word);
-    parser::WordManager::addVerb(word);
+    parser::WordManager::addNoun(word, &in);
+    parser::WordManager::addVerb(word, &in);
 
     EXPECT_TRUE(parser::WordManager::hasEditModeVerb("FOOBAR"));
     EXPECT_TRUE(parser::WordManager::hasEditModeVerb("foobar"));

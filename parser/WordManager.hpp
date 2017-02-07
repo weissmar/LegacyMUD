@@ -20,6 +20,10 @@
 #include <string>
 #include <utility>
 
+namespace legacymud { namespace engine {
+    class InteractiveNoun;
+}}
+
 namespace legacymud { namespace parser {
 
 /*! 
@@ -37,11 +41,11 @@ struct VerbInfo {
 */
 typedef std::map<std::string, VerbInfo> GlobalVerbMap;
 
-/*! 
-  \typedef WordCountMap
-  \brief Specifies the container type used to store how many times a word is used.
+/*!
+  \typedef WordAliasMap
+  \brief Specifies the type of an alias-to-InteractiveNoun-pointer lookup table.
 */
-typedef std::map<std::string, unsigned int> WordCountMap;
+typedef std::multimap<std::string, engine::InteractiveNoun *> AliasLookupTable;
 
 /*!
   \brief Stores and manages all verbs and nouns supported by the game world.
@@ -129,67 +133,37 @@ public:
       \brief Adds an entry to the lookup table of noun aliases in use.
 
       This function adds the specified string to the lookup table of all 
-      local noun aliases that are in use in the game world. The same noun 
-      can (and should) be added to the table for every object it is used in.
+      noun aliases that are in use in the game world. Every time a noun alias
+      is added to an InteractiveNoun, it should be registered here.
       
-      \param[in]  noun  Specifies the string to use as the noun alias.
+      \param[in]  alias   Specifies the string to use as the noun alias.
+      \param[in]  pObj    Specifies a pointer to the InteractiveNoun object
+                          that has the alias.
 
-      \pre \a noun is a valid, non-empty string.
+      \pre \a alias is a valid, non-empty string.
+      \pre \a pObj is a non-null pointer to a valid InteractiveNoun instance.
 
-      \post The specified \a noun has been added to the noun alias table.
+      \post The specified \a alias has been mapped to \a pObj in the noun lookup table.
     */
-    static void addNoun(std::string noun);
-
-    /*!
-      \brief Adds a list of entries to the lookup table of noun aliases in use.
-
-      This function adds all of the strings in the specified list to the 
-      lookup table of all local noun aliases that are in use in the game world.
-      The same noun can (and should) be added to the table for every object it 
-      is used in.
-      
-      \param[in]  nouns     Specifies a list of strings to use as noun aliases.
-
-      \pre \a nouns is a valid list of strings.
-      \pre Each string in \a nouns is a valid, non-empty string.
-
-      \post All of the strings in \a nouns have been added to the noun alias 
-            table.
-    */
-    static void addNouns(const std::vector<std::string> &nouns);
+    static void addNoun(std::string alias, engine::InteractiveNoun *nounObject);
 
     /*!
       \brief Adds an entry to the lookup table of verb aliases in use.
 
       This function adds the specified string to the lookup table of all 
-      local verb aliases that are in use in the game world. The same verb 
-      can (and should) be added to the table for every object it is used in.
+      local verb aliases that are in use in the game world. Every time a verb 
+      alias is added to an InteractiveNoun, it should be registered here.
       
-      \param[in]  verb  Specifies the string to use as the verb alias.
+      \param[in]  alias   Specifies the string to use as the verb alias.
+      \param[in]  pObj    Specifies a pointer to the InteractiveNoun object
+                          that has the alias.
 
-      \pre \a verb is a valid, non-empty string.
+      \pre \a alias is a valid, non-empty string.
+      \pre \a pObj is a non-null pointer to a valid InteractiveNoun instance.
 
-      \post The specified \a verb has been added to the verb alias table.
+      \post The specified \a alias has been mapped to \a pObj in the verb lookup table.
     */
-    static void addVerb(std::string verb);
-
-    /*!
-      \brief Adds a list of entries to the lookup table of verb aliases in use.
-
-      This function adds all of the strings in the specified list to the 
-      lookup table of all local verb aliases that are in use in the game world.
-      The same verb can (and should) be added to the table for every object it 
-      is used in.
-      
-      \param[in]  verbs     Specifies a list of strings to use as verb aliases.
-
-      \pre \a verbs is a valid list of strings.
-      \pre Each string in \a verbs is a valid, non-empty string.
-
-      \post All of the strings in \a verbs have been added to the verb alias 
-            table.
-    */
-    static void addVerbs(const std::vector<std::string> &verbs);
+    static void addVerb(std::string alias, engine::InteractiveNoun *nounObject);
 
     /*!
       \brief Gets the VerbInfo object of the specified edit mode verb.
@@ -249,110 +223,72 @@ public:
 
       \return Returns whether \a verb is in use.
     */
-    static bool hasVerb(std::string verb);
+    static bool hasVerb(std::string alias);
 
     /*!
-      \brief Gets whether the specified edit mode verb has been added.
+      \brief Gets whether the specified edit mode verb alias has been added.
 
-      \param[in] verb   Specifies the edit mode verb alias to check for.
+      \param[in] alias  Specifies the edit mode verb alias to check for.
 
-      \return Returns whether \a verb has been added.
+      \return Returns whether \a alias has been added.
     */
-    static bool hasEditModeVerb(std::string verb);
+    static bool hasEditModeVerb(std::string alias);
 
     /*!
-      \brief Gets whether the specified world builder verb has been added.
+      \brief Gets whether the specified world builder verb alias has been added.
 
-      \param[in] verb   Specifies the world builder verb alias to check for.
+      \param[in] alias  Specifies the world builder verb alias to check for.
 
-      \return Returns whether \a verb has been added.
+      \return Returns whether \a alias has been added.
     */
     static bool hasBuilderVerb(std::string verb);
 
     /*!
-      \brief Gets whether the specified global verb has been added.
+      \brief Gets whether the specified global verb alias has been added.
 
-      \param[in] verb   Specifies the global verb alias to check for.
+      \param[in] alias  Specifies the global verb alias to check for.
 
-      \return Returns whether \a verb has been added.
+      \return Returns whether \a alias has been added.
     */
-    static bool hasGlobalVerb(std::string verb);
+    static bool hasGlobalVerb(std::string alias);
 
     /*!
-      \brief Removes one use of a noun from the lookup table of noun aliases in use.
+      \brief Removes the specified noun alias-InteractiveNoun pair from the lookup table.
 
-      This function decrements the usage counter for the specified \a noun.
-      The same noun can (and should) be removed every time an object that uses
-      the noun is destroyed.
+      This function removes the specified alias-to-InteractiveNoun pair from the lookup
+      table of all nouns in use. Call this function whenever a noun alias is removed
+      from an InteractiveNoun object. If the InteractiveNoun object is being destroyed,
+      call this function once for each noun alias of the InteractiveNoun. 
       
-      \param[in]  noun  Specifies the noun alias to remove.
+      \param[in]  alias   Specifies the noun alias to remove.
+      \param[in]  pObj    Specifies a pointer to the InteractiveNoun object
+                          that has the alias.
 
-      \pre \a noun is a valid, non-empty string.
-      \pre \a noun exists in the table of noun aliases in use.
+      \pre \a alias is a valid, non-empty string.
+      \pre \a alias exists in the lookup table of noun aliases.
 
-      \post The use count for the specified \a noun has been decremented by 1.
-            If the use count becomes 0, the entry is removed from the table.
+      \post The \a alias and \a pObj pair is no longer in the noun lookup table.
     */
-    static void removeNoun(std::string noun);
+    static void removeNoun(std::string alias, engine::InteractiveNoun *pObj);
 
     /*!
-      \brief Removes one use of each string from the lookup table of noun aliases in use.
+      \brief Removes the specified verb alias-InteractiveNoun pair from the lookup table.
 
-      This function decrements the usage counter for each string in the specified
-      \a nouns list. The same noun can (and should) be removed every time an object 
-      that uses the noun is destroyed.
+      This function removes the specified alias-to-InteractiveNoun pair from the lookup
+      table of all verbs in use. Call this function whenever a verb alias is removed
+      from an InteractiveNoun object. If the InteractiveNoun object is being destroyed,
+      call this function once for each verb alias of the InteractiveNoun. 
       
-      \param[in]  nouns     Specifies the noun aliases to remove.
+      \param[in]  alias   Specifies the verb alias to remove.
+      \param[in]  pObj    Specifies a pointer to the InteractiveNoun object
+                          that has the alias.
 
-      \pre \a nouns is a valid list of strings.
-      \pre Each string in \a nouns is a valid, non-empty string.
-      \pre Each string in \a nouns exists in the table of noun aliases in use.
-      \pre If an alias appears multiple times in \a nouns, the counter must be
-           at least that number.
+      \pre \a alias is a valid, non-empty string.
+      \pre \a alias exists in the lookup table of verb aliases.
 
-      \post The use count for each alias in the specified \a nouns list has 
-            been decremented by 1. If the use count becomes 0, the entry is 
-            removed from the table.
+      \post The \a alias and \a pObj pair is no longer in the verb lookup table.
     */
-    static void removeNouns(const std::vector<std::string> &nouns);
-
-    /*!
-      \brief Removes one use of a verb from the lookup table of verb aliases in use.
-
-      This function decrements the usage counter for the specified \a verb.
-      The same verb can (and should) be removed every time an object that uses
-      the verb is destroyed.
-      
-      \param[in]  verb  Specifies the verb alias to remove.
-
-      \pre \a verb is a valid, non-empty string.
-      \pre \a verb exists in the table of verb aliases in use.
-
-      \post The use count for the specified \a verb has been decremented by 1.
-            If the use count becomes 0, the entry is removed from the table.
-    */
-    static void removeVerb(std::string verb);
-
-    /*!
-      \brief Removes one use of each string from the lookup table of verb aliases in use.
-
-      This function decrements the usage counter for each string in the specified
-      \a verbs list. The same verb can (and should) be removed every time an object 
-      that uses the verb is destroyed.
-      
-      \param[in]  verbs     Specifies the verb aliases to remove.
-
-      \pre \a verbs is a valid list of strings.
-      \pre Each string in \a verbs is a valid, non-empty string.
-      \pre Each string in \a verbs exists in the table of verb aliases in use.
-      \pre If an alias appears multiple times in \a verbs, the counter must be
-           at least that number.
-
-      \post The use count for each alias in the specified \a verbs list has 
-            been decremented by 1. If the use count becomes 0, the entry is 
-            removed from the table.
-    */
-    static void removeVerbs(const std::vector<std::string> &verbs);
+    static void removeVerb(std::string alias, engine::InteractiveNoun *pObj);
 
     /*!
       \brief Resets the WordManager class and clears all words
@@ -366,9 +302,6 @@ private:
     // Use a private constructor to prevent instantiation.
     WordManager() {}
 
-    // Utility class to store the provided inputs into the specified private map
-    static void addToMap(GlobalVerbMap &map, std::string alias, VerbInfo info);
-
     // Store the verbs to enable edit mode here.
     static GlobalVerbMap _editModeVerbs;
     
@@ -379,10 +312,10 @@ private:
     static GlobalVerbMap _globalVerbs;
 
     // Store all nouns in the game world here.
-    static WordCountMap _nounAliases;
+    static AliasLookupTable _nounAliases;
 
     // Store all verbs in the game world here (not including global verbs).
-    static WordCountMap _verbAliases;
+    static AliasLookupTable _verbAliases;
 
 };
 
