@@ -122,70 +122,70 @@ void WordManager::addVerb(std::string alias, engine::InteractiveNoun *pObj) {
 }
 
 // Gets the VerbInfo of the specified edit mode verb.
-VerbInfo WordManager::getEditModeVerb(std::string verb) {
+VerbInfo WordManager::getEditModeVerb(std::string alias) {
     // Precondition: value must be in map
-    auto it = _editModeVerbs.find(verb);
+    auto it = _editModeVerbs.find(alias);
     assert(it != _editModeVerbs.end());
 
-    return _editModeVerbs.at(verb);
+    return _editModeVerbs.at(alias);
 }
 
 // Gets the VerbInfo of the specified global verb.
-VerbInfo WordManager::getGlobalVerb(std::string verb) {
+VerbInfo WordManager::getGlobalVerb(std::string alias) {
     // Precondition: value must be in map
-    auto it = _globalVerbs.find(verb);
+    auto it = _globalVerbs.find(alias);
     assert(it != _globalVerbs.end());
 
-    return _globalVerbs.at(verb);
+    return _globalVerbs.at(alias);
 }
 
 // Gets the VerbInfo of the specified builder verb.
-VerbInfo WordManager::getBuilderVerb(std::string verb) {
+VerbInfo WordManager::getBuilderVerb(std::string alias) {
     // Precondition: value must be in map
-    auto it = _builderVerbs.find(verb);
+    auto it = _builderVerbs.find(alias);
     assert(it != _builderVerbs.end());
 
-    return _builderVerbs.at(verb);
+    return _builderVerbs.at(alias);
 }
 
 // Gets whether the specified noun is in use.
-bool WordManager::hasNoun(std::string noun) {
+bool WordManager::hasNoun(std::string alias) {
     // Convert string to lowercase
-    std::transform(noun.begin(), noun.end(), noun.begin(), ::tolower);
+    std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
-    return _nounAliases.find(noun) != _nounAliases.end();
+    return _nounAliases.find(alias) != _nounAliases.end();
 }
 
 // Gets whether the specified verb is in use.
-bool WordManager::hasVerb(std::string verb) {
+bool WordManager::hasVerb(std::string alias) {
     // Convert string to lowercase
-    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+    std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
-    return _verbAliases.find(verb) != _verbAliases.end();
+    return _verbAliases.find(alias) != _verbAliases.end();
 }
 
 // Gets whether the specified edit mode verb has been added.
-bool WordManager::hasEditModeVerb(std::string verb) {
+bool WordManager::hasEditModeVerb(std::string alias) {
     // Convert string to lowercase
-    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+    std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
-    return _editModeVerbs.find(verb) != _editModeVerbs.end();
+    return _editModeVerbs.find(alias) != _editModeVerbs.end();
 }
 
 // Gets whether the specified global verb has been added.
-bool WordManager::hasGlobalVerb(std::string verb) {
+bool WordManager::hasGlobalVerb(std::string alias) {
     // Convert string to lowercase
-    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+    std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
-    return _globalVerbs.find(verb) != _globalVerbs.end();
+    return _globalVerbs.find(alias) != _globalVerbs.end();
 }
 
 // Gets whether the specified builder verb has been added.
-bool WordManager::hasBuilderVerb(std::string verb) {
+bool WordManager::hasBuilderVerb(std::string alias) {
     // Convert string to lowercase
-    std::transform(verb.begin(), verb.end(), verb.begin(), ::tolower);
+    std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
-    return _builderVerbs.find(verb) != _builderVerbs.end();
+    return _builderVerbs.find(alias) != _builderVerbs.end();
 }
 
 // Removes a noun alias-InteractiveNoun pair from the noun alias lookup table.

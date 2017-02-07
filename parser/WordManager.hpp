@@ -207,11 +207,11 @@ public:
       This function gets whether the specified noun alias is currently in use
       by at least one InteractiveNoun object.
 
-      \param[in] noun   Specifies the noun alias to check for.
+      \param[in] alias  Specifies the noun alias to check for.
 
       \return Returns whether \a noun is in use.
     */
-    static bool hasNoun(std::string noun);
+    static bool hasNoun(std::string alias);
 
     /*!
       \brief Gets whether the specified verb is in use.
@@ -219,7 +219,7 @@ public:
       This function gets whether the specified verb alias is currently in use
       by at least one InteractiveNoun object.
 
-      \param[in] verb   Specifies the verb alias to check for.
+      \param[in] alias  Specifies the verb alias to check for.
 
       \return Returns whether \a verb is in use.
     */
@@ -241,7 +241,7 @@ public:
 
       \return Returns whether \a alias has been added.
     */
-    static bool hasBuilderVerb(std::string verb);
+    static bool hasBuilderVerb(std::string alias);
 
     /*!
       \brief Gets whether the specified global verb alias has been added.
