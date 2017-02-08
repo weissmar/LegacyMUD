@@ -1,8 +1,9 @@
 /*!
-  \file    Grammar.cpp
-  \author  David Rigert
-  \date    02/05/2017
-  \course  CS467, Winter 2017
+  \file     Grammar.cpp
+  \author   David Rigert
+  \created  02/02/2017
+  \modified 02/07/2017
+  \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the Grammar class.
 */

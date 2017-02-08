@@ -1,10 +1,11 @@
 /*!
-  \file    parser_Grammar_Test.cpp
-  \author  David Rigert
-  \date    02/05/2017
-  \course  CS467, Winter 2017
+  \file     parser_Grammar_Test.cpp
+  \author   David Rigert
+  \created  02/02/2017
+  \modified 02/07/2017
+  \course   CS467, Winter 2017
  
-  \details This file contains the unit tests for the Grammar class.
+  \details  This file contains the unit tests for the Grammar class.
 */
 
 #include <Grammar.hpp>

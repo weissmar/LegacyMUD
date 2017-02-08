@@ -1,12 +1,13 @@
 /*!
-  \file    WordManager.h
-  \author  David Rigert
-  \date    02/02/2017
-  \course  CS467, Winter 2017
+  \file     WordManager.h
+  \author   David Rigert
+  \created  02/02/2017
+  \modified 02/07/2017
+  \course   CS467, Winter 2017
  
-  \details This file contains the declarations for the WordManager class.
-           The WordManager class keeps track of all verbs and nouns in use
-           by objects in the game world.
+  \details  This file contains the declarations for the WordManager class.
+            The WordManager class keeps track of all verbs and nouns in use
+            by objects in the game world.
 */
 #ifndef LEGACYMUD_PARSER_WORDMANAGER_HPP
 #define LEGACYMUD_PARSER_WORDMANAGER_HPP
@@ -209,7 +210,7 @@ public:
 
       \param[in] alias  Specifies the noun alias to check for.
 
-      \return Returns whether \a noun is in use.
+      \return Returns whether \a alias is in use.
     */
     static bool hasNoun(std::string alias);
 
@@ -221,7 +222,7 @@ public:
 
       \param[in] alias  Specifies the verb alias to check for.
 
-      \return Returns whether \a verb is in use.
+      \return Returns whether \a alias is in use.
     */
     static bool hasVerb(std::string alias);
 

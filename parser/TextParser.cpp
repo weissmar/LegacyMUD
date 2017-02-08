@@ -1,8 +1,9 @@
 /*!
-  \file    TextParser.cpp
-  \author  David Rigert
-  \date    02/04/2017
-  \course  CS467, Winter 2017
+  \file     TextParser.cpp
+  \author   David Rigert
+  \created  01/29/2017
+  \modified 02/07/2017
+  \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the TextParser class.
 */

@@ -1,13 +1,14 @@
 /*!
-  \file    parser_WordManager_Test.cpp
-  \author  David Rigert
-  \date    02/05/2017
-  \course  CS467, Winter 2017
+  \file     parser_WordManager_Test.cpp
+  \author   David Rigert
+  \created  01/29/2017
+  \modified 02/07/2017
+  \course   CS467, Winter 2017
  
-  \details This file contains the unit tests for the WordManager class.
-  \note    Because WordManager is a static class, the resetAll() member
-           function must be called after each test or the changes will 
-           persist into subsequent tests.
+  \details  This file contains the unit tests for the WordManager class.
+  \note     Because WordManager is a static class, the resetAll() member
+            function must be called after each test or the changes will 
+            persist into subsequent tests.
 */
 
 #include <WordManager.hpp>

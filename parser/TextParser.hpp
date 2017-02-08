@@ -1,14 +1,15 @@
 /*!
-  \file    TextParser.h
-  \author  David Rigert
-  \date    02/04/2017
-  \course  CS467, Winter 2017
+  \file     TextParser.h
+  \author   David Rigert
+  \created  02/02/2017
+  \modified 02/07/2017
+  \course   CS467, Winter 2017
  
-  \details This file contains the declarations for the TextParser class and
-           its associated enumerated types and structures.
-           The TextParser class validates text input from users and
-           converts it into an enum that the game engine uses to determine
-           which action to perform.
+  \details  This file contains the declarations for the TextParser class and
+            its associated enumerated types and structures.
+            The TextParser class validates text input from users and
+            converts it into an enum that the game engine uses to determine
+            which action to perform.
 */
 #ifndef LEGACYMUD_PARSER_TEXTPARSER_HPP
 #define LEGACYMUD_PARSER_TEXTPARSER_HPP

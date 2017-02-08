@@ -1,13 +1,14 @@
 /*!
-  \file    Grammar.hpp
-  \author  David Rigert
-  \date    02/05/2017
-  \course  CS467, Winter 2017
+  \file     Grammar.hpp
+  \author   David Rigert
+  \created  02/02/2017
+  \modified 02/07/2017
+  \course   CS467, Winter 2017
  
-  \details This file contains the declarations for the Grammar class and
-           its associated enumerated types and structures.
-           The Grammar class represents the object types and prepositions
-           supported by a verb.
+  \details  This file contains the declarations for the Grammar class and
+            its associated enumerated types and structures.
+            The Grammar class represents the object types and prepositions
+            supported by a verb.
 */
 #ifndef LEGACYMUD_PARSER_GRAMMAR_HPP
 #define LEGACYMUD_PARSER_GRAMMAR_HPP
