@@ -1,5 +1,5 @@
 /*!
-  \file     WordManager.h
+  \file     WordManager.hpp
   \author   David Rigert
   \created  02/02/2017
   \modified 02/07/2017
