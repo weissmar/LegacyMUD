@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 1/31/2017
+ * Last Modified: 2/7/2017
  * Course:        CS467, Winter 2017
  * Filename:      display_main.cpp
  *
@@ -9,7 +9,7 @@
  *     This main function for for local testing of the display class.
  ************************************************************************/
 
-#include "Display.h"
+#include "Display.hpp"
 #include <string>
 #include <iostream>
 

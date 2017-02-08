@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/30/2017
- * Last Modified: 1/30/2017
+ * Last Modified: 2/8/2017
  * Course:        CS467, Winter 2017
  * Filename:      Display_Test.hpp
  *
@@ -9,7 +9,7 @@
  *     Unit test for the Display class.
  ************************************************************************/
 
-#include "Display.h"
+#include "Display.hpp"
 #include <string>
 #include <iostream>
 
@@ -17,7 +17,7 @@
 
 namespace {
 
-// Add red to a string.
+/* Add red to a string. */
 TEST(DisplayTest, AddRed) {
     legacymud::display::Display d;
     std::string outStr;
@@ -27,7 +27,7 @@ TEST(DisplayTest, AddRed) {
         << "Expect ANSI code 31 for red.";
 }
 
-// Add green to a string.
+/* Add green to a string. */
 TEST(DisplayTest, AddGreen) {
     legacymud::display::Display d;
     std::string outStr;
@@ -37,7 +37,7 @@ TEST(DisplayTest, AddGreen) {
         << "Expect ANSI code 32 for green.";
 }
 
-// Add yellow to a string.
+/* Add yellow to a string. */
 TEST(DisplayTest, AddYellow) {
     legacymud::display::Display d;
     std::string outStr;
@@ -47,7 +47,7 @@ TEST(DisplayTest, AddYellow) {
         << "Expect ANSI code 33 for yellow.";
 }
 
-// Add blue to a string.
+/* Add blue to a string. */
 TEST(DisplayTest, AddBlue) {
     legacymud::display::Display d;
     std::string outStr;
@@ -57,7 +57,7 @@ TEST(DisplayTest, AddBlue) {
         << "Expect ANSI code 34 for blue.";
 }
 
-// Add magenta to a string.
+/* Add magenta to a string. */
 TEST(DisplayTest, AddMagenta) {
     legacymud::display::Display d;
     std::string outStr;
@@ -67,7 +67,7 @@ TEST(DisplayTest, AddMagenta) {
         << "Expect ANSI code 35 for magenta.";
 }
 
-// Add cyan to a string.
+/* Add cyan to a string. */
 TEST(DisplayTest, AddCyan) {
     legacymud::display::Display d;
     std::string outStr;
@@ -77,7 +77,7 @@ TEST(DisplayTest, AddCyan) {
         << "Expect ANSI code 36 for cyan.";
 }
 
-// Add green to a string.  Add bright.
+/* Add green to a string.  Add bright. */
 TEST(DisplayTest, AddGreenBright) {
     legacymud::display::Display d;
     std::string outStr;
@@ -87,7 +87,7 @@ TEST(DisplayTest, AddGreenBright) {
         << "Expect ANSI code 32 for green and 1 for bright.";
 }
 
-// Add green to a string.  Add underscore.
+/* Add green to a string.  Add underscore. */
 TEST(DisplayTest, AddGreenUnderscore) {
     legacymud::display::Display d;
     std::string outStr;
@@ -97,7 +97,7 @@ TEST(DisplayTest, AddGreenUnderscore) {
         << "Expect ANSI code 32 for green and 4 for underscore.";
 }
 
-// Add white to a string.  Add bright and underscore.
+/* Add white to a string.  Add bright and underscore. */
 TEST(DisplayTest, AddWhiteBrightUnderscore) {
     legacymud::display::Display d;
     std::string outStr;
@@ -107,7 +107,7 @@ TEST(DisplayTest, AddWhiteBrightUnderscore) {
         << "Expect ANSI code 37 for white, 1 for bright, and 4 for underscore.";
 }
 
-// Add red to a string.  Add a white background.
+/* Add red to a string.  Add a white background. */
 TEST(DisplayTest, AddRedOnWhite) {
     legacymud::display::Display d;
     std::string outStr;
@@ -117,7 +117,7 @@ TEST(DisplayTest, AddRedOnWhite) {
         << "Expect ANSI code 31 for red. ANSI code 47 for white background";
 }
 
-// Add red to a string.  Add a cyan background. Add bright.
+/* Add red to a string.  Add a cyan background. Add bright. */
 TEST(DisplayTest, AddRedOnCyanBright) {
     legacymud::display::Display d;
     std::string outStr;
@@ -127,7 +127,7 @@ TEST(DisplayTest, AddRedOnCyanBright) {
         << "Expect ANSI code 31 for red. ANSI code 46 for cyan background, ANSI code 1 for bright.";
 }
 
-// Add yellow to a string.  Add a black background. Add bright and underscore.
+/* Add yellow to a string.  Add a black background. Add bright and underscore. */
 TEST(DisplayTest, AddYellowOnBlackBrightUnderscore) {
     legacymud::display::Display d;
     std::string outStr;
