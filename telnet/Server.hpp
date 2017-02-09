@@ -21,7 +21,13 @@ namespace legacymud {
     }
     namespace telnet {
 
-class Server {
+    /*!
+      \brief Telnet server class for legacyMUD.  
+      
+      This class is a telnet server to be used for legacyMUD.  Multiplayer support is provided 
+      through threading.  The server supports ANSI terminals that use BSD telnet commands.
+    */
+    class Server {
     public:
         Server(int newServerPort, int newMaxPlayers, legacymud::engine::GameLogic* glpt);
         void startServer();
