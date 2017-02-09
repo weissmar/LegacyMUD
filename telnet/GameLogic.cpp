@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/2/2017
+ * Last Modified: 2/8/2017
  * Course:        CS467, Winter 2017
  * Filename:      GameLogic.cpp
  *
@@ -12,14 +12,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "GameLogic.h"
+#include "GameLogic.hpp"
+#include "Server.hpp"
 
-namespace legacymud { 
-    namespace telnet {
-        class Server;
-    }
-    
-    namespace engine {
+namespace legacymud {namespace engine {
 
 /******************************************************************************
 * Function:    newPlayerHandler

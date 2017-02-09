@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/2/2017
+ * Last Modified: 2/8/2017
  * Course:        CS467, Winter 2017
  * Filename:      Server.cpp
  *
@@ -22,15 +22,11 @@
 #include <mutex>
 #include <iostream>
 #include <vector>
-#include "Server.h"
+#include "Server.hpp"
+#include "GameLogic.hpp"
 
 
-namespace legacymud {
-    namespace engine {
-        class GameLogic;
-    }
-
-    namespace telnet {
+namespace legacymud {namespace telnet {
 
 
 /******************************************************************************

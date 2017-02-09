@@ -1,19 +1,18 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/2/2017
+ * Last Modified: 2/8/2017
  * Course:        CS467, Winter 2017
- * Filename:      Server.h
+ * Filename:      Server.hpp
  *
  * Overview:
  *     Declaration file for the Server class.
  ************************************************************************/
  
-#ifndef LEGACYMUD_TELNET_SERVER_H
-#define LEGACYMUD_TELNET_SERVER_H
+#ifndef LEGACYMUD_TELNET_SERVER_HPP
+#define LEGACYMUD_TELNET_SERVER_HPP
 
 #include <string>
-#include "GameLogic.h"
 
 namespace legacymud {
     namespace engine{
