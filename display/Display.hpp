@@ -18,7 +18,7 @@ namespace legacymud { namespace display {
 
 
 /*!
-  \brief Represents the grammar suported by verb alias of an InteractiveNoun.
+  \brief Attaches ANSI codes to a string.
   
   This class attaches ANSI codes to a string.  Supported are ANSI codes for color, brightness,
   and underscore.
