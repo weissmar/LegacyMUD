@@ -1,29 +1,26 @@
-/*************************************************************************
- * Author:        Keith Adkins
- * Date Created:  1/31/2017
- * Last Modified: 2/8/2017
- * Course:        CS467, Winter 2017
- * Filename:      Server.hpp
- *
- * Overview:
- *     Declaration file for the Server class.
- ************************************************************************/
+/*!
+  \file     Server.hpp
+  \author   Keith Adkins
+  \created  1/31/2017
+  \modified 2/08/2017
+  \course   CS467, Winter 2017
+ 
+  \details  Declaration file for the Server class.
+*/
+
  
 #ifndef LEGACYMUD_TELNET_SERVER_HPP
 #define LEGACYMUD_TELNET_SERVER_HPP
 
 #include <string>
 
+
 namespace legacymud {
     namespace engine{
-        class GameLogic;
+        class GameLogic;    // forward declaration
     }
-
     namespace telnet {
 
-/*!
-  \brief A telnet server class.
-*/
 class Server {
     public:
         Server(int newServerPort, int newMaxPlayers, legacymud::engine::GameLogic* glpt);

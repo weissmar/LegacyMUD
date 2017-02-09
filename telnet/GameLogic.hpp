@@ -17,7 +17,7 @@
 
 namespace legacymud {
     namespace telnet {
-        class Server;
+        class Server;       // forward declaration
     }
 
     namespace engine {
