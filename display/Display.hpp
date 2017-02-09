@@ -26,12 +26,16 @@ namespace legacymud { namespace display {
 class Display {
     public:
     
-        /* Available text foreground and background colors. */
+        /*!
+          \enum Available text foreground and background colors.
+        */
         enum Color {
             BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE
         };
         
-        /* Available style attributes. */
+        /*!
+          \enum Available style attributes.
+        */
         enum Style {
             BRIGHT, UNDERSCORE
         };
