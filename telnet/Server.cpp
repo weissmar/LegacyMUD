@@ -1,27 +1,25 @@
-/*************************************************************************
- * Author:        Keith Adkins
- * Date Created:  1/31/2017
- * Last Modified: 2/8/2017
- * Course:        CS467, Winter 2017
- * Filename:      Server.cpp
- *
- * Overview:
- *     Implementation file for the Server class.
- ************************************************************************/
+/*!
+  \file     Server.cpp
+  \author   Keith Adkins
+  \created  1/31/2017
+  \modified 2/08/2017
+  \course   CS467, Winter 2017
+ 
+  \details  Implementation file for the Server class.
+*/
+
 
 #include <stdio.h>          // sprintf and other input,output operations
 #include <stdlib.h>         // general purpose functions
-#include <string.h>         // for c strings
-#include <string>           // for std::string
-#include <unistd.h>         // includes close
-#include <sys/types.h>      // includes data types used in system calls
+#include <string.h>         // c strings
+#include <string>           // std::string
+#include <unistd.h>         // close
+#include <sys/types.h>      // data types used in system calls
 #include <sys/socket.h>     // sockets
-#include <netinet/in.h>     // needed for internet domain addresses
-// #include <netdb.h>           // perhaps not needed? more for a client?
+#include <netinet/in.h>     // internet domain addresses
 #include <thread>           // threading
-#include <mutex>
-#include <iostream>
-#include <vector>
+#include <mutex>            // mutex locks
+#include <iostream>         // displaying messages on server
 #include "Server.hpp"
 #include "GameLogic.hpp"
 
@@ -30,41 +28,58 @@ namespace legacymud {namespace telnet {
 
 
 /******************************************************************************
-* Function:    Server class constructor
-* Description: This function starts the server.
-*
-* Input:            int newServerPort     Port to start the server on.
-* Input:            int newMaxLoad        Max number of people that can be on the server.           
-* Preconditions:    newServerPort         Should be an integer from 1000 to 65535 
-*                   newMaxLoad            Should be an integer > 0.                        
+* Function:    Server()
+* Description: Server class constructor
+* 
+* Input:            none         
+* Preconditions:    none                      
 *****************************************************************************/
-Server::Server(int newServerPort, int newMaxPlayers, legacymud::engine::GameLogic* glpt) {   
-    _serverPort = newServerPort;     
-    _maxPlayers = newMaxPlayers;  
+Server::Server() {   
+    _serverPort = 0;     
+    _maxPlayers = 0;  
     _playerCount = 0;
-    _gameLogicPt = glpt;    
+    _listenSocketFd = 0;
+    _serverPause = false;
+    _gameLogicPt = 0;    
 }
 
+
 /******************************************************************************
-* Function:    startServer
-* Description: This function starts the server.
-*
-* Input:            none           
-* Preconditions:    Server object should be constructed with a valid serverport
-*                   and maxload.                        
-* Return:           Returns true if server started successfully. 
+* Function:    initServer
+* Description: This function initializes the server.
+* 
+* Input:            int serverPort     Port to start the server on.
+* Input:            int maxPlayers     Max number of people that can be on the server. 
+* Input:            gameLogicPt          
+* Preconditions:    serverPort         Should be an integer from 1000 to 65535 
+*                   maxPlayers         Should be an integer > 0.     
+* Return:           true if successful.  otherwise false.                   
 *****************************************************************************/
-void Server::startServer() {   
-    struct sockaddr_in serverAddr;         // address structure for server
-    struct sockaddr_in clientAddr;         // address structure for client
-    socklen_t clientLength;                // length of a client's address structure   
-    int newClientSocketFd;                 // new socket connected to client
+bool Server::initServer(int serverPort, int maxPlayers, legacymud::engine::GameLogic* gameLogicPt) {   
+    struct sockaddr_in serverAddr;         // address structure for server  
       
+    /* Validate serverPort. */
+    if (serverPort < 1000 || serverPort > 65535) {
+        std::cout << "Error port value must be from 1000 to 65535" << std::endl;
+        return false;
+    }
+    
+    /* Validate max players. */
+    if (maxPlayers <=0) {
+        std::cout << "Error max player cap must be greater than zero" << std::endl;
+        return false;
+    }
+    
+    /* Set member variables. */
+    _serverPort = serverPort;     
+    _maxPlayers = maxPlayers;  
+    _gameLogicPt = gameLogicPt;
+    
     /* Initialize the server. Create a socket. TCP/IP. */
     _listenSocketFd = socket(AF_INET, SOCK_STREAM, 0);   // IP, TCP
     if (_listenSocketFd < 0) {
         std::cout << "Error opening socket." << std::endl; // Error opening socket
-        std::terminate();           // terminate this thread         
+        return false;
     }           
     
     /* Fill server address struct. */
@@ -76,10 +91,29 @@ void Server::startServer() {
     /* Bind the socket to the port. */
     if (bind(_listenSocketFd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)) < 0) {
         std::cout << "Error cannot connect to port." << std::endl; // Error cannot connect to port  
-        std::terminate();                                        // terminate this thread           
+        return false;          
     }    
     
-    std::cout << "Server started on port " << _serverPort << std::endl;
+    std::cout << "Server initialized on port " << _serverPort << std::endl;
+    return true;   
+}
+
+
+/******************************************************************************
+* Function:    startListening
+* Description: This function listens for connections.
+*
+* Input:            none           
+* Preconditions:    none                        
+* Return:           none 
+*****************************************************************************/
+void Server::startListening() {   
+    struct sockaddr_in clientAddr;         // address structure for client
+    socklen_t clientLength;                // length of a client's address structure   
+    int newClientSocketFd;                 // new socket connected to client
+    struct timeval timeOut;                // timeout timer for receiving messages on a socket.
+    timeOut.tv_sec = 900;                  // set a 15 minute player timeout for disconnect  
+   
     while (1) {
         /* Listen for connection. */
         std::cout << "Listening for new connection..." << std::endl;
@@ -92,20 +126,104 @@ void Server::startServer() {
             std::cout << "Error accepting connection" << std::endl;
         }
         else {
-            std::cout << "Connection established. Socket: " << newClientSocketFd << std::endl;  
-            if (_playerCount < _maxPlayers) {
-                _playerCount++;
-                /* Pass client off to its own thread. */
-                std::thread t(&legacymud::engine::GameLogic::newPlayerHandler, _gameLogicPt, newClientSocketFd);    
-                t.detach();  
-            }
-            else {
-                sendMsg("Server is full.  Try again later.\n", newClientSocketFd);
+            std::cout << "Connection established. Socket: " << newClientSocketFd << std::endl; 
+            _playerCount++;    // increment player count               
+            /* Disconnect the player if the player cap is exceeded. */
+            if (_playerCount > _maxPlayers) {
+                sendMsg("Server is full.  Please try again later.\n", newClientSocketFd);
                 disconnectPlayer(newClientSocketFd);
+            }
+            /* Disconnect the player if game backup is in progress. */
+            else if (_serverPause == true) {
+                sendMsg("Server backup in progress.  Please try again later.\n", newClientSocketFd);
+                disconnectPlayer(newClientSocketFd);    
+            }
+            /* Otherwise, send the player to the new player handler. */
+            else {
+                /* Set disconnect timeout on player's socket. */
+                if (setsockopt (newClientSocketFd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeOut, sizeof(timeOut)) < 0)
+                    std::cout << "Error setting socket timeout" << std::endl;  
+                else {
+                    /* Create a new thread for this player and send to a new player handler in the game logic. */
+                    std::thread t(&legacymud::engine::GameLogic::newPlayerHandler, _gameLogicPt, newClientSocketFd);    
+                    t.detach();      
+                }
             }
         }
     }
 }
+
+
+/******************************************************************************
+* Function:    setServerPause
+* Description: 
+*
+* Input:                   
+* Preconditions:                         
+* Return:          
+*****************************************************************************/
+void Server::setServerPause(bool pause) {   
+    _serverPause = pause;
+}
+
+
+/******************************************************************************
+* Function:    getServerPause
+* Description: 
+*
+* Input:                   
+* Preconditions:                         
+* Return:          
+*****************************************************************************/
+bool Server::getServerPause() const {   
+    return _serverPause;
+}        
+
+
+/******************************************************************************
+* Function:    setMaxPlayers
+* Description: 
+*
+* Input:                   
+* Preconditions:                         
+* Return:          
+*****************************************************************************/
+bool Server::setMaxPlayers(int maxPlayers) {   
+    if (maxPlayers <= 0) {
+        return false;    
+    }
+    else {
+        _maxPlayers = maxPlayers; 
+        return true;
+    }
+    
+}
+
+
+/******************************************************************************
+* Function:    getMaxPlayers
+* Description: 
+*
+* Input:                   
+* Preconditions:                         
+* Return:          
+*****************************************************************************/
+int Server::getMaxPlayers() const {   
+    return _maxPlayers;
+}        
+
+
+/******************************************************************************
+* Function:    getPlayerCount
+* Description: 
+*
+* Input:                   
+* Preconditions:                         
+* Return:          
+*****************************************************************************/
+int Server::getPlayerCount() const {   
+    return _playerCount;
+}         
 
 
 /******************************************************************************
@@ -116,11 +234,9 @@ void Server::startServer() {
 * Preconditions:    none                      
 * Return:           Returns true if player disconnected successfully. Otherwise false.
 *****************************************************************************/
-bool Server::disconnectPlayer(int clientSocketFd) {   
-    if (close(clientSocketFd) < 0 ) 
-        return false;   // Error closing socket
-    else
-        return true;
+void Server::disconnectPlayer(int clientSocketFd) {   
+    _playerCount--;     // decrement player count
+    close(clientSocketFd); 
 }
 
 
@@ -136,8 +252,8 @@ bool Server::disconnectPlayer(int clientSocketFd) {
 bool Server::sendMsg(std::string outMsg, int clientSocketFd) {
     
     /* Write to the socket. */ 
-    if (write(clientSocketFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
-        return false; // Error writing to socket
+    if (write(clientSocketFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0)
+        return false;       // Error writing to socket         
     else 
         return true;
 }
@@ -153,13 +269,13 @@ bool Server::sendMsg(std::string outMsg, int clientSocketFd) {
 * Return:           Returns true if successful send. Otherwise false.
 *****************************************************************************/
 bool Server::receiveMsg(std::string &inMsg, int clientSocketFd) {
-    unsigned char ch=0;
+    unsigned char ch = 0;
     inMsg = "";               // initialize inMsg
     
     // Read socket.
     while (ch !='\n') {
-        if (read(clientSocketFd,&ch,1) < 0) 
-            return false; // error reading from socket 
+        if (read(clientSocketFd,&ch,1) <= 0) // returns -1 when error reading, returns 0 if client disconnected.
+            return false;        
         else {
             if (ch >=32 && ch <=127) {
                 inMsg += ch;
@@ -178,8 +294,8 @@ bool Server::receiveMsg(std::string &inMsg, int clientSocketFd) {
 * Preconditions:    none                      
 * Return:           none
 *****************************************************************************/
-void Server::listenForMsgs(int playerFd) {
-    unsigned char ch=0;
+bool Server::listenForMsgs(int playerFd) {
+    unsigned char ch = 0;
     std::string inMsg;             // initialize inMsg
     std::mutex m;
     
@@ -188,10 +304,9 @@ void Server::listenForMsgs(int playerFd) {
         inMsg = "";     // initialize
         // Read socket.
         while (ch !='\n') {
-            if (read(playerFd,&ch,1) < 0) {
-                _playerCount--;             // decrement player count
-                disconnectPlayer(playerFd); // disconnect player
-                std::terminate();           // terminate this thread
+            if (read(playerFd,&ch,1) <= 0) {     // returns -1 when error reading, returns 0 if client disconnected.          
+                disconnectPlayer(playerFd);  
+                return false;
             }
             else {
                 if (ch >=32 && ch <=127) {

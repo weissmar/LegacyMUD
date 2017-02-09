@@ -10,36 +10,50 @@
  ************************************************************************/
 
 #include <string>
+#include <string.h>
 #include <iostream>
 #include <thread>           // threading
 #include <mutex>
 #include "GameLogic.hpp"
 #include "Server.hpp"
 
-int main() {   
+int main(int argc, char *argv[]) {   
+    int serverPort;
     legacymud::engine::GameLogic gl;
-    legacymud::telnet::Server ts(50500,10, &gl);
+    legacymud::telnet::Server ts;
     gl.serverPt = &ts; 
-    std::mutex m;
+    std::mutex m;    
     
     
-    std::cout << "Hello.  Welcome to Server Testing." << std::endl;
+    /* Validate command line entry. */
+	if (argc < 2 || argc > 2) {
+		std::cout << "Error: Usage is server [port number]" << std::endl;
+		return 1;
+	}
     
-    std::thread serverThread(&legacymud::telnet::Server::startServer, &ts);    // pass client off to its own thread
-    serverThread.detach();    
+    serverPort = atoi(argv[1]);
     
-    // Need to call game logic.
-    std::cout << "And the game is on! Enter 'quit' to quit." << std::endl;
-    char ch;
-    while(ch != 'q' ) {
-        std::cin >> ch;
-        if (gl.msgDeque.size() > 0) {
-            std::cout << "Message: " << gl.msgDeque.front().msg << " " << gl.msgDeque.front().playerFd << std::endl;
-            m.lock();
-            gl.msgDeque.pop_front();
-            m.unlock();
-        }
+    if (ts.initServer(serverPort,10, &gl) == false) {
+        return 1;     // error initializing the server
     }
-
-    return 0;
+    else {
+        std::thread serverThread(&legacymud::telnet::Server::startListening, &ts);    // pass client off to its own thread
+        serverThread.detach();    
+        
+        
+        // Need to call game logic.
+        std::cout << "In the game play thread... Enter 'q' to quit." << std::endl;
+        char ch;
+        while(ch != 'q' ) {
+            std::cin >> ch;
+            if (gl.msgDeque.size() > 0) {
+                std::cout << "Message: " << gl.msgDeque.front().msg << " " << gl.msgDeque.front().playerId << std::endl;
+                m.lock();
+                gl.msgDeque.pop_front();
+                m.unlock();
+            }
+        }
+        return 0;        
+    }
+ 
 }

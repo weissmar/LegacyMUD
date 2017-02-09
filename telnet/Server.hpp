@@ -29,18 +29,25 @@ namespace legacymud {
     */
     class Server {
     public:
-        Server(int newServerPort, int newMaxPlayers, legacymud::engine::GameLogic* glpt);
-        void startServer();
-        bool disconnectPlayer(int clientSocketFd);
-        bool sendMsg(std::string outMsg, int clientSocketFd);
-        bool receiveMsg(std::string &inMsg, int clientSocketFd);
-        void listenForMsgs(int clientSocketFd);
+        Server();
+        bool initServer(int serverPort, int maxPlayers, legacymud::engine::GameLogic* gameLogicPt);
+        void startListening();
+        void disconnectPlayer(int playerId);
+        bool sendMsg(std::string outMsg, int playerId);
+        bool receiveMsg(std::string &inMsg, int playerId);
+        bool listenForMsgs(int playerId);
+        void setServerPause(bool pause);
+        bool getServerPause() const;
+        bool setMaxPlayers(int maxPlayers);
+        int getMaxPlayers() const;
+        int getPlayerCount() const;
     
     private:
         int _serverPort;
         int _maxPlayers; 
         int _listenSocketFd; 
         int _playerCount;
+        bool _serverPause;
         legacymud::engine::GameLogic* _gameLogicPt;        
 };
 
