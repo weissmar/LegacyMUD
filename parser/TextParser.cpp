@@ -132,23 +132,61 @@ TextParseStatus TextParser::parse(
 
     // FIFTH: Check for global verbs
     {
+        m = parseGlobal(tokens, WordManager::hasGlobalVerb, WordManager::getGlobalVerb, playerNounMap, areaNounMap);
+
+        // If we get a valid match, add to candidate list and return
+        if (m.status == TextParseStatus::VALID) {
+            // If no direct objects, there will only be one result
+            if (m.directObjs.empty()) {
+                result.command = m.verbInfo.command;
+                result.direct = nullptr;
+                result.position = prepositionToPosition(m.preposition);
+                result.unparsed = m.unparsed;
+                for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
+                    result.indirect.push_back(it2->second);
+                }
+
+                candidates.push_back(result);
+            }
+            else {
+                // Each direct object gets its own result
+                for (auto it = m.directObjs.begin(); it != m.directObjs.end(); ++it) {
+                    result.command = m.verbInfo.command;
+                    result.direct = it->second;
+                    result.position = prepositionToPosition(m.preposition);
+                    result.unparsed = m.unparsed;
+                    for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
+                        result.indirect.push_back(it2->second);
+                    }
+
+                    candidates.push_back(result);
+                }
+            }
+
+            return TextParseStatus::VALID;
+        }
 
     }
 
-
-    // SIXTH: Check for unavailable verbs
-    {
-
-    }
-
-    // No verb found if we reach here; return unparsed input with INVALID_VERB.
+    // No verb found if we reach here
+    // Return unparsed input with INVALID_VERB or UNAVAILABLE_VERB.
     result.command = engine::CommandEnum::INVALID;
     result.direct = nullptr;
     result.position = engine::ItemPosition::NONE;
     result.unparsed = joinOriginalTokens(tokens, Range(0, tokens.size()));
     candidates.push_back(result);
 
-    return TextParseStatus::INVALID_VERB;
+    // SIXTH: Check for unavailable verbs
+    Range r = Range(0, tokens.size());
+    alias = findLongestGlobalAlias(WordManager::hasVerb, tokens, r);
+    if (!alias.empty()) {
+        // Verb found but unavailable; return unparsed input with UNAVAILABLE_VERB.
+        return TextParseStatus::UNAVAILABLE_VERB;
+    }
+    else {
+        // No verb found; return unparsed input with INVALID_VERB
+        return TextParseStatus::INVALID_VERB;
+    }
 }
 
 std::vector<TextParser::Token> TextParser::tokenizeInput(const std::string &input) {
