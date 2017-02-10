@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      Item.hpp
  *
@@ -19,6 +19,7 @@
 #include "UniqueNoun.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -39,17 +40,18 @@ class Item: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         bool setPosition(ItemPosition position);
         bool setName(std::string name);
         bool setType(ItemType *type);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
         virtual std::string look();  
         virtual bool take(Player*, Item*, InteractiveNoun*);
         virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
-        virtual bool drop();
+        virtual bool drop(Player*);
         virtual std::string more(); 
         virtual bool equip(Player*, Item*, InteractiveNoun*);
         virtual bool unequip(Player*, Item*);
         virtual bool transfer(Player*, Item*, InteractiveNoun*);
-        virtual std::string move(); 
+        virtual std::string move(Player*); 
         virtual bool attack(Player*, Item*, InteractiveNoun*);
         virtual bool buy(Player*, Item*);
         virtual bool sell(Player*, Item*);
@@ -61,7 +63,7 @@ class Item: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         virtual std::string pull(Player*); 
         virtual std::string eat(Player*); 
         virtual std::string drink(Player*); 
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();

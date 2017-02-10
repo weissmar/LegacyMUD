@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      CreatureType.hpp
  *
@@ -17,6 +17,8 @@
 #include "CombatantType.hpp"
 #include "CharacterSize.hpp"
 #include "DataType.hpp"
+#include "XPTier.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -28,15 +30,19 @@ class CreatureType: public CombatantType {
         CreatureType & operator=(const CreatureType &otherCreatureType);
         virtual ~CreatureType();
         CharacterSize getSize();
+        XPTier getDifficulty();
         bool setSize(CharacterSize size);
+        bool setDifficulty(XPTier difficulty);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         CharacterSize size;
+        XPTier difficulty;
 };
 
 }}

@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      Container.hpp
  *
@@ -18,6 +18,7 @@
 #include "Item.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -36,21 +37,22 @@ class Container: public Item {
         std::vector<Item*> getTopContents();
         int getInsideCapacity();
         bool setInsideCapacity(int);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
         virtual std::string look();  
         virtual bool take(Player*, Item*, InteractiveNoun*);
         virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
-        virtual bool drop();
+        virtual bool drop(Player *aPlayer);
         virtual std::string more(); 
         virtual bool equip(Player*, Item*, InteractiveNoun*);
         virtual bool unequip(Player*, Item*);
         virtual bool transfer(Player*, Item*, InteractiveNoun*);
-        virtual std::string move(); 
+        virtual std::string move(Player *aPlayer); 
         virtual bool attack(Player*, Item*, InteractiveNoun*);
         virtual bool buy(Player*, Item*);
         virtual bool sell(Player*, Item*);
-        virtual std::string search(); 
+        virtual std::string search(Player *aPlayer); 
         virtual std::string read(Player*); 
         virtual std::string breakIt(Player*); 
         virtual std::string climb(Player*); 
@@ -59,7 +61,7 @@ class Container: public Item {
         virtual std::string pull(Player*); 
         virtual std::string eat(Player*); 
         virtual std::string drink(Player*); 
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();

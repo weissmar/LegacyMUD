@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      InteractiveNoun.hpp
  *
@@ -20,6 +20,7 @@
 #include <tuple>
 #include <Grammar.h>
 #include "CommandEnum.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -40,22 +41,23 @@ class InteractiveNoun {
         bool removeAction(CommandEnum);
         bool addAlias(std::string);
         bool removeAlias(std::string);
+        virtual ObjectType getObjectType();
         virtual std::string look();  
         virtual std::string listen(); 
         virtual bool take(Player*, Item*, InteractiveNoun*);
         virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
-        virtual bool drop();
+        virtual bool drop(Player*);
         virtual std::string more(); 
         virtual bool equip(Player*, Item*, InteractiveNoun*);
         virtual bool unequip(Player*, Item*);
         virtual bool transfer(Player*, Item*, InteractiveNoun*);
         virtual bool go(Player*, Area*);
-        virtual std::string move(); 
+        virtual std::string move(Player*); 
         virtual bool attack(Player*, Item*, InteractiveNoun*);
         virtual std::string talk(Player*, NonCombatant*); 
         virtual bool buy(Player*, Item*);
         virtual bool sell(Player*, Item*);
-        virtual std::string search(); 
+        virtual std::string search(Player*); 
         virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
         virtual std::string read(Player*); 
         virtual std::string breakIt(Player*); 
@@ -66,7 +68,7 @@ class InteractiveNoun {
         virtual std::string eat(Player*); 
         virtual std::string drink(Player*); 
         virtual std::string warp(Player*, Area*); 
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
     private:

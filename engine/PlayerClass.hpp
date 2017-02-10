@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      PlayerClass.hpp
  *
@@ -17,6 +17,7 @@
 #include "CombatantType.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -31,9 +32,10 @@ class PlayerClass: public CombatantType {
         virtual ~PlayerClass();
         int getPrimaryStat();
         bool setPrimaryStat(int);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();

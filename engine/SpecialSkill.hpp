@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      SpecialSkill.hpp
  *
@@ -19,6 +19,7 @@
 #include "UniqueNoun.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -39,12 +40,13 @@ class SpecialSkill: public SerializableNoun, public InteractiveNoun, public Uniq
         bool setDamageType(DamageType type);
         bool setCost(int cost);
         bool setCooldown(int cooldown);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
         virtual std::string more(); 
         virtual bool attack(Player*, Item*, InteractiveNoun*);
         virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();

@@ -92,7 +92,6 @@ class GameLogic {
         bool warpCommand(Player *aPlayer, InteractiveNoun *firstParam);
         bool copyCommand(Player *aPlayer, InteractiveNoun *firstParam);
         bool createCommand(Player *aPlayer, const std::string &stringParam);
-        bool addCommand(Player *aPlayer, const std::string &stringParam);
         bool editAttributeCommand(Player *aPlayer, const std::string &stringParam);
         bool editAttributeCommand(Player *aPlayer, InteractiveNoun *firstParam, const std::string &stringParam);
         bool editWizardCommand(Player *aPlayer, InteractiveNoun *firstParam);

@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      Quest.hpp
  *
@@ -20,6 +20,7 @@
 #include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -44,9 +45,10 @@ class Quest: public SerializableNoun, public InteractiveNoun, public UniqueNoun 
         bool setRewardItem(Item *rewardItem);
         bool addStep(int, QuestStep *aStep);
         bool removeStep(QuestStep *aStep);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();

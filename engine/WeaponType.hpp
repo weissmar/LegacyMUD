@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/09/2017
  * Course:        CS467, Winter 2017
  * Filename:      WeaponType.hpp
  *
@@ -20,6 +20,7 @@
 #include "DamageType.hpp"
 #include "AreaSize.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -30,17 +31,18 @@ class WeaponType: public ItemType {
         WeaponType(const WeaponType &otherWeaponType);
         WeaponType & operator=(const WeaponType &otherWeaponType);
         virtual ~WeaponType();
-        int getDamage();
-        DamageType getDamageType();
-        AreaSize getRange();
-        int getCritMultiplier();
-        bool setDamage(int damage);
-        bool setDamageType(DamageType type);
-        bool setRange(AreaSize);
-        bool setCritMultiplier(int);
+        virtual int getDamage();
+        virtual DamageType getDamageType();
+        virtual AreaSize getRange();
+        virtual int getCritMultiplier();
+        virtual bool setDamage(int damage);
+        virtual bool setDamageType(DamageType type);
+        virtual bool setRange(AreaSize);
+        virtual bool setCritMultiplier(int);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
-        virtual std::string move(); 
+        virtual std::string move(Player*); 
         virtual std::string read(Player*); 
         virtual std::string breakIt(Player*); 
         virtual std::string climb(Player*); 
@@ -49,7 +51,7 @@ class WeaponType: public ItemType {
         virtual std::string pull(Player*); 
         virtual std::string eat(Player*); 
         virtual std::string drink(Player*); 
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();

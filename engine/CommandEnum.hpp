@@ -56,7 +56,6 @@ enum class CommandEnum {
     WARP,
     COPY,
     CREATE,
-    ADD,
     EDIT_ATTRIBUTE,
     EDIT_WIZARD,
     SAVE,

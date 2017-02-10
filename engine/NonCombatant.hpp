@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      NonCombatant.hpp
  *
@@ -16,6 +16,7 @@
 #include <string>
 #include "Character.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -31,6 +32,7 @@ class NonCombatant: public Character {
         virtual ~NonCombatant();
         Quest* getQuest();
         bool setQuest(Quest *aQuest);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
         virtual std::string look();  
@@ -39,7 +41,7 @@ class NonCombatant: public Character {
         virtual std::string talk(Player*, NonCombatant*); 
         virtual bool buy(Player*, Item*);
         virtual bool sell(Player*, Item*);
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();

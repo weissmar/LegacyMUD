@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      Player.hpp
  *
@@ -21,6 +21,7 @@
 #include "CharacterSize.hpp"
 #include "CommandEnum.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -55,6 +56,7 @@ class Player: public Combatant {
         bool isEditMode();
         std::vector<std::tuple<Quest*, int>> getQuestList();
         std::multimap<std::string, InteractiveNoun*> getVerbLookup();
+        std::multimap<std::string, InteractiveNoun*> getNounLookup();
         int addToExperiencePts(int gainedXP);
         bool levelUp();
         bool setSize(CharacterSize size);
@@ -69,6 +71,7 @@ class Player: public Combatant {
         bool updateQuest(Quest *aQuest, int step); 
         bool addVerbs(std::vector<std::string>, InteractiveNoun*);
         bool removeVerbs(InteractiveNoun*);
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
         virtual std::string look();  
@@ -82,10 +85,10 @@ class Player: public Combatant {
         virtual std::string talk(Player*, NonCombatant*); 
         virtual bool buy(Player*, Item*);
         virtual bool sell(Player*, Item*);
-        virtual std::string search(); 
+        virtual std::string search(Player*); 
         virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
         virtual std::string warp(Player*, Area*); 
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
@@ -102,6 +105,7 @@ class Player: public Combatant {
         bool editMode;
         std::vector<std::tuple<Quest*, int>> questList;
         std::multimap<std::string, InteractiiveNoun*> verbLookup;
+        std::multimap<std::string, InteractiiveNoun*> nounLookup;
 };
 
 }}

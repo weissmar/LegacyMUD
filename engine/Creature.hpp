@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Rachel Weissman-Hohler
  * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
+ * Last Modified: 02/08/2017
  * Course:        CS467, Winter 2017
  * Filename:      Creature.hpp
  *
@@ -16,6 +16,7 @@
 #include <string>
 #include "Combatant.hpp"
 #include "DataType.hpp"
+#include "ObjectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -34,6 +35,7 @@ class Creature: public Combatant {
         bool setType(CreatureType *aType);
         bool setAmbulatory(bool ambulatory);
         Area* move();
+        virtual ObjectType getObjectType();
         virtual std::string serialize();
         virtual bool deserialize(std::string);
         virtual std::string look();  
@@ -44,7 +46,7 @@ class Creature: public Combatant {
         virtual bool transfer(Player*, Item*, InteractiveNoun*);
         virtual bool attack(Player*, Item*, InteractiveNoun*);
         virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
-        virtual bool copy();
+        virtual InteractiveNoun* copy();
         virtual bool editAttribute(Player*, std::string);
         virtual bool editWizard(Player*);
         static std::map<std::string, DataType> getAttributeSignature();
