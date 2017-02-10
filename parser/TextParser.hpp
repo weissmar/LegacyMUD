@@ -1,5 +1,5 @@
 /*!
-  \file     TextParser.h
+  \file     TextParser.hpp
   \author   David Rigert
   \created  02/02/2017
   \modified 02/07/2017
@@ -13,6 +13,8 @@
 */
 #ifndef LEGACYMUD_PARSER_TEXTPARSER_HPP
 #define LEGACYMUD_PARSER_TEXTPARSER_HPP
+
+#include "WordManager.hpp"
 
 #include <CommandEnum.hpp>
 #include <ItemPosition.hpp>
@@ -182,6 +184,72 @@ public:
         bool isAdmin = false,
         bool editMode = false
                          );
+private:
+    // Stores a single token
+    struct Token {
+        std::string original;
+        std::string normalized;
+    };
+
+    // Stores the start and end indices of a grammar type
+    struct Range {
+        size_t start;
+        size_t end;
+
+        Range() : Range(0, 0) {}
+        Range(size_t s, size_t e) {
+          start = s;
+          end = e;
+        }
+    };
+
+    // Stores a candidate match
+    struct Match {
+        std::string verbAlias;
+        std::map<std::string, engine::InteractiveNoun *> directObjs;
+        PrepositionType preposition;
+        std::map<std::string, engine::InteractiveNoun *> indirectObjs;
+        std::string unparsed;
+        VerbInfo verbInfo;
+        TextParseStatus status;
+    };
+
+    // Creates a token list from the input string
+    std::vector<Token> tokenizeInput(const std::string &);
+
+    // Join the specified range of a token list into a normalized string
+    std::string joinNormalizedTokens(const std::vector<Token> &tokens, Range range, bool skipIgnoreWords);
+
+    // Join the specified range of a token list into the original string
+    std::string joinOriginalTokens(const std::vector<Token> &tokens, Range range);
+
+    // Find a matching alias in a WordMap
+    std::string findLongestLocalAlias(const WordMap &lookupTable, const std::vector<Token> &tokens, Range &range);
+
+    // Find a matching alias using the specified find function
+    std::string findLongestGlobalAlias(bool (*hasAlias)(std::string), const std::vector<Token> &tokens, Range &range);
+
+    // Tries to find a global match based on input tokens and maps
+    Match parseGlobal(
+        const std::vector<Token> &tokens,
+        bool (*hasAlias)(std::string),
+        VerbInfo (*getVerb)(std::string),
+        const WordMap &playerNounMap,
+        const WordMap &areaNounMap
+    );
+
+    // Tries to find a local match based on input tokens and maps
+    Match parseLocal(
+        const std::vector<Token> &tokens,
+        const WordMap &playerVerbMap,
+        const WordMap &playerNounMap,
+        const WordMap &areaVerbMap,
+        const WordMap &areaNounMap
+    );
+
+    // Converts a PrepositionType value to an ItemPosition value
+    engine::ItemPosition prepositionToPosition(PrepositionType preposition);
+    
 };
 
 }}

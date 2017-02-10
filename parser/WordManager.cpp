@@ -34,6 +34,10 @@ std::mutex verbLock;
 // Mutex for nouns
 std::mutex nounLock;
 
+// Mutex for ignore words
+std::mutex ignoreWordLock;
+
+
 // Helper function for adding an alias and VerbInfo pair to a GlobalVerbMap.
 void addToMap(legacymud::parser::GlobalVerbMap &verbMap, std::string alias, legacymud::parser::VerbInfo info) {
     // Convert string to lowercase
@@ -53,6 +57,7 @@ GlobalVerbMap WordManager::_globalVerbs;
 GlobalVerbMap WordManager::_builderVerbs;
 AliasLookupTable WordManager::_nounAliases;
 AliasLookupTable WordManager::_verbAliases;
+std::set<std::string> WordManager::_ignoreWords;
 
 // Adds an entry to the list of global verbs.
 void WordManager::addGlobalVerb(std::string alias, VerbInfo info) {
@@ -122,10 +127,25 @@ void WordManager::addVerb(std::string alias, engine::InteractiveNoun *pObj) {
     _verbAliases.emplace(alias, pObj);
 }
 
+// Adds a word to the ignore list
+void WordManager::addIgnoreWord(std::string word) {
+    // Precondition: verify non-empty string
+    assert(!word.empty());
+
+    // Convert string to lowercase
+    std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+
+    // Block any other threads from accessing _ignoreWords until operation is complete.
+    std::lock_guard<std::mutex> guard(ignoreWordLock);
+
+    _ignoreWords.insert(word);
+}
+
 // Gets the VerbInfo of the specified edit mode verb.
 VerbInfo WordManager::getEditModeVerb(std::string alias) {
     // Precondition: value must be in map
     auto it = _editModeVerbs.find(alias);
+
     assert(it != _editModeVerbs.end());
 
     return _editModeVerbs.at(alias);
@@ -189,6 +209,14 @@ bool WordManager::hasBuilderVerb(std::string alias) {
     return _builderVerbs.find(alias) != _builderVerbs.end();
 }
 
+// Gets whether the specified ignore word has been added.
+bool WordManager::isIgnoreWord(std::string word) {
+    // Convert string to lowercase
+    std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+
+    return _ignoreWords.find(word) != _ignoreWords.end();
+}
+
 // Removes a noun alias-InteractiveNoun pair from the noun alias lookup table.
 void WordManager::removeNoun(std::string alias, engine::InteractiveNoun *pObj) {
     // Precondition: alias is non-empty string
@@ -245,12 +273,14 @@ void WordManager::resetAll() {
     std::lock_guard<std::mutex> builderVerbGuard(builderVerbLock);
     std::lock_guard<std::mutex> nounGuard(nounLock);
     std::lock_guard<std::mutex> verbGuard(verbLock);
+    std::lock_guard<std::mutex> ignoreWordGuard(ignoreWordLock);
 
     _editModeVerbs.clear();
     _globalVerbs.clear();
     _builderVerbs.clear();
     _nounAliases.clear();
     _verbAliases.clear();
+    _ignoreWords.clear();
 }
 
 }}

@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include <string>
 #include <utility>
 
@@ -129,6 +130,19 @@ public:
             list.
     */
     static void addBuilderVerb(std::string alias, VerbInfo info);
+
+    /*!
+      \brief Adds the specified word to the ignore list.
+
+      When a word is in the ignore list, the parser will attempt to find a match
+      both with and without that word. This is meant to be used for articles such
+      as \em the, \em a, and \em and.
+
+      \pre \a word is a valid, non-mepty string.
+
+      \post The specified word is in the ignore list.
+    */
+    static void addIgnoreWord(std::string word);
 
     /*!
       \brief Adds an entry to the lookup table of noun aliases in use.
@@ -254,6 +268,15 @@ public:
     static bool hasGlobalVerb(std::string alias);
 
     /*!
+      \brief Gets whether the specified word is an ignored work.
+
+      \param[in] word   Specifies the word to check against the ignore word list.
+
+      \return Returns whether \a word should be ignored.
+    */
+    static bool isIgnoreWord(std::string word);
+
+    /*!
       \brief Removes the specified noun alias-InteractiveNoun pair from the lookup table.
 
       This function removes the specified alias-to-InteractiveNoun pair from the lookup
@@ -317,6 +340,9 @@ private:
 
     // Store all verbs in the game world here (not including global verbs).
     static AliasLookupTable _verbAliases;
+
+    // Store ignore words
+    static std::set<std::string> _ignoreWords;
 
 };
 

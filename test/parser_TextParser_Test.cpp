@@ -898,7 +898,7 @@ TEST_F(TextParserTest, EditModeHappyPath) {
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
     EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_STREQ("", candidates.begin()->unparsed.c_str());
 }
 
 // Test the EDIT_MODE command without permissions
@@ -912,7 +912,7 @@ TEST_F(TextParserTest, EditModeNotAdmin) {
     EXPECT_TRUE(candidates.begin()->direct == nullptr);
     EXPECT_EQ(0, candidates.begin()->indirect.size());
     EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_STREQ("editmode", candidates.begin()->unparsed.c_str());
 }
 
 // Test the happy path of the WARP command
@@ -1325,7 +1325,7 @@ void setBuilderVerbs() {
     vi = parser::VerbInfo();
     vi.grammar = parser::Grammar(parser::Grammar::TEXT, parser::Grammar::NO);
     vi.command = engine::CommandEnum::LOAD;
-    parser::WordManager::addBuilderVerb("save", vi);
+    parser::WordManager::addBuilderVerb("load", vi);
 
     // DELETE command
     vi = parser::VerbInfo();
