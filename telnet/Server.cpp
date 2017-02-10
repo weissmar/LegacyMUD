@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/08/2017
+  \modified 2/10/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -40,7 +40,8 @@ Server::Server() {
     _playerCount = 0;
     _listenSocketFd = 0;
     _serverPause = false;
-    _gameLogicPt = 0;    
+    _gameLogicPt = 0;
+    _echo = true;    
 }
 
 
@@ -100,6 +101,36 @@ bool Server::initServer(int serverPort, int maxPlayers, legacymud::engine::GameL
 
 
 /******************************************************************************
+* Function:    _setCharacterMode
+* Description: This helper function sends a telnet command to a client to set 
+* character mode.
+*
+* Input:            
+* Input:                    
+* Preconditions:                          
+* Return:           
+*****************************************************************************/
+bool _setCharacterMode(int playerFd) {
+    unsigned char code[6] = {255,251,1,255,251,3};     // Telnet command IAC WILL ECHO, IAC WILL SUPPRESS_GO_AHEAD
+    unsigned char inCode[6];                           // returned Telnet code from terminal
+    
+    /* Write to the socket. */ 
+    if (write(playerFd,code,6) < 0)
+        return false;       // Error writing to socket         
+    else {
+        /* Get confirmation from client that character mode is set. */
+        if (read(playerFd, inCode, 6) <= 0) {
+            return false;       // Error writing to socket    
+        }
+        else if (inCode[0] == 255 && inCode[1] == 253 && inCode[2] == 1 && inCode[3] == 255 && inCode[4] == 253 && inCode[5] == 3)   
+            return true;
+        else 
+            return false;       // client doesn't support character mode
+    }
+}
+
+
+/******************************************************************************
 * Function:    startListening
 * Description: This function listens for connections.
 *
@@ -128,28 +159,172 @@ void Server::startListening() {
         else {
             std::cout << "Connection established. Socket: " << newClientSocketFd << std::endl; 
             _playerCount++;    // increment player count               
+             /* Set the player's Telnet terminal into character mode. */
+            if (_setCharacterMode(newClientSocketFd) == false) {
+                std::cout << "Error setting character mode in the client" << std::endl;
+                disconnectPlayer(newClientSocketFd);
+            }  
             /* Disconnect the player if the player cap is exceeded. */
-            if (_playerCount > _maxPlayers) {
-                sendMsg("Server is full.  Please try again later.\n", newClientSocketFd);
+            else if (_playerCount > _maxPlayers) {
+                sendMsg(newClientSocketFd, "Server is full.  Please try again later.", NEWLINE);
                 disconnectPlayer(newClientSocketFd);
             }
-            /* Disconnect the player if game backup is in progress. */
+            /* Disconnect the new player if game backup is in progress. */
             else if (_serverPause == true) {
-                sendMsg("Server backup in progress.  Please try again later.\n", newClientSocketFd);
+                sendMsg(newClientSocketFd, "Server backup in progress.  Please try again later.", NEWLINE);
                 disconnectPlayer(newClientSocketFd);    
             }
-            /* Otherwise, send the player to the new player handler. */
+            /* Set disconnect timeout on player's socket. */
+            else if (setsockopt (newClientSocketFd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeOut, sizeof(timeOut)) < 0) {
+                std::cout << "Error setting socket timeout" << std::endl; 
+                disconnectPlayer(newClientSocketFd);                
+            }
+            /* Otherwise, create a new thread for this player and send to a new player handler in the game logic. */
             else {
-                /* Set disconnect timeout on player's socket. */
-                if (setsockopt (newClientSocketFd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeOut, sizeof(timeOut)) < 0)
-                    std::cout << "Error setting socket timeout" << std::endl;  
-                else {
-                    /* Create a new thread for this player and send to a new player handler in the game logic. */
-                    std::thread t(&legacymud::engine::GameLogic::newPlayerHandler, _gameLogicPt, newClientSocketFd);    
-                    t.detach();      
-                }
+                std::thread t(&legacymud::engine::GameLogic::newPlayerHandler, _gameLogicPt, newClientSocketFd);    
+                t.detach();                        
+            }  
+        }
+    }
+}
+
+
+/******************************************************************************
+* Function:    disconnectPlayer
+* Description: This function disconnects a player.
+*
+* Input:            int playerFd   Socket to close.        
+* Preconditions:    none                      
+* Return:           Returns true if player disconnected successfully. Otherwise false.
+*****************************************************************************/
+void Server::disconnectPlayer(int playerFd) {   
+    _playerCount--;     // decrement player count
+    close(playerFd); 
+}
+
+
+/******************************************************************************
+* Function:    sendMsg
+* Description: This function sends a message to a client.
+*
+* Input:            int playerFd   client socket 
+* Input:            std::string outMsg   message to be sent  
+* Input:            Server::NewLine newLine
+* Preconditions:    none                      
+* Return:           Returns true if successful send. Otherwise false.
+*****************************************************************************/
+bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) {
+   
+    if (newLine == NEWLINE) { 
+        outMsg += "\015\012";       // attach carriage return  and linefeed
+    }
+    /* Write to the socket. */ 
+    if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) {
+        disconnectPlayer(playerFd); 
+        return false;   // Error writing to socket
+    }               
+    else         
+        return true;         
+}  
+    
+
+/******************************************************************************
+* Function:    receiveMsg
+* Description: This function receives a message from a client.
+*
+* Input:            std::string inMsg    message received
+* Input:            int playerFd   client socket        
+* Preconditions:    none                      
+* Return:           Returns true if successful send. Otherwise false.
+*****************************************************************************/
+bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
+    unsigned char ch = 0;
+    
+    inMsg = "";               // initialize inMsg
+    
+    // Read socket.
+    while (ch != 13) {  // ASCII carriage return
+        if (read(playerFd,&ch,1) <= 0) { // returns -1 when error reading, returns 0 if client disconnected.
+            disconnectPlayer(playerFd); 
+            return false;        
+        }
+        
+        /* Read an ANSI escape code.  Needed for up arrow. */
+        else if (ch == 27 ) {
+            /* Read the rest if the ansi code. */
+            unsigned char ansiCode[10];
+            if (read(playerFd,ansiCode,10) <= 0) {  // returns -1 when error reading, returns 0 if client disconnected.
+                disconnectPlayer(playerFd);     
+                return false;    
+            } 
+            /* This is an up arrow. */
+            else if (ansiCode[0] == 91 && ansiCode[1] == 65) {
+
+                /* Redisplay the message on the player's terminal. */
+                if (_echo)
+                    if (sendMsg(playerFd, inMsg, NO_NEWLINE) == false) {
+                        disconnectPlayer(playerFd); 
+                        return false;    
+                    }  
             }
         }
+            
+        /* Backspace character received. */
+        else if (ch == 8 && inMsg.size() > 0) {
+            /* Remove the last character from the message. */ 
+            inMsg.pop_back();               
+            
+            /* Send the delete character to the player's terminal. */
+            if (_echo) {
+                ch = 127;
+                if (write(playerFd, &ch, 1) < 0) {
+                    disconnectPlayer(playerFd); 
+                    return false;     
+                }            
+            }  
+        }
+            
+        /* Character to be added to the message. */
+        else if (ch >=32 && ch <=126) {
+            inMsg += ch;
+            
+            /* Echo the character back to the player's terminal. */
+            if (_echo) 
+                if (write(playerFd, &ch, 1) < 0) {
+                    disconnectPlayer(playerFd); 
+                    return false;     
+                }        
+        }                   
+    }
+    /* Echo new line to the player's terminal. */
+    if (sendMsg(playerFd, "", NEWLINE) == false ) {
+        disconnectPlayer(playerFd); 
+        return false;     
+    }
+    return true;
+}
+
+
+/******************************************************************************
+* Function:    listenForMsgs
+* Description: This function listens for messages from a client
+*
+* Input:            int playerFd   client socket        
+* Preconditions:    none                      
+* Return:           none
+*****************************************************************************/
+bool Server::listenForMsgs(int playerFd) {
+    std::string inMsg;             // initialize inMsg
+    std::mutex m;
+    
+    while (1) {
+        if (receiveMsg(playerFd, inMsg) == false )
+            return false;
+        
+        /* Send the message to the message handler. */
+        m.lock();   // make thread safe
+        _gameLogicPt->receivedMsgHandler(inMsg, playerFd); 
+        m.unlock();
     }
 }
 
@@ -195,8 +370,7 @@ bool Server::setMaxPlayers(int maxPlayers) {
     else {
         _maxPlayers = maxPlayers; 
         return true;
-    }
-    
+    }   
 }
 
 
@@ -223,101 +397,34 @@ int Server::getMaxPlayers() const {
 *****************************************************************************/
 int Server::getPlayerCount() const {   
     return _playerCount;
-}         
+}   
 
 
 /******************************************************************************
-* Function:    disconnectPlayer
-* Description: This function disconnects a player.
+* Function:    setEcho
+* Description: 
 *
-* Input:            int clientSocketFd   Socket to close.        
-* Preconditions:    none                      
-* Return:           Returns true if player disconnected successfully. Otherwise false.
+* Input:                   
+* Preconditions:                         
+* Return:          
 *****************************************************************************/
-void Server::disconnectPlayer(int clientSocketFd) {   
-    _playerCount--;     // decrement player count
-    close(clientSocketFd); 
-}
+void Server::setEcho(bool echo) {   
+    _echo = echo;  
+}  
 
 
 /******************************************************************************
-* Function:    sendMsg
-* Description: This function sends a message to a client.
+* Function:    getEcho
+* Description: 
 *
-* Input:            std::string outMsg   message to be sent
-* Input:            int clientSocketFd   client socket        
-* Preconditions:    none                      
-* Return:           Returns true if successful send. Otherwise false.
+* Input:                   
+* Preconditions:                         
+* Return:          
 *****************************************************************************/
-bool Server::sendMsg(std::string outMsg, int clientSocketFd) {
+bool Server::getEcho() const {   
+    return _echo;  
+}   
+
+}}  
+
     
-    /* Write to the socket. */ 
-    if (write(clientSocketFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0)
-        return false;       // Error writing to socket         
-    else 
-        return true;
-}
-
-
-/******************************************************************************
-* Function:    receiveMsg
-* Description: This function receives a message from a client.
-*
-* Input:            std::string inMsg    message received
-* Input:            int clientSocketFd   client socket        
-* Preconditions:    none                      
-* Return:           Returns true if successful send. Otherwise false.
-*****************************************************************************/
-bool Server::receiveMsg(std::string &inMsg, int clientSocketFd) {
-    unsigned char ch = 0;
-    inMsg = "";               // initialize inMsg
-    
-    // Read socket.
-    while (ch !='\n') {
-        if (read(clientSocketFd,&ch,1) <= 0) // returns -1 when error reading, returns 0 if client disconnected.
-            return false;        
-        else {
-            if (ch >=32 && ch <=127) {
-                inMsg += ch;
-            }
-        }             
-    } 
-    return true;
-}
-
-
-/******************************************************************************
-* Function:    listenForMsgs
-* Description: This function listens for messages from a client
-*
-* Input:            int playerFd   client socket        
-* Preconditions:    none                      
-* Return:           none
-*****************************************************************************/
-bool Server::listenForMsgs(int playerFd) {
-    unsigned char ch = 0;
-    std::string inMsg;             // initialize inMsg
-    std::mutex m;
-    
-    while (1) {
-        ch = 0;         // initialize
-        inMsg = "";     // initialize
-        // Read socket.
-        while (ch !='\n') {
-            if (read(playerFd,&ch,1) <= 0) {     // returns -1 when error reading, returns 0 if client disconnected.          
-                disconnectPlayer(playerFd);  
-                return false;
-            }
-            else {
-                if (ch >=32 && ch <=127) {
-                    inMsg += ch;
-                }
-            }             
-        }
-        m.lock();   // make thread safe
-        _gameLogicPt->receivedMsgHandler(inMsg, playerFd); 
-        m.unlock();
-    }
-}
-
-}}

@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/8/2017
+ * Last Modified: 2/10/2017
  * Course:        CS467, Winter 2017
  * Filename:      GameLogic.h
  *
@@ -12,7 +12,6 @@
 #ifndef LEGACYMUD_ENGINE_GAMELOGIC_HPP
 #define LEGACYMUD_ENGINE_GAMELOGIC_HPP
 
-#include <string>
 #include <deque>
 
 namespace legacymud {

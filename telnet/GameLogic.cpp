@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/8/2017
+ * Last Modified: 2/10/2017
  * Course:        CS467, Winter 2017
  * Filename:      GameLogic.cpp
  *
@@ -31,26 +31,30 @@ void GameLogic::newPlayerHandler(int playerId) {
     std::string password;
     std::string newMsg;
 
-    serverPt->sendMsg("Welcome to Server Testing\n", playerId);
-    serverPt->sendMsg("Enter Username: ", playerId);  
-    if (serverPt->receiveMsg(username, playerId) == false) {
+    serverPt->sendMsg(playerId, "Welcome to Server Testing", serverPt->NEWLINE);
+    serverPt->sendMsg(playerId, "Enter Username: ", serverPt->NO_NEWLINE);  
+    if (serverPt->receiveMsg(playerId, username ) == false) {
         /* Player either timed out or disconnected. */
         std::cout << "Player timed out." << std::endl;
-        serverPt->sendMsg("\nDisconnected for inactivity.\n", playerId);        
+        serverPt->sendMsg(playerId, "", serverPt->NEWLINE);
+        serverPt->sendMsg(playerId, "Disconnected for inactivity.", serverPt->NEWLINE);        
         serverPt->disconnectPlayer(playerId);      
     }
     else {
         std::cout << "Username received: " << username << std::endl;
-        serverPt->sendMsg("Enter Password: ", playerId);
-        if(serverPt->receiveMsg(password, playerId) == false) {
+        serverPt->setEcho(false);
+        serverPt->sendMsg(playerId, "Enter Password: ", serverPt->NO_NEWLINE);
+        if(serverPt->receiveMsg(playerId, password) == false) {
             /* Player either timed out or disconnected. */
             std::cout << "Player timed out." << std::endl;
-            serverPt->sendMsg("\nDisconnected for inactivity.\n", playerId);        
+            serverPt->sendMsg(playerId, "", serverPt->NEWLINE);
+            serverPt->sendMsg(playerId, "Disconnected for inactivity.", serverPt->NEWLINE );        
             serverPt->disconnectPlayer(playerId);    
         }
+        serverPt->setEcho(true);
         std::cout << "Password received: " << password << std::endl;
         
-        serverPt->sendMsg("Let's play!\n", playerId);  
+        serverPt->sendMsg(playerId, "Let's play!", serverPt->NEWLINE);  
         
         /* Send thread back to server to listen for messages. */
         if (serverPt->listenForMsgs(playerId) == false) {
