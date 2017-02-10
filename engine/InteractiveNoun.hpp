@@ -18,12 +18,20 @@
 #include <vector>
 #include <map>
 #include <tuple>
-#include <Grammar.h>
 #include "CommandEnum.hpp"
+#include "ItemPosition.hpp"
+
+namespace legacymud { namespace parser {
+    class Grammar;
+}}
 
 namespace legacymud { namespace engine {
-
+class Player;
+class Item;
+class Area;
 class Action;
+class NonCombatant;
+class SpecialSkill;
 
 class InteractiveNoun {
     public:
