@@ -168,7 +168,7 @@ TextParseStatus TextParser::parse(
 
     }
 
-    // No verb found if we reach here
+    // No usable verb found if we reach here
     // Return unparsed input with INVALID_VERB or UNAVAILABLE_VERB.
     result.command = engine::CommandEnum::INVALID;
     result.direct = nullptr;
@@ -326,7 +326,7 @@ TextParser::Match TextParser::parseGlobal(const std::vector<Token> &tokens, bool
         range.start = range.end;
         range.end = tokens.size();
 
-        // Parse remaining input based on grammar
+        // Check remaining input for direct object based on grammar
         switch (m.verbInfo.grammar.takesDirectObject()) {
         case Grammar::NO:
             // Do nothing
@@ -395,15 +395,18 @@ TextParser::Match TextParser::parseGlobal(const std::vector<Token> &tokens, bool
             if (m.verbInfo.grammar.takesIndirectObject() == Grammar::NO) {
                 m.unparsed = joinOriginalTokens(tokens, range);
                 
-                // Set status based on whether there is any unparsed text
+                // Text is required, so set status to invalid if no unparsed text
                 m.status = m.unparsed.empty() ? TextParseStatus::INVALID_NOUN : TextParseStatus::VALID;
 
                 return m;
             }
-            // Try to find indirect object at end, moving toward the front
-            // Write a findObject function?
+            else {
+                // Try to find indirect object at end, moving toward the front
+                // Write a findObjectFromEnd function?
 
-            // If indirect object is found, check if prior word is preposition
+                // If indirect object is found, check if prior word is preposition
+
+            }
             break;
         case Grammar::OPTIONALTEXT:
             // If no further grammar is required, dump everything into unparsed text and return
@@ -415,7 +418,10 @@ TextParser::Match TextParser::parseGlobal(const std::vector<Token> &tokens, bool
 
                 return m;
             }
-            // Try to find indirect object at end, moving toward the front
+            else {
+                // Try to find indirect object at end, moving toward the front
+
+            }
             break;
         }
 
