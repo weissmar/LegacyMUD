@@ -29,16 +29,96 @@ class GameLogic {
         GameLogic(const GameLogic &otherGameLogic);
         GameLogic & operator=(const GameLogic &otherGameLogic);
         ~GameLogic();
+
+        /*!
+         * \brief   Starts a game.
+         * 
+         * This function starts a new game, if newGame is true, or loads the
+         * game from the default file.
+         * 
+         * \param[in] newGame   Specifies whether or not to start a new game.
+         *
+         * \return  Returns a bool indicating whether or not starting the game
+         *          was successful.
+         */
         bool startGame(bool newGame);
+
+        /*!
+         * \brief   Starts a game.
+         * 
+         * This function starts a new game, if newGame is true, or loads the
+         * game from the passed-in file.
+         * 
+         * \param[in] newGame   Specifies whether or not to start a new game.
+         * \param[in] fileName  Specifies the file to load the game from, if
+         *                      newGame is false.
+         *
+         * \return  Returns a bool indicating whether or not starting the game
+         *          was successful.
+         */
         bool startGame(bool newGame, const std::string &fileName);
+
+        /*!
+         * \brief   Loads a new player into the game.
+         * 
+         * This function starts the set-up process for a new player, if they
+         * haven't played before, and loads existing players into the game.
+         * 
+         * \param[in] fileDescriptor    Specifies the player identifier to use when 
+         *                              communicating with the server.
+         *
+         * \return  Returns a bool indicating whether or not loading the player
+         *          was successful.
+         */
         bool newPlayerHandler(int fileDescriptor);
+
+        /*!
+         * \brief   Processes messages from the message queue.
+         * 
+         * \param[in] numToProcess  Specifies how many messages to process at a
+         *                          time.
+         *
+         * \return  Returns a bool indicating whether or not processing messages
+         *          was successful.
+         */
         bool processInput(int numToProcess);
+
+        /*!
+         * \brief   Adds a new message into the message queue.
+         * 
+         * This function adds a new message from the server into the message
+         * queue for later processing.
+         * 
+         * \param[in] message           Specifies the message to add.
+         * \param[in] fileDescriptor    Specifies the player that sent the message.
+         *
+         * \return  Returns a bool indicating whether or not adding the message
+         *          was successful.
+         */
         bool receivedMessageHandler(std::string message, int fileDescriptor);
+
+        /*!
+         * \brief   Updates creatures' movements and attacks.
+         * 
+         * This function updates the position of ambulatory creatures, and the
+         * attacks of all creatures.
+         *
+         * \return  Returns a bool indicating whether or not updating the creatures
+         *          was successful.
+         */
         bool updateCreatures();
+
+        /*!
+         * \brief   Updates players that are in combat.
+         * 
+         * This function updates all players that are currently in combat, processing
+         * actions off of their combat queues or making default attacks.
+         *
+         * \return  Returns a bool indicating whether or not updating the players
+         *          was successful.
+         */
         bool updatePlayersInCombat();
     private:
-        GameObjectManager *manager;
-        std::queue<std::tuple<std::string, int>> messageQueue;
         bool loadPlayer(Player *aPlayer, int fileDescriptor);
         bool hibernatePlayer(Player *aPlayer);
         int rollDice(int numSides, int numDice);
@@ -99,6 +179,8 @@ class GameLogic {
         bool loadCommand(Player *aPlayer);
         bool loadCommand(Player *aPlayer, const std::string &stringParam);
         bool deleteCommand(Player *aPlayer, InteractiveNoun *firstParam);
+        GameObjectManager *manager;
+        std::queue<std::tuple<std::string, int>> messageQueue;
 };
 
 }}
