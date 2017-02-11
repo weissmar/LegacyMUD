@@ -1,14 +1,13 @@
-/*************************************************************************
- * Author:        Rachel Weissman-Hohler
- * Date Created:  02/01/2017
- * Last Modified: 02/08/2017
- * Course:        CS467, Winter 2017
- * Filename:      InteractiveNoun.hpp
+/*********************************************************************//**
+ * \author      Rachel Weissman-Hohler
+ * \created     02/01/2017
+ * \modified    02/10/2017
+ * \course      CS467, Winter 2017
+ * \file        InteractiveNoun.hpp
  *
- * Overview:
- *     Header file for InteractiveNoun base class. Defines necessary
- * members for aliasing nouns and commands and interface for defining
- * command actions.
+ * \details     Header file for InteractiveNoun base class. Defines necessary
+ *              members for aliasing nouns and commands and interface for defining
+ *              command actions.
  ************************************************************************/
 
 #ifndef INTERACTIVE_NOUN_HPP
@@ -25,6 +24,7 @@
 namespace legacymud { namespace engine {
 
 class Action;
+class SpecialSkill;
 
 class InteractiveNoun {
     public:
@@ -49,16 +49,16 @@ class InteractiveNoun {
         virtual bool drop(Player*);
         virtual std::string more(); 
         virtual bool equip(Player*, Item*, InteractiveNoun*);
-        virtual bool unequip(Player*, Item*);
-        virtual bool transfer(Player*, Item*, InteractiveNoun*);
-        virtual bool go(Player*, Area*);
+        virtual bool unequip(Player*, Item*, InteractiveNoun*);
+        virtual bool transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*);
+        virtual bool go(Player *aPlayer, Area *anArea, InteractiveNoun *character);
         virtual std::string move(Player*); 
-        virtual bool attack(Player*, Item*, InteractiveNoun*);
+        virtual bool attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool);
         virtual std::string talk(Player*, NonCombatant*); 
         virtual bool buy(Player*, Item*);
         virtual bool sell(Player*, Item*);
         virtual std::string search(Player*); 
-        virtual std::string useSkill(SpecialSkill*, InteractiveNoun*); 
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill); 
         virtual std::string read(Player*); 
         virtual std::string breakIt(Player*); 
         virtual std::string climb(Player*); 

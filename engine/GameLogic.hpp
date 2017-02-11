@@ -1,13 +1,12 @@
-/*************************************************************************
- * Author:        Rachel Weissman-Hohler
- * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
- * Course:        CS467, Winter 2017
- * Filename:      GameLogic.hpp
+/*********************************************************************//**
+ * \author      Rachel Weissman-Hohler
+ * \created     02/01/2017
+ * \modified    02/10/2017
+ * \course      CS467, Winter 2017
+ * \file        GameLogic.hpp
  *
- * Overview:
- *     Header file for GameLogic class. Defines the members and 
- * functions that control the game logic.
+ * \details     Header file for GameLogic class. Defines the members and 
+ *              functions that control the game logic.
  ************************************************************************/
 
 #ifndef GAME_LOGIC_HPP
@@ -61,8 +60,8 @@ class GameLogic {
         bool inventoryCommand(Player *aPlayer);
         bool moreCommand(Player *aPlayer, InteractiveNoun *firstParam);
         bool equipmentCommand(Player *aPlayer);
-        bool equipCommand(Player *aPlayer, InteractiveNoun *firstParam);
-        bool unequipCommand(Player *aPlayer, InteractiveNoun *firstParam);
+        bool equipCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam);
+        bool unequipCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam);
         bool transferCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam);
         bool speakCommand(Player *aPlayer, const std::string &stringParam);
         bool shoutCommand(Player *aPlayer, const std::string &stringParam);

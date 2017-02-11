@@ -1,13 +1,12 @@
-/*************************************************************************
- * Author:        Rachel Weissman-Hohler
- * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
- * Course:        CS467, Winter 2017
- * Filename:      GameObjectManager.hpp
+/*********************************************************************//**
+ * \author      Rachel Weissman-Hohler
+ * \created     02/01/2017
+ * \modified    02/10/2017
+ * \course      CS467, Winter 2017
+ * \file        GameObjectManager.hpp
  *
- * Overview:
- *     Header file for GameObjectManager base class. Defines the members and 
- * functions that apply to all GameObjectManagers.
+ * \details     Header file for GameObjectManager class. Defines the members 
+ *              and functions needed to track all game objects.
  ************************************************************************/
 
 #ifndef GAME_OBJECT_MANAGER_HPP

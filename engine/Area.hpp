@@ -289,19 +289,24 @@ class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         virtual std::string listen(); 
 
         /*!
-         * \brief   Moves the specified player to this area.
+         * \brief   Moves the specified player or character to this area.
          *
-         * This function moves the specified player to this area. After adding
-         * the player to this area, it calls go() on the player, passing the 
-         * Area* of this area, so the player can respond to the go command.
+         * This function moves the specified player or character to this area. 
+         * After adding the player/character to this area, it calls go() on  
+         * the player/character, passing a pointer of this area in the anArea 
+         * parameter, so the player/character can respond to the go command.
          *
-         * \param[in] aPlayer   Specifes the player to be added to this area.
-         * \param[in] anArea    This parameter will be ignored for this object.    
+         * \param[in] aPlayer   Specifes the player that entered the command and,
+         *                      if character == nullptr, the player to be added 
+         *                      to this area.
+         * \param[out] anArea   Specifies the area to add the player/character to.  
+         * \param[in] character Optionally specifies the character to move to this
+         *                      area, or nullptr if the player is the one moving.
          *
          * \return  Returns a bool indicating whether or not moving the player
-         *          to this area was successful.
+         *          or character to this area was successful.
          */
-        virtual bool go(Player* aPlayer, Area* anArea);
+        virtual bool go(Player *aPlayer, Area *anArea, InteractiveNoun *character);
 
         /*!
          * \brief   Gets the response of this object to the command search.
@@ -319,11 +324,12 @@ class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
          * \brief   Moves the specified player to this area.
          *
          * This function moves the specified player to this area. After adding
-         * the player to this area, it calls warp() on the player, passing the 
-         * Area* of this area, so the player can respond to the go command.
+         * the player to this area, it calls go() on the player, passing a 
+         * pointer of this area in the anArea parameter, so the player can 
+         * respond to the go command.
          *
          * \param[in] aPlayer   Specifes the player to be added to this area.
-         * \param[in] anArea    This parameter will be ignored for this object.    
+         * \param[out] anArea   Specifies the area to add the player to.    
          *
          * \return  Returns a bool indicating whether or not moving the player
          *          to this area was successful.
