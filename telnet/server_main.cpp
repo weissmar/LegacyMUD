@@ -21,8 +21,12 @@ int main(int argc, char *argv[]) {
     int serverPort;
     legacymud::engine::GameLogic gl;
     legacymud::telnet::Server ts;
+    int playerCap = 5;
+    int timeOut = 900;           // in seconds.
+    std::mutex m;
+    
     gl.serverPt = &ts; 
-    std::mutex m;    
+        
     
     
     /* Validate command line entry. */
@@ -33,7 +37,8 @@ int main(int argc, char *argv[]) {
     
     serverPort = atoi(argv[1]);
     
-    if (ts.initServer(serverPort,10, &gl) == false) {
+    
+    if (ts.initServer(serverPort, playerCap, timeOut, &gl) == false) {
         return 1;     // error initializing the server
     }
     else {
@@ -47,7 +52,7 @@ int main(int argc, char *argv[]) {
         while(ch != 'q' ) {
             std::cin >> ch;
             if (gl.msgDeque.size() > 0) {
-                std::cout << "Message: " << gl.msgDeque.front().msg << " " << gl.msgDeque.front().playerId << std::endl;
+                std::cout << "Message: " << gl.msgDeque.front().msg << " " << gl.msgDeque.front().playerFd << std::endl;
                 m.lock();
                 gl.msgDeque.pop_front();
                 m.unlock();

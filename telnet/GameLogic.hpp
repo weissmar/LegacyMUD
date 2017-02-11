@@ -24,12 +24,12 @@ namespace legacymud {
 
 class GameLogic {
     public:
-        void newPlayerHandler(int playerId);
-        bool receivedMsgHandler(std::string inMsg, int playerId);          
+        void newPlayerHandler(int playerFd);
+        bool receivedMessageHandler(std::string inMsg, int playerFd);          
         legacymud::telnet::Server* serverPt;
         struct ReceivedMsg {
             std::string msg;
-            int playerId;
+            int playerFd;
         };
         std::deque<ReceivedMsg> msgDeque;
        
