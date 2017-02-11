@@ -117,7 +117,7 @@ bool GameLogic::endConversation(Player *aPlayer){
 }
 
 
-bool GameLogic::executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = none){
+bool GameLogic::executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition){
 
 }
 

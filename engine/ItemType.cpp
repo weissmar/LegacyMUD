@@ -32,7 +32,7 @@ ItemType & ItemType::operator=(const ItemType &otherItemType){
 }
 
 
-virtual ItemType::~ItemType(){
+ItemType::~ItemType(){
 
 }
 
@@ -97,142 +97,142 @@ bool ItemType::setSlotType(EquipmentSlot slotType){
 }
 
 
-virtual int ItemType::getArmorBonus(){
+int ItemType::getArmorBonus(){
 
 }
 
 
-virtual DamageType ItemType::getResistantTo(){
+DamageType ItemType::getResistantTo(){
 
 }
 
 
-virtual int ItemType::getDamage(){
+int ItemType::getDamage(){
 
 }
 
 
-virtual DamageType ItemType::getDamageType(){
+DamageType ItemType::getDamageType(){
 
 }
 
 
-virtual AreaSize ItemType::getRange(){
+AreaSize ItemType::getRange(){
 
 }
 
 
-virtual int ItemType::getCritMultiplier(){
+int ItemType::getCritMultiplier(){
 
 }
 
 
-virtual bool ItemType::setDamage(int damage){
+bool ItemType::setDamage(int damage){
 
 }
 
 
-virtual bool ItemType::setDamageType(DamageType type){
+bool ItemType::setDamageType(DamageType type){
 
 }
 
 
-virtual bool ItemType::setRange(AreaSize){
+bool ItemType::setRange(AreaSize){
 
 }
 
 
-virtual bool ItemType::setCritMultiplier(int){
+bool ItemType::setCritMultiplier(int){
 
 }
 
 
-virtual bool ItemType::setArmorBonus(int){
+bool ItemType::setArmorBonus(int){
 
 }
 
 
-virtual bool ItemType::setResistantTo(DamageType){
+bool ItemType::setResistantTo(DamageType){
 
 }
 
 
-virtual ObjectType ItemType::getObjectType(){
+ObjectType ItemType::getObjectType(){
 
 }
 
 
-virtual std::string ItemType::serialize(){
+std::string ItemType::serialize(){
 
 }
 
 
-virtual bool ItemType::deserialize(std::string){
+bool ItemType::deserialize(std::string){
 
 }
 
 
-virtual std::string ItemType::move(Player*){
+std::string ItemType::move(Player*){
 
 } 
 
 
-virtual std::string ItemType::read(Player*){
+std::string ItemType::read(Player*){
 
 } 
 
 
-virtual std::string ItemType::breakIt(Player*){
+std::string ItemType::breakIt(Player*){
 
 } 
 
 
-virtual std::string ItemType::climb(Player*){
+std::string ItemType::climb(Player*){
 
 } 
 
 
-virtual std::string ItemType::turn(Player*){
+std::string ItemType::turn(Player*){
 
 } 
 
 
-virtual std::string ItemType::push(Player*){
+std::string ItemType::push(Player*){
 
 } 
 
 
-virtual std::string ItemType::pull(Player*){
+std::string ItemType::pull(Player*){
 
 } 
 
 
-virtual std::string ItemType::eat(Player*){
+std::string ItemType::eat(Player*){
 
 } 
 
 
-virtual std::string ItemType::drink(Player*){
+std::string ItemType::drink(Player*){
 
 } 
 
 
-virtual InteractiveNoun* ItemType::copy(){
+InteractiveNoun* ItemType::copy(){
 
 }
 
 
-virtual bool ItemType::editAttribute(Player*, std::string){
+bool ItemType::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool ItemType::editWizard(Player*){
+bool ItemType::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> ItemType::getAttributeSignature(){
+std::map<std::string, DataType> ItemType::getAttributeSignature(){
 
 }
 

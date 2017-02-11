@@ -395,8 +395,8 @@ class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
         std::vector<Character*> characterContents;
         std::vector<Feature*> featureContents;
         std::vector<Exit*> exitContents;
-        std::multimap<std::string, InteractiiveNoun*> verbLookup;
-        std::multimap<std::string, InteractiiveNoun*> nounLookup;
+        std::multimap<std::string, InteractiveNoun*> verbLookup;
+        std::multimap<std::string, InteractiveNoun*> nounLookup;
 };
 
 }}

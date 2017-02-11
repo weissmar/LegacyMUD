@@ -11,7 +11,7 @@ LIBNAME = engine
 # and stores them as a list of .o filenames
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 # List the relative paths to any include directories here
-INCLUDE_DIRS = ../engine
+INCLUDE_DIRS = ../engine ../parser
 # Append the include paths to the g++ flags
 CXXFLAGS += $(foreach include_dir, $(INCLUDE_DIRS), -I$(include_dir))
 

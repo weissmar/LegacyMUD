@@ -34,7 +34,7 @@ Quest & Quest::operator=(const Quest &otherQuest){
 }
 
 
-virtual Quest::~Quest(){
+Quest::~Quest(){
 
 }
 
@@ -94,37 +94,37 @@ bool Quest::removeStep(QuestStep *aStep){
 }
 
 
-virtual ObjectType Quest::getObjectType(){
+ObjectType Quest::getObjectType(){
 
 }
 
 
-virtual std::string Quest::serialize(){
+std::string Quest::serialize(){
 
 }
 
 
-virtual bool Quest::deserialize(std::string){
+bool Quest::deserialize(std::string){
 
 }
 
 
-virtual InteractiveNoun* Quest::copy(){
+InteractiveNoun* Quest::copy(){
 
 }
 
 
-virtual bool Quest::editAttribute(Player*, std::string){
+bool Quest::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool Quest::editWizard(Player*){
+bool Quest::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> Quest::getAttributeSignature(){
+std::map<std::string, DataType> Quest::getAttributeSignature(){
 
 }
 

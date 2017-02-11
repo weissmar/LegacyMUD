@@ -36,7 +36,7 @@ Item & Item::operator=(const Item &otherItem){
 }
 
 
-virtual Item::~Item(){
+Item::~Item(){
 
 }
 
@@ -81,137 +81,137 @@ bool Item::setType(ItemType *type){
 }
 
 
-virtual ObjectType Item::getObjectType(){
+ObjectType Item::getObjectType(){
 
 }
 
 
-virtual std::string Item::serialize(){
+std::string Item::serialize(){
 
 }
 
 
-virtual bool Item::deserialize(std::string){
+bool Item::deserialize(std::string){
 
 }
 
 
-virtual std::string Item::look(){
+std::string Item::look(){
 
 }  
 
 
-virtual bool Item::take(Player*, Item*, InteractiveNoun*){
+bool Item::take(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Item::put(Player*, Item*, InteractiveNoun*, ItemPosition){
+bool Item::put(Player*, Item*, InteractiveNoun*, ItemPosition){
 
 }
 
 
-virtual bool Item::drop(Player*){
+bool Item::drop(Player*){
 
 }
 
 
-virtual std::string Item::more(){
+std::string Item::more(){
 
 } 
 
 
-virtual bool Item::equip(Player*, Item*, InteractiveNoun*){
+bool Item::equip(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Item::unequip(Player*, Item*, InteractiveNoun*){
+bool Item::unequip(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Item::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
+bool Item::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
 
 }
 
 
-virtual std::string Item::move(Player*){
+std::string Item::move(Player*){
 
 } 
 
 
-virtual bool Item::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
+bool Item::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
 
 }
 
 
-virtual bool Item::buy(Player*, Item*){
+bool Item::buy(Player*, Item*){
 
 }
 
 
-virtual bool Item::sell(Player*, Item*){
+bool Item::sell(Player*, Item*){
 
 }
 
 
-virtual std::string Item::read(Player*){
+std::string Item::read(Player*){
 
 } 
 
 
-virtual std::string Item::breakIt(Player*){
+std::string Item::breakIt(Player*){
 
 } 
 
 
-virtual std::string Item::climb(Player*){
+std::string Item::climb(Player*){
 
 } 
 
 
-virtual std::string Item::turn(Player*){
+std::string Item::turn(Player*){
 
 } 
 
 
-virtual std::string Item::push(Player*){
+std::string Item::push(Player*){
 
 } 
 
 
-virtual std::string Item::pull(Player*){
+std::string Item::pull(Player*){
 
 } 
 
 
-virtual std::string Item::eat(Player*){
+std::string Item::eat(Player*){
 
 } 
 
 
-virtual std::string Item::drink(Player*){
+std::string Item::drink(Player*){
 
 } 
 
 
-virtual InteractiveNoun* Item::copy(){
+InteractiveNoun* Item::copy(){
 
 }
 
 
-virtual bool Item::editAttribute(Player*, std::string){
+bool Item::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool Item::editWizard(Player*){
+bool Item::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> Item::getAttributeSignature(){
+std::map<std::string, DataType> Item::getAttributeSignature(){
 
 }
 

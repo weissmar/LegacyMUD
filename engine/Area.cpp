@@ -36,7 +36,7 @@ Area & Area::operator=(const Area &otherArea){
 }
 
 
-virtual Area::~Area(){
+Area::~Area(){
 
 }
 
@@ -151,62 +151,62 @@ bool Area::removeExit(Exit *anExit){
 }
 
 
-virtual Area::ObjectType getObjectType(){
+ObjectType Area::getObjectType(){
 
 }
 
 
-virtual std::string Area::serialize(){
+std::string Area::serialize(){
 
 }
 
 
-virtual bool Area::deserialize(std::string){
+bool Area::deserialize(std::string){
 
 }
 
 
-virtual std::string Area::look(){
+std::string Area::look(){
 
 }  
 
 
-virtual std::string Area::listen(){
+std::string Area::listen(){
 
 } 
 
 
-virtual bool Area::go(Player *aPlayer, Area *anArea){
+bool Area::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
 
 }
 
 
-virtual std::string Area::search(Player *aPlayer){
+std::string Area::search(Player *aPlayer){
 
 } 
 
 
-virtual std::string Area::warp(Player *aPlayer, Area *anArea){
+std::string Area::warp(Player *aPlayer, Area *anArea){
 
 } 
 
 
-virtual InteractiveNoun* Area::copy(){
+InteractiveNoun* Area::copy(){
 
 }
 
 
-virtual bool Area::editAttribute(Player *aPlayer, std::string attribute){
+bool Area::editAttribute(Player *aPlayer, std::string attribute){
 
 }
 
 
-virtual bool Area::editWizard(Player *aPlayer){
+bool Area::editWizard(Player *aPlayer){
 
 }
 
 
-static std::map<std::string, DataType> Area::getAttributeSignature(){
+std::map<std::string, DataType> Area::getAttributeSignature(){
 
 }
 

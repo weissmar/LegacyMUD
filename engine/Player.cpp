@@ -38,7 +38,7 @@ Player & Player::operator=(const Player &otherPlayer){
 }
 
 
-virtual Player::~Player(){
+Player::~Player(){
 
 }
 
@@ -188,102 +188,102 @@ bool Player::removeNouns(InteractiveNoun*){
 }
 
 
-virtual ObjectType Player::getObjectType(){
+ObjectType Player::getObjectType(){
 
 }
 
 
-virtual std::string Player::serialize(){
+std::string Player::serialize(){
 
 }
 
 
-virtual bool Player::deserialize(std::string){
+bool Player::deserialize(std::string){
 
 }
 
 
-virtual std::string Player::look(){
+std::string Player::look(){
 
 }  
 
 
-virtual bool Player::take(Player*, Item*, InteractiveNoun*){
+bool Player::take(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Player::equip(Player*, Item*, InteractiveNoun*){
+bool Player::equip(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Player::unequip(Player*, Item*, InteractiveNoun*){
+bool Player::unequip(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Player::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
+bool Player::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
 
 }
 
 
-virtual bool Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
+bool Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
 
 }
 
 
-virtual bool Player::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
+bool Player::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
 
 }
 
 
-virtual std::string Player::talk(Player*, NonCombatant*){
+std::string Player::talk(Player*, NonCombatant*){
 
 } 
 
 
-virtual bool Player::buy(Player*, Item*){
+bool Player::buy(Player*, Item*){
 
 }
 
 
-virtual bool Player::sell(Player*, Item*){
+bool Player::sell(Player*, Item*){
 
 }
 
 
-virtual std::string Player::search(Player*){
+std::string Player::search(Player*){
 
 } 
 
 
-virtual std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
+std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
 
 } 
 
 
-virtual std::string Player::warp(Player*, Area*){
+std::string Player::warp(Player*, Area*){
 
 } 
 
 
-virtual InteractiveNoun* Player::copy(){
+InteractiveNoun* Player::copy(){
 
 }
 
 
-virtual bool Player::editAttribute(Player*, std::string){
+bool Player::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool Player::editWizard(Player*){
+bool Player::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> Player::getAttributeSignature(){
+std::map<std::string, DataType> Player::getAttributeSignature(){
 
 }
 

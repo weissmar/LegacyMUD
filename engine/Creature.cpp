@@ -35,7 +35,7 @@ Creature & Creature::operator=(const Creature &otherCreature){
 }
 
 
-virtual Creature::~Creature(){
+Creature::~Creature(){
 
 }
 
@@ -60,77 +60,77 @@ bool Creature::setAmbulatory(bool ambulatory){
 }
 
 
-virtual ObjectType Creature::getObjectType(){
+ObjectType Creature::getObjectType(){
 
 }
 
 
-virtual std::string Creature::serialize(){
+std::string Creature::serialize(){
 
 }
 
 
-virtual bool Creature::deserialize(std::string){
+bool Creature::deserialize(std::string){
 
 }
 
 
-virtual std::string Creature::look(){
+std::string Creature::look(){
 
 }  
 
 
-virtual bool Creature::take(Player*, Item*, InteractiveNoun*){
+bool Creature::take(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Creature::equip(Player*, Item*, InteractiveNoun*){
+bool Creature::equip(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Creature::unequip(Player*, Item*, InteractiveNoun*){
+bool Creature::unequip(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
+bool Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
 
 }
 
 
-virtual bool Creature::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
+bool Creature::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
 
 }
 
 
-virtual bool Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
+bool Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
 
 }
 
 
-virtual std::string Creature::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
+std::string Creature::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
 
 } 
 
 
-virtual InteractiveNoun* Creature::copy(){
+InteractiveNoun* Creature::copy(){
 
 }
 
 
-virtual bool Creature::editAttribute(Player*, std::string){
+bool Creature::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool Creature::editWizard(Player*){
+bool Creature::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> Creature::getAttributeSignature(){
+std::map<std::string, DataType> Creature::getAttributeSignature(){
 
 }
 

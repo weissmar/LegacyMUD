@@ -23,6 +23,8 @@
 #include "ItemRarity.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "DamageType.hpp"
+#include "AreaSize.hpp"
 
 namespace legacymud { namespace engine {
 

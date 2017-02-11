@@ -29,7 +29,7 @@ InteractiveNoun & InteractiveNoun::operator=(const InteractiveNoun &otherNoun){
 }
 
 
-virtual InteractiveNoun::~InteractiveNoun(){
+InteractiveNoun::~InteractiveNoun(){
 
 }
 

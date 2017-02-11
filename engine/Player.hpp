@@ -607,8 +607,8 @@ class Player: public Combatant {
         std::queue<Command*> combatQueue;
         bool editMode;
         std::vector<std::tuple<Quest*, int>> questList;
-        std::multimap<std::string, InteractiiveNoun*> verbLookup;
-        std::multimap<std::string, InteractiiveNoun*> nounLookup;
+        std::multimap<std::string, InteractiveNoun*> verbLookup;
+        std::multimap<std::string, InteractiveNoun*> nounLookup;
 };
 
 }}

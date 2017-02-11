@@ -34,7 +34,7 @@ QuestStep & QuestStep::operator=(const QuestStep &otherQuestStep){
 }
 
 
-virtual QuestStep::~QuestStep(){
+QuestStep::~QuestStep(){
 
 }
 
@@ -99,37 +99,37 @@ bool QuestStep::setCompletionText(std::string completionText){
 } 
 
 
-virtual ObjectType QuestStep::getObjectType(){
+ObjectType QuestStep::getObjectType(){
 
 }
 
 
-virtual std::string QuestStep::serialize(){
+std::string QuestStep::serialize(){
 
 }
 
 
-virtual bool QuestStep::deserialize(std::string){
+bool QuestStep::deserialize(std::string){
 
 }
 
 
-virtual InteractiveNoun* QuestStep::copy(){
+InteractiveNoun* QuestStep::copy(){
 
 }
 
 
-virtual bool QuestStep::editAttribute(Player*, std::string){
+bool QuestStep::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool QuestStep::editWizard(Player*){
+bool QuestStep::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> QuestStep::getAttributeSignature(){
+std::map<std::string, DataType> QuestStep::getAttributeSignature(){
 
 }
 

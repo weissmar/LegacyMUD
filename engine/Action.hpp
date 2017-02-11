@@ -19,7 +19,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <Grammar.h>
+#include <Grammar.hpp>
 #include "SerializableNoun.hpp"
 #include "UniqueNoun.hpp"
 #include "CommandEnum.hpp"

@@ -33,7 +33,7 @@ Combatant & Combatant::operator=(const Combatant &otherCombatant){
 }
 
 
-virtual Combatant::~Combatant(){
+Combatant::~Combatant(){
 
 }
 
@@ -148,12 +148,12 @@ bool Combatant::respawn(){
 }
 
 
-virtual std::string Combatant::serialize(){
+std::string Combatant::serialize(){
 
 }
 
 
-virtual bool Combatant::deserialize(std::string){
+bool Combatant::deserialize(std::string){
 
 }
 

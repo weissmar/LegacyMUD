@@ -35,7 +35,7 @@ CombatantType & CombatantType::operator=(const CombatantType &otherCombatantType
 }
 
 
-virtual CombatantType::~CombatantType(){
+CombatantType::~CombatantType(){
 
 }
 
@@ -110,12 +110,12 @@ bool CombatantType::setHealPoints(float healPoints){
 }
 
 
-virtual std::string CombatantType::serialize(){
+std::string CombatantType::serialize(){
 
 }
 
 
-virtual bool CombatantType::deserialize(std::string){
+bool CombatantType::deserialize(std::string){
 
 }
 

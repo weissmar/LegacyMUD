@@ -13,7 +13,10 @@
 #define GAME_LOGIC_HPP
 
 #include <string>
+#include <queue>
 #include "ObjectType.hpp"
+#include "CommandEnum.hpp"
+#include "ItemPosition.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -257,7 +260,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not executing the command
          *          was successful.
          */
-        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = none);
+        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = ItemPosition::NONE);
 
         /*!
          * \brief   Executes the help command.

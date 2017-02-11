@@ -19,6 +19,7 @@
 #include <tuple>
 #include "CommandEnum.hpp"
 #include "ObjectType.hpp"
+#include "ItemPosition.hpp"
 
 namespace legacymud { namespace parser {
     class Grammar;
@@ -30,6 +31,8 @@ class Item;
 class Area;
 class Action;
 class SpecialSkill;
+class NonCombatant;
+class Combatant;
 
 /*!
  * \details     Defines necessary members for aliasing nouns and commands 
