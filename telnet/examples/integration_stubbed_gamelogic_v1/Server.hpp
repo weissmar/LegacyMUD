@@ -160,16 +160,6 @@ namespace legacymud {
         */ 
         bool setTimeOut(int timeOut);
         
-        /*!
-          \brief Sets a pointer to the game logic object.
-          
-          This function sets a pointer to the Game Logic object. 
-          
-          \param[in]  gameLogicPt     pointer to a game logic object                         
-          \pre gameLogicPt should not be 0.
-          \post Returns false if gameLogicPt is 0.  Otherwise game logic pointer is set and true is returned.
-        */ 
-        bool setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt);
         
         /*!
           \brief Sets a players text display echo mode.
@@ -256,6 +246,7 @@ namespace legacymud {
 
     private:
         bool _setServerPort(int serverPort);        // function that sets and validates the server port
+        bool _setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt);    // function that sets a pointer to a game logic object
         bool _setCharacterMode(int playerFd);       // function that sets a player's telnet terminal to character mode
         bool _addPlayerToMap(int playerFd);         // function that adds a players to the _playerEcho map
         bool _removePlayerFromMap(int playerFd);    // function that removes a players from the _playerEcho map

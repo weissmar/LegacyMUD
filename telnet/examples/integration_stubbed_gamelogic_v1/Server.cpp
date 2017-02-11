@@ -50,7 +50,7 @@ bool Server::initServer(int serverPort, int maxPlayers, int timeOut, legacymud::
     struct sockaddr_in serverAddr;         // address structure for server  
     
     /* Set member variables. */
-    if (!_setServerPort(serverPort) || !setMaxPlayers(maxPlayers) || !setTimeOut(timeOut) || !setGameLogicPt(gameLogicPt) ) {
+    if (!_setServerPort(serverPort) || !setMaxPlayers(maxPlayers) || !setTimeOut(timeOut) || !_setGameLogicPt(gameLogicPt) ) {
         std::cout << "Error setting server parameters." << std::endl; // Error setting member variables
         return false;    
     }        
@@ -289,23 +289,6 @@ bool Server::setTimeOut(int timeOut) {
 
 
 /******************************************************************************
-* Function:    setGameLogicPt          
-*****************************************************************************/
-bool Server::setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt) {   
-
-    /* Validate the pointer. */
-    if (gameLogicPt == 0) {
-        return false;    
-    }
-    /* Set the game logic pointer. */
-    else {
-        _gameLogicPt = gameLogicPt; 
-        return true;
-    }
-}
-
-
-/******************************************************************************
 * Function:    setPlayerEcho          
 *****************************************************************************/
 bool Server::setPlayerEcho(int playerFd, bool echo) {  
@@ -402,6 +385,23 @@ bool Server::_setServerPort(int serverPort) {
     /* Set the server port value. */
     else {
         _serverPort = serverPort; 
+        return true;
+    }
+}
+
+
+/******************************************************************************
+* Private Function:    _setGameLogicPt          
+*****************************************************************************/
+bool Server::_setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt) {   
+
+    /* Validate the pointer. */
+    if (gameLogicPt == 0) {
+        return false;    
+    }
+    /* Set the game logic pointer. */
+    else {
+        _gameLogicPt = gameLogicPt; 
         return true;
     }
 }
