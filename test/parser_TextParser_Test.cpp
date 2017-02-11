@@ -1367,11 +1367,6 @@ void setBuilderVerbs() {
     vi.command = engine::CommandEnum::CREATE;
     parser::WordManager::addBuilderVerb("create", vi);
     parser::WordManager::addBuilderVerb("new", vi);
-
-    // ADD command
-    vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
-    vi.command = engine::CommandEnum::ADD;
     parser::WordManager::addBuilderVerb("add", vi);
 
     // EDIT_ATTRIBUTE command
