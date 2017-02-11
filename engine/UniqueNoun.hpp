@@ -1,13 +1,13 @@
-/*************************************************************************
- * Author:        Rachel Weissman-Hohler
- * Date Created:  02/01/2017
- * Last Modified: 02/03/2017
- * Course:        CS467, Winter 2017
- * Filename:      UniqueNoun.hpp
+/*********************************************************************//**
+ * \author      Rachel Weissman-Hohler
+ * \created     02/01/2017
+ * \modified    02/10/2017
+ * \course      CS467, Winter 2017
+ * \file        UniqueNoun.hpp
  *
- * Overview:
- *     Header file for UniqueNoun base class. Allows for all descendant
- * class instances to be uniquely identified by an int.
+ * \details     Header file for UniqueNoun base class. Allows for all 
+ *              descendant class instances to be uniquely identified by 
+ *              an int. This class should not be instantiated.
  ************************************************************************/
 
 #ifndef UNIQUE_NOUN_HPP
@@ -15,10 +15,21 @@
 
 namespace legacymud { namespace engine {
 
+/*!
+ * \details     This class allows for all descendant class instances to be  
+ *              uniquely identified by an int. This class should not be 
+ *              instantiated.
+ */
 class UniqueNoun {
     public:
         UniqueNoun();
         ~UniqueNoun();
+
+        /*!
+         * \brief   Gets the ID of the unique noun.
+         *
+         * \return  Returns an int with the ID.
+         */
         int getID();
     private:
         int ID;
