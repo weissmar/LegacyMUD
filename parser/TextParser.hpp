@@ -2,7 +2,7 @@
   \file     TextParser.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/07/2017
+  \modified 02/10/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the TextParser class and
@@ -22,6 +22,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <queue>
 
 namespace legacymud { namespace engine {
     class InteractiveNoun;
@@ -43,11 +44,26 @@ typedef std::multimap<std::string, engine::InteractiveNoun *> WordMap;
   function to communicate the result of the operation to the caller.
 */
 enum class TextParseStatus {
-    VALID,              //!< Input string contains all valid words.
-    INVALID_VERB,       //!< Input string contains invalid verb.
-    INVALID_NOUN,       //!< Input string contains valid verb but invalid noun.
+    INVALID_VERB = 0,   //!< Input string contains invalid verb.
     UNAVAILABLE_VERB,   //!< Input string contains valid verb but not in current area.
-    UNAVAILABLE_NOUN    //!< Input string contains valid noun but not in current area.
+    INVALID_NOUN,       //!< Input string contains valid verb but invalid noun.
+    UNAVAILABLE_NOUN,   //!< Input string contains valid noun but not in current area.
+    VALID               //!< Input string contains all valid words.
+};
+
+/*!
+  \enum legacymud::parser::VerbType
+  \brief Enumerates the possible types of verb.
+
+  This enumerated type is used to prioritize parse results by verb type.
+*/
+enum class VerbType {
+    INVALID = 0,
+    UNAVAILABLE,
+    GLOBAL,
+    LOCAL,
+    BUILDER,
+    EDITMODE
 };
 
 /*!
@@ -58,6 +74,11 @@ enum class TextParseStatus {
   \c TextParseStatus::VALID.
 */
 struct TextParseResult {
+    /*!
+      \brief The type of verb.
+    */
+    VerbType type;
+
     /*!
       \brief The \c CommandEnum that the verb maps to.
     */
@@ -101,6 +122,15 @@ struct TextParseResult {
       could not be parsed.
     */
     std::string unparsed;
+
+    TextParseResult() : TextParseResult(VerbType::INVALID) {}
+    
+    TextParseResult(VerbType t) {
+        type = t;
+        command = engine::CommandEnum::INVALID;
+        direct = nullptr;
+        position = engine::ItemPosition::NONE;
+    }
 };
 
 /*!
@@ -214,6 +244,26 @@ private:
         TextParseStatus status;
     };
 
+    // Manages the result candidates and keeps track of the best so far.
+    class ResultContainer {
+    public:
+        ResultContainer();
+        // Gets the best TextParseStatus so far.
+        TextParseStatus getBestStatus() const;
+        // Gets the result(s) with the most complete parse status.
+        // If there are multiple results with the same TextParseStatus,
+        // the ones with the highest priority verb type are returned.
+        TextParseStatus getBestResults(std::vector<TextParseResult> &results) const;
+        // Adds a result to the ResultContainer and updates the highest status so far.
+        void addResult(TextParseStatus status, TextParseResult result);
+        size_t getResultCount() const;
+
+    private:
+        size_t _count;
+        TextParseStatus _bestSoFar;
+        std::multimap<TextParseStatus, TextParseResult> _results;
+    };
+
     // Creates a token list from the input string
     std::vector<Token> tokenizeInput(const std::string &);
 
@@ -250,6 +300,8 @@ private:
     // Converts a PrepositionType value to an ItemPosition value
     engine::ItemPosition prepositionToPosition(PrepositionType preposition);
     
+    // Generates TextParseResults from the Match and adds them to the container.
+    void addMatchToResults(VerbType type, const Match m, ResultContainer &results);
 };
 
 }}

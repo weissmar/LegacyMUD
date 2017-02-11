@@ -2,7 +2,7 @@
   \file     TextParser.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/07/2017
+  \modified 02/10/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the TextParser class.
@@ -41,45 +41,21 @@ TextParseStatus TextParser::parse(
     // Tokenize the input
     std::vector<Token> tokens = tokenizeInput(input);
 
-    std::vector<Match> matches;             // Stores potential matches
-    Match m;                                // Stores match information
-    std::string alias;                      // Stores an alias
-    TextParseResult result;                 // Stores a parsing result
+    std::vector<Match> matches;     // Stores potential matches
+    Match m;                        // Stores match information
+    std::string alias;              // Stores an alias
+    TextParseResult result;         // Stores a parsing result
+    ResultContainer results;        // Maintains the parsing results by priority
 
     // FIRST: Check for edit mode verbs if user has permission
     if (isAdmin) {
         m = parseGlobal(tokens, WordManager::hasEditModeVerb, WordManager::getEditModeVerb, playerNounMap, areaNounMap);
 
-        // If we get a valid match, set candidate and immediately return
-        if (m.status == TextParseStatus::VALID) {
-            // If no direct objects, there will only be one result
-            if (m.directObjs.empty()) {
-                result.command = m.verbInfo.command;
-                result.direct = nullptr;
-                result.position = prepositionToPosition(m.preposition);
-                result.unparsed = m.unparsed;
-                for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
-                    result.indirect.push_back(it2->second);
-                }
+        addMatchToResults(VerbType::EDITMODE, m, results);
 
-                candidates.push_back(result);
-            }
-            else {
-                // Each direct object gets its own result
-                for (auto it = m.directObjs.begin(); it != m.directObjs.end(); ++it) {
-                    result.command = m.verbInfo.command;
-                    result.direct = it->second;
-                    result.position = prepositionToPosition(m.preposition);
-                    result.unparsed = m.unparsed;
-                    for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
-                        result.indirect.push_back(it2->second);
-                    }
-
-                    candidates.push_back(result);
-                }
-            }
-
-            return TextParseStatus::VALID;
+        // Stop if we find a valid edit mode verb
+        if (results.getBestStatus() == TextParseStatus::VALID) {
+            return results.getBestResults(candidates);
         }
     }
 
@@ -87,106 +63,63 @@ TextParseStatus TextParser::parse(
     if (editMode) {
         m = parseGlobal(tokens, WordManager::hasBuilderVerb, WordManager::getBuilderVerb, playerNounMap, areaNounMap);
 
-        // If we get a valid match, add to candidate list and return
-        if (m.status == TextParseStatus::VALID) {
-            // If no direct objects, there will only be one result
-            if (m.directObjs.empty()) {
-                result.command = m.verbInfo.command;
-                result.direct = nullptr;
-                result.position = prepositionToPosition(m.preposition);
-                result.unparsed = m.unparsed;
-                for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
-                    result.indirect.push_back(it2->second);
-                }
+        addMatchToResults(VerbType::BUILDER, m, results);
 
-                candidates.push_back(result);
-            }
-            else {
-                // Each direct object gets its own result
-                for (auto it = m.directObjs.begin(); it != m.directObjs.end(); ++it) {
-                    result.command = m.verbInfo.command;
-                    result.direct = it->second;
-                    result.position = prepositionToPosition(m.preposition);
-                    result.unparsed = m.unparsed;
-                    for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
-                        result.indirect.push_back(it2->second);
-                    }
-
-                    candidates.push_back(result);
-                }
-            }
-
-            return TextParseStatus::VALID;
+        // Stop if we find a valid world builder verb
+        if (results.getBestStatus() == TextParseStatus::VALID) {
+            return results.getBestResults(candidates);
         }
     }
 
     // THIRD: Check for player verbs
     {
+        result = TextParseResult(VerbType::LOCAL);
 
     }
 
     // FOURTH: Check for area verbs
     {
+        result = TextParseResult(VerbType::LOCAL);
 
     }
 
     // FIFTH: Check for global verbs
     {
         m = parseGlobal(tokens, WordManager::hasGlobalVerb, WordManager::getGlobalVerb, playerNounMap, areaNounMap);
+        
+        addMatchToResults(VerbType::GLOBAL, m, results);
 
-        // If we get a valid match, add to candidate list and return
-        if (m.status == TextParseStatus::VALID) {
-            // If no direct objects, there will only be one result
-            if (m.directObjs.empty()) {
-                result.command = m.verbInfo.command;
-                result.direct = nullptr;
-                result.position = prepositionToPosition(m.preposition);
-                result.unparsed = m.unparsed;
-                for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
-                    result.indirect.push_back(it2->second);
-                }
-
-                candidates.push_back(result);
-            }
-            else {
-                // Each direct object gets its own result
-                for (auto it = m.directObjs.begin(); it != m.directObjs.end(); ++it) {
-                    result.command = m.verbInfo.command;
-                    result.direct = it->second;
-                    result.position = prepositionToPosition(m.preposition);
-                    result.unparsed = m.unparsed;
-                    for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
-                        result.indirect.push_back(it2->second);
-                    }
-
-                    candidates.push_back(result);
-                }
-            }
-
-            return TextParseStatus::VALID;
+        // Stop if we find a valid global verb
+        if (results.getBestStatus() == TextParseStatus::VALID) {
+            return results.getBestResults(candidates);
         }
-
     }
 
-    // No usable verb found if we reach here
-    // Return unparsed input with INVALID_VERB or UNAVAILABLE_VERB.
-    result.command = engine::CommandEnum::INVALID;
-    result.direct = nullptr;
-    result.position = engine::ItemPosition::NONE;
-    result.unparsed = joinOriginalTokens(tokens, Range(0, tokens.size()));
-    candidates.push_back(result);
+    // SIXTH: Check for unavailable verbs if no other results yet
+    if (results.getResultCount() == 0) {
+        // No usable verb found if we reach here
+        // Return unparsed input with INVALID_VERB or UNAVAILABLE_VERB.
+        result = TextParseResult(VerbType::UNAVAILABLE);
+        result.command = engine::CommandEnum::INVALID;
+        result.direct = nullptr;
+        result.position = engine::ItemPosition::NONE;
+        result.unparsed = joinOriginalTokens(tokens, Range(0, tokens.size()));
+        candidates.push_back(result);
 
-    // SIXTH: Check for unavailable verbs
-    Range r = Range(0, tokens.size());
-    alias = findLongestGlobalAlias(WordManager::hasVerb, tokens, r);
-    if (!alias.empty()) {
-        // Verb found but unavailable; return unparsed input with UNAVAILABLE_VERB.
-        return TextParseStatus::UNAVAILABLE_VERB;
+        Range r = Range(0, tokens.size());
+        alias = findLongestGlobalAlias(WordManager::hasVerb, tokens, r);
+        if (!alias.empty()) {
+            // Verb found but unavailable; return unparsed input with UNAVAILABLE_VERB.
+            return TextParseStatus::UNAVAILABLE_VERB;
+        }
+        else {
+            // No verb found; return unparsed input with INVALID_VERB
+            return TextParseStatus::INVALID_VERB;
+        }
     }
-    else {
-        // No verb found; return unparsed input with INVALID_VERB
-        return TextParseStatus::INVALID_VERB;
-    }
+
+    // Return highest result
+    return results.getBestResults(candidates);
 }
 
 std::vector<TextParser::Token> TextParser::tokenizeInput(const std::string &input) {
@@ -305,6 +238,41 @@ std::string TextParser::findLongestGlobalAlias(bool (*hasAlias)(std::string), co
 
     // Did not find a match; return empty string.
     return std::string();
+}
+
+// Generates TextParseResults from the Match and adds them to the container.
+void TextParser::addMatchToResults(VerbType type, const Match m, ResultContainer &results) {
+    TextParseResult result;
+    result.type = type;
+    // If no direct objects, there will only be one result
+    if (m.directObjs.empty()) {
+        result.command = m.verbInfo.command;
+        result.direct = nullptr;
+        result.position = prepositionToPosition(m.preposition);
+        result.unparsed = m.unparsed;
+        for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
+            result.indirect.push_back(it2->second);
+        }
+
+        // Add result to container
+        results.addResult(m.status, result);
+    }
+    else {
+        // Each direct object gets its own result
+        for (auto it = m.directObjs.begin(); it != m.directObjs.end(); ++it) {
+            result.command = m.verbInfo.command;
+            result.direct = it->second;
+            result.position = prepositionToPosition(m.preposition);
+            result.unparsed = m.unparsed;
+            for (auto it2 = m.indirectObjs.begin(); it2 != m.indirectObjs.end(); ++it2) {
+                result.indirect.push_back(it2->second);
+            }
+
+            // Add result to container
+            results.addResult(m.status, result);
+        }
+    }
+
 }
 
 // Tries to find a global match based on input tokens and maps
@@ -431,6 +399,7 @@ TextParser::Match TextParser::parseGlobal(const std::vector<Token> &tokens, bool
     else {
         // No verb found; add all tokens to unparsed
         m.status = TextParseStatus::INVALID_VERB;
+        m.verbInfo = VerbInfo();
         range.end = tokens.size();
         m.unparsed = joinOriginalTokens(tokens, range);
     }
@@ -458,5 +427,57 @@ engine::ItemPosition TextParser::prepositionToPosition(PrepositionType prepositi
     }
 }
 
+
+//********************************
+// ResultContainer class
+//********************************
+TextParser::ResultContainer::ResultContainer() {
+    // Default to lowest
+    _bestSoFar = TextParseStatus::INVALID_VERB;
+}
+
+// Gets the best TextParseStatus so far.
+TextParseStatus TextParser::ResultContainer::getBestStatus() const {
+    return _bestSoFar;
+}
+
+// Gets the result(s) with the most complete parse status.
+TextParseStatus TextParser::ResultContainer::getBestResults(std::vector<TextParseResult> &results) const {
+    int highestPriority = 0;
+    // Find result(s) with highest priority by verb type
+    for (auto it = _results.find(_bestSoFar); it != _results.end(); ++it) {
+        int priority = static_cast<int>(it->second.type);
+        if (priority >= highestPriority) {
+            highestPriority = priority;
+        }
+    }
+    // Add the highest priority objects to the results
+    for (auto it = _results.find(_bestSoFar); it != _results.end(); ++it) {
+        int priority = static_cast<int>(it->second.type);
+        if (priority == highestPriority) {
+            results.push_back(it->second);
+        }
+    }
+
+    return _bestSoFar;
+}
+
+// Adds a result to the ResultContainer and updates the highest status so far.
+void TextParser::ResultContainer::addResult(TextParseStatus status, TextParseResult result) {
+    // Update highest status as needed
+    if (static_cast<int>(status) > static_cast<int>(_bestSoFar)) {
+        _bestSoFar = status;
+    }
+    // Add result to map
+    _results.emplace(status, result);
+
+    // Increment counter
+    _count++;
+}
+
+// Gets the total number of results in the container.
+size_t TextParser::ResultContainer::getResultCount() const {
+    return _count;
+}
 
 }}

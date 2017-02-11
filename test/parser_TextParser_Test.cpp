@@ -2,7 +2,7 @@
   \file     parser_TextParser_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/07/2017
+  \modified 02/10/2017
   \course   CS467, Winter 2017
  
   \details This file contains the unit tests for the TextParser class.
@@ -149,6 +149,7 @@ TEST_F(TextParserTest, LookHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -185,6 +186,7 @@ TEST_F(TextParserTest, TakeHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -209,6 +211,7 @@ TEST_F(TextParserTest, PutHappyPath) {
         ASSERT_EQ(1, candidates.begin()->indirect.size());
         EXPECT_TRUE(*candidates.begin()->indirect.begin() == nullptr);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -230,6 +233,7 @@ TEST_F(TextParserTest, DropHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -249,6 +253,7 @@ TEST_F(TextParserTest, InventoryHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -270,6 +275,7 @@ TEST_F(TextParserTest, MoreItemHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -289,6 +295,7 @@ TEST_F(TextParserTest, EquipmentHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -314,6 +321,7 @@ TEST_F(TextParserTest, EquipHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -339,6 +347,7 @@ TEST_F(TextParserTest, UnequipHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -360,6 +369,7 @@ TEST_F(TextParserTest, TransferHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -395,6 +405,7 @@ TEST_F(TextParserTest, ShoutHappyPath) {
         EXPECT_TRUE(candidates.begin()->direct == nullptr);
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+        candidates.clear();
     }
 }
 
@@ -434,6 +445,7 @@ TEST_F(TextParserTest, QuitHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -457,6 +469,7 @@ TEST_F(TextParserTest, GoHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -479,6 +492,7 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -543,6 +557,7 @@ TEST_F(TextParserTest, AttackHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -565,6 +580,7 @@ TEST_F(TextParserTest, AttackWithSkillHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -654,6 +670,7 @@ TEST_F(TextParserTest, SearchHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -708,6 +725,7 @@ TEST_F(TextParserTest, MoveHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -730,6 +748,7 @@ TEST_F(TextParserTest, ReadHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -752,6 +771,7 @@ TEST_F(TextParserTest, BreakHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -774,6 +794,7 @@ TEST_F(TextParserTest, ClimbHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -796,6 +817,7 @@ TEST_F(TextParserTest, TurnHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -818,6 +840,7 @@ TEST_F(TextParserTest, PushHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -840,6 +863,7 @@ TEST_F(TextParserTest, PullHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -862,6 +886,7 @@ TEST_F(TextParserTest, EatHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -884,6 +909,7 @@ TEST_F(TextParserTest, DrinkHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 
@@ -966,6 +992,7 @@ TEST_F(TextParserTest, CreateHappyPath) {
         EXPECT_TRUE(candidates.begin()->direct == nullptr);
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+        candidates.clear();
     }
 }
 
@@ -1077,6 +1104,7 @@ TEST_F(TextParserTest, DeleteHappyPath) {
         ASSERT_EQ(0, candidates.begin()->indirect.size());
         EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
         EXPECT_TRUE(candidates.begin()->unparsed.empty());
+        candidates.clear();
     }
 }
 

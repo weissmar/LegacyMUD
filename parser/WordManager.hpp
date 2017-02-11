@@ -2,7 +2,7 @@
   \file     WordManager.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/07/2017
+  \modified 02/10/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the WordManager class.
@@ -35,6 +35,11 @@ struct VerbInfo {
     Grammar grammar;              //!< Stores the grammar supported by the verb.
     engine::CommandEnum command;  //!< Stores the command mapped to the verb.
     std::string description;      //!< Stores the description of the verb shown in help.
+
+    VerbInfo() {
+      grammar = Grammar(Grammar::Support::NO, Grammar::Support::NO);
+      command = engine::CommandEnum::INVALID;
+    }
 };
 
 /*! 
