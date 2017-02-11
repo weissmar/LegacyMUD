@@ -28,13 +28,11 @@ namespace legacymud {namespace telnet {
 
 
 /******************************************************************************
-* Function:    Server()
-* Description: Server class constructor
-* 
-* Input:            none         
-* Preconditions:    none                      
+* Constructor:    Server()                     
 *****************************************************************************/
-Server::Server() {   
+Server::Server() { 
+    /* Sets default private member variables.  initServer needs to be called afterwards */
+    /* to initialize the server. */
     _serverPort = 0;     
     _maxPlayers = 0;  
     _playerCount = 0;
@@ -46,21 +44,13 @@ Server::Server() {
 
 
 /******************************************************************************
-* Function:    initServer
-* Description: This function initializes the server.
-* 
-* Input:            int serverPort     Port to start the server on.
-* Input:            int maxPlayers     Max number of people that can be on the server. 
-* Input:            gameLogicPt          
-* Preconditions:    serverPort         Should be an integer from 1000 to 65535 
-*                   maxPlayers         Should be an integer > 0.     
-* Return:           true if successful.  otherwise false.                   
+* Function:    initServer                 
 *****************************************************************************/
 bool Server::initServer(int serverPort, int maxPlayers, int timeOut, legacymud::engine::GameLogic* gameLogicPt) {   
     struct sockaddr_in serverAddr;         // address structure for server  
     
     /* Set member variables. */
-    if (!setServerPort(serverPort) || !setMaxPlayers(maxPlayers) || !setTimeOut(timeOut) || !setGameLogicPt(gameLogicPt) ) {
+    if (!_setServerPort(serverPort) || !setMaxPlayers(maxPlayers) || !setTimeOut(timeOut) || !setGameLogicPt(gameLogicPt) ) {
         std::cout << "Error setting server parameters." << std::endl; // Error setting member variables
         return false;    
     }        
@@ -91,57 +81,52 @@ bool Server::initServer(int serverPort, int maxPlayers, int timeOut, legacymud::
 
 /******************************************************************************
 * Function:    startListening
-* Description: This function listens for connections.
-*
-* Input:            none           
-* Preconditions:    none                        
-* Return:           none 
 *****************************************************************************/
 void Server::startListening() {   
     struct sockaddr_in clientAddr;         // address structure for client
     socklen_t clientLength;                // length of a client's address structure   
     int newClientSocketFd;                 // new socket connected to client
     struct timeval timeOut;                // timeout timer for receiving messages on a socket.
-    timeOut.tv_sec = getTimeOut();                  // set a 15 minute player timeout for disconnect 
+    timeOut.tv_sec = getTimeOut();         // sets a player time-out period in seconds for disconnect 
    
     while (1) {
         
         /* Listen for connection. */
         std::cout << "Listening for new connection..." << std::endl;
-        listen(_listenSocketFd, 10);      // maximum connection requests at a time: 10
+        listen(_listenSocketFd, 10);      // maximum connection requests at a time set to 10
         
         /* Accept connection. */
         clientLength = sizeof(clientAddr);
         newClientSocketFd = accept(_listenSocketFd, (struct sockaddr *) &clientAddr, &clientLength);
         if (newClientSocketFd < 0) {   
-            std::cout << "Error accepting connection" << std::endl;
+            std::cout << "Error accepting connection" << std::endl;     // error accepting connection
         }
         else {
             std::cout << "Connection established. Socket: " << newClientSocketFd << std::endl;              
             
             /* Add player to player map. This map is a list of players on the server. */
             if (_addPlayerToMap(newClientSocketFd) == false) {
-                std::cout << "Error adding player to map." << std::endl; 
+                std::cout << "Error adding player to map." << std::endl;    // error adding player to a map
                 disconnectPlayer(newClientSocketFd);
             }
             /* Set the player's Telnet terminal into character mode. */
             else if (_setCharacterMode(newClientSocketFd) == false) {
-                std::cout << "Error setting character mode in the client" << std::endl;
+                std::cout << "Error setting character mode in the client" << std::endl; // error setting character mode
                 disconnectPlayer(newClientSocketFd);
             }
             /* Disconnect the player if the player cap is exceeded. */
             else if (_playerCount > _maxPlayers) {
-                sendMsg(newClientSocketFd, "Server is full.  Please try again later.", NEWLINE);
+                sendMsg(newClientSocketFd, "Server is full.  Please try again later.", NEWLINE);    // server is full
                 disconnectPlayer(newClientSocketFd);
             }
             /* Disconnect the new player if game backup is in progress. */
             else if (_serverPause == true) {
-                sendMsg(newClientSocketFd, "Server backup in progress.  Please try again later.", NEWLINE);
+                sendMsg(newClientSocketFd, "Game backup in progress.  Please try again later.", NEWLINE); // game backup in progress
                 disconnectPlayer(newClientSocketFd);    
             }
             /* Set disconnect timeout on player's socket. */
             else if (setsockopt (newClientSocketFd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeOut, sizeof(timeOut)) < 0) {
-                std::cout << "Error setting socket timeout" << std::endl; 
+                std::cout << "Error setting socket time-out" << std::endl;   // error setting time-out
                 disconnectPlayer(newClientSocketFd);                
             }
             /* Create a new thread for this player and send to a new player handler in the game logic. */
@@ -156,17 +141,11 @@ void Server::startListening() {
 
 /******************************************************************************
 * Function:    disconnectPlayer
-* Description: This function disconnects a player.
-*
-* Input:            int playerFd   Socket to close.        
-* Preconditions:    none                      
-* Return:           Returns true if player disconnected successfully. Otherwise false.
 *****************************************************************************/
 void Server::disconnectPlayer(int playerFd) {   
     
-    /* Only close and decrement player count when player is in map.  Protects */
-    /* against accidental multiple calls to disconnect a player. */
-    
+    /* Only close and decrement player count when player is in map. */
+    /* Protects against accidental multiple calls to disconnect a player. */   
     if (_removePlayerFromMap(playerFd) == true ) {
         _playerCount--;     // decrement player count
         close(playerFd);     
@@ -176,16 +155,10 @@ void Server::disconnectPlayer(int playerFd) {
 
 /******************************************************************************
 * Function:    sendMsg
-* Description: This function sends a message to a client.
-*
-* Input:            int playerFd   client socket 
-* Input:            std::string outMsg   message to be sent  
-* Input:            Server::NewLine newLine
-* Preconditions:    none                      
-* Return:           Returns true if successful send. Otherwise false.
 *****************************************************************************/
 bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) {
    
+    /* Check if a newline is desired. */
     if (newLine == NEWLINE) { 
         outMsg += "\015\012";       // attach carriage return  and linefeed
     }
@@ -199,19 +172,13 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
 
 /******************************************************************************
 * Function:    receiveMsg
-* Description: This function receives a message from a client.
-*
-* Input:            std::string inMsg    message received
-* Input:            int playerFd   client socket        
-* Preconditions:    none                      
-* Return:           Returns true if successful send. Otherwise false.
 *****************************************************************************/
 bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
-    unsigned char ch = 0;
+    unsigned char ch = 0;       // character read from the socket
     
-    inMsg = "";               // initialize inMsg
+    inMsg = "";                 // initialize inMsg
     
-    // Read socket.
+    // Read the socket.  Continue to read until a carriage return (ASCII 13) is received.
     while (ch != 13) {  // ASCII carriage return
         if (read(playerFd,&ch,1) <= 0)  // returns -1 when error reading, returns 0 if client disconnected.
             return false;        
@@ -265,35 +232,22 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
 
 /******************************************************************************
 * Function:    listenForMsgs
-* Description: This function listens for messages from a client
-*
-* Input:            int playerFd   client socket        
-* Preconditions:    none                      
-* Return:           none
 *****************************************************************************/
 bool Server::listenForMsgs(int playerFd) {
     std::string inMsg;             // initialize inMsg
-    std::mutex m;
     
     while (1) {
         if (receiveMsg(playerFd, inMsg) == false )
             return false;
         
         /* Send the message to the message handler. */
-        m.lock();   // make thread safe
-        _gameLogicPt->receivedMessageHandler(inMsg, playerFd); 
-        m.unlock();
+        _gameLogicPt->receivedMessageHandler(inMsg, playerFd);       
     }
 }
 
 
 /******************************************************************************
-* Function:    pause
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    pause          
 *****************************************************************************/
 void Server::pause(bool pause) {   
     _serverPause = pause;
@@ -301,17 +255,15 @@ void Server::pause(bool pause) {
 
 
 /******************************************************************************
-* Function:    setMaxPlayers
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    setMaxPlayers       
 *****************************************************************************/
 bool Server::setMaxPlayers(int maxPlayers) {   
+    
+    /* Validate the maxPlayer value. */
     if (maxPlayers <= 0) {
         return false;    
     }
+    /* Set the maxPlayer value. */
     else {
         _maxPlayers = maxPlayers; 
         return true;
@@ -320,17 +272,15 @@ bool Server::setMaxPlayers(int maxPlayers) {
 
 
 /******************************************************************************
-* Function:    setTimeOut
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    setTimeOut         
 *****************************************************************************/
 bool Server::setTimeOut(int timeOut) {    
+    
+    /* Validate the time-out value. */
     if (timeOut <= 0) {
         return false;    
     }
+    /* Set the time-out value. */
     else {
         _timeOut = timeOut; 
         return true;
@@ -339,38 +289,15 @@ bool Server::setTimeOut(int timeOut) {
 
 
 /******************************************************************************
-* Function:    setServerPort
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
-*****************************************************************************/
-bool Server::setServerPort(int serverPort) {   
-
-    if (serverPort < 1000 || serverPort > 65535) {
-        return false;    
-    }
-    else {
-        _serverPort = serverPort; 
-        return true;
-    }
-}
-
-
-/******************************************************************************
-* Function:    setGameLogicPt
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    setGameLogicPt          
 *****************************************************************************/
 bool Server::setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt) {   
 
+    /* Validate the pointer. */
     if (gameLogicPt == 0) {
         return false;    
     }
+    /* Set the game logic pointer. */
     else {
         _gameLogicPt = gameLogicPt; 
         return true;
@@ -379,20 +306,19 @@ bool Server::setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt) {
 
 
 /******************************************************************************
-* Function:    setPlayerEcho
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    setPlayerEcho          
 *****************************************************************************/
-bool Server::setPlayerEcho(int playerFd, bool echo) {   
+bool Server::setPlayerEcho(int playerFd, bool echo) {  
+    
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_echo);   
     
     /* Verify that the player is in the Map. */
     if(_playerEcho.find(playerFd) == _playerEcho.end()) 
         return false;
+    
+    /* Set the player's echo value. */
     else {
-        /* Set the player's echo value. */
         _playerEcho[playerFd] = echo;            
         return true;
     }   
@@ -400,12 +326,7 @@ bool Server::setPlayerEcho(int playerFd, bool echo) {
 
 
 /******************************************************************************
-* Function:    getServerPause
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    getServerPause        
 *****************************************************************************/
 bool Server::getServerPause() const {   
     return _serverPause;
@@ -413,12 +334,7 @@ bool Server::getServerPause() const {
 
 
 /******************************************************************************
-* Function:    getMaxPlayers
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    getMaxPlayers          
 *****************************************************************************/
 int Server::getMaxPlayers() const {   
     return _maxPlayers;
@@ -426,12 +342,7 @@ int Server::getMaxPlayers() const {
 
 
 /******************************************************************************
-* Function:    getPlayerCount
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    getPlayerCount        
 *****************************************************************************/
 int Server::getPlayerCount() const {   
     return _playerCount;
@@ -439,12 +350,7 @@ int Server::getPlayerCount() const {
 
 
 /******************************************************************************
-* Function:    getTimeOut
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    getTimeOut        
 *****************************************************************************/
 int Server::getTimeOut() const {   
     return _timeOut;  
@@ -452,12 +358,7 @@ int Server::getTimeOut() const {
 
 
 /******************************************************************************
-* Function:    getServerPort
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    getServerPort          
 *****************************************************************************/
 int Server::getServerPort() const {   
     return _serverPort;  
@@ -465,12 +366,7 @@ int Server::getServerPort() const {
 
 
 /******************************************************************************
-* Function:    getGameLogicPt
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    getGameLogicPt         
 *****************************************************************************/
 legacymud::engine::GameLogic* Server::getGameLogicPt() const {   
     return _gameLogicPt;  
@@ -478,33 +374,41 @@ legacymud::engine::GameLogic* Server::getGameLogicPt() const {
 
 
 /******************************************************************************
-* Function:    getPlayerEcho
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Function:    getPlayerEcho         
 *****************************************************************************/
 bool Server::getPlayerEcho(int playerFd) {   
 
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_echo);   
+    
     /* Verify that the player is in the Map. */
     if(_playerEcho.find(playerFd) == _playerEcho.end()) 
         return false;     // Don't care.  This player is not in the game.
-    else
-        /* Get the player's echo value. */
+    /* Get the player's echo value. */
+    else 
         return _playerEcho[playerFd];        
 }
 
 
 /******************************************************************************
-* Function:    _setCharacterMode
-* Description: This helper function sends a telnet command to a client to set 
-* character mode.
-*
-* Input:            
-* Input:                    
-* Preconditions:                          
-* Return:           
+* Private Function:    _setServerPort         
+*****************************************************************************/
+bool Server::_setServerPort(int serverPort) {   
+
+    /* Validate the server port value. */
+    if (serverPort < 1000 || serverPort > 65535) {
+        return false;    
+    }
+    /* Set the server port value. */
+    else {
+        _serverPort = serverPort; 
+        return true;
+    }
+}
+
+
+/******************************************************************************
+* Private Function:    _setCharacterMode          
 *****************************************************************************/
 bool Server::_setCharacterMode(int playerFd) {
     unsigned char code[6] = {255,251,1,255,251,3};     // Telnet command IAC WILL ECHO, IAC WILL SUPPRESS_GO_AHEAD
@@ -527,15 +431,13 @@ bool Server::_setCharacterMode(int playerFd) {
 
 
 /******************************************************************************
-* Function:    _addPlayerToMap
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Private Function:    _addPlayerToMap         
 *****************************************************************************/
-bool Server::_addPlayerToMap(int playerFd) {   
+bool Server::_addPlayerToMap(int playerFd) {  
 
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_echo);    
+    
     /* Verify that the player isn't already in the Map. */
     if(_playerEcho.find(playerFd) != _playerEcho.end()) 
         return false;     // This player fd is alread in the map.
@@ -549,14 +451,12 @@ bool Server::_addPlayerToMap(int playerFd) {
 
 
 /******************************************************************************
-* Function:    _removePlayerFromMap
-* Description: 
-*
-* Input:                   
-* Preconditions:                         
-* Return:          
+* Private Function:    _removePlayerFromMap         
 *****************************************************************************/
 bool Server::_removePlayerFromMap(int playerFd ) { 
+    
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_echo);    
     
     /* Verify that the player is in the Map. */
     if(_playerEcho.find(playerFd) == _playerEcho.end()) 

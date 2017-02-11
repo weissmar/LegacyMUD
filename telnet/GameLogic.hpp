@@ -13,6 +13,7 @@
 #define LEGACYMUD_ENGINE_GAMELOGIC_HPP
 
 #include <deque>
+#include <condition_variable>
 
 namespace legacymud {
     namespace telnet {
@@ -26,13 +27,14 @@ class GameLogic {
     public:
         void newPlayerHandler(int playerFd);
         bool receivedMessageHandler(std::string inMsg, int playerFd);          
-        legacymud::telnet::Server* serverPt;
-        struct ReceivedMsg {
+        legacymud::telnet::Server* serverPt;        
+        struct ReceivedMsg {                // received message struct   
             std::string msg;
             int playerFd;
         };
-        std::deque<ReceivedMsg> msgDeque;
-       
+        std::deque<ReceivedMsg> msgDeque;   // message deque for received messages
+        std::condition_variable cond_msg;   // conditional variable for information game engine a message has arrived
+        std::mutex mu_msg;                  // mutex for making msgDeque thread safe
 };
 
 }}

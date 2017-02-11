@@ -75,10 +75,11 @@ namespace legacymud {
         /*!
           \brief Disconnects a player from the server.
           
-          This function disconnects a player from the server.
+          This function disconnects a player from the server.  This should be called by the game engine every time
+          receiveMsg or listenForMsgs returns false. 
                    
           \pre none
-          \post A players is disconnected from the server.
+          \post A player is disconnected from the server.
         */        
         void disconnectPlayer(int playerFd);
         
@@ -113,46 +114,160 @@ namespace legacymud {
         /*!
           \brief Listens for received messages from a player.  
           
-          This function listens for received messages from a player.  It enters an infinite loop that constantly listens. 
-          This infinite loop is broken if a player disconnects or times-out.  Each received message is sent to a Game Logic 
-          object receivedMessageHandler. 
+          This function listens for received messages from a player.  It enters an infinite loop that constantly listens 
+          for received messages from one player. This infinite loop is broken if a player disconnects or times-out.  
+          Each received message is sent to a Game Logic object receivedMessageHandler function. 
           
           \param[in]  playerFd          a player identifier                               
           \pre none
           \post Returns false if a player disconnects or times-out. The Game Logic newPlayerHandler should call 
-                Server::disconnectPlayer(playerFd) if a false is received.
+                disconnectPlayer(playerFd) if a false is received.
         */ 
         bool listenForMsgs(int playerFd);
         
-        /* Setters. */
+        /*!
+          \brief Sets the server into a pause state. 
+          
+          This function sets the server into a paused state to support game back-ups.  In a paused state, the server no longer accepts
+          new player connections.  
+          
+          \param[in]  pause     sets the pause state of the server                            
+          \pre none
+          \post If pause is set to true, the server will be in a paused state.  If pause is set to false, the server will not
+                be in a paused state.
+        */
         void pause(bool pause);
+        
+        /*!
+          \brief Sets the max number of players that can be concurrently on the server.  
+          
+          This function sets the max number of players that can be concurrently on the server. 
+          
+          \param[in]  maxPlayers     max number of players that can be on the server                           
+          \pre maxplayers must be an integer greater than 0.
+          \post Returns false if maxPlayers is an invalid ammount.  Otherwise the player cap is set and true is returned.
+        */        
         bool setMaxPlayers(int maxPlayers);
+        
+        /*!
+          \brief Sets the time-out period in seconds that the server waits before disconnecting an inactive player.  
+          
+          This function sets the time-out period in seconds that the server waits before disconnecting an inactive player.  
+          
+          \param[in]  timeOut     time in seconds to set the time-out period to                          
+          \pre timeOut must be an integer greater than 0.
+          \post Returns false if timeOut is an invalid ammount.  Otherwise the time-out period is set and true is returned.
+        */ 
         bool setTimeOut(int timeOut);
-        bool setServerPort(int timeOut);
+        
+        /*!
+          \brief Sets a pointer to the game logic object.
+          
+          This function sets a pointer to the Game Logic object. 
+          
+          \param[in]  gameLogicPt     pointer to a game logic object                         
+          \pre gameLogicPt should not be 0.
+          \post Returns false if gameLogicPt is 0.  Otherwise game logic pointer is set and true is returned.
+        */ 
         bool setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt);
+        
+        /*!
+          \brief Sets a players text display echo mode.
+          
+          This function sets a players text display echo mode.  For example, it can be used to prevent the
+          display of a password as it's entered on a player's terminal display.
+          
+          \param[in]  playerFd        player identifier 
+          \param[in]  echo            text echo display mode of a player's terminal display                        
+          \pre none
+          \post Returns false if the player is not on the server.  Otherwise the echo mode is set and true is returned.
+        */ 
         bool setPlayerEcho(int playerFd, bool echo);
         
-        /* Getters. */
+        /*!
+          \brief Gets the server's pause state.
+          
+          This function gets the server's pause state.
+                                
+          \pre none
+          \post Returns the server's pause state.
+        */ 
         bool getServerPause() const;
+        
+        /*!
+          \brief Gets the server's max player setting.
+          
+          This function gets the server's max player setting.
+                                
+          \pre none
+          \post Returns the server's max player setting.
+        */
         int getMaxPlayers() const;
+        
+        /*!
+          \brief Gets the server's current player count.
+          
+          This function gets the server's current player count.
+                                
+          \pre none
+          \post Returns the server's current player count.
+        */
         int getPlayerCount() const;
+        
+        /*!
+          \brief Gets the server's player time-out period in seconds.
+          
+          This function gets the server's player time-out period in seconds.
+                                
+          \pre none
+          \post Returns the server's time-out period in seconds.
+        */        
         int getTimeOut() const;
+        
+        /*!
+          \brief Gets the server's port.
+          
+          This function gets the server's port.
+                                
+          \pre none
+          \post Returns the server's port.
+        */ 
         int getServerPort() const;
+        
+        /*!
+          \brief Gets the game logic pointer that the server is using.
+          
+          This function gets the game logic pointer that the server is using.
+                                
+          \pre none
+          \post Returns the game logic pointer that the server is using.
+        */ 
         legacymud::engine::GameLogic* getGameLogicPt() const;
+        
+        /*!
+          \brief Gets a player's text display echo mode.
+          
+          This function gets a player's text display echo mode.
+                                
+          \pre none
+          \post Returns a player's text display echo mode.
+        */         
         bool getPlayerEcho(int playerFd);
 
     private:
-        bool _setCharacterMode(int playerFd);
-        bool _addPlayerToMap(int playerFd);
-        bool _removePlayerFromMap(int playerFd);
-        int _serverPort;
-        int _maxPlayers; 
-        int _timeOut;
-        int _listenSocketFd; 
-        int _playerCount;
-        bool _serverPause;
-        legacymud::engine::GameLogic* _gameLogicPt;  
-        std::map<int, bool> _playerEcho;        
+        bool _setServerPort(int serverPort);        // function that sets and validates the server port
+        bool _setCharacterMode(int playerFd);       // function that sets a player's telnet terminal to character mode
+        bool _addPlayerToMap(int playerFd);         // function that adds a players to the _playerEcho map
+        bool _removePlayerFromMap(int playerFd);    // function that removes a players from the _playerEcho map
+        int _serverPort;                            // server port
+        int _maxPlayers;                            // max number of players that can be on the server
+        int _timeOut;                               // time in seconds the server waits before removing an inactive player
+        int _listenSocketFd;                        // socket the server uses to listen for new connections
+        int _playerCount;                           // a count of the number of players on the server
+        bool _serverPause;                          // pause state of the server
+        legacymud::engine::GameLogic* _gameLogicPt; // game logic pointer the server is using
+        std::map<int, bool> _playerEcho;            // map used to set a player's text echo display mode
+        std::mutex _mu_echo;                         // mutex used for the player echo map
 };
 
 }}
