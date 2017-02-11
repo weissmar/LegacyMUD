@@ -17,14 +17,20 @@
 #include <vector>
 #include <map>
 #include <tuple>
-#include <Grammar.h>
+#include <Grammar.hpp>
 #include "CommandEnum.hpp"
 #include "ObjectType.hpp"
+#include "ItemPosition.hpp"
 
 namespace legacymud { namespace engine {
 
 class Action;
 class SpecialSkill;
+class Player;
+class Item;
+class Area;
+class NonCombatant;
+class Combatant;
 
 /*!
  * \details     Defines necessary members for aliasing nouns and commands 

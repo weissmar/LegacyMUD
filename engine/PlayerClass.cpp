@@ -33,7 +33,7 @@ PlayerClass & PlayerClass::operator=(const PlayerClass &otherPlayerClass){
 }
 
 
-virtual PlayerClass::~PlayerClass(){
+PlayerClass::~PlayerClass(){
 
 }
 
@@ -48,37 +48,37 @@ bool PlayerClass::setPrimaryStat(int){
 }
 
 
-virtual ObjectType PlayerClass::getObjectType(){
+ObjectType PlayerClass::getObjectType(){
 
 }
 
 
-virtual std::string PlayerClass::serialize(){
+std::string PlayerClass::serialize(){
 
 }
 
 
-virtual bool PlayerClass::deserialize(std::string){
+bool PlayerClass::deserialize(std::string){
 
 }
 
 
-virtual InteractiveNoun* PlayerClass::copy(){
+InteractiveNoun* PlayerClass::copy(){
 
 }
 
 
-virtual bool PlayerClass::editAttribute(Player*, std::string){
+bool PlayerClass::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool PlayerClass::editWizard(Player*){
+bool PlayerClass::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> PlayerClass::getAttributeSignature(){
+std::map<std::string, DataType> PlayerClass::getAttributeSignature(){
 
 }
 

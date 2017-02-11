@@ -33,7 +33,7 @@ ConditionalElement & ConditionalElement::operator=(const ConditionalElement &oth
 }
 
 
-virtual ConditionalElement::~ConditionalElement(){
+ConditionalElement::~ConditionalElement(){
 
 }
 
@@ -78,12 +78,12 @@ bool ConditionalElement::setAltDescription(std::string altDescription){
 }
 
 
-virtual std::string ConditionalElement::serialize(){
+std::string ConditionalElement::serialize(){
 
 }
 
 
-virtual bool ConditionalElement::deserialize(std::string){
+bool ConditionalElement::deserialize(std::string){
 
 }
 

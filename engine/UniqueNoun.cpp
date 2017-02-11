@@ -14,18 +14,12 @@ namespace legacymud { namespace engine {
 
 int UniqueNoun::nextID = 0;
 
-UniqueNoun::UniqueNoun(){
-
-}
-
-
-UniqueNoun::~UniqueNoun(){
-
+UniqueNoun::UniqueNoun() : ID(nextID++) {
 }
 
 
 int UniqueNoun::getID(){
-
+    return ID;
 }
 
 }}

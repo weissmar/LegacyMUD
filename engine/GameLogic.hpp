@@ -13,7 +13,10 @@
 #define GAME_LOGIC_HPP
 
 #include <string>
+#include <queue>
 #include "ObjectType.hpp"
+#include "CommandEnum.hpp"
+#include "ItemPosition.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -34,20 +37,7 @@ class GameLogic {
          * \brief   Starts a game.
          * 
          * This function starts a new game, if newGame is true, or loads the
-         * game from the default file.
-         * 
-         * \param[in] newGame   Specifies whether or not to start a new game.
-         *
-         * \return  Returns a bool indicating whether or not starting the game
-         *          was successful.
-         */
-        bool startGame(bool newGame);
-
-        /*!
-         * \brief   Starts a game.
-         * 
-         * This function starts a new game, if newGame is true, or loads the
-         * game from the passed-in file.
+         * game from the passed-in file or, if empty string, the default file.
          * 
          * \param[in] newGame   Specifies whether or not to start a new game.
          * \param[in] fileName  Specifies the file to load the game from, if
@@ -257,7 +247,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not executing the command
          *          was successful.
          */
-        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = none);
+        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = ItemPosition::NONE);
 
         /*!
          * \brief   Executes the help command.

@@ -32,12 +32,12 @@ Action & Action::operator=(const Action &otherAction){
 }
 
 
-virtual Action::~Action(){
+Action::~Action(){
 
 }
 
 
-Action::CommandEnum getCommand(){
+CommandEnum Action::getCommand(){
 
 }
 
@@ -92,17 +92,17 @@ bool Action::removeAlias(std::string alais){
 }
 
 
-virtual std::string Action::serialize(){
+std::string Action::serialize(){
 
 }
 
 
-virtual bool Action::deserialize(std::string){
+bool Action::deserialize(std::string){
 
 }
 
 
-static std::map<std::string, DataType> Action::getAttributeSignature(){
+std::map<std::string, DataType> Action::getAttributeSignature(){
 
 }
 

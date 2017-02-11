@@ -11,6 +11,11 @@
 #include "InteractiveNoun.hpp"
 #include "Action.hpp"
 #include "SpecialSkill.hpp"
+#include "Player.hpp"
+#include "Item.hpp"
+#include "Area.hpp"
+#include "NonCombatant.hpp"
+#include "Combatant.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -29,7 +34,7 @@ InteractiveNoun & InteractiveNoun::operator=(const InteractiveNoun &otherNoun){
 }
 
 
-virtual InteractiveNoun::~InteractiveNoun(){
+InteractiveNoun::~InteractiveNoun(){
 
 }
 

@@ -34,7 +34,7 @@ Character & Character::operator=(const Character &otherCharacter){
 }
 
 
-virtual Character::~Character(){
+Character::~Character(){
 
 }
 
@@ -129,12 +129,12 @@ bool Character::unequipItem(Item *anItem){
 }
 
 
-virtual std::string Character::serialize(){
+std::string Character::serialize(){
 
 }
 
 
-virtual bool Character::deserialize(std::string){
+bool Character::deserialize(std::string){
 
 }
 

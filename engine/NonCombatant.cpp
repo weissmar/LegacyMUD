@@ -34,7 +34,7 @@ NonCombatant & NonCombatant::operator=(const NonCombatant &otherNPC){
 }
 
 
-virtual NonCombatant::~NonCombatant(){
+NonCombatant::~NonCombatant(){
 
 }
 
@@ -49,62 +49,62 @@ bool NonCombatant::setQuest(Quest *aQuest){
 }
 
 
-virtual ObjectType NonCombatant::getObjectType(){
+ObjectType NonCombatant::getObjectType(){
 
 }
 
 
-virtual std::string NonCombatant::serialize(){
+std::string NonCombatant::serialize(){
 
 }
 
 
-virtual bool NonCombatant::deserialize(std::string){
+bool NonCombatant::deserialize(std::string){
 
 }
 
 
-virtual std::string NonCombatant::look(){
+std::string NonCombatant::look(){
 
 }  
 
 
-virtual bool NonCombatant::take(Player*, Item*, InteractiveNoun*){
+bool NonCombatant::take(Player*, Item*, InteractiveNoun*){
 
 }
 
 
-virtual bool NonCombatant::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
+bool NonCombatant::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
 
 }
 
 
-virtual bool NonCombatant::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
+bool NonCombatant::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
 
 }
 
 
-virtual std::string NonCombatant::talk(Player*, NonCombatant*){
+std::string NonCombatant::talk(Player*, NonCombatant*){
 
 } 
 
 
-virtual InteractiveNoun* NonCombatant::copy(){
+InteractiveNoun* NonCombatant::copy(){
 
 }
 
 
-virtual bool NonCombatant::editAttribute(Player*, std::string){
+bool NonCombatant::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool NonCombatant::editWizard(Player*){
+bool NonCombatant::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> NonCombatant::getAttributeSignature(){
+std::map<std::string, DataType> NonCombatant::getAttributeSignature(){
 
 }
 

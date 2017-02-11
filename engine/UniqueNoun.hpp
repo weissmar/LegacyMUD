@@ -23,7 +23,6 @@ namespace legacymud { namespace engine {
 class UniqueNoun {
     public:
         UniqueNoun();
-        ~UniqueNoun();
 
         /*!
          * \brief   Gets the ID of the unique noun.
@@ -31,8 +30,10 @@ class UniqueNoun {
          * \return  Returns an int with the ID.
          */
         int getID();
+    protected:
+        ~UniqueNoun() {}
     private:
-        int ID;
+        const int ID;
         static int nextID;
 };
 

@@ -32,7 +32,7 @@ Feature & Feature::operator=(const Feature &otherFeature){
 }
 
 
-virtual Feature::~Feature(){
+Feature::~Feature(){
 
 }
 
@@ -57,92 +57,92 @@ bool Feature::setPlacement(std::string){
 }
 
 
-virtual ObjectType Feature::getObjectType(){
+ObjectType Feature::getObjectType(){
 
 }
 
 
-virtual std::string Feature::serialize(){
+std::string Feature::serialize(){
 
 }
 
 
-virtual bool Feature::deserialize(std::string){
+bool Feature::deserialize(std::string){
 
 }
 
 
-virtual std::string Feature::look(){
+std::string Feature::look(){
 
 }  
 
 
-virtual std::string Feature::listen(){
+std::string Feature::listen(){
 
 } 
 
 
-virtual std::string Feature::move(Player*){
+std::string Feature::move(Player*){
 
 } 
 
 
-virtual std::string Feature::read(Player*){
+std::string Feature::read(Player*){
 
 } 
 
 
-virtual std::string Feature::breakIt(Player*){
+std::string Feature::breakIt(Player*){
 
 } 
 
 
-virtual std::string Feature::climb(Player*){
+std::string Feature::climb(Player*){
 
 } 
 
 
-virtual std::string Feature::turn(Player*){
+std::string Feature::turn(Player*){
 
 } 
 
 
-virtual std::string Feature::push(Player*){
+std::string Feature::push(Player*){
 
 } 
 
 
-virtual std::string Feature::pull(Player*){
+std::string Feature::pull(Player*){
 
 } 
 
 
-virtual std::string Feature::eat(Player*){
+std::string Feature::eat(Player*){
 
 } 
 
 
-virtual std::string Feature::drink(Player*){
+std::string Feature::drink(Player*){
 
 } 
 
 
-virtual InteractiveNoun* Feature::copy(){
+InteractiveNoun* Feature::copy(){
 
 }
 
 
-virtual bool Feature::editAttribute(Player*, std::string){
+bool Feature::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool Feature::editWizard(Player*){
+bool Feature::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> Feature::getAttributeSignature(){
+std::map<std::string, DataType> Feature::getAttributeSignature(){
 
 }
   

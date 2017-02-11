@@ -32,107 +32,107 @@ ArmorType & ArmorType::operator=(const ArmorType &otherArmorType){
 }
 
 
-virtual ArmorType::~ArmorType(){
+ArmorType::~ArmorType(){
 
 }
 
 
-virtual int ArmorType::getArmorBonus(){
+int ArmorType::getArmorBonus(){
 
 }
 
 
-virtual DamageType ArmorType::getResistantTo(){
+DamageType ArmorType::getResistantTo(){
 
 }
 
 
-virtual bool ArmorType::setArmorBonus(int bonus){
+bool ArmorType::setArmorBonus(int bonus){
 
 }
 
 
-virtual bool ArmorType::setResistantTo(DamageType resistance){
+bool ArmorType::setResistantTo(DamageType resistance){
 
 }
 
 
-virtual ObjectType ArmorType::getObjectType(){
+ObjectType ArmorType::getObjectType(){
 
 }
 
 
-virtual std::string ArmorType::serialize(){
+std::string ArmorType::serialize(){
 
 }
 
 
-virtual bool ArmorType::deserialize(std::string){
+bool ArmorType::deserialize(std::string){
 
 }
 
 
-virtual std::string ArmorType::move(Player *aPlayer){
+std::string ArmorType::move(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::read(Player *aPlayer){
+std::string ArmorType::read(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::breakIt(Player *aPlayer){
+std::string ArmorType::breakIt(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::climb(Player *aPlayer){
+std::string ArmorType::climb(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::turn(Player *aPlayer){
+std::string ArmorType::turn(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::push(Player *aPlayer){
+std::string ArmorType::push(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::pull(Player *aPlayer){
+std::string ArmorType::pull(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::eat(Player *aPlayer){
+std::string ArmorType::eat(Player *aPlayer){
 
 } 
 
 
-virtual std::string ArmorType::drink(Player *aPlayer){
+std::string ArmorType::drink(Player *aPlayer){
 
 } 
 
 
-virtual InteractiveNoun* ArmorType::copy(){
+InteractiveNoun* ArmorType::copy(){
 
 }
 
 
-virtual bool ArmorType::editAttribute(Player *aPlayer, std::string attribute){
+bool ArmorType::editAttribute(Player *aPlayer, std::string attribute){
 
 }
 
 
-virtual bool ArmorType::editWizard(Player *aPlayer){
+bool ArmorType::editWizard(Player *aPlayer){
 
 }
 
 
-static std::map<std::string, DataType> ArmorType::getAttributeSignature(){
+std::map<std::string, DataType> ArmorType::getAttributeSignature(){
 
 }
 

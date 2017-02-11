@@ -32,7 +32,7 @@ SpecialSkill & SpecialSkill::operator=(const SpecialSkill &otherSpecialSkill){
 }
 
 
-virtual SpecialSkill::~SpecialSkill(){
+SpecialSkill::~SpecialSkill(){
 
 }
 
@@ -87,52 +87,52 @@ bool SpecialSkill::setCooldown(int cooldown){
 }
 
 
-virtual ObjectType SpecialSkill::getObjectType(){
+ObjectType SpecialSkill::getObjectType(){
 
 }
 
 
-virtual std::string SpecialSkill::serialize(){
+std::string SpecialSkill::serialize(){
 
 }
 
 
-virtual bool SpecialSkill::deserialize(std::string){
+bool SpecialSkill::deserialize(std::string){
 
 }
 
 
-virtual std::string SpecialSkill::more(){
+std::string SpecialSkill::more(){
 
 } 
 
 
-virtual bool SpecialSkill::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
+bool SpecialSkill::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
 
 }
 
 
-virtual std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
+std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
 
 } 
 
 
-virtual InteractiveNoun* SpecialSkill::copy(){
+InteractiveNoun* SpecialSkill::copy(){
 
 }
 
 
-virtual bool SpecialSkill::editAttribute(Player*, std::string){
+bool SpecialSkill::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool SpecialSkill::editWizard(Player*){
+bool SpecialSkill::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> SpecialSkill::getAttributeSignature(){
+std::map<std::string, DataType> SpecialSkill::getAttributeSignature(){
 
 }
 

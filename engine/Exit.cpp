@@ -33,7 +33,7 @@ Exit & Exit::operator=(const Exit &otherExit){
 }
 
 
-virtual Exit::~Exit(){
+Exit::~Exit(){
 
 }
 
@@ -68,92 +68,92 @@ bool Exit::setConnectArea(Area *anArea){
 }
 
 
-virtual ObjectType Exit::getObjectType(){
+ObjectType Exit::getObjectType(){
 
 }
 
 
-virtual std::string Exit::serialize(){
+std::string Exit::serialize(){
 
 }
 
 
-virtual bool Exit::deserialize(std::string){
+bool Exit::deserialize(std::string){
 
 }
 
 
-virtual std::string Exit::look(){
+std::string Exit::look(){
 
 }  
 
 
-virtual std::string Exit::listen(){
+std::string Exit::listen(){
 
 } 
 
 
-virtual std::string Exit::move(Player*){
+std::string Exit::move(Player*){
 
 } 
 
 
-virtual std::string Exit::read(Player*){
+std::string Exit::read(Player*){
 
 } 
 
 
-virtual std::string Exit::breakIt(Player*){
+std::string Exit::breakIt(Player*){
 
 } 
 
 
-virtual std::string Exit::climb(Player*){
+std::string Exit::climb(Player*){
 
 } 
 
 
-virtual std::string Exit::turn(Player*){
+std::string Exit::turn(Player*){
 
 } 
 
 
-virtual std::string Exit::push(Player*){
+std::string Exit::push(Player*){
 
 } 
 
 
-virtual std::string Exit::pull(Player*){
+std::string Exit::pull(Player*){
 
 } 
 
 
-virtual std::string Exit::eat(Player*){
+std::string Exit::eat(Player*){
 
 } 
 
 
-virtual std::string Exit::drink(Player*){
+std::string Exit::drink(Player*){
 
 } 
 
 
-virtual InteractiveNoun* Exit::copy(){
+InteractiveNoun* Exit::copy(){
 
 }
 
 
-virtual bool Exit::editAttribute(Player*, std::string){
+bool Exit::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool Exit::editWizard(Player*){
+bool Exit::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> Exit::getAttributeSignature(){
+std::map<std::string, DataType> Exit::getAttributeSignature(){
 
 }
 

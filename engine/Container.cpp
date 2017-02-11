@@ -33,7 +33,7 @@ Container & Container::operator=(const Container &otherContainer){
 }
 
 
-virtual Container::~Container(){
+Container::~Container(){
 
 }
 
@@ -78,142 +78,142 @@ bool Container::setInsideCapacity(int capacity){
 }
 
 
-virtual ObjectType Container::getObjectType(){
+ObjectType Container::getObjectType(){
 
 }
 
 
-virtual std::string Container::serialize(){
+std::string Container::serialize(){
 
 }
 
 
-virtual bool Container::deserialize(std::string){
+bool Container::deserialize(std::string){
 
 }
 
 
-virtual std::string Container::look(){
+std::string Container::look(){
 
 }  
 
 
-virtual bool Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter){
+bool Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter){
 
 }
 
 
-virtual bool Container::put(Player *aPlayer, Item *anItem, InteractiveNoun*, ItemPosition position){
+bool Container::put(Player *aPlayer, Item *anItem, InteractiveNoun*, ItemPosition position){
 
 }
 
 
-virtual bool Container::drop(Player *aPlayer){
+bool Container::drop(Player *aPlayer){
 
 }
 
 
-virtual std::string Container::more(){
+std::string Container::more(){
 
 } 
 
 
-virtual bool Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun*){
+bool Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun*){
 
 }
 
 
-virtual bool Container::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*){
+bool Container::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*){
 
 }
 
 
-virtual bool Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*){
+bool Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*){
 
 }
 
 
-virtual std::string Container::move(Player *aPlayer){
+std::string Container::move(Player *aPlayer){
 
 } 
 
 
-virtual bool Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool playerAttacker){
+bool Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool playerAttacker){
 
 }
 
 
-virtual bool Container::buy(Player *aPlayer, Item *anItem){
+bool Container::buy(Player *aPlayer, Item *anItem){
 
 }
 
 
-virtual bool Container::sell(Player *aPlayer, Item *anItem){
+bool Container::sell(Player *aPlayer, Item *anItem){
 
 }
 
 
-virtual std::string Container::search(Player *aPlayer){
+std::string Container::search(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::read(Player *aPlayer){
+std::string Container::read(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::breakIt(Player *aPlayer){
+std::string Container::breakIt(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::climb(Player *aPlayer){
+std::string Container::climb(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::turn(Player *aPlayer){
+std::string Container::turn(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::push(Player *aPlayer){
+std::string Container::push(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::pull(Player *aPlayer){
+std::string Container::pull(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::eat(Player *aPlayer){
+std::string Container::eat(Player *aPlayer){
 
 } 
 
 
-virtual std::string Container::drink(Player *aPlayer){
+std::string Container::drink(Player *aPlayer){
 
 } 
 
 
-virtual InteractiveNoun* Container::copy(){
+InteractiveNoun* Container::copy(){
 
 }
 
 
-virtual bool Container::editAttribute(Player *aPlayer, std::string){
+bool Container::editAttribute(Player *aPlayer, std::string){
 
 }
 
 
-virtual bool Container::editWizard(Player *aPlayer){
+bool Container::editWizard(Player *aPlayer){
 
 }
 
 
-static std::map<std::string, DataType> Container::getAttributeSignature(){
+std::map<std::string, DataType> Container::getAttributeSignature(){
 
 }
 

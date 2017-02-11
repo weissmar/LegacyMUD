@@ -29,7 +29,7 @@ enum class ExitDirection {
     NORTHWEST,  //!< The exit is to the northwest
     SOUTHEAST,  //!< The exit is to the southeast
     SOUTHWEST,  //!< The exit is to the southwest 
-    UP          //!< The exit is above 
+    UP,         //!< The exit is above 
     DOWN        //!< The exit is below
 };
 

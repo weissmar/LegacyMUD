@@ -32,7 +32,7 @@ CreatureType & CreatureType::operator=(const CreatureType &otherCreatureType){
 }
 
 
-virtual CreatureType::~CreatureType(){
+CreatureType::~CreatureType(){
 
 }
 
@@ -57,37 +57,37 @@ bool CreatureType::setDifficulty(XPTier difficulty){
 }
 
 
-virtual ObjectType CreatureType::getObjectType(){
+ObjectType CreatureType::getObjectType(){
 
 }
 
 
-virtual std::string CreatureType::serialize(){
+std::string CreatureType::serialize(){
 
 }
 
 
-virtual bool CreatureType::deserialize(std::string){
+bool CreatureType::deserialize(std::string){
 
 }
 
 
-virtual InteractiveNoun* CreatureType::copy(){
+InteractiveNoun* CreatureType::copy(){
 
 }
 
 
-virtual bool CreatureType::editAttribute(Player*, std::string){
+bool CreatureType::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool CreatureType::editWizard(Player*){
+bool CreatureType::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> CreatureType::getAttributeSignature(){
+std::map<std::string, DataType> CreatureType::getAttributeSignature(){
 
 }
 

@@ -32,127 +32,127 @@ WeaponType & WeaponType::operator=(const WeaponType &otherWeaponType){
 }
 
 
-virtual WeaponType::~WeaponType(){
+WeaponType::~WeaponType(){
 
 }
 
 
-virtual int WeaponType::getDamage(){
+int WeaponType::getDamage(){
 
 }
 
 
-virtual DamageType WeaponType::getDamageType(){
+DamageType WeaponType::getDamageType(){
 
 }
 
 
-virtual AreaSize WeaponType::getRange(){
+AreaSize WeaponType::getRange(){
 
 }
 
 
-virtual int WeaponType::getCritMultiplier(){
+int WeaponType::getCritMultiplier(){
 
 }
 
 
-virtual bool WeaponType::setDamage(int damage){
+bool WeaponType::setDamage(int damage){
 
 }
 
 
-virtual bool WeaponType::setDamageType(DamageType type){
+bool WeaponType::setDamageType(DamageType type){
 
 }
 
 
-virtual bool WeaponType::setRange(AreaSize){
+bool WeaponType::setRange(AreaSize){
 
 }
 
 
-virtual bool WeaponType::setCritMultiplier(int){
+bool WeaponType::setCritMultiplier(int){
 
 }
 
 
-virtual ObjectType WeaponType::getObjectType(){
+ObjectType WeaponType::getObjectType(){
 
 }
 
 
-virtual std::string WeaponType::serialize(){
+std::string WeaponType::serialize(){
 
 }
 
 
-virtual bool WeaponType::deserialize(std::string){
+bool WeaponType::deserialize(std::string){
 
 }
 
 
-virtual std::string WeaponType::move(Player*){
+std::string WeaponType::move(Player*){
 
 } 
 
 
-virtual std::string WeaponType::read(Player*){
+std::string WeaponType::read(Player*){
 
 } 
 
 
-virtual std::string WeaponType::breakIt(Player*){
+std::string WeaponType::breakIt(Player*){
 
 } 
 
 
-virtual std::string WeaponType::climb(Player*){
+std::string WeaponType::climb(Player*){
 
 } 
 
 
-virtual std::string WeaponType::turn(Player*){
+std::string WeaponType::turn(Player*){
 
 } 
 
 
-virtual std::string WeaponType::push(Player*){
+std::string WeaponType::push(Player*){
 
 } 
 
 
-virtual std::string WeaponType::pull(Player*){
+std::string WeaponType::pull(Player*){
 
 } 
 
 
-virtual std::string WeaponType::eat(Player*){
+std::string WeaponType::eat(Player*){
 
 } 
 
 
-virtual std::string WeaponType::drink(Player*){
+std::string WeaponType::drink(Player*){
 
 } 
 
 
-virtual InteractiveNoun* WeaponType::copy(){
+InteractiveNoun* WeaponType::copy(){
 
 }
 
 
-virtual bool WeaponType::editAttribute(Player*, std::string){
+bool WeaponType::editAttribute(Player*, std::string){
 
 }
 
 
-virtual bool WeaponType::editWizard(Player*){
+bool WeaponType::editWizard(Player*){
 
 }
 
 
-static std::map<std::string, DataType> WeaponType::getAttributeSignature(){
+std::map<std::string, DataType> WeaponType::getAttributeSignature(){
 
 }
 
