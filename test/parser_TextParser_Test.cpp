@@ -1108,6 +1108,49 @@ TEST_F(TextParserTest, DeleteHappyPath) {
     }
 }
 
+// Test an unknown verb only
+TEST_F(TextParserTest, InvalidVerbOnly) {
+    std::string input = "foo";
+    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
+    EXPECT_EQ(parser::TextParseStatus::INVALID_VERB, result);
+    ASSERT_EQ(1, candidates.size());
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("foo", candidates.begin()->unparsed.c_str());
+    // Should not be any objects or position
+    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    EXPECT_EQ(0, candidates.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+}
+
+// Test an unknown verb with unknown direct object
+TEST_F(TextParserTest, InvalidVerbInvalidDirectObject) {
+    std::string input = "foo bar";
+    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
+    EXPECT_EQ(parser::TextParseStatus::INVALID_VERB, result);
+    ASSERT_EQ(1, candidates.size());
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("foo bar", candidates.begin()->unparsed.c_str());
+    // Should not be any objects or position
+    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    EXPECT_EQ(0, candidates.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+}
+
+// Test an unknown verb with known direct object
+TEST_F(TextParserTest, InvalidVerbValidDirectObject) {
+    std::string input = "foo torch";
+    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
+    EXPECT_EQ(parser::TextParseStatus::INVALID_VERB, result);
+    ASSERT_EQ(1, candidates.size());
+    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("foo torch", candidates.begin()->unparsed.c_str());
+    // Should not be any objects or position
+    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    EXPECT_EQ(0, candidates.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+}
+
+
 /******************************************
  * Helper Functions
  *****************************************/
