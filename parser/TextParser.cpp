@@ -73,6 +73,7 @@ TextParseStatus TextParser::parse(
 
     // THIRD: Check for player verbs
     {
+        m = parseLocal(tokens, playerVerbMap, playerNounMap, areaVerbMap, areaNounMap);
         result = TextParseResult(VerbType::LOCAL);
 
     }
@@ -95,26 +96,22 @@ TextParseStatus TextParser::parse(
         }
     }
 
-    // SIXTH: Check for unavailable verbs if no other results yet
-    if (results.getResultCount() == 0) {
+    // SIXTH: Check for unavailable verbs if no other valid verbs have been found
+    if (results.getBestStatus() == TextParseStatus::INVALID_VERB) {
         // No usable verb found if we reach here
-        // Return unparsed input with INVALID_VERB or UNAVAILABLE_VERB.
-        result = TextParseResult(VerbType::UNAVAILABLE);
-        result.command = engine::CommandEnum::INVALID;
-        result.direct = nullptr;
-        result.position = engine::ItemPosition::NONE;
-        result.unparsed = joinOriginalTokens(tokens, Range(0, tokens.size()));
-        candidates.push_back(result);
-
+        // Check if verb is available anywhere
         Range r = Range(0, tokens.size());
         alias = findLongestGlobalAlias(WordManager::hasVerb, tokens, r);
         if (!alias.empty()) {
-            // Verb found but unavailable; return unparsed input with UNAVAILABLE_VERB.
+            // Verb found but unavailable; clear old candidates and add unparsed input with UNAVAILABLE_VERB.
+            candidates.clear();
+            result = TextParseResult(VerbType::UNAVAILABLE);
+            result.command = engine::CommandEnum::INVALID;
+            result.direct = nullptr;
+            result.position = engine::ItemPosition::NONE;
+            result.unparsed = joinOriginalTokens(tokens, Range(0, tokens.size()));
+            candidates.push_back(result);
             return TextParseStatus::UNAVAILABLE_VERB;
-        }
-        else {
-            // No verb found; return unparsed input with INVALID_VERB
-            return TextParseStatus::INVALID_VERB;
         }
     }
 
