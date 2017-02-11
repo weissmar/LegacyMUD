@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/11/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -120,7 +120,7 @@ class InteractiveNoun {
         bool addAlias(std::string);
 
         /*!
-         * \brief   Removess the specified noun alias from this interactive noun.
+         * \brief   Removes the specified noun alias from this interactive noun.
          *
          * \param[in] alias     Specifies the noun alias to remove
          *
@@ -129,36 +129,289 @@ class InteractiveNoun {
          */
         bool removeAlias(std::string);
         
-        virtual ObjectType getObjectType();
-        virtual std::string look();  
-        virtual std::string listen(); 
-        virtual bool take(Player*, Item*, InteractiveNoun*);
-        virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition);
-        virtual bool drop(Player*);
-        virtual std::string more(); 
-        virtual bool equip(Player*, Item*, InteractiveNoun*);
-        virtual bool unequip(Player*, Item*, InteractiveNoun*);
-        virtual bool transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*);
-        virtual bool go(Player *aPlayer, Area *anArea, InteractiveNoun *character);
-        virtual std::string move(Player*); 
-        virtual bool attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool);
-        virtual std::string talk(Player*, NonCombatant*); 
-        virtual bool buy(Player*, Item*);
-        virtual bool sell(Player*, Item*);
-        virtual std::string search(Player*); 
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill); 
-        virtual std::string read(Player*); 
-        virtual std::string breakIt(Player*); 
-        virtual std::string climb(Player*); 
-        virtual std::string turn(Player*); 
-        virtual std::string push(Player*); 
-        virtual std::string pull(Player*); 
-        virtual std::string eat(Player*); 
-        virtual std::string drink(Player*); 
-        virtual std::string warp(Player*, Area*); 
-        virtual InteractiveNoun* copy();
-        virtual bool editAttribute(Player*, std::string);
-        virtual bool editWizard(Player*);
+        /*!
+         * \brief   Gets the object type. This is a pure virtual function for
+         *          interactive noun.
+         */
+        virtual ObjectType getObjectType() = 0;
+
+        /*!
+         * \brief   Gets the object's response to the look command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the look command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string look() { return ""; }  
+
+        /*!
+         * \brief   Gets the object's response to the listen command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the listen command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string listen() { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the take command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the take command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool take(Player*, Item*, InteractiveNoun*) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the put command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the put command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool put(Player*, Item*, InteractiveNoun*, ItemPosition) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the drop command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the drop command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool drop(Player*) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the more command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the more command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string more() { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the equip command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the equip command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool equip(Player*, Item*, InteractiveNoun*) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the unequip command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the unequip command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool unequip(Player*, Item*, InteractiveNoun*) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the transfer command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the transfer command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the go command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the go command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool go(Player *aPlayer, Area *anArea, InteractiveNoun *character) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the move command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the move command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string move(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the attack command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the attack command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the talk command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the talk command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string talk(Player*, NonCombatant*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the buy command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the buy command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool buy(Player*, Item*) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the sell command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the sell command.
+         *
+         * \return  Returns false.
+         */
+        virtual bool sell(Player*, Item*) { return false; }
+
+        /*!
+         * \brief   Gets the object's response to the search command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the search command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string search(Player*) { return ""; }
+
+        /*!
+         * \brief   Gets the object's response to the useSkill command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the useSkill command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string useSkill(Player*, SpecialSkill*, InteractiveNoun*, Combatant*, bool) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the read command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the read command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string read(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the break command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the break command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string breakIt(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the climb command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the climb command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string climb(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the turn command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the turn command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string turn(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the push command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the push command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string push(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the pull command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the pull command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string pull(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the eat command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the eat command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string eat(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the drink command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the drink command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string drink(Player*) { return ""; } 
+
+        /*!
+         * \brief   Gets the object's response to the warp command.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support the warp command.
+         *
+         * \return  Returns an empty string.
+         */
+        virtual std::string warp(Player*, Area*) { return ""; } 
+
+        /*!
+         * \brief   Makes a copy of the object. This is a pure virtual function
+         *          for interactive noun.
+         */
+        virtual InteractiveNoun* copy() = 0;
+
+        /*!
+         * \brief   Edits an attribute of the object. This is a pure virtual 
+         *          function for interactive noun.
+         */
+        virtual bool editAttribute(Player*, std::string) = 0;
+
+        /*!
+         * \brief   Starts the edit wizard for the object. This is a pure virtual
+         *          function for interactive noun.
+         */
+        virtual bool editWizard(Player*) = 0;
     private:
         std::vector<Action*> actions;
         std::vector<std::string> aliases;

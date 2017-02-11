@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/10/2017
+ * \modified    02/11/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -33,11 +33,6 @@ GameLogic & GameLogic::operator=(const GameLogic &otherGameLogic){
 
 
 GameLogic::~GameLogic(){
-
-}
-
-
-bool GameLogic::startGame(bool newGame){
 
 }
 
@@ -122,7 +117,7 @@ bool GameLogic::endConversation(Player *aPlayer){
 }
 
 
-bool GameLogic::executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam, const std::string &stringParam, ItemPosition aPosition = none){
+bool GameLogic::executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = none){
 
 }
 
@@ -132,7 +127,7 @@ bool GameLogic::helpCommand(Player *aPlayer){
 }
 
 
-bool GameLogic::lookCommand(Player *aPlayer){
+bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
 
 }
 
@@ -142,22 +137,17 @@ bool GameLogic::listenCommand(Player *aPlayer){
 }
 
 
-bool GameLogic::lookAtCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
 
 }
 
 
-bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam){
+bool GameLogic::putCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, ItemPosition aPosition){
 
 }
 
 
-bool GameLogic::putCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam, ItemPosition aPosition){
-
-}
-
-
-bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
@@ -167,7 +157,7 @@ bool GameLogic::inventoryCommand(Player *aPlayer){
 }
 
 
-bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
@@ -177,17 +167,17 @@ bool GameLogic::equipmentCommand(Player *aPlayer){
 }
 
 
-bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam){
+bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::unequipCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam){
+bool GameLogic::unequipCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam){
+bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
 
 }
 
@@ -202,7 +192,7 @@ bool GameLogic::shoutCommand(Player *aPlayer, const std::string &stringParam){
 }
 
 
-bool GameLogic::whisperCommand(Player *aPlayer, InteractiveNoun *firstParam, const std::string &stringParam){
+bool GameLogic::whisperCommand(Player *aPlayer, InteractiveNoun *indirectObj, const std::string &stringParam){
 
 }
 
@@ -212,12 +202,12 @@ bool GameLogic::quitCommand(Player *aPlayer){
 }
 
 
-bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
 
 }
 
 
-bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
@@ -237,12 +227,12 @@ bool GameLogic::skillsCommand(Player *aPlayer){
 }
 
 
-bool GameLogic::attackCommand(Player *aPlayer, InteractiveNoun *firstParam, InteractiveNoun *secondParam){
+bool GameLogic::attackCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
 
 }
 
 
-bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *param){
 
 }
 
@@ -252,62 +242,62 @@ bool GameLogic::shopCommand(Player *aPlayer){
 }
 
 
-bool GameLogic::buyCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::buyCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::sellCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::sellCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
 
 }
 
 
-bool GameLogic::readCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::readCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::breakCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::breakCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::climbCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::climbCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::turnCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::turnCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::pushCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::pushCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::pullCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::pullCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
 
-bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
@@ -317,12 +307,12 @@ bool GameLogic::editModeCommand(Player *aPlayer){
 } 
 
 
-bool GameLogic::warpCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::warpCommand(Player *aPlayer, InteractiveNoun *param){
 
 }
 
 
-bool GameLogic::copyCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::copyCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
@@ -332,22 +322,12 @@ bool GameLogic::createCommand(Player *aPlayer, const std::string &stringParam){
 }
 
 
-bool GameLogic::editAttributeCommand(Player *aPlayer, const std::string &stringParam){
+bool GameLogic::editAttributeCommand(Player *aPlayer, InteractiveNoun *directObj, const std::string &stringParam){
 
 }
 
 
-bool GameLogic::editAttributeCommand(Player *aPlayer, InteractiveNoun *firstParam, const std::string &stringParam){
-
-}
-
-
-bool GameLogic::editWizardCommand(Player *aPlayer, InteractiveNoun *firstParam){
-
-}
-
-
-bool GameLogic::saveCommand(Player *aPlayer){
+bool GameLogic::editWizardCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
@@ -357,17 +337,12 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
 }
 
 
-bool GameLogic::loadCommand(Player *aPlayer){
-
-}
-
-
 bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
 
 }
 
 
-bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *firstParam){
+bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 }
 
