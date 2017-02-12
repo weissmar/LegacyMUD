@@ -10,7 +10,7 @@ CXXFLAGS = -std=c++11 -g -Wall -pthread
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 # List the relative paths to the libraries being tested here
 # LIB_DIRS = ../account ../display ../engine ../parser ../telnet
-LIB_DIRS = ../display
+LIB_DIRS = ../display ../telnet
 # Get the paths to the static libraries being tested
 LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(patsubst ../%,%,$(lib_dir)).a)
 # List the relative paths to external library binaries here
