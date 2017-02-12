@@ -19,16 +19,16 @@
 namespace {
 
 /* Server test. */
-TEST(ServerTest, InitializeServer) {
-    legacymud::engine::GameLogic gl;
+TEST(ServerTest, InitServer) {
     legacymud::telnet::Server ts;
+    legacymud::engine::GameLogic gl;
     int serverPort = 0;
     int playerCap = 10;
     int timeOut = 900;           // in seconds.
     bool err;
 
     /* Initialize the server. */
-    err = ts.initServer(serverPort, playerCap, timeOut, &gl)
+    err = ts.initServer(serverPort, playerCap, timeOut, &gl);
     
     EXPECT_EQ(false, err) 
             << "Expect false for invalid port.";

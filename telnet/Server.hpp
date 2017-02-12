@@ -13,6 +13,7 @@
 #define LEGACYMUD_TELNET_SERVER_HPP
 
 #include <map>
+#include <mutex>
 
 
 namespace legacymud {
