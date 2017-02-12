@@ -146,11 +146,9 @@ bool Server::disconnectPlayer(int playerFd) {
     
     /* Only close and decrement player count when player is in map. */
     /* Protects against accidental multiple calls to disconnect a player. */   
-    if (_removePlayerFromMap(playerFd) == false ) {
-        _playerCount--;     // decrement player count
-        close(playerFd);     
+    if (_removePlayerFromMap(playerFd) == false )     
         return false;
-    }
+ 
     else {
         _playerCount--;     // decrement player count
         close(playerFd);

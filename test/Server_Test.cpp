@@ -127,7 +127,7 @@ TEST(ServerTest, ListeningServer) {
 }
 
 
-/* Server player disconnect and sending and receiving messages. */
+/* Server player handling. */
 TEST(ServerTest, HandlingPlayers) {
     legacymud::telnet::Server ts;
     legacymud::engine::GameLogic gl;
@@ -135,7 +135,6 @@ TEST(ServerTest, HandlingPlayers) {
     int playerCap=1;
     int timeOut=1;           // timeout in seconds.
     int playerFd = 1;
-    std::string inMsg;
     
     srand(time(NULL));     // seed the random number generator
 
@@ -153,23 +152,6 @@ TEST(ServerTest, HandlingPlayers) {
     /* Disconnect a player.  There are no players so this should return false. */
     EXPECT_EQ(false, ts.disconnectPlayer(playerFd) ) 
         << "Expect false since there are no players.";
-        
-    /* Send a message to a player. There are no players so this should return false. NEWLINE. */
-    EXPECT_EQ(false, ts.sendMsg(playerFd, "Sending this message.", ts.NEWLINE) ) 
-        << "Expect false since there are no players.";
-
-    /* Send a message to a player. There are no players so this should return false. NO_NEWLINE. */
-    EXPECT_EQ(false, ts.sendMsg(playerFd, "Sending this message.", ts.NO_NEWLINE) ) 
-        << "Expect false since there are no players.";        
-        
-
-    /* Receive a message from a player. There are no players so this should return false.*/
-    EXPECT_EQ(false, ts.receiveMsg(playerFd, inMsg ) ) 
-        << "Expect false since there are no players.";         
-
-    /* Listen for messages from a player. There are no players so this should return false.*/
-    EXPECT_EQ(false, ts.listenForMsgs(playerFd ) ) 
-        << "Expect false since there are no players."; 
 
     /* Set a player's echo.  There are no players so this should return false. */
     EXPECT_EQ(false, ts.setPlayerEcho(playerFd, true) ) 
@@ -183,7 +165,7 @@ TEST(ServerTest, HandlingPlayers) {
 }
 
 /* Testing server setters and getters. */
-TEST(ServerTest, ServerSettersandGetters) {
+TEST(ServerTest, SettersandGetters) {
     legacymud::telnet::Server ts;
     legacymud::engine::GameLogic gl;
     int serverPort;
