@@ -3,7 +3,7 @@
  * Date Created:  1/30/2017
  * Last Modified: 2/8/2017
  * Course:        CS467, Winter 2017
- * Filename:      Display_Test.hpp
+ * Filename:      Display_Test.cpp
  *
  * Overview:
  *     Unit test for the Display class.
