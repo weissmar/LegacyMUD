@@ -33,9 +33,9 @@ class Item: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
         Item();
         Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type);
-        Item(const Item &otherItem);
+        /*Item(const Item &otherItem);
         Item & operator=(const Item &otherItem);
-        virtual ~Item();
+        virtual ~Item();*/
 
         /*!
          * \brief   Gets the location of the item.

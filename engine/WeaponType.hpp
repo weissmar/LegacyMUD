@@ -35,9 +35,6 @@ class WeaponType: public ItemType {
     public:
         WeaponType();
         WeaponType(int damage, DamageType type, AreaSize range, int critMultiplier, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType);
-        WeaponType(const WeaponType &otherWeaponType);
-        WeaponType & operator=(const WeaponType &otherWeaponType);
-        virtual ~WeaponType();
 
         /*!
          * \brief   Gets the damage of this weapon type.

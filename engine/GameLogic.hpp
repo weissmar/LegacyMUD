@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/11/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -14,6 +14,7 @@
 
 #include <string>
 #include <queue>
+#include <utility>
 #include "ObjectType.hpp"
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
@@ -775,7 +776,7 @@ class GameLogic {
          */
         bool deleteCommand(Player *aPlayer, InteractiveNoun *directObj);
         GameObjectManager *manager;
-        std::queue<std::tuple<std::string, int>> messageQueue;
+        std::queue<std::pair<std::string, int>> messageQueue;
 };
 
 }}

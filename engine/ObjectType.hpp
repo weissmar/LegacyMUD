@@ -1,8 +1,8 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/03/2017
- * \modified    02/10/2017
- * \course      CS467,          //!< Winter 2017
+ * \modified    02/12/2017
+ * \course      CS467, Winter 2017
  * \file        ObjectType.hpp
  *
  * \details     Header file for ObjectType enum. 
@@ -21,6 +21,7 @@ namespace legacymud { namespace engine {
  * that inherit from InteractiveNoun.
  */
 enum class ObjectType {
+    NONE,           //!< Not an object type
     AREA,           //!< Area class
     ARMOR_TYPE,     //!< ArmorType class
     CONTAINER,      //!< Container class

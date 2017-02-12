@@ -27,9 +27,6 @@ class Feature: public ConditionalElement {
     public:
         Feature();
         Feature(std::string name, std::string placement, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
-        Feature(const Feature &otherFeature);
-        Feature & operator=(const Feature &otherFeature);
-        virtual ~Feature();
 
         /*!
          * \brief   Gets the name of this feature.

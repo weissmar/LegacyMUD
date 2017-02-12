@@ -30,9 +30,6 @@ class SpecialSkill: public SerializableNoun, public InteractiveNoun, public Uniq
     public:
         SpecialSkill();
         SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown);
-        SpecialSkill(const SpecialSkill &otherSpecialSkill);
-        SpecialSkill & operator=(const SpecialSkill &otherSpecialSkill);
-        virtual ~SpecialSkill();
 
         /*!
          * \brief   Gets the name of the special skill.

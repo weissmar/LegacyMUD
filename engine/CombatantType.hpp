@@ -31,9 +31,9 @@ class CombatantType: public SerializableNoun, public InteractiveNoun, public Uni
     public:
         CombatantType();
         CombatantType(std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints);
-        CombatantType(const CombatantType &otherCombatantType);
+        /*CombatantType(const CombatantType &otherCombatantType);
         CombatantType & operator=(const CombatantType &otherCombatantType);
-        virtual ~CombatantType();
+        virtual ~CombatantType();*/
 
         /*!
          * \brief   Gets the name of this combatant type.

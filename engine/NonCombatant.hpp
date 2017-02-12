@@ -31,9 +31,9 @@ class NonCombatant: public Character {
     public:
         NonCombatant();
         NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
-        NonCombatant(const NonCombatant &otherNPC);
+        /*NonCombatant(const NonCombatant &otherNPC);
         NonCombatant & operator=(const NonCombatant &otherNPC);
-        virtual ~NonCombatant();
+        virtual ~NonCombatant();*/
 
         /*!
          * \brief   Gets the quest.

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/08/2017
+ * \modified    02/12/2017
  * \course      CS467, Winter 2017
  * \file        Action.hpp
  *
@@ -91,7 +91,14 @@ class Action: public SerializableNoun, public UniqueNoun {
          * \return  Returns a map of std::string aliases to parser::Grammar*
          *          for this action.
          */        
-        std::map<std::string, parser::Grammar*> getAliases();
+        std::map<std::string, parser::Grammar*> getAliasesAndGrammar();
+
+        /*!
+         * \brief   Gets the aliases for this action.
+         *
+         * \return  Returns a vectorof std::string aliases for this action.
+         */        
+        std::vector<std::string> getAliases();
 
         /*!
          * \brief   Sets whether or not this action is currently valid.

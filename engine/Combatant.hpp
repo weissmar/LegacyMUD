@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/11/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -13,7 +13,7 @@
 #ifndef COMBATANT_HPP
 #define COMBATANT_HPP
 
-#include <tuple>
+#include <utility>
 #include <string>
 #include "Character.hpp"
 
@@ -29,9 +29,9 @@ class Combatant: public Character {
     public:
         Combatant();
         Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
-        Combatant(const Combatant &otherCombatant);
+        /*Combatant(const Combatant &otherCombatant);
         Combatant & operator=(const Combatant &otherCombatant);
-        virtual ~Combatant();
+        virtual ~Combatant();*/
 
         /*!
          * \brief   Gets whether or not the cooldown for this combatant is 
@@ -270,9 +270,9 @@ class Combatant: public Character {
         int increaseIntelligence(int intPoints);
     private:
         int cooldownClock;
-        std::tuple<int, int> health;
+        std::pair<int, int> health;
         Area* spawnLocation;
-        std::tuple<int, int> specialPoints;
+        std::pair<int, int> specialPoints;
         int dexterity;
         int strength;
         int intelligence;

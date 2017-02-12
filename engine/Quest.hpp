@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/11/2017
  * \course      CS467, Winter 2017
  * \file        Quest.hpp
  *
@@ -15,7 +15,7 @@
 
 #include <string>
 #include <vector>
-#include <tuple>
+#include <utility>
 #include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
 #include "UniqueNoun.hpp"
@@ -35,9 +35,9 @@ class Quest: public SerializableNoun, public InteractiveNoun, public UniqueNoun 
     public:
         Quest();
         Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem);
-        Quest(const Quest &otherQuest);
+        /*Quest(const Quest &otherQuest);
         Quest & operator=(const Quest &otherQuest);
-        virtual ~Quest();
+        virtual ~Quest();*/
 
         /*!
          * \brief   Gets the name of this quest.
@@ -70,10 +70,10 @@ class Quest: public SerializableNoun, public InteractiveNoun, public UniqueNoun 
         /*!
          * \brief   Gets the steps of this quest.
          *
-         * \return  Returns a std::vector<std::tuple<int, QuestStep*>> 
+         * \return  Returns a std::vector<std::pair<int, QuestStep*>> 
          *          with the steps.
          */
-        std::vector<std::tuple<int, QuestStep*>> getSteps();
+        std::vector<std::pair<int, QuestStep*>> getSteps();
 
         /*!
          * \brief   Sets the name of this quest.
@@ -217,7 +217,7 @@ class Quest: public SerializableNoun, public InteractiveNoun, public UniqueNoun 
         std::string description;
         int rewardMoney;
         Item *rewardItem;
-        std::vector<std::tuple<int, QuestStep*>> steps;
+        std::vector<std::pair<int, QuestStep*>> steps;
 };
 
 }}

@@ -37,9 +37,6 @@ class ItemType: public SerializableNoun, public InteractiveNoun, public UniqueNo
     public:
         ItemType();
         ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType);
-        ItemType(const ItemType &otherItemType);
-        ItemType & operator=(const ItemType &otherItemType);
-        virtual ~ItemType();
 
         /*!
          * \brief   Gets the weight of this item type.

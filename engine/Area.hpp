@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/11/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -40,9 +40,9 @@ class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
         Area();
         Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size);
-        Area(const Area &otherArea);
+        /*Area(const Area &otherArea);
         Area & operator=(const Area &otherArea);
-        virtual ~Area();
+        virtual ~Area();*/
 
         /*!
          * \brief   Gets the name of this area.

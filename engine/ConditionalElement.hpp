@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/03/2017
+ * \modified    02/08/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.hpp
  *
@@ -26,13 +26,13 @@ class ItemType;
  * \details     This class defines the inheritable characteristics that define 
  *              all in-game conditional elements. This class should not be instantiated.
  */
-class ConditionalElement: public InteractiveNoun, public SerializableNoun, public UniqueNoun {
+class ConditionalElement: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
     public:
         ConditionalElement();
         ConditionalElement(bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
-        ConditionalElement(const ConditionalElement &otherElement);
+        /*ConditionalElement(const ConditionalElement &otherElement);
         ConditionalElement & operator=(const ConditionalElement &otherElement);
-        virtual ~ConditionalElement();
+        virtual ~ConditionalElement();*/
 
         /*!
          * \brief   Gets whether or not this condtitional element is conditional.

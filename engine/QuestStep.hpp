@@ -32,9 +32,9 @@ class QuestStep: public SerializableNoun, public InteractiveNoun, public UniqueN
     public:
         QuestStep();
         QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText);
-        QuestStep(const QuestStep &otherQuestStep);
+        /*QuestStep(const QuestStep &otherQuestStep);
         QuestStep & operator=(const QuestStep &otherQuestStep);
-        virtual ~QuestStep();
+        virtual ~QuestStep();*/
 
         /*!
          * \brief   Gets the ordinal number of the quest step.
