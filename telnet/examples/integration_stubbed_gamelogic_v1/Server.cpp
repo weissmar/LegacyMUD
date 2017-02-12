@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/10/2017
+  \modified 2/11/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -89,7 +89,7 @@ void Server::startListening() {
     struct timeval timeOut;                // timeout timer for receiving messages on a socket.
     timeOut.tv_sec = getTimeOut();         // sets a player time-out period in seconds for disconnect 
    
-    while (1) {
+    while (_listenSocketFd > 0 ) {
         
         /* Listen for connection. */
         std::cout << "Listening for new connection..." << std::endl;
@@ -98,7 +98,7 @@ void Server::startListening() {
         /* Accept connection. */
         clientLength = sizeof(clientAddr);
         newClientSocketFd = accept(_listenSocketFd, (struct sockaddr *) &clientAddr, &clientLength);
-        if (newClientSocketFd < 0) {   
+        if (newClientSocketFd < 0 && _listenSocketFd > 0) {   
             std::cout << "Error accepting connection" << std::endl;     // error accepting connection
         }
         else {
@@ -142,13 +142,49 @@ void Server::startListening() {
 /******************************************************************************
 * Function:    disconnectPlayer
 *****************************************************************************/
-void Server::disconnectPlayer(int playerFd) {   
+bool Server::disconnectPlayer(int playerFd) {   
     
     /* Only close and decrement player count when player is in map. */
     /* Protects against accidental multiple calls to disconnect a player. */   
-    if (_removePlayerFromMap(playerFd) == true ) {
+    if (_removePlayerFromMap(playerFd) == false ) {
         _playerCount--;     // decrement player count
         close(playerFd);     
+        return false;
+    }
+    else {
+        _playerCount--;     // decrement player count
+        close(playerFd);
+        return true;
+    }
+}
+
+
+/******************************************************************************
+* Function:    shutdown
+*****************************************************************************/
+bool Server::shutdown() {   
+    
+    /* Only shutdown if there are no players on the server and the listening socket 
+       is greater than 0. The game logic would have to first pause the server and
+       disconnect all the players before calling this. */
+    
+    if (_playerCount > 0 && _listenSocketFd > 0) {
+        return false;
+    }
+    else {
+        /* Close the listening socket. */
+        close(_listenSocketFd);
+        
+        /* Return parameters to default state. */
+        _serverPort = 0;     
+        _maxPlayers = 0;  
+        _playerCount = 0;
+        _timeOut = 0;
+        _listenSocketFd = 0;
+        _serverPause = false;
+        _gameLogicPt = 0; 
+        
+        return true;
     }
 }
 
