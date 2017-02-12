@@ -2,7 +2,7 @@
   \file     Server.hpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/10/2017
+  \modified 2/11/2017
   \course   CS467, Winter 2017
  
   \details  Declaration file for the Server class.
@@ -13,6 +13,7 @@
 #define LEGACYMUD_TELNET_SERVER_HPP
 
 #include <map>
+#include <mutex>
 
 
 namespace legacymud {
@@ -79,9 +80,20 @@ namespace legacymud {
           receiveMsg or listenForMsgs returns false. 
                    
           \pre none
-          \post A player is disconnected from the server.
+          \post Returns true if a player is disconnected from the server.  Otherwise returns false.
         */        
-        void disconnectPlayer(int playerFd);
+        bool disconnectPlayer(int playerFd);
+        
+        /*!
+          \brief Closes the server listen socket and sets member variables to default values.
+          
+          This function closes all open server sockets and sets member variables to default values.
+                   
+          \pre All players on the server have to be disconnected before calling this.
+          \post True is returned if the server listen socket is closed and member variables are reset to default values.
+                Otherwise, false is returned.
+        */        
+        bool shutdown();
         
         /*!
           \brief Sends a message to a player.
@@ -242,8 +254,8 @@ namespace legacymud {
           \pre none
           \post Returns a player's text display echo mode.
         */         
-        bool getPlayerEcho(int playerFd);
-
+        bool getPlayerEcho(int playerFd);       
+        
     private:
         bool _setServerPort(int serverPort);        // function that sets and validates the server port
         bool _setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt);    // function that sets a pointer to a game logic object
