@@ -239,11 +239,9 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
             inMsg.pop_back();               
             
             /* Send the delete character to the player's terminal. */
-            if (getPlayerEcho(playerFd)) {
-                ch = 127;
-                if (write(playerFd, &ch, 1) < 0) 
-                    return false;                
-            }  
+            ch = 127;
+            if (write(playerFd, &ch, 1) < 0) 
+                return false;                
         }
             
         /* Character to be added to the message. */
