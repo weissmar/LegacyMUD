@@ -2,7 +2,7 @@
   \file     parser.h
   \author   David Rigert
   \created  01/27/2017
-  \modified 02/07/2017
+  \modified 02/12/2017
   \course   CS467, Winter 2017
  
   \details  This is the main header for the text parser component.
@@ -12,8 +12,9 @@
 #ifndef LEGACYMUD_PARSER_PARSER_H
 #define LEGACYMUD_PARSER_PARSER_H
 
-#include "WordManager.hpp"
 #include "TextParser.hpp"
+#include "LexicalData.hpp"
+#include "Grammar.hpp"
 
 namespace legacymud {
 

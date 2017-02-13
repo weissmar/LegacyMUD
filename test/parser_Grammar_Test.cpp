@@ -20,14 +20,16 @@ namespace parser = legacymud::parser;
 TEST(GrammarTest, DefaultConstructorTest) {
     parser::Grammar g = parser::Grammar();
     EXPECT_EQ(parser::Grammar::NO, g.takesDirectObject());
+    EXPECT_FALSE(g.takesPreposition());
     EXPECT_EQ(parser::Grammar::NO, g.takesIndirectObject());
 }
 
 // Verify constructor that sets direct/indirect object support
 TEST(GrammarTest, ObjectSupportConstructorTest) {
-    parser::Grammar g = parser::Grammar(parser::Grammar::OPTIONAL, parser::Grammar::REQUIRED);
-    EXPECT_EQ(parser::Grammar::OPTIONAL, g.takesDirectObject());
-    EXPECT_EQ(parser::Grammar::REQUIRED, g.takesIndirectObject());
+    parser::Grammar g = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::TEXT);
+    EXPECT_EQ(parser::Grammar::YES, g.takesDirectObject());
+    EXPECT_TRUE(g.takesPreposition());
+    EXPECT_EQ(parser::Grammar::TEXT, g.takesIndirectObject());
 }
 
 // Verify adding a preposition and getting it back
@@ -57,16 +59,27 @@ TEST(GrammarTest, GetUnknownPrepositionTest) {
     EXPECT_EQ(parser::PrepositionType::NONE, g.getPrepositionType("foo"));
 }
 
+// Verify that checking for an unknown preposition returns false,
+// and checking for a known preposition returns true.
+TEST(GrammarTest, HasPrepositionTest) {
+    parser::Grammar g = parser::Grammar();
+    EXPECT_FALSE(g.hasPreposition("foo"));
+    g.addPreposition("foo", parser::PrepositionType::NONE);
+    EXPECT_TRUE(g.hasPreposition("foo"));
+}
+
 // Verify changing object support with setter function
 TEST(GrammarTest, SetObjectSupportTest) {
     parser::Grammar g = parser::Grammar();
-    g.setObjectSupport(parser::Grammar::OPTIONAL, parser::Grammar::REQUIRED);
-    EXPECT_EQ(parser::Grammar::OPTIONAL, g.takesDirectObject());
-    EXPECT_EQ(parser::Grammar::REQUIRED, g.takesIndirectObject());
+    g.setSupport(parser::Grammar::YES, true, parser::Grammar::TEXT);
+    EXPECT_EQ(parser::Grammar::YES, g.takesDirectObject());
+    EXPECT_TRUE(g.takesPreposition());
+    EXPECT_EQ(parser::Grammar::TEXT, g.takesIndirectObject());
     // Change it to something else
-    g.setObjectSupport(parser::Grammar::NO, parser::Grammar::OPTIONAL);
-    EXPECT_EQ(parser::Grammar::NO, g.takesDirectObject());
-    EXPECT_EQ(parser::Grammar::OPTIONAL, g.takesIndirectObject());
+    g.setSupport(parser::Grammar::TEXT, false, parser::Grammar::NO);
+    EXPECT_EQ(parser::Grammar::TEXT, g.takesDirectObject());
+    EXPECT_FALSE(g.takesPreposition());
+    EXPECT_EQ(parser::Grammar::NO, g.takesIndirectObject());
 }
 
 

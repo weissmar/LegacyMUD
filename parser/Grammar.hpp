@@ -2,41 +2,23 @@
   \file     Grammar.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/07/2017
+  \modified 02/12/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the Grammar class and
-            its associated enumerated types and structures.
+            its associated types.
             The Grammar class represents the object types and prepositions
             supported by a verb.
 */
 #ifndef LEGACYMUD_PARSER_GRAMMAR_HPP
 #define LEGACYMUD_PARSER_GRAMMAR_HPP
 
+#include "PrepositionType.hpp"
+
 #include <map>
 #include <string>
 
 namespace legacymud { namespace parser {
-
-/*!
-  \enum legacymud::parser::Preposition
-  \brief Enumerates the supported preposition meanings.
-
-  This enumerated type represents the "meanings" of prepositions
-  supported by each verb. When registering a verb, the caller must
-  specify which prepositions are supported and the corresponding meaning.
-*/
-enum class PrepositionType {
-    NONE      = 0,        //!< Does not have any meaning.
-    TO        = (1 << 0), //!< Conveys the meaning of \em to, \em toward, \em at.
-    WITH      = (1 << 1), //!< Conveys the meaning of \em with, \em using.
-    OF        = (1 << 2), //!< The indirect object possesses the direct object.
-    FROM      = (1 << 3), //!< Conveys the meaning of \em from.
-    ON        = (1 << 4), //!< Conveys the meaning of \em on, <i>on top of</i>.
-    UNDER     = (1 << 5), //!< Conveys the meaning of \em under, \em underneath, \em below.
-    IN        = (1 << 6), //!< Conveys the meaning of \em in, \em inside, \em into.
-    ALL       = ~0        //!< All possible meanings.   
-};
 
 /*!
   \typedef PrepositionMap
@@ -55,16 +37,32 @@ typedef std::map<std::string, PrepositionType> PrepositionMap;
 class Grammar {
 public:
     enum Support {
-        NO,           //!< Does not support the object type.
-        OPTIONAL,     //!< Optionally supports the object type.
-        REQUIRED,     //!< Requires the object type.
-        TEXT,         //!< Requires an object that does not match an InteractiveNoun.
-        OPTIONALTEXT  //!< Optionally supports an object that does not match an InteractiveNoun.
+        NO,   //!< Does not support the object type.
+        YES,  //!< Requires the object type.
+        TEXT  //!< Requires text that does not match an InteractiveNoun alias.
     };
 
-    Grammar() : Grammar(Support::NO, Support::NO) {}
+    /*!
+      \brief Default constructor.
 
-    Grammar(Support directObject, Support indirectObject);
+      The default constructor initializes the object to:
+        - No direct object
+        - No preposition
+        - No indirect object
+    */
+    Grammar() : Grammar(Support::NO, false, Support::NO) {}
+
+    /*!
+      \brief Constructor that specifies grammar rules.
+
+      This constructor creates an instance with the grammar rules
+      preconfigured to the specified values.
+
+      \param[in] direct       Specifies whether the verb supports a direct object.
+      \param[in] preposition  Specifies whether the verb supports a preposition.
+      \param[in] indirect     Specifies whether the verb supports an indirect object.
+    */
+    Grammar(Support direct, bool preposition, Support indirect);
 
     /*!
       \brief Adds an entry to the list of supported prepositions.
@@ -82,7 +80,7 @@ public:
 
       \post The specified preposition and position pair is added to the preposition list.
     */
-    void addPreposition(std::string prep, PrepositionType meaning);
+    void addPreposition(std::string prep, PrepositionType type);
 
     /*!
       \brief Gets the meaning of the specified preposition.
@@ -100,6 +98,18 @@ public:
     PrepositionType getPrepositionType(std::string prep) const;
 
     /*!
+      \brief Gets whether the grammar rules support the specified preposition.
+
+      This function determines whether the specified preposition is supported
+      by the Grammar rules.
+
+      \param[in] prep   Specifies the preposition to check for.
+      
+      \return Returns whether \a prep is supported.
+    */
+    bool hasPreposition(std::string prep) const;
+
+    /*!
       \brief Sets the objects supported by the associated verb.
 
       This function sets whether the associated verb supports direct
@@ -107,10 +117,11 @@ public:
       or REQUIRED. If a verb that requires an indirect object does not
       have one in the input string, the TextParseResult will be set to invalid.
 
-      \param[in] direct   Specifies whether the verb supports a direct object.
-      \param[in] indirect Specifies whether the verb supports an indirect object.
+      \param[in] direct       Specifies whether the verb supports a direct object.
+      \param[in] preposition  Specifies whether the verb supports a preposition.
+      \param[in] indirect     Specifies whether the verb supports an indirect object.
     */
-    void setObjectSupport(Support direct, Support indirect);
+    void setSupport(Support direct, bool preposition, Support indirect);
 
     /*!
       \brief Gets whether the associated verb takes a direct object.
@@ -118,6 +129,13 @@ public:
       \return Returns whether the associated verb takes a direct object.
     */
     Support takesDirectObject() const;
+
+    /*!
+      \brief Gets whether the associated verb takes a preposition.
+
+      \return Returns whether the associated verb takes a preposition.
+    */
+    bool takesPreposition() const;
 
     /*!
       \brief Gets whether the associated verb takes an indirect object.
@@ -128,6 +146,7 @@ public:
 
 private:
     Support _directObject;
+    bool _preposition;
     Support _indirectObject;
     PrepositionMap _prepositions;
 };

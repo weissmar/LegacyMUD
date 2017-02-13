@@ -2,14 +2,14 @@
   \file     parser_TextParser_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/10/2017
+  \modified 02/11/2017
   \course   CS467, Winter 2017
  
   \details This file contains the unit tests for the TextParser class.
 */
 
 #include <TextParser.hpp>
-#include <WordManager.hpp>
+#include <LexicalData.hpp>
 
 #include <gtest/gtest.h>
 
@@ -32,18 +32,14 @@ std::vector<engine::InteractiveNoun *> ins;
 // Store the input text here
 std::string input;
 
-// Store the player verb map here
-parser::WordMap playerVM;
-// Store the player noun map here
-parser::WordMap playerNM;
+// Store the player lexical data here
+parser::LexicalData playerLex;
 
-// Store the area verb map here
-parser::WordMap areaVM;
-// Store the area noun map here
-parser::WordMap areaNM;
+// Store the area lexical data here
+parser::LexicalData areaLex;
 
-// Reuse this list for candidates
-std::vector<parser::TextParseResult> candidates;
+// Reuse this list for results
+std::vector<parser::ParseResult> results;
 
 // Test fixture to set up and tear down each unit test
 class TextParserTest : public :: testing::Test {
@@ -73,13 +69,13 @@ public:
 
     virtual void TearDown() {
         // Clear the candidate list
-        candidates.clear();
+        results.clear();
 
         // Clear the player VerbMap
-        playerVM.clear();
+        playerLex.clear();
 
         // Clear the area VerbMap
-        areaVM.clear();
+        areaLex.clear();
     }
 };
 
@@ -90,44 +86,44 @@ public:
 // Test the happy path of the HELP command
 TEST_F(TextParserTest, HelpHappyPath) {
     input = "help";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::HELP);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::HELP);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the HELP command with invalid input after
 TEST_F(TextParserTest, HelpInvalidSuffix) {
     input = "help me";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::INVALID_NOUN, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::HELP);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::HELP);
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
     // Unparsed text should contain "me"
-    EXPECT_STREQ("me", candidates.begin()->unparsed.c_str());
+    EXPECT_STREQ("me", results.begin()->unparsed.c_str());
 }
 
 // Test the happy path of the standalone LOOK command
 TEST_F(TextParserTest, LookStandaloneHappyPath) {
     std::string input = "look";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::LOOK);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::LOOK);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the LOOK command with object
@@ -141,29 +137,29 @@ TEST_F(TextParserTest, LookHappyPath) {
     // TODO: Add candle to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::LOOK);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::LOOK);
+        ASSERT_EQ(1, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
 // Test the happy path of the LISTEN command
 TEST_F(TextParserTest, ListenHappyPath) {
     std::string input = "listen";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::LISTEN);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::LISTEN);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the TAKE command
@@ -178,15 +174,15 @@ TEST_F(TextParserTest, TakeHappyPath) {
     // TODO: Add candle to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::TAKE);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::TAKE);
+        ASSERT_EQ(1, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -202,16 +198,16 @@ TEST_F(TextParserTest, PutHappyPath) {
     // TODO: Add torch to areaVM and table to areaNM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::PUT);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        EXPECT_EQ(engine::ItemPosition::ON, candidates.begin()->position);
-        ASSERT_EQ(1, candidates.begin()->indirect.size());
-        EXPECT_TRUE(*candidates.begin()->indirect.begin() == nullptr);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::PUT);
+        ASSERT_EQ(1, results.begin()->direct.size());
+        EXPECT_EQ(engine::ItemPosition::ON, results.begin()->position);
+        ASSERT_EQ(1, results.begin()->indirect.size());
+        EXPECT_TRUE(*results.begin()->indirect.begin() == nullptr);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -225,15 +221,15 @@ TEST_F(TextParserTest, DropHappyPath) {
     // TODO: Add candle to playerVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::DROP);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::DROP);
+        ASSERT_EQ(1, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -245,15 +241,15 @@ TEST_F(TextParserTest, InventoryHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVENTORY);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::INVENTORY);
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -267,15 +263,15 @@ TEST_F(TextParserTest, MoreItemHappyPath) {
     // TODO: Add torch and heal to playerVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::MORE);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::MORE);
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -287,15 +283,15 @@ TEST_F(TextParserTest, EquipmentHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::EQUIPMENT);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::EQUIPMENT);
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -313,15 +309,15 @@ TEST_F(TextParserTest, EquipHappyPath) {
     // TODO: Add helmet to playerVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::EQUIP);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::EQUIP);
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -339,15 +335,15 @@ TEST_F(TextParserTest, UnequipHappyPath) {
     // TODO: Add helmet to playerVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::UNEQUIP);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::UNEQUIP);
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -361,30 +357,30 @@ TEST_F(TextParserTest, TransferHappyPath) {
     // TODO: Add torch to playerVM and Joe to areaNM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::UNEQUIP);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::UNEQUIP);
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
 // Test the happy path of the SPEAK command
 TEST_F(TextParserTest, SpeakHappyPath) {
     input = "say Hi everyone!";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SPEAK);
-    EXPECT_STREQ("Hi everyone!", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::SPEAK);
+    EXPECT_STREQ("Hi everyone!", results.begin()->directAlias.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 
@@ -396,16 +392,16 @@ TEST_F(TextParserTest, ShoutHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SHOUT);
-        EXPECT_STREQ("HELLO THERE", candidates.begin()->unparsed.c_str());
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::SHOUT);
+        EXPECT_STREQ("HELLO THERE", results.begin()->directAlias.c_str());
         // Should not be any objects or position
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        candidates.clear();
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        results.clear();
     }
 }
 
@@ -415,16 +411,16 @@ TEST_F(TextParserTest, WhisperHappyPath) {
     
     // TODO: Add Joe to areaNM
     
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::WHISPER);
-    ASSERT_EQ(1, candidates.begin()->indirect.size());
-    EXPECT_TRUE(*candidates.begin()->indirect.begin() == nullptr);
-    EXPECT_STREQ("Don't tell anyone", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::WHISPER);
+    ASSERT_EQ(1, results.begin()->indirect.size());
+    EXPECT_TRUE(*results.begin()->indirect.begin() == nullptr);
+    EXPECT_STREQ("Don't tell anyone", results.begin()->directAlias.c_str());
     // Should not be any direct object or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 // Test the happy path of the QUIT command
@@ -436,16 +432,16 @@ TEST_F(TextParserTest, QuitHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::QUIT);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::QUIT);
         // Should not be any objects, position or unparsed text
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        EXPECT_EQ(0, results.begin()->direct.size());
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -460,16 +456,16 @@ TEST_F(TextParserTest, GoHappyPath) {
     // TODO: Add exit to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::GO);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::GO);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object, position, or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        EXPECT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -483,59 +479,59 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
     // TODO: Add exit to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::GO);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::GO);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object, position, or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
 // Test the happy path of the STATS command
 TEST_F(TextParserTest, StatsHappyPath) {
     input = "stats";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::STATS);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::STATS);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the QUESTS command
 TEST_F(TextParserTest, QuestsHappyPath) {
     input = "quests";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::QUESTS);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::QUESTS);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the SKILLS command
 TEST_F(TextParserTest, SkillsHappyPath) {
     input = "skills";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SKILLS);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::SKILLS);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the ATTACK command
@@ -548,16 +544,16 @@ TEST_F(TextParserTest, AttackHappyPath) {
     // TODO: Add troll to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::ATTACK);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::ATTACK);
+        EXPECT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -571,16 +567,16 @@ TEST_F(TextParserTest, AttackWithSkillHappyPath) {
     // TODO: Add troll to areaVM and fireball to playerNM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::ATTACK);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::ATTACK);
+        ASSERT_EQ(1, results.begin()->direct.size());
+        ASSERT_EQ(1, results.begin()->indirect.size());
+        // Should not be any unparsed text
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -590,29 +586,29 @@ TEST_F(TextParserTest, TalkHappyPath) {
 
     // TODO: Add Sarah to areaVM
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::TALK);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    // Should not be any indirect objects, position or unparsed text
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::TALK);
+    ASSERT_EQ(1, results.begin()->indirect.size());
+    // Should not be any direct objects, position or unparsed text
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the SHOP command
 TEST_F(TextParserTest, ShopHappyPath) {
     input = "shop";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SHOP);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::SHOP);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the BUY command
@@ -621,15 +617,15 @@ TEST_F(TextParserTest, BuyHappyPath) {
 
     // TODO: Add torch to areaVM
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::BUY);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::BUY);
+    ASSERT_EQ(1, results.begin()->direct.size());
     // Should not be any indirect objects, position or unparsed text
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the SELL command
@@ -638,15 +634,15 @@ TEST_F(TextParserTest, SellHappyPath) {
 
     // TODO: Add torch to playerVM
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SELL);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::SELL);
+    ASSERT_EQ(1, results.begin()->direct.size());
     // Should not be any indirect objects, position or unparsed text
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the SEARCH command
@@ -661,31 +657,31 @@ TEST_F(TextParserTest, SearchHappyPath) {
     // TODO: Add chest to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SEARCH);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::SEARCH);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
 // Test the happy path of the USE_SKILL command
 TEST_F(TextParserTest, UseSkillHappyPath) {
     input = "use heal";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::USE_SKILL);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::USE_SKILL);
+    ASSERT_EQ(1, results.begin()->direct.size());
     // Should not be any indirect objects, position or unparsed text
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the USE_SKILL command on a target
@@ -694,16 +690,16 @@ TEST_F(TextParserTest, UseSkillOnTargetHappyPath) {
 
     // TODO: Add heal to playerVM and Joe to areaNM
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::USE_SKILL);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    ASSERT_EQ(1, candidates.begin()->indirect.size());
-    EXPECT_TRUE(*candidates.begin()->indirect.begin() == nullptr);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::USE_SKILL);
+    ASSERT_EQ(1, results.begin()->direct.size());
+    ASSERT_EQ(1, results.begin()->indirect.size());
+    EXPECT_TRUE(*results.begin()->indirect.begin() == nullptr);
     // Should not be any position or unparsed text
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the MOVE command
@@ -716,16 +712,16 @@ TEST_F(TextParserTest, MoveHappyPath) {
     // TODO: Add chair to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::MOVE);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::MOVE);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -739,16 +735,16 @@ TEST_F(TextParserTest, ReadHappyPath) {
     // TODO: Add book to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::READ);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::READ);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -762,16 +758,16 @@ TEST_F(TextParserTest, BreakHappyPath) {
     // TODO: Add book to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::BREAK);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::BREAK);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -785,16 +781,16 @@ TEST_F(TextParserTest, ClimbHappyPath) {
     // TODO: Add ladder to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::CLIMB);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::CLIMB);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -808,16 +804,16 @@ TEST_F(TextParserTest, TurnHappyPath) {
     // TODO: Add knob to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::TURN);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::TURN);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -831,16 +827,16 @@ TEST_F(TextParserTest, PushHappyPath) {
     // TODO: Add table to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::PUSH);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::PUSH);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -854,16 +850,16 @@ TEST_F(TextParserTest, PullHappyPath) {
     // TODO: Add table to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::PULL);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::PULL);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -877,16 +873,16 @@ TEST_F(TextParserTest, EatHappyPath) {
     // TODO: Add bread to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::EAT);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::EAT);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
@@ -900,45 +896,45 @@ TEST_F(TextParserTest, DrinkHappyPath) {
     // TODO: Add potion to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::DRINK);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::DRINK);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
 // Test the happy path of the EDIT_MODE command
 TEST_F(TextParserTest, EditModeHappyPath) {
     input = "editmode";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates, true);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::EDIT_MODE);
+    results = tp.parse(input, playerLex, areaLex, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::EDIT_MODE);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_STREQ("", candidates.begin()->unparsed.c_str());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_STREQ("", results.begin()->unparsed.c_str());
 }
 
 // Test the EDIT_MODE command without permissions
 TEST_F(TextParserTest, EditModeNotAdmin) {
     input = "editmode";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::INVALID_VERB, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::INVALID);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_STREQ("editmode", candidates.begin()->unparsed.c_str());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_STREQ("editmode", results.begin()->unparsed.c_str());
 }
 
 // Test the happy path of the WARP command
@@ -947,15 +943,15 @@ TEST_F(TextParserTest, WarpHappyPath) {
 
     // TODO: Add area with ID of 1 to WordManager::addNoun
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::WARP);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::WARP);
+    ASSERT_EQ(1, results.begin()->direct.size());
     // Should not be any indirect objects, position or unparsed text
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the COPY command
@@ -964,15 +960,15 @@ TEST_F(TextParserTest, CopyHappyPath) {
 
     // TODO: Add item with ID of 1 to WordManager::addNoun
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::COPY);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::COPY);
+    ASSERT_EQ(1, results.begin()->direct.size());
     // Should not be any indirect objects, position or unparsed text
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the CREATE command
@@ -983,16 +979,16 @@ TEST_F(TextParserTest, CreateHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::CREATE);
-        EXPECT_STREQ("item", candidates.begin()->unparsed.c_str());
+        results = tp.parse(*it, playerLex, areaLex, true, true);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::CREATE);
+        EXPECT_STREQ("item", results.begin()->directAlias.c_str());
         // Should not be any objects or position
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        candidates.clear();
+        EXPECT_EQ(0, results.begin()->direct.size());
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        results.clear();
     }
 }
 
@@ -1000,29 +996,29 @@ TEST_F(TextParserTest, CreateHappyPath) {
 TEST_F(TextParserTest, AddHappyPath) {
     input = "add exit";
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::CREATE);
-    EXPECT_STREQ("exit", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::CREATE);
+    EXPECT_STREQ("exit", results.begin()->directAlias.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    ASSERT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    ASSERT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 // Test the happy path of the EDIT_ATTRIBUTE command
 TEST_F(TextParserTest, EditAttributeHappyPath) {
     input = "edit long description";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::INVALID_NOUN, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::EDIT_ATTRIBUTE);
-    EXPECT_STREQ("long description", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::EDIT_ATTRIBUTE);
+    EXPECT_STREQ("long description", results.begin()->directAlias.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 // Test the happy path of the EDIT_WIZARD command
@@ -1031,57 +1027,57 @@ TEST_F(TextParserTest, EditWizardHappyPath) {
 
     // TODO: Add torch to areaVM
 
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::EDIT_WIZARD);
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::EDIT_WIZARD);
+    ASSERT_EQ(1, results.begin()->direct.size());
     // Should not be any indirect objects, position or unparsed text
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the SAVE command
 TEST_F(TextParserTest, SaveHappyPath) {
     std::string input = "save";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SAVE);
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::SAVE);
     // Should not be any objects, position or unparsed text
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-    EXPECT_TRUE(candidates.begin()->unparsed.empty());
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    EXPECT_TRUE(results.begin()->unparsed.empty());
 }
 
 // Test the happy path of the SAVE command with filename
 TEST_F(TextParserTest, SaveFilenameHappyPath) {
     std::string input = "save filename.dat";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::SAVE);
-    EXPECT_STREQ("filename.dat", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::SAVE);
+    EXPECT_STREQ("filename.dat", results.begin()->directAlias.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 // Test the happy path of the LOAD command
 TEST_F(TextParserTest, LoadHappyPath) {
     std::string input = "load filename.dat";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::VALID, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
-    EXPECT_STREQ("filename.dat", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex, true, true);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("filename.dat", results.begin()->directAlias.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 // Test the happy path of the DELETE command
@@ -1095,59 +1091,59 @@ TEST_F(TextParserTest, DeleteHappyPath) {
     // TODO: Add potion with ID of 1 to areaVM
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        auto result = tp.parse(*it, playerVM, playerNM, areaVM, areaNM, candidates);
-        EXPECT_EQ(parser::TextParseStatus::VALID, result);
-        ASSERT_EQ(1, candidates.size());
-        EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::DELETE);
-        EXPECT_TRUE(candidates.begin()->direct == nullptr);
+        results = tp.parse(*it, playerLex, areaLex, true, true);
+        ASSERT_EQ(1, results.size());
+        EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+        EXPECT_EQ(results.begin()->command, engine::CommandEnum::DELETE);
+        ASSERT_EQ(1, results.begin()->direct.size());
         // Should not be any indirect object or unparsed text
-        ASSERT_EQ(0, candidates.begin()->indirect.size());
-        EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
-        EXPECT_TRUE(candidates.begin()->unparsed.empty());
-        candidates.clear();
+        ASSERT_EQ(0, results.begin()->indirect.size());
+        EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+        EXPECT_TRUE(results.begin()->unparsed.empty());
+        results.clear();
     }
 }
 
 // Test an unknown verb only
 TEST_F(TextParserTest, InvalidVerbOnly) {
     std::string input = "foo";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::INVALID_VERB, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
-    EXPECT_STREQ("foo", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("foo", results.begin()->unparsed.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 // Test an unknown verb with unknown direct object
 TEST_F(TextParserTest, InvalidVerbInvalidDirectObject) {
     std::string input = "foo bar";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::INVALID_VERB, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
-    EXPECT_STREQ("foo bar", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("foo bar", results.begin()->unparsed.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 // Test an unknown verb with known direct object
 TEST_F(TextParserTest, InvalidVerbValidDirectObject) {
     std::string input = "foo torch";
-    auto result = tp.parse(input, playerVM, playerNM, areaVM, areaNM, candidates);
-    EXPECT_EQ(parser::TextParseStatus::INVALID_VERB, result);
-    ASSERT_EQ(1, candidates.size());
-    EXPECT_EQ(candidates.begin()->command, engine::CommandEnum::INVALID);
-    EXPECT_STREQ("foo torch", candidates.begin()->unparsed.c_str());
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("foo torch", results.begin()->unparsed.c_str());
     // Should not be any objects or position
-    EXPECT_TRUE(candidates.begin()->direct == nullptr);
-    EXPECT_EQ(0, candidates.begin()->indirect.size());
-    EXPECT_EQ(engine::ItemPosition::NONE, candidates.begin()->position);
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
 }
 
 
@@ -1171,8 +1167,8 @@ void setGlobalVerbs() {
 
     // LOOK command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::LOOK;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("look", vi);
     parser::WordManager::addGlobalVerb("look at", vi);
 
@@ -1183,8 +1179,12 @@ void setGlobalVerbs() {
 
     // TAKE command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::OPTIONAL);
     vi.command = engine::CommandEnum::TAKE;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    parser::WordManager::addGlobalVerb("pick up", vi);
+    parser::WordManager::addGlobalVerb("take", vi);
+    
+    vi.grammar = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::YES);
     vi.grammar.addPreposition("on", parser::PrepositionType::ON);
     vi.grammar.addPreposition("under", parser::PrepositionType::UNDER);
     vi.grammar.addPreposition("in", parser::PrepositionType::IN);
@@ -1196,8 +1196,8 @@ void setGlobalVerbs() {
 
     // PUT command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::REQUIRED);
     vi.command = engine::CommandEnum::PUT;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::YES);
     vi.grammar.addPreposition("on", parser::PrepositionType::ON);
     vi.grammar.addPreposition("under", parser::PrepositionType::UNDER);
     vi.grammar.addPreposition("in", parser::PrepositionType::IN);
@@ -1205,8 +1205,8 @@ void setGlobalVerbs() {
 
     // DROP command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::DROP;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("drop", vi);
 
     // INVENTORY command
@@ -1217,8 +1217,8 @@ void setGlobalVerbs() {
 
     // MORE command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::MORE;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("more", vi);
 
     // EQUIPMENT command
@@ -1229,44 +1229,44 @@ void setGlobalVerbs() {
 
     // EQUIP command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::EQUIP;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("wear", vi);
     parser::WordManager::addGlobalVerb("put on", vi);
     parser::WordManager::addGlobalVerb("equip", vi);
 
     // UNEQUIP command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::UNEQUIP;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("remove", vi);
     parser::WordManager::addGlobalVerb("take off", vi);
     parser::WordManager::addGlobalVerb("unequip", vi);
 
     // TRANSFER command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::REQUIRED);
     vi.command = engine::CommandEnum::TRANSFER;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::YES);
     vi.grammar.addPreposition("to", parser::PrepositionType::TO);
     parser::WordManager::addGlobalVerb("give", vi);
 
     // SPEAK command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::TEXT, parser::Grammar::NO);
     vi.command = engine::CommandEnum::SPEAK;
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("say", vi);
 
     // SHOUT command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::TEXT, parser::Grammar::NO);
     vi.command = engine::CommandEnum::SHOUT;
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("shout", vi);
     parser::WordManager::addGlobalVerb("yell", vi);
 
     // WHISPER command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::TEXT, parser::Grammar::REQUIRED);
     vi.command = engine::CommandEnum::WHISPER;
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, true, parser::Grammar::YES);
     vi.grammar.addPreposition("to", parser::PrepositionType::TO);
     parser::WordManager::addGlobalVerb("whisper", vi);
 
@@ -1279,8 +1279,8 @@ void setGlobalVerbs() {
 
     // GO command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::GO;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("go", vi);
     parser::WordManager::addGlobalVerb("go to", vi);
 
@@ -1301,17 +1301,21 @@ void setGlobalVerbs() {
 
     // ATTACK command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::OPTIONAL);
     vi.command = engine::CommandEnum::ATTACK;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    parser::WordManager::addGlobalVerb("attack", vi);
+
+    vi.grammar = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::YES);
     vi.grammar.addPreposition("with", parser::PrepositionType::WITH);
     vi.grammar.addPreposition("using", parser::PrepositionType::WITH);
     parser::WordManager::addGlobalVerb("attack", vi);
 
     // TALK command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::NO, parser::Grammar::REQUIRED);
     vi.command = engine::CommandEnum::TALK;
-    parser::WordManager::addGlobalVerb("talk to", vi);
+    vi.grammar = parser::Grammar(parser::Grammar::NO, true, parser::Grammar::YES);
+    vi.grammar.addPreposition("to", parser::PrepositionType::TO);
+    parser::WordManager::addGlobalVerb("talk", vi);
 
     // SHOP command
     vi = parser::VerbInfo();
@@ -1320,27 +1324,30 @@ void setGlobalVerbs() {
 
     // BUY command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::BUY;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("buy", vi);
 
     // SELL command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::SELL;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("sell", vi);
 
     // SEARCH command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::SEARCH;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("search", vi);
     parser::WordManager::addGlobalVerb("open", vi);
 
     // USE_SKILL command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::OPTIONAL);
     vi.command = engine::CommandEnum::USE_SKILL;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    parser::WordManager::addGlobalVerb("use", vi);
+    
+    vi.grammar = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::YES);
     vi.grammar.addPreposition("on", parser::PrepositionType::TO);
     parser::WordManager::addGlobalVerb("use", vi);
 
@@ -1351,51 +1358,59 @@ void setBuilderVerbs() {
 
     // WARP command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::WARP;
-    parser::WordManager::addBuilderVerb("warp to", vi);
+    vi.grammar = parser::Grammar(parser::Grammar::NO, true, parser::Grammar::YES);
+    vi.grammar.addPreposition("to", parser::PrepositionType::TO);
+    parser::WordManager::addBuilderVerb("warp", vi);
 
     // COPY command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::COPY;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addBuilderVerb("copy", vi);
 
     // CREATE command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::TEXT, parser::Grammar::NO);
     vi.command = engine::CommandEnum::CREATE;
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
     parser::WordManager::addBuilderVerb("create", vi);
     parser::WordManager::addBuilderVerb("new", vi);
     parser::WordManager::addBuilderVerb("add", vi);
 
     // EDIT_ATTRIBUTE command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::TEXT);
     vi.command = engine::CommandEnum::EDIT_ATTRIBUTE;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::TEXT);
+    parser::WordManager::addBuilderVerb("edit", vi);
+
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, true, parser::Grammar::YES);
+    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
     parser::WordManager::addBuilderVerb("edit", vi);
 
     // EDIT_WIZARD command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
     vi.command = engine::CommandEnum::EDIT_WIZARD;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addBuilderVerb("edit", vi);
 
     // SAVE command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::OPTIONALTEXT, parser::Grammar::NO);
     vi.command = engine::CommandEnum::SAVE;
+    vi.grammar = parser::Grammar(parser::Grammar::NO, false, parser::Grammar::NO);
+    parser::WordManager::addBuilderVerb("save", vi);
+
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
     parser::WordManager::addBuilderVerb("save", vi);
 
     // LOAD command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::TEXT, parser::Grammar::NO);
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
     vi.command = engine::CommandEnum::LOAD;
     parser::WordManager::addBuilderVerb("load", vi);
 
     // DELETE command
     vi = parser::VerbInfo();
-    vi.grammar = parser::Grammar(parser::Grammar::REQUIRED, parser::Grammar::NO);
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     vi.command = engine::CommandEnum::DELETE;
     parser::WordManager::addBuilderVerb("delete", vi);
     

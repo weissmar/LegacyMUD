@@ -2,7 +2,7 @@
   \file     TextParser.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/10/2017
+  \modified 02/12/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the TextParser class.
@@ -21,6 +21,20 @@ TextParser::~TextParser() {
 
 }
 
+std::vector<ParseResult> TextParser::parse(
+    const std::string input, 
+    const LexicalData &player,
+    const LexicalData &area,
+    bool isAdmin,
+    bool editMode
+    ) {
+
+    std::vector<ParseResult> results;
+
+    return results;
+}
+
+#if 0
 // Converts text input from players into potential commands to be run.
 TextParseStatus TextParser::parse(
         const std::string &input, 
@@ -49,7 +63,7 @@ TextParseStatus TextParser::parse(
 
     // FIRST: Check for edit mode verbs if user has permission
     if (isAdmin) {
-        m = parseGlobal(tokens, WordManager::hasEditModeVerb, WordManager::getEditModeVerb, playerNounMap, areaNounMap);
+        m = parseGlobal(tokens, WordManager::hasEditModeVerb, WordManager::getEditModeVerbs, playerNounMap, areaNounMap);
 
         addMatchToResults(VerbType::EDITMODE, m, results);
 
@@ -61,7 +75,7 @@ TextParseStatus TextParser::parse(
 
     // SECOND: Check for world builder verbs if in builder mode
     if (editMode) {
-        m = parseGlobal(tokens, WordManager::hasBuilderVerb, WordManager::getBuilderVerb, playerNounMap, areaNounMap);
+        m = parseGlobal(tokens, WordManager::hasBuilderVerb, WordManager::getBuilderVerbs, playerNounMap, areaNounMap);
 
         addMatchToResults(VerbType::BUILDER, m, results);
 
@@ -86,7 +100,7 @@ TextParseStatus TextParser::parse(
 
     // FIFTH: Check for global verbs
     {
-        m = parseGlobal(tokens, WordManager::hasGlobalVerb, WordManager::getGlobalVerb, playerNounMap, areaNounMap);
+        m = parseGlobal(tokens, WordManager::hasGlobalVerb, WordManager::getGlobalVerbs, playerNounMap, areaNounMap);
         
         addMatchToResults(VerbType::GLOBAL, m, results);
 
@@ -117,72 +131,6 @@ TextParseStatus TextParser::parse(
 
     // Return highest result
     return results.getBestResults(candidates);
-}
-
-std::vector<TextParser::Token> TextParser::tokenizeInput(const std::string &input) {
-    std::vector<Token> tokens;
-    char *buffer = new char[input.size() + 1];
-    ::strcpy(buffer, input.c_str());
-    char *token = ::strtok(buffer, " ");
-    while (token) {
-        Token t;
-        // Store original word
-        t.original = token;
-        // Store word normalized to lowercase
-        t.normalized.resize(t.original.size());
-        std::transform(t.original.begin(), t.original.end(), t.normalized.begin(), ::tolower);
-        // Add Token to vector
-        tokens.push_back(t);
-        // Get next token
-        token = strtok(NULL, " ");
-    }
-    delete [] buffer;
-
-    return tokens;
-}
-
-std::string TextParser::joinNormalizedTokens(const std::vector<Token> &tokens, Range range, bool skipIgnoreWords) {
-    // Immediately return if invalid arguments
-    if (range.start < 0       // start is negative
-        || range.start >= range.end // start is at or after end
-        || range.start >= tokens.size() // start is larger than vector size
-        || range.end > tokens.size())   // end is larger than vector size
-        return std::string();
-    
-    std::ostringstream oss;
-    size_t i = range.start;
-    // Append first token
-    if (!(skipIgnoreWords && WordManager::isIgnoreWord(tokens[i].normalized))) {
-        oss << tokens[i].normalized;
-    }
-    // Append remaining tokens separated by space
-    for (++i; i < range.end; ++i) {
-        if (!(skipIgnoreWords && WordManager::isIgnoreWord(tokens[i].normalized))) {
-            oss << " " << tokens[i].normalized;
-        }
-    }
-
-    return oss.str();
-}
-
-std::string TextParser::joinOriginalTokens(const std::vector<Token> &tokens, Range range) {
-    // Immediately return if invalid arguments
-    if (range.start < 0       // start is negative
-        || range.start >= range.end // start is at or after end
-        || range.start >= tokens.size() // start is larger than vector size
-        || range.end > tokens.size())   // end is larger than vector size
-        return std::string();
-    
-    std::ostringstream oss;
-    size_t i = range.start;
-    // Append first token
-    oss << tokens[i].original;
-    // Append remaining tokens separated by space
-    for (++i; i < range.end; ++i) {
-        oss << " " << tokens[i].original;
-    }
-
-    return oss.str();
 }
 
 // Find a matching alias in a WordMap
@@ -273,7 +221,7 @@ void TextParser::addMatchToResults(VerbType type, const Match m, ResultContainer
 }
 
 // Tries to find a global match based on input tokens and maps
-TextParser::Match TextParser::parseGlobal(const std::vector<Token> &tokens, bool (*hasAlias)(std::string), VerbInfo (*getVerb)(std::string), const WordMap &playerNounMap, const WordMap &areaNounMap) {
+TextParser::Match TextParser::parseGlobal(const std::vector<Token> &tokens, bool (*hasAlias)(std::string), std::vector<VerbInfo> (*getVerbs)(std::string), const WordMap &playerNounMap, const WordMap &areaNounMap) {
     // Stores match information
     Match m;
     // Stores the range of tokens being checked
@@ -285,37 +233,82 @@ TextParser::Match TextParser::parseGlobal(const std::vector<Token> &tokens, bool
     m.verbAlias = findLongestGlobalAlias(hasAlias, tokens, range);
     if (!m.verbAlias.empty()) {
         // Get verb grammar info
-        m.verbInfo = getVerb(m.verbAlias);
+        m.verbInfos = getVerbs(m.verbAlias);
 
         // Set range to start after verb
         range.start = range.end;
         range.end = tokens.size();
 
         // Check remaining input for direct object based on grammar
+        for (auto verbInfoIt = m.verbInfos.begin(); verbInfoIt !+ m.verbInfos.end(); ++verbInfoIt) {
+            switch (verbInfoIt->grammar.takesDirectObject()) {
+            case Grammar::NO:
+                switch (verbInfoIt->grammar.takesIndirectObject()) {
+                case Grammar::NO:
+                    // Supports verb only
+                    break;
+                case Grammar::YES:
+                    // Supports indirect object only (with possible preposition)
+                    break;
+                case Grammar::TEXT:
+                    // Supports indirect object text (with possible preposition)
+                    break;
+                }
+                break;
+            case Grammar::YES:
+                switch (verbInfoIt->grammar.takesIndirectObject()) {
+                case Grammar::NO:
+                    // Supports verb and direct object only
+                    // Check for direct object match on player
+                    alias = findLongestLocalAlias(playerNounMap, tokens, range);
+                    if (!alias.empty()) {
+                        for (auto it = playerNounMap.find(alias); it != playerNounMap.end(); ++it) {
+                            m.directObjs[it->first] = it->second;
+                        }
+                    }
+                    // Reset range and check for direct object match in area
+                    range.end = tokens.size();
+                    alias = findLongestLocalAlias(areaNounMap, tokens, range);
+                    if (!alias.empty()) {
+                        for (auto it = areaNounMap.find(alias); it != areaNounMap.end(); ++it) {
+                            m.directObjs[it->first] = it->second;
+                        }
+                    }
+
+                    // Update range to after direct object
+                    range.start = range.end;
+                    range.end = tokens.size();
+                    break;
+                case Grammar::YES:
+                    // Supports verb, direct object, and indirect object (with possible preposition)
+                    break;
+                case Grammar::TEXT:
+                    // Supports verb, direct object, and indirect object text (with possible preposition)
+                    break;
+                }
+                break;
+            case Grammar::TEXT:
+                switch (verbInfoIt->grammar.takesIndirectObject()) {
+                case Grammar::NO:
+                    // Supports verb and direct object text
+                    break;
+                case Grammar::YES:
+                    // Supports verb, direct object text, and indirect object (with possible preposition)
+                    break;
+                case Grammar::TEXT:
+                    // Supports verb, direct object text, and indirect object text (with possible preposition)
+                    break;
+                }
+                break;
+            }
+        }
         switch (m.verbInfo.grammar.takesDirectObject()) {
         case Grammar::NO:
+            switch (m.verbInfo.grammar.takesDirectObject()) {
+            }
             // Do nothing
             break;
         case Grammar::OPTIONAL:
-            // Check for direct object match on player
-            alias = findLongestLocalAlias(playerNounMap, tokens, range);
-            if (!alias.empty()) {
-                for (auto it = playerNounMap.find(alias); it != playerNounMap.end(); ++it) {
-                    m.directObjs[it->first] = it->second;
-                }
-            }
-            // Reset range and check for direct object match in area
-            range.end = tokens.size();
-            alias = findLongestLocalAlias(areaNounMap, tokens, range);
-            if (!alias.empty()) {
-                for (auto it = areaNounMap.find(alias); it != areaNounMap.end(); ++it) {
-                    m.directObjs[it->first] = it->second;
-                }
-            }
-
-            // Update range to after direct object
-            range.start = range.end;
-            range.end = tokens.size();
             break;
         case Grammar::REQUIRED:
             // Check for direct object match on player
@@ -476,5 +469,5 @@ void TextParser::ResultContainer::addResult(TextParseStatus status, TextParseRes
 size_t TextParser::ResultContainer::getResultCount() const {
     return _count;
 }
-
+#endif
 }}

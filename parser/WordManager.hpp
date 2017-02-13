@@ -2,7 +2,7 @@
   \file     WordManager.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/10/2017
+  \modified 02/12/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the WordManager class.
@@ -13,6 +13,8 @@
 #define LEGACYMUD_PARSER_WORDMANAGER_HPP
 
 #include "Grammar.hpp"
+#include "VerbInfo.hpp"
+#include "WordMap.hpp"
 
 #include <CommandEnum.hpp>
 
@@ -29,30 +31,10 @@ namespace legacymud { namespace engine {
 namespace legacymud { namespace parser {
 
 /*! 
-  \brief Specifies the struct used to store verb information.
-*/
-struct VerbInfo {
-    Grammar grammar;              //!< Stores the grammar supported by the verb.
-    engine::CommandEnum command;  //!< Stores the command mapped to the verb.
-    std::string description;      //!< Stores the description of the verb shown in help.
-
-    VerbInfo() {
-      grammar = Grammar(Grammar::Support::NO, Grammar::Support::NO);
-      command = engine::CommandEnum::INVALID;
-    }
-};
-
-/*! 
   \typedef GlobalVerbMap
   \brief Specifies the container type used to store global verbs.
 */
-typedef std::map<std::string, VerbInfo> GlobalVerbMap;
-
-/*!
-  \typedef WordAliasMap
-  \brief Specifies the type of an alias-to-InteractiveNoun-pointer lookup table.
-*/
-typedef std::multimap<std::string, engine::InteractiveNoun *> AliasLookupTable;
+typedef std::multimap<std::string, VerbInfo> GlobalVerbMap;
 
 /*!
   \brief Stores and manages all verbs and nouns supported by the game world.
@@ -193,9 +175,9 @@ public:
 
       \param[in] alias  Specifies the verb alias for which to get the VerbInfo.
       
-      \return Returns the VerbInfo object that corresponds to \a alias.
+      \return Returns a list of VerbInfo objects that corresponds to \a alias.
     */
-    static VerbInfo getEditModeVerb(std::string alias);
+    static std::vector<VerbInfo> getEditModeVerbs(std::string alias);
 
     /*!
       \brief Gets the VerbInfo object of the specified world builder verb.
@@ -205,9 +187,9 @@ public:
 
       \param[in] alias  Specifies the verb alias for which to get the VerbInfo.
       
-      \return Returns the VerbInfo object that corresponds to \a alias.
+      \return Returns a list of VerbInfo objects that corresponds to \a alias.
     */
-    static VerbInfo getBuilderVerb(std::string alias);
+    static std::vector<VerbInfo> getBuilderVerbs(std::string alias);
 
     /*!
       \brief Gets the VerbInfo object of the specified global verb.
@@ -217,9 +199,9 @@ public:
 
       \param[in] alias  Specifies the verb alias for which to get the VerbInfo.
       
-      \return Returns the VerbInfo object that corresponds to \a alias.
+      \return Returns a list of VerbInfo objects that corresponds to \a alias.
     */
-    static VerbInfo getGlobalVerb(std::string alias);
+    static std::vector<VerbInfo> getGlobalVerbs(std::string alias);
 
     /*!
       \brief Gets whether the specified noun alias is in use.
@@ -340,11 +322,11 @@ private:
     // Store all global verbs here.
     static GlobalVerbMap _globalVerbs;
 
-    // Store all nouns in the game world here.
-    static AliasLookupTable _nounAliases;
+    // Store a map of all nouns in the game world here.
+    static WordMap _localNouns;
 
-    // Store all verbs in the game world here (not including global verbs).
-    static AliasLookupTable _verbAliases;
+    // Store a map of all verbs in the game world here.
+    static WordMap _localVerbs;
 
     // Store ignore words
     static std::set<std::string> _ignoreWords;

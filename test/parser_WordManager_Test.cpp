@@ -2,7 +2,7 @@
   \file     parser_WordManager_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/07/2017
+  \modified 02/11/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the unit tests for the WordManager class.
@@ -81,7 +81,7 @@ TEST_F(WordManagerTest, AddEditModeVerbTest) {
     EXPECT_FALSE(parser::WordManager::hasGlobalVerb(word));
     parser::WordManager::addGlobalVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(engine::CommandEnum::EDIT_MODE, parser::WordManager::getGlobalVerb(word).command);
+    EXPECT_EQ(engine::CommandEnum::EDIT_MODE, parser::WordManager::getGlobalVerbs(word)[0].command);
 }
 
 // Verify that a word can correctly be added to the global verb lookup table
@@ -93,7 +93,7 @@ TEST_F(WordManagerTest, AddGlobalVerbTest) {
     EXPECT_FALSE(parser::WordManager::hasGlobalVerb(word));
     parser::WordManager::addGlobalVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(engine::CommandEnum::EAT, parser::WordManager::getGlobalVerb(word).command);
+    EXPECT_EQ(engine::CommandEnum::EAT, parser::WordManager::getGlobalVerbs(word)[0].command);
 }
 
 // Verify that a word can correctly be added to the builder verb lookup table
@@ -105,11 +105,11 @@ TEST_F(WordManagerTest, AddBuilderVerbTest) {
     EXPECT_FALSE(parser::WordManager::hasBuilderVerb(word));
     parser::WordManager::addBuilderVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb(word));
-    EXPECT_EQ(engine::CommandEnum::EDIT_WIZARD, parser::WordManager::getBuilderVerb(word).command);
+    EXPECT_EQ(engine::CommandEnum::EDIT_WIZARD, parser::WordManager::getBuilderVerbs(word)[0].command);
 }
 
-// Verify that a word can correctly be overwritten in the edit mode verb lookup table
-TEST_F(WordManagerTest, OverwriteEditModeVerbTest) {
+// Verify that a duplicate word can correctly be added to the edit mode verb lookup table
+TEST_F(WordManagerTest, AddDuplicateEditModeVerbTest) {
     std::string word = "editmode";
     parser::VerbInfo vi;
     // Set the command to INVALID
@@ -117,15 +117,17 @@ TEST_F(WordManagerTest, OverwriteEditModeVerbTest) {
     EXPECT_FALSE(parser::WordManager::hasEditModeVerb(word));
     parser::WordManager::addEditModeVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasEditModeVerb(word));
-    EXPECT_EQ(engine::CommandEnum::INVALID, parser::WordManager::getEditModeVerb(word).command);
-    // Change the command to EDIT_MODE and set again
+    ASSERT_EQ(1, parser::WordManager::getEditModeVerbs(word).size());
+    EXPECT_EQ(engine::CommandEnum::INVALID, parser::WordManager::getEditModeVerbs(word)[0].command);
+    // Add another with the command set to EDIT_MODE
     vi.command = engine::CommandEnum::EDIT_MODE;
     parser::WordManager::addEditModeVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasEditModeVerb(word));
-    EXPECT_EQ(engine::CommandEnum::EDIT_MODE, parser::WordManager::getEditModeVerb(word).command);
+    ASSERT_EQ(2, parser::WordManager::getEditModeVerbs(word).size());
+    EXPECT_EQ(engine::CommandEnum::EDIT_MODE, parser::WordManager::getEditModeVerbs(word)[1].command);
 }
 
-// Verify that a word can correctly be overwritten in the global verb lookup table
+// Verify that a duplicate word can correctly be added to the global verb lookup table
 TEST_F(WordManagerTest, OverwriteGlobalVerbTest) {
     std::string word = "eat";
     parser::VerbInfo vi;
@@ -134,15 +136,17 @@ TEST_F(WordManagerTest, OverwriteGlobalVerbTest) {
     EXPECT_FALSE(parser::WordManager::hasGlobalVerb(word));
     parser::WordManager::addGlobalVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(engine::CommandEnum::INVALID, parser::WordManager::getGlobalVerb(word).command);
-    // Change the command to EAT and set again
+    ASSERT_EQ(1, parser::WordManager::getGlobalVerbs(word).size());
+    EXPECT_EQ(engine::CommandEnum::INVALID, parser::WordManager::getGlobalVerbs(word)[0].command);
+    // Add another with the command set to EAT
     vi.command = engine::CommandEnum::EAT;
     parser::WordManager::addGlobalVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasGlobalVerb(word));
-    EXPECT_EQ(engine::CommandEnum::EAT, parser::WordManager::getGlobalVerb(word).command);
+    ASSERT_EQ(2, parser::WordManager::getGlobalVerbs(word).size());
+    EXPECT_EQ(engine::CommandEnum::EAT, parser::WordManager::getGlobalVerbs(word)[1].command);
 }
 
-// Verify that a word can correctly be overwritten in the builder verb lookup table
+// Verify that a duplicate word can correctly be added to the builder verb lookup table
 TEST_F(WordManagerTest, OverwriteBuilderVerbTest) {
     std::string word = "edit";
     parser::VerbInfo vi;
@@ -151,12 +155,14 @@ TEST_F(WordManagerTest, OverwriteBuilderVerbTest) {
     EXPECT_FALSE(parser::WordManager::hasBuilderVerb(word));
     parser::WordManager::addBuilderVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb(word));
-    EXPECT_EQ(engine::CommandEnum::INVALID, parser::WordManager::getBuilderVerb(word).command);
-    // Change the command to EDIT_WIZARD and set again
+    ASSERT_EQ(1, parser::WordManager::getBuilderVerbs(word).size());
+    EXPECT_EQ(engine::CommandEnum::INVALID, parser::WordManager::getBuilderVerbs(word)[0].command);
+    // Add another with the command set to EDIT_WIZARD
     vi.command = engine::CommandEnum::EDIT_WIZARD;
     parser::WordManager::addBuilderVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasBuilderVerb(word));
-    EXPECT_EQ(engine::CommandEnum::EDIT_WIZARD, parser::WordManager::getBuilderVerb(word).command);
+    ASSERT_EQ(2, parser::WordManager::getBuilderVerbs(word).size());
+    EXPECT_EQ(engine::CommandEnum::EDIT_WIZARD, parser::WordManager::getBuilderVerbs(word)[1].command);
 }
 
 // Verify that a word can correctly be added to and removed from the list of verbs in use
