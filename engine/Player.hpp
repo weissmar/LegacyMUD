@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/10/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -18,7 +18,7 @@
 #include <string>
 #include <queue>
 #include <vector>
-#include <utility>
+#include <tuple>
 #include "Combatant.hpp"
 #include "CharacterSize.hpp"
 #include "CommandEnum.hpp"
@@ -51,9 +51,9 @@ class Player: public Combatant {
     public:
         Player();
         Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
-        /*Player(const Player &otherPlayer);
+        Player(const Player &otherPlayer);
         Player & operator=(const Player &otherPlayer);
-        virtual ~Player();*/
+        virtual ~Player();
 
         /*!
          * \brief   Gets the experience points of this player.
@@ -131,10 +131,10 @@ class Player: public Combatant {
         /*!
          * \brief   Gets the quest list of this player.
          *
-         * \return  Returns a std::vector<std::pair<Quest*, int>> with the 
+         * \return  Returns a std::vector<std::tuple<Quest*, int>> with the 
          *          quest list.
          */
-        std::vector<std::pair<Quest*, int>> getQuestList();
+        std::vector<std::tuple<Quest*, int>> getQuestList();
 
         /*!
          * \brief   Gets the verb lookup for the items in this player's 
@@ -606,7 +606,7 @@ class Player: public Combatant {
         int fileDescriptor;
         std::queue<Command*> combatQueue;
         bool editMode;
-        std::vector<std::pair<Quest*, int>> questList;
+        std::vector<std::tuple<Quest*, int>> questList;
         std::multimap<std::string, InteractiveNoun*> verbLookup;
         std::multimap<std::string, InteractiveNoun*> nounLookup;
 };

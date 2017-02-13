@@ -17,18 +17,20 @@
 #include <vector>
 #include <map>
 #include <tuple>
-#include <Grammar.hpp>
 #include "CommandEnum.hpp"
 #include "ObjectType.hpp"
 #include "ItemPosition.hpp"
 
-namespace legacymud { namespace engine {
+namespace legacymud { namespace parser {
+    class Grammar;
+}}
 
-class Action;
-class SpecialSkill;
+namespace legacymud { namespace engine {
 class Player;
 class Item;
 class Area;
+class Action;
+class SpecialSkill;
 class NonCombatant;
 class Combatant;
 
