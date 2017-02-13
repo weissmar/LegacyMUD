@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/09/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -17,9 +17,7 @@ namespace legacymud { namespace engine {
 const int DEFAULT_MAX_INV = 10;
 
 Character::Character() 
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name("")
 , description("")
 , money(0)
@@ -29,9 +27,7 @@ Character::Character()
 
 
 Character::Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name(name)
 , description(description)
 , money(money)

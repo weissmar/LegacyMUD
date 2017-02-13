@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Action.cpp
  *
@@ -13,9 +13,7 @@
 namespace legacymud { namespace engine {
 
 Action::Action() 
-: SerializableNoun()
-, UniqueNoun()
-, command(CommandEnum::INVALID)
+: command(CommandEnum::INVALID)
 , valid(false)
 , flavorText("")
 , effect(EffectType::NONE)
@@ -23,9 +21,7 @@ Action::Action()
 
 
 Action::Action(CommandEnum command, bool valid, std::string flavorText, EffectType effect)
-: SerializableNoun()
-, UniqueNoun()
-, command(command)
+: command(command)
 , valid(valid)
 , flavorText(flavorText)
 , effect(effect)
@@ -33,9 +29,7 @@ Action::Action(CommandEnum command, bool valid, std::string flavorText, EffectTy
 
 
 Action::Action(const Action &otherAction)
-: SerializableNoun()
-, UniqueNoun()
-, command(otherAction.command)
+: command(otherAction.command)
 , valid(otherAction.valid)
 , flavorText(otherAction.flavorText)
 , effect(otherAction.effect){
@@ -134,16 +128,6 @@ bool Action::addAlias(std::string alias, parser::Grammar *grammar){
 
 
 bool Action::removeAlias(std::string alais){
-    return false;
-}
-
-
-std::string Action::serialize(){
-    return "";
-}
-
-
-bool Action::deserialize(std::string){
     return false;
 }
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/12/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.hpp
  *
@@ -18,7 +18,6 @@
 
 namespace legacymud { namespace engine {
 
-class SerializableNoun;
 class InteractiveNoun;
 class Creature;
 class Player;
@@ -57,16 +56,6 @@ class GameObjectManager {
         int removeObject(InteractiveNoun *anObject, int objectType);
 
         /*!
-         * \brief   Gets the ID of the specified object.
-         *
-         * \param[in] anObject      Specifies the object whose ID is requested.
-         *
-         * \return  Returns a int with the ID of the object, if finding the 
-         *          object was successful. Otherwise, returns -1.
-         */
-        int getID(InteractiveNoun *anObject);
-
-        /*!
          * \brief   Gets a pointer to the object indicated by the specified
          *          ID.
          *
@@ -102,7 +91,6 @@ class GameObjectManager {
          */
         Player* getPlayerByFD(int fileDescriptor);
     private:
-        std::vector<SerializableNoun*> gameSerializableObjects;
         std::map<int, InteractiveNoun*> gameObjects;
         std::vector<Creature*> gameCreatures;
         std::map<int, Player*> gamePlayers;

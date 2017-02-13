@@ -9,7 +9,7 @@
  ************************************************************************/
 
 #include "GameObjectManager.hpp"
-#include "SerializableNoun.hpp"
+#include "InteractiveNoun.hpp"
 #include "Creature.hpp"
 #include "Player.hpp"
 
@@ -41,11 +41,6 @@ int GameObjectManager::addObject(InteractiveNoun *anObject, int objectType){
 
 
 int GameObjectManager::removeObject(InteractiveNoun *anObject, int objectType){
-    return -1;
-}
-
-
-int GameObjectManager::getID(InteractiveNoun *anObject){
     return -1;
 }
 

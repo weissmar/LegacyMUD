@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/09/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -17,9 +17,7 @@
 namespace legacymud { namespace engine {
 
 Area::Area()
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name("")
 , shortDescription("")
 , longDescription("")
@@ -28,9 +26,7 @@ Area::Area()
 
 
 Area::Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name(name)
 , shortDescription(shortDescription)
 , longDescription(longDescription)

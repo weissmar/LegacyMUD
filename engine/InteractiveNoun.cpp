@@ -19,12 +19,12 @@
 
 namespace legacymud { namespace engine {
 
-InteractiveNoun::InteractiveNoun(){
+InteractiveNoun::InteractiveNoun() : ID(nextID++){
 
 }
 
 
-InteractiveNoun::InteractiveNoun(const InteractiveNoun &otherNoun){
+InteractiveNoun::InteractiveNoun(const InteractiveNoun &otherNoun) : ID(nextID++){
     aliases = otherNoun.aliases;
     if (!otherNoun.actions.empty()){
         for (auto action : otherNoun.actions){
@@ -58,6 +58,11 @@ InteractiveNoun::~InteractiveNoun(){
         delete action;
     }
     actions.clear();
+}
+
+
+int InteractiveNoun::getID(){
+    return ID;
 }
 
 

@@ -54,12 +54,33 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
 
 bool GameLogic::processInput(int numToProcess){
+    // lock for thread-safety
+    std::lock_guard<std::mutex> lockGuard(queueMutex);
+    std::pair<std::string, int> aMessage;
+
+    for(int i = 0; i < numToProcess; i++){
+        // get the next message
+        aMessage = messageQueue.front();
+        messageQueue.pop();
+
+        // get pointer to player the message is from
+
+        // TO DO: check if message is expected by a wizard
+
+        // send message to parser
+
+    }
     return false;
 }
 
 
 bool GameLogic::receivedMessageHandler(std::string message, int fileDescriptor){
-    return false;
+    // lock for thread-safety
+    std::lock_guard<std::mutex> lockGuard(queueMutex);
+
+    messageQueue.push(std::make_pair(message, fileDescriptor));
+
+    return true;
 }
 
 

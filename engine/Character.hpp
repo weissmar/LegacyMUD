@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -16,9 +16,7 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "EquipmentSlot.hpp"
 
 namespace legacymud { namespace engine {
@@ -30,7 +28,7 @@ class Item;
  * \details     This class defines the inheritable characteristics that define 
  *              all in-game characters. This class should not be instantiated.
  */
-class Character: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class Character: public InteractiveNoun {
     public:
         Character();
         Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);

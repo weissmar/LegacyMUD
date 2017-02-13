@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -13,9 +13,7 @@
 namespace legacymud { namespace engine {
 
 ItemType::ItemType()
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , weight(1)
 , rarity(ItemRarity::COMMON)
 , description("")
@@ -26,9 +24,7 @@ ItemType::ItemType()
 
 
 ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , weight(weight)
 , rarity(rarity)
 , description(description)

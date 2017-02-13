@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.cpp
  *
@@ -14,9 +14,7 @@
 namespace legacymud { namespace engine {
 
 ConditionalElement::ConditionalElement()
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , conditionSet(false)
 , conditionItem(nullptr)
 , description("")
@@ -25,9 +23,7 @@ ConditionalElement::ConditionalElement()
 
 
 ConditionalElement::ConditionalElement(bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , conditionSet(isConditional)
 , conditionItem(anItemType)
 , description(description)

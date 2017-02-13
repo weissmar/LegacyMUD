@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/12/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Action.hpp
  *
@@ -20,8 +20,6 @@
 #include <map>
 #include <vector>
 #include <Grammar.hpp>
-#include "SerializableNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "CommandEnum.hpp"
 #include "EffectType.hpp"
 #include "DataType.hpp"
@@ -34,7 +32,7 @@ namespace legacymud { namespace engine {
  *              grammar for each action. It also records the results of
  *              the action by way of text and an EffectType.
  */
-class Action: public SerializableNoun, public UniqueNoun {
+class Action {
     public:
         Action();
         Action(CommandEnum command, bool valid, std::string flavorText, EffectType effect);
@@ -159,23 +157,6 @@ class Action: public SerializableNoun, public UniqueNoun {
          *          specified alias succeeded.
          */
         bool removeAlias(std::string alais);
-
-        /*!
-         * \brief   Serializes this object for writing to file.
-         *
-         * \return  Returns a std::string with the serialized data.
-         */
-        virtual std::string serialize();
-
-        /*!
-         * \brief   Deserializes this object after reading from file.
-         * 
-         * \param[in] string    Holds the data to be deserialized.
-         *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
-         */
-        virtual bool deserialize(std::string);
 
         /*!
          * \brief   Gets the attribute signature of the class.

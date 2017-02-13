@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -16,9 +16,7 @@
 namespace legacymud { namespace engine {
 
 CombatantType::CombatantType()
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name("")
 , specialSkill(nullptr)
 , attackBonus(0)
@@ -30,9 +28,7 @@ CombatantType::CombatantType()
 
 
 CombatantType::CombatantType(std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name(name)
 , specialSkill(skill)
 , attackBonus(attackBonus)

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -15,9 +15,7 @@
 namespace legacymud { namespace engine {
 
 Quest::Quest()
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name("")
 , description("")
 , rewardMoney(0)
@@ -26,9 +24,7 @@ Quest::Quest()
 
 
 Quest::Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name(name)
 , description(description)
 , rewardMoney(rewardMoney)

@@ -13,9 +13,7 @@
 namespace legacymud { namespace engine {
 
 SpecialSkill::SpecialSkill()
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name("")
 , damage(0)
 , damageType(DamageType::NONE)
@@ -25,9 +23,7 @@ SpecialSkill::SpecialSkill()
 
 
 SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , name(name)
 , damage(damage)
 , damageType(type)

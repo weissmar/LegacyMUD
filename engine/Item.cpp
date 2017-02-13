@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -17,9 +17,7 @@
 namespace legacymud { namespace engine {
 
 Item::Item()
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , location(nullptr)
 , position(ItemPosition::NONE)
 , name("")
@@ -28,9 +26,7 @@ Item::Item()
 
 
 Item::Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type)
-: SerializableNoun()
-, InteractiveNoun()
-, UniqueNoun()
+: InteractiveNoun()
 , location(location)
 , position(position)
 , name(name)
