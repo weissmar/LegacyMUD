@@ -1,15 +1,15 @@
 /*************************************************************************
  * Author:        David Rigert
  * Date Created:  1/14/2017
- * Last Modified: 1/14/2017
+ * Last Modified: 2/5/2017
  * Course:        CS467, Winter 2017
- * Filename:      Sample_Test.hpp
+ * Filename:      Sample_Test.cpp
  *
  * Overview:
  *     Unit test for the Sample class.
  ************************************************************************/
 
-#include "Sample.h"
+#include "Sample.hpp"
 
 #include <gtest/gtest.h>
 

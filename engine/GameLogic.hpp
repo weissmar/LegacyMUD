@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/10/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -14,7 +14,6 @@
 
 #include <string>
 #include <queue>
-#include <utility>
 #include "ObjectType.hpp"
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
@@ -38,7 +37,20 @@ class GameLogic {
          * \brief   Starts a game.
          * 
          * This function starts a new game, if newGame is true, or loads the
-         * game from the passed-in file or, if empty string, the default file.
+         * game from the default file.
+         * 
+         * \param[in] newGame   Specifies whether or not to start a new game.
+         *
+         * \return  Returns a bool indicating whether or not starting the game
+         *          was successful.
+         */
+        bool startGame(bool newGame);
+
+        /*!
+         * \brief   Starts a game.
+         * 
+         * This function starts a new game, if newGame is true, or loads the
+         * game from the passed-in file.
          * 
          * \param[in] newGame   Specifies whether or not to start a new game.
          * \param[in] fileName  Specifies the file to load the game from, if
@@ -776,7 +788,7 @@ class GameLogic {
          */
         bool deleteCommand(Player *aPlayer, InteractiveNoun *directObj);
         GameObjectManager *manager;
-        std::queue<std::pair<std::string, int>> messageQueue;
+        std::queue<std::tuple<std::string, int>> messageQueue;
 };
 
 }}

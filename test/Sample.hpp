@@ -1,15 +1,15 @@
 /*************************************************************************
  * Author:        David Rigert
  * Date Created:  1/14/2017
- * Last Modified: 1/14/2017
+ * Last Modified: 2/5/2017
  * Course:        CS467, Winter 2017
- * Filename:      Sample.cpp
+ * Filename:      Sample.hpp
  *
  * Overview:
  *     This file contains a sample class to demonstrate how to use gtest.
  ************************************************************************/
-#ifndef LYNX_RETROMUD_SAMPLE_H
-#define LYNX_RETROMUD_SAMPLE_H
+#ifndef LEGACYMUD_SAMPLE_HPP
+#define LEGACYMUD_SAMPLE_HPP
 
 namespace legacymud { namespace test {
 
