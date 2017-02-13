@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/12/2017
+ * Last Modified: 2/13/2017
  * Course:        CS467, Winter 2017
  * Filename:      GameLogic.cpp
  *
@@ -12,8 +12,8 @@
 #include <iostream>
 #include <string>
 #include <mutex>            // mutex locks
-#include <GameLogic.hpp>
-#include "Server.hpp"
+#include "GameLogic.hpp"
+#include <Server.hpp>
 
 namespace legacymud { namespace engine {
     
