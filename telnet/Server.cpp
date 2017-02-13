@@ -21,7 +21,7 @@
 #include <mutex>            // mutex locks
 #include <iostream>         // displaying messages on server
 #include "Server.hpp"
-#include <GameLogic.hpp>
+#include "GameLogic.hpp"
 
 
 namespace legacymud { namespace telnet {
@@ -251,7 +251,7 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
             inMsg += ch;
             
             /* If echo is set to false, set ch to '*'. */
-            if (getPlayerEcho(playerFd))
+            if (!getPlayerEcho(playerFd))
                 ch = '*';
             
             /* Display the character on the player's terminal. */
