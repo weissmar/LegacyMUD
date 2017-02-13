@@ -1,5 +1,5 @@
 # Author:      David Rigert
-# Created:     1/14/2017
+# Created:     1/31/2017
 # Course:      CS 467, Winter 2017
 # Description: Makefile for unit tests
 
@@ -9,8 +9,7 @@ CXXFLAGS = -std=c++11 -g -Wall -pthread
 # and stores them as a list of .o filenames
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 # List the relative paths to the libraries being tested here
-# LIB_DIRS = ../account ../display ../engine ../parser ../telnet
-LIB_DIRS = ../engine ../telnet
+LIB_DIRS = ../account ../display ../engine ../parser ../telnet
 # Get the paths to the static libraries being tested
 LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(patsubst ../%,%,$(lib_dir)).a)
 # List the relative paths to external library binaries here
@@ -31,7 +30,7 @@ EXT_LIB = $(foreach ext_lib_name, $(EXT_LIB_NAMES), -l$(ext_lib_name))
 PROG = unittest
 
 all: $(LIBS) $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(PROG) $(EXT_BIN) $(EXT_LIB)
+	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS) -Wl,--start-group $(LIBS) -Wl,--end-group $(EXT_BIN) $(EXT_LIB)
 
 # Run the makefile for each library
 %.a: $(dir $@)

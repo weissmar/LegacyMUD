@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/10/2017
+ * Last Modified: 2/13/2017
  * Course:        CS467, Winter 2017
  * Filename:      server_main.cpp
  *
@@ -14,8 +14,8 @@
 #include <iostream>
 #include <thread>           // threading
 #include <mutex>
-#include "GameLogic.hpp"
-#include "Server.hpp"
+#include <GameLogic.hpp>
+#include <Server.hpp>
 
 
 int main(int argc, char *argv[]) {   

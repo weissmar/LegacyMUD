@@ -13,7 +13,7 @@
 #include <string>
 #include <mutex>            // mutex locks
 #include "GameLogic.hpp"
-#include "Server.hpp"
+#include <Server.hpp>
 
 namespace legacymud { namespace engine {
     
