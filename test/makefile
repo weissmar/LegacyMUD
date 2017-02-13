@@ -30,7 +30,7 @@ EXT_LIB = $(foreach ext_lib_name, $(EXT_LIB_NAMES), -l$(ext_lib_name))
 PROG = unittest
 
 all: $(LIBS) $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(PROG) $(EXT_BIN) $(EXT_LIB)
+	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS) -Wl,--start-group $(LIBS) -Wl,--end-group $(EXT_BIN) $(EXT_LIB)
 
 # Run the makefile for each library
 %.a: $(dir $@)
