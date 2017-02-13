@@ -15,7 +15,8 @@
 #include "GameLogic.hpp"
 #include <Server.hpp>
 
-namespace legacymud {namespace engine {
+namespace legacymud { namespace engine {
+    
 
 /******************************************************************************
 * Function:    newPlayerHandler

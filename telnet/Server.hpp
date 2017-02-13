@@ -15,7 +15,6 @@
 #include <map>
 #include <mutex>
 
-
 namespace legacymud {
     namespace engine{
         class GameLogic;    // forward declaration

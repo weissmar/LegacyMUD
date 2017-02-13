@@ -24,7 +24,7 @@
 #include <GameLogic.hpp>
 
 
-namespace legacymud {namespace telnet {
+namespace legacymud { namespace telnet {
 
 
 /******************************************************************************
