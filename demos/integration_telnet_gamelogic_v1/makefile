@@ -1,7 +1,7 @@
-# Author:      David Rigert
-# Created:     1/14/2017
+# Author:      Keith Adkins (follows David Rigert's original)
+# Created:     2/12/2017
 # Course:      CS 467, Winter 2017
-# Description: Makefile for unit tests
+# Description: Makefile for demo telnet/game logic integration.
 
 CXX = g++
 CXXFLAGS = -std=c++11 -g -Wall -pthread
@@ -9,15 +9,16 @@ CXXFLAGS = -std=c++11 -g -Wall -pthread
 # and stores them as a list of .o filenames
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 # List the relative paths to the libraries being tested here
-LIB_DIRS = ../account ../display ../engine ../parser ../telnet
+# LIB_DIRS = ../account ../display ../engine ../parser ../telnet
+LIB_DIRS = ../../engine ../../telnet
 # Get the paths to the static libraries being tested
 LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(patsubst ../%,%,$(lib_dir)).a)
 # List the relative paths to external library binaries here
-EXT_BIN_DIRS = ../external/bin
+EXT_BIN_DIRS = ../../external/bin
 # List the relative paths to external library header files here
-EXT_INC_DIRS = ../external/headers
+EXT_INC_DIRS = ../../external/headers
 # List the names of external libraries here
-EXT_LIB_NAMES = gtest
+# EXT_LIB_NAMES = gtest
 # Append the include paths for the libraries to the g++ flags
 CXXFLAGS += $(foreach include_dir, $(LIB_DIRS), -I$(include_dir))
 # Add the external header directory as an include path
@@ -27,7 +28,7 @@ EXT_BIN = $(foreach ext_bin_dir, $(EXT_BIN_DIRS), -L $(ext_bin_dir))
 # Tell the linker to link the external libraries
 EXT_LIB = $(foreach ext_lib_name, $(EXT_LIB_NAMES), -l$(ext_lib_name))
 # The name of the unit test executable
-PROG = unittest
+PROG = demo
 
 all: $(LIBS) $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(PROG) $(EXT_BIN) $(EXT_LIB)

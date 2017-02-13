@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/30/2017
- * Last Modified: 2/8/2017
+ * Last Modified: 2/12/2017
  * Course:        CS467, Winter 2017
  * Filename:      Display_Test.cpp
  *
@@ -9,7 +9,7 @@
  *     Unit test for the Display class.
  ************************************************************************/
 
-#include "Display.hpp"
+#include <Display.hpp>
 #include <string>
 #include <iostream>
 

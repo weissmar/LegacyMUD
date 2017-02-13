@@ -1,21 +1,21 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/30/2017
- * Last Modified: 2/11/2017
+ * Last Modified: 2/12/2017
  * Course:        CS467, Winter 2017
  * Filename:      Server_Test.cpp
  *
  * Overview:
  *     Unit tests for the Server class.  
  ************************************************************************/
-
-#include "Server.hpp"
-#include "GameLogic.hpp"    // game logic stub
+  
 #include <string>
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
 #include <thread> 
+#include <Server.hpp>
+#include <GameLogic.hpp> 
           
 #include <gtest/gtest.h>
 
