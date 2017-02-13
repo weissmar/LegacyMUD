@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.hpp
  *
@@ -14,9 +14,7 @@
 #define SPECIAL_SKILL_HPP
 
 #include <string>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -26,7 +24,7 @@ namespace legacymud { namespace engine {
 /*!
  * \details     Special skills define in-game skills that use special points. 
  */
-class SpecialSkill: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class SpecialSkill: public InteractiveNoun {
     public:
         SpecialSkill();
         SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown);

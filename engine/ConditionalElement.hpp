@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/08/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.hpp
  *
@@ -15,8 +15,6 @@
 
 #include <string>
 #include "InteractiveNoun.hpp"
-#include "SerializableNoun.hpp"
-#include "UniqueNoun.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -26,7 +24,7 @@ class ItemType;
  * \details     This class defines the inheritable characteristics that define 
  *              all in-game conditional elements. This class should not be instantiated.
  */
-class ConditionalElement: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class ConditionalElement: public InteractiveNoun {
     public:
         ConditionalElement();
         ConditionalElement(bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);

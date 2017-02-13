@@ -1,13 +1,17 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
  * \details     Header file for InteractiveNoun base class. Defines necessary
- *              members for aliasing nouns and commands and interface for defining
- *              command actions. This class should not be instantiated.
+ *              members for aliasing nouns and commands and interface for 
+ *              defining command actions. This class also allows for all 
+ *              descendant class instances to be uniquely identified by an 
+ *              int. Finally, this class requires all descendant classes 
+ *              to implement functions for serializing and deserializing. 
+ *              This class should not be instantiated.
  ************************************************************************/
 
 #ifndef INTERACTIVE_NOUN_HPP
@@ -37,7 +41,10 @@ class Combatant;
 /*!
  * \details     Defines necessary members for aliasing nouns and commands 
  *              and interface for defining command actions for inherited classes. 
- *              This class should not be instantiated.
+ *              This class also allows for all descendant class instances to be  
+ *              uniquely identified by an int. Finally, this class requires all 
+ *              descendant classes to implement functions for serializing and 
+ *              deserializing. This class should not be instantiated.
  */
 class InteractiveNoun {
     public:
@@ -45,6 +52,13 @@ class InteractiveNoun {
         InteractiveNoun(const InteractiveNoun &otherNoun);
         InteractiveNoun & operator=(const InteractiveNoun &otherNoun);
         virtual ~InteractiveNoun();
+
+        /*!
+         * \brief   Gets the ID of this noun.
+         * 
+         * \return  Returns an int with the ID.
+         */
+        int getID();
 
         /*!
          * \brief   Gets the action that is associated with the specified 
@@ -420,9 +434,28 @@ class InteractiveNoun {
          *          function for interactive noun.
          */
         virtual bool editWizard(Player*) = 0;
+
+        /*!
+         * \brief   Serializes this object for writing to file.
+         *
+         * \return  Returns a std::string with the serialized data.
+         */
+        virtual std::string serialize() = 0;
+
+        /*!
+         * \brief   Deserializes this object after reading from file.
+         * 
+         * \param[in] string    Holds the data to be deserialized.
+         *
+         * \return  Returns a bool indicating whether or not deserializing
+         *          the string into an Action succeeded.
+         */
+        virtual bool deserialize(std::string) = 0;
     private:
         std::vector<Action*> actions;
         std::vector<std::string> aliases;
+        const int ID;
+        static int nextID;
 };
 
 }}

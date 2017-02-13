@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Item.hpp
  *
@@ -14,9 +14,7 @@
 #define ITEM_HPP
 
 #include <string>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -29,7 +27,7 @@ class SpecialSkill;
 /*!
  * \details     Item defines generic in-game items.
  */
-class Item: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class Item: public InteractiveNoun {
     public:
         Item();
         Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type);

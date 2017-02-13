@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Quest.hpp
  *
@@ -16,9 +16,7 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
 
@@ -31,7 +29,7 @@ class QuestStep;
  * \details     Quests define in-game quests with steps that players may 
  *              complete for rewards.
  */
-class Quest: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class Quest: public InteractiveNoun {
     public:
         Quest();
         Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem);

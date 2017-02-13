@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -17,9 +17,7 @@
 
 #include <string>
 #include <vector>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "AreaSize.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -36,7 +34,7 @@ class Feature;
  *              track of the items, characters, features, and exits in them, as 
  *              well as the nouns and verbs currently usable in the area.
  */
-class Area: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class Area: public InteractiveNoun {
     public:
         Area();
         Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size);
