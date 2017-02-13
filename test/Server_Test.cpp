@@ -27,7 +27,7 @@ TEST(ServerTest, ConstructServer) {
     legacymud::telnet::Server ts;
 
     /* Get server pause value. */
-    EXPECT_EQ(false, ts.getServerPause() ) 
+    EXPECT_FALSE(ts.getServerPause() ) 
             << "Expect false for server pause default value.";
 
     /* Get server max player value. */
@@ -66,34 +66,34 @@ TEST(ServerTest, InitializeServer) {
     playerCap = 1;
     timeOut = 1; 
     serverPort = rand() % (65535-1000) + 1000;  // range 1000 to 65535
-    EXPECT_EQ(true, ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
+    EXPECT_TRUE(ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
             << "Expect true for all parameters being valid.  Could return false if port is already taken.";
     
     /* Shut the server down. */
-    EXPECT_EQ(true, ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutdown() ) 
         << "Expect true that the server is shutdown.";
     
     /* Invalid server port of 999. */
     serverPort = 999;
-    EXPECT_EQ(false, ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
+    EXPECT_FALSE(ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
             << "Expect false for invalid port.";
    
     /* Invalid server port of 65536. */
     serverPort = 65536; 
-    EXPECT_EQ(false, ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
+    EXPECT_FALSE(ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
             << "Expect false for invalid port.";
             
     /* Invalid player cap. */
     serverPort = rand() % (65535-1000) + 1000;  // range 1000 to 65535
     playerCap = 0;
-    EXPECT_EQ(false, ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
+    EXPECT_FALSE(ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
             << "Expect false for invalid player cap.  Could return false if port is already taken."; 
 
 
     /* Invalid timeout. */
     serverPort = rand() % (65535-1000) + 1000;  // range 1000 to 65535
     timeOut = 0;
-    EXPECT_EQ(false, ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
+    EXPECT_FALSE(ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
             << "Expect false for invalid timeout.  Could return false if port is already taken.";             
 }
 
@@ -111,7 +111,7 @@ TEST(ServerTest, ListeningServer) {
     /* All parameters are valid */ 
     serverPort = rand() % (65535-1000) + 1000;  // range 1000 to 65535
     
-    ASSERT_EQ(ts.initServer(serverPort, playerCap, timeOut, &gl), true ) 
+    ASSERT_TRUE(ts.initServer(serverPort, playerCap, timeOut, &gl)) 
             << "Expect true for initializing server.  Could return false if port is already taken.";
     
     /* The following only runs if the previous passes. */
@@ -120,7 +120,7 @@ TEST(ServerTest, ListeningServer) {
     std::thread serverThread(&legacymud::telnet::Server::startListening, &ts);   
     
     /* Shut the server down. */
-    EXPECT_EQ(true, ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutdown() ) 
         << "Expect true that the server is shutdown.";  
         
     serverThread.join();          
@@ -141,7 +141,7 @@ TEST(ServerTest, HandlingPlayers) {
     /* All parameters are valid */ 
     serverPort = rand() % (65535-1000) + 1000;  // range 1000 to 65535
     
-    ASSERT_EQ(ts.initServer(serverPort, playerCap, timeOut, &gl), true ) 
+    ASSERT_TRUE(ts.initServer(serverPort, playerCap, timeOut, &gl) ) 
             << "Expect true for initializing server.  Could return false if port is already taken.";
     
     /* The following only runs if the previous passes. */
@@ -150,15 +150,15 @@ TEST(ServerTest, HandlingPlayers) {
     std::thread serverThread(&legacymud::telnet::Server::startListening, &ts);   
     
     /* Disconnect a player.  There are no players so this should return false. */
-    EXPECT_EQ(false, ts.disconnectPlayer(playerFd) ) 
+    EXPECT_FALSE(ts.disconnectPlayer(playerFd) ) 
         << "Expect false since there are no players.";
 
     /* Set a player's echo.  There are no players so this should return false. */
-    EXPECT_EQ(false, ts.setPlayerEcho(playerFd, true) ) 
+    EXPECT_FALSE(ts.setPlayerEcho(playerFd, true) ) 
         << "Expect false since there are no players.";              
     
     /* Shut the server down. */
-    EXPECT_EQ(true, ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutdown() ) 
         << "Expect true that the server is shutdown.";  
         
     serverThread.join();          
@@ -187,24 +187,24 @@ TEST(ServerTest, SettersandGetters) {
     
     /* Set and get server pause. */
     ts.pause(true);
-    EXPECT_EQ(true, ts.getServerPause() ) 
+    EXPECT_TRUE(ts.getServerPause() ) 
         << "Expect pause to be true.";
     ts.pause(false);
-    EXPECT_EQ(false, ts.getServerPause() ) 
+    EXPECT_FALSE(ts.getServerPause() ) 
         << "Expect pause to be true.";        
 
     /* Set and get maxPlayers. */
-    EXPECT_EQ(false, ts.setMaxPlayers(0) ) 
+    EXPECT_FALSE(ts.setMaxPlayers(0) ) 
         << "Expect false since 0 is invalid.";          // invalid amount
-    EXPECT_EQ(true, ts.setMaxPlayers(10) ) 
+    EXPECT_TRUE(ts.setMaxPlayers(10) ) 
         << "Expect true since 10 is a valid amount.";   // valid amount        
     EXPECT_EQ(10, ts.getMaxPlayers() ) 
         << "Expect true the amount was set to 10.";       
 
     /* Set and get TimeOut. */
-    EXPECT_EQ(false, ts.setTimeOut(0) ) 
+    EXPECT_FALSE(ts.setTimeOut(0) ) 
         << "Expect false since 0 is invalid.";          // invalid amount
-    EXPECT_EQ(true, ts.setTimeOut(900) ) 
+    EXPECT_TRUE(ts.setTimeOut(900) ) 
         << "Expect true since 10 is a valid amount.";   // valid amount        
     EXPECT_EQ(900, ts.getTimeOut() ) 
         << "Expect true the amount was set to 900.";         
@@ -222,7 +222,7 @@ TEST(ServerTest, SettersandGetters) {
         << "Expect true.";         
     
     /* Shut the server down. */
-    EXPECT_EQ(true, ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutdown() ) 
         << "Expect true that the server is shutdown.";  
         
     serverThread.join();          
