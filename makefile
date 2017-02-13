@@ -10,7 +10,7 @@ LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(lib_dir).a)
 CXXFLAGS += $(foreach include_dir, $(INCLUDE_DIRS), -I$(include_dir))
 
 all: $(LIBS)
-	$(CXX) $(CXXFLAGS) $^ main.cpp -o legacymud
+	$(CXX) $(CXXFLAGS) -o legacymud main.cpp -Wl,--start-group $^ -Wl,--end-group
 
 # Run the makefile for each library
 %.a: $(dir $@)

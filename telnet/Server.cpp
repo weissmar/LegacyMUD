@@ -21,7 +21,7 @@
 #include <mutex>            // mutex locks
 #include <iostream>         // displaying messages on server
 #include "Server.hpp"
-#include "GameLogic.hpp"
+#include <GameLogic.hpp>
 
 
 namespace legacymud { namespace telnet {
