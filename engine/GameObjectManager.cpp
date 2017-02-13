@@ -35,22 +35,22 @@ GameObjectManager::~GameObjectManager(){
 }
 
 
-int GameObjectManager::addObject(SerializableNoun *anObject, int objectType){
+int GameObjectManager::addObject(InteractiveNoun *anObject, int objectType){
     return -1;
 }
 
 
-int GameObjectManager::removeObject(SerializableNoun *anObject, int objectType){
+int GameObjectManager::removeObject(InteractiveNoun *anObject, int objectType){
     return -1;
 }
 
 
-int GameObjectManager::getID(SerializableNoun *anObject){
+int GameObjectManager::getID(InteractiveNoun *anObject){
     return -1;
 }
 
 
-SerializableNoun* GameObjectManager::getPointer(int){
+InteractiveNoun* GameObjectManager::getPointer(int){
     return nullptr;
 }
 
@@ -61,7 +61,17 @@ std::vector<Creature*> GameObjectManager::getCreatures(){
 
 
 std::vector<Player*> GameObjectManager::getPlayers(){
-    return gamePlayers;
+    std::vector<Player*> playerVector;
+
+    for (auto player : gamePlayers){
+        playerVector.push_back(player.second);
+    }
+    return playerVector;
+}
+
+
+Player* GameObjectManager::getPlayerByFD(int fileDescriptor){
+    return nullptr;
 }
 
 }}
