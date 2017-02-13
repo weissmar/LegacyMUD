@@ -1,9 +1,9 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/31/2017
- * Last Modified: 2/10/2017
+ * Last Modified: 2/12/2017
  * Course:        CS467, Winter 2017
- * Filename:      GameLogic.h
+ * Filename:      GameLogic.hpp
  *
  * Overview:
  *     Stub of GameLogic class for testing Server class. Declarations.
@@ -14,6 +14,7 @@
 
 #include <deque>
 #include <condition_variable>
+
 
 namespace legacymud {
     namespace telnet {

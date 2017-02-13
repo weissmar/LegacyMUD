@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/11/2017
+  \modified 2/12/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -21,10 +21,10 @@
 #include <mutex>            // mutex locks
 #include <iostream>         // displaying messages on server
 #include "Server.hpp"
-#include "GameLogic.hpp"
+#include <GameLogic.hpp>
 
 
-namespace legacymud {namespace telnet {
+namespace legacymud { namespace telnet {
 
 
 /******************************************************************************
@@ -250,10 +250,13 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
         else if (ch >=32 && ch <=126) {
             inMsg += ch;
             
-            /* Echo the character back to the player's terminal. */
-            if (getPlayerEcho(playerFd)) 
-                if (write(playerFd, &ch, 1) < 0) 
-                    return false;             
+            /* If echo is set to false, set ch to '*'. */
+            if (getPlayerEcho(playerFd))
+                ch = '*';
+            
+            /* Display the character on the player's terminal. */
+            if (write(playerFd, &ch, 1) < 0) 
+                return false; 
         }                   
     }
     /* Echo new line to the player's terminal. */
