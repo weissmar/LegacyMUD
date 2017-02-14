@@ -2,7 +2,7 @@
   \file     Account.cpp
   \author   Keith Adkins
   \created  2/12/2017
-  \modified 2/13/2017
+  \modified 2/14/2017
   \course   CS467, Winter 2017
  
   \details Implementation file for the Account class.
@@ -72,7 +72,9 @@ bool Account::initialize() {
                 inFile.close();
                 return false;     // error: data corrupt
             }
-            user.userId = atoi(userIdStr.c_str());      // convert to an integer
+            
+            /* Convert userIdStr to an integer. */
+            user.userId = atoi(userIdStr.c_str());      
             
             /* Put the user in the map. */
             _userMap[userName] = user;         
@@ -241,7 +243,7 @@ bool Account::verifyAdmin(std::string userName ) {
     /* Find the user. */
     auto user = _userMap.find(userName);
     
-    /* If the user is in the map, return true if the user is an admin.  Otherswise return false. */
+    /* If the user is in the map, return true if the user is an admin.  Otherwise return false. */
     if(user != _userMap.end()) 
         return user->second.isAdmin;
     else
@@ -277,6 +279,7 @@ int Account::getNumberOfAccounts( ) {
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
+    /* Return the number of accounts in the account system. */
     return _userMap.size();
 }
 

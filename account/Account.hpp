@@ -2,7 +2,7 @@
   \file     Account.hpp
   \author   Keith Adkins
   \created  2/12/2017
-  \modified 2/13/2017
+  \modified 2/14/2017
   \course   CS467, Winter 2017
  
   \details  Declaration file for the Account class.
@@ -30,9 +30,7 @@ class Account {
         Account();
         
         /*!
-          \brief Initialize the account sytem loading the data into memory.
-          
-          This function initialize the account sytem loading the data into memory.
+          \brief Initialize the account sytem loading the data from disk into memory.
           
           \pre none
           \post Returns true if successful.  Otherwise false.
@@ -42,7 +40,7 @@ class Account {
         /*!
           \brief Saves all account sytem data to disk.
           
-          This function saves all account sytem data to disk.  Best to do this at the same
+          This function saves all account sytem data to disk.  It is suggested to do this at the same
           time game data is saved so that data between the account system and the game stay
           aligned.
           
@@ -66,22 +64,19 @@ class Account {
         /*!
           \brief Creates a new user account. 
           
-          This function creates a new user account.  This account will not be created if the userName and userId
-          are not unique.
+          This function creates a new user account.  This account will not be created if the userName is not unique.
           
           \param[in]  userName        player's account user name,  must be unique.
           \param[in]  password        player's password
           \param[in]  isAdmin         boolean that indicates if this player is an admin or not 
           \param[in]  userId          ID used to link this user to player game data          
-          \pre userName and userId must both be unique
+          \pre The game engine sure make sure userId is unique.
           \post Returns true if the account is successfully created.  Returns false if the user is already listed.
         */
         bool createAccount(std::string userName, std::string password, bool isAdmin, int userId );
 
         /*!
           \brief Changes a user's password.
-          
-          This function changes a user's password.
           
           \param[in]  userName        player's account user name
           \param[in]  password        player's password                 
@@ -93,8 +88,6 @@ class Account {
         /*!
           \brief Verifies an account by username and password.
           
-          This function verifies an account by username and password.
-          
           \param[in]  userName        player's account user name
           \param[in]  password        player's password                 
           \pre none
@@ -103,9 +96,7 @@ class Account {
         bool verifyAccount(std::string userName, std::string password );      
 
         /*!
-          \brief Sets a user's admin status.
-          
-          This function sets a user's admin status.  
+          \brief Sets a user's admin status. 
           
           \param[in]  userName        player's account user name
           \param[in]  isAdmin         boolean that indicates if this player is an admin or not                  
@@ -117,8 +108,6 @@ class Account {
         /*!
           \brief Checks if a player is an admin.
           
-          This function checks if a player is an admin.
-          
           \param[in]  userName        player's account user name.                 
           \pre none
           \post Returns true if the user is an admin.  Otherwise false.
@@ -126,9 +115,7 @@ class Account {
         bool verifyAdmin(std::string userName );                
         
         /*!
-          \brief Deletes an account.
-          
-          This function deletes a user's account. 
+          \brief Deletes an account. 
           
           \param[in]  userName        player's account user name               
           \pre none
@@ -137,12 +124,10 @@ class Account {
         bool deleteAccount(std::string userName ); 
         
         /*!
-          \brief Gets the number of accounts.
-          
-          This function gets the number of accounts. 
+          \brief Gets the number of accounts in the account system. 
                         
           \pre none
-          \post Returns the number of accounts in the account system.
+          \post Returns a the number of accounts in the account system.
         */
         int getNumberOfAccounts();
         
