@@ -36,24 +36,24 @@ class GameObjectManager {
         /*!
          * \brief   Adds the specified object to the game manager.
          *
-         * \param[in] anObject      Specifies the object to be added.
-         * \param[in] objectType    Specifies the type of the object.
+         * \param[in] anObject  Specifies the object to be added.
+         * \param[in] FD        If the object is a player, specifies their file descriptor
          *
-         * \return  Returns a int with the ID of the added object, if adding the 
-         *          object was successful. Otherwise, returns -1.
+         * \return  Returns a bool indicating whether or not adding the object was
+         *          successful.
          */
-        int addObject(InteractiveNoun *anObject, int objectType);
+        bool addObject(InteractiveNoun *anObject, int FD);
 
         /*!
          * \brief   Removes the specified object from the game manager.
          *
-         * \param[in] anObject      Specifies the object to be removed.
-         * \param[in] objectType    Specifies the type of the object.
+         * \param[in] anObject  Specifies the object to be removed.
+         * \param[in] FD        If the object is a player, specifies their file descriptor
          *
-         * \return  Returns a int with the ID of the removed object, if removing the 
-         *          object was successful. Otherwise, returns -1.
+         * \return  Returns a bool indicating whether or not removing the object was
+         *          successful.
          */
-        int removeObject(InteractiveNoun *anObject, int objectType);
+        bool removeObject(InteractiveNoun *anObject, int FD);
 
         /*!
          * \brief   Gets a pointer to the object indicated by the specified
@@ -92,7 +92,7 @@ class GameObjectManager {
         Player* getPlayerByFD(int fileDescriptor);
     private:
         std::map<int, InteractiveNoun*> gameObjects;
-        std::vector<Creature*> gameCreatures;
+        std::map<int, Creature*> gameCreatures;
         std::map<int, Player*> gamePlayers;
 };
 
