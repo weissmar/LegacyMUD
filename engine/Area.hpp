@@ -17,6 +17,8 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <LexicalData.hpp>
 #include "InteractiveNoun.hpp"
 #include "AreaSize.hpp"
 #include "DataType.hpp"
@@ -104,22 +106,6 @@ class Area: public InteractiveNoun {
          *          in this area.
          */
         std::vector<Exit*> getExits();
-
-        /*!
-         * \brief   Gets a map of the valid verb aliases in this area.
-         *
-         * \return  Returns a std::multimap<std::string, InteractiveNoun*> with 
-         *          the map of verb aliases for objects in this area.
-         */
-        std::multimap<std::string, InteractiveNoun*> getVerbLookup();
-
-        /*!
-         * \brief   Gets a map of the valid noun aliases in this area.
-         *
-         * \return  Returns a std::multimap<std::string, InteractiveNoun*> with 
-         *          the map of noun aliases for objects in this area.
-         */
-        std::multimap<std::string, InteractiveNoun*> getNounLookup();
 
         /*!
          * \brief   Sets the name of this area.
@@ -393,8 +379,7 @@ class Area: public InteractiveNoun {
         std::vector<Character*> characterContents;
         std::vector<Feature*> featureContents;
         std::vector<Exit*> exitContents;
-        std::multimap<std::string, InteractiveNoun*> verbLookup;
-        std::multimap<std::string, InteractiveNoun*> nounLookup;
+        parser::LexicalData contentsLexicalData;
 };
 
 }}

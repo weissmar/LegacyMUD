@@ -89,16 +89,6 @@ std::vector<Exit*> Area::getExits(){
 }
 
 
-std::multimap<std::string, InteractiveNoun*> Area::getVerbLookup(){
-    return verbLookup;
-}
-
-
-std::multimap<std::string, InteractiveNoun*> Area::getNounLookup(){
-    return nounLookup;
-}
-
-
 bool Area::setName(std::string name){
     return false;
 }

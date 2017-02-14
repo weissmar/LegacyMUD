@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -116,16 +116,6 @@ std::vector<std::pair<Quest*, int>> Player::getQuestList(){
 }
 
 
-std::multimap<std::string, InteractiveNoun*> Player::getVerbLookup(){
-    return verbLookup;
-}
-
-
-std::multimap<std::string, InteractiveNoun*> Player::getNounLookup(){
-    return nounLookup;
-}
-
-
 int Player::addToExperiencePts(int gainedXP){
     experiencePoints += gainedXP;
 
@@ -208,22 +198,12 @@ bool Player::updateQuest(Quest *aQuest, int step){
 } 
 
 
-bool Player::addVerbs(std::vector<std::string>, InteractiveNoun*){
+bool Player::addToInventory(Item *anItem){
     return false;
 }
 
 
-bool Player::addNouns(std::vector<std::string>, InteractiveNoun*){
-    return false;
-}
-
-
-bool Player::removeVerbs(InteractiveNoun*){
-    return false;
-}
-
-
-bool Player::removeNouns(InteractiveNoun*){
+bool Player::removeFromInventory(Item *anItem){
     return false;
 }
 

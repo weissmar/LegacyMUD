@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -19,6 +19,7 @@
 #include <queue>
 #include <vector>
 #include <utility>
+#include <LexicalData.hpp>
 #include "Combatant.hpp"
 #include "CharacterSize.hpp"
 #include "CommandEnum.hpp"
@@ -137,24 +138,6 @@ class Player: public Combatant {
         std::vector<std::pair<Quest*, int>> getQuestList();
 
         /*!
-         * \brief   Gets the verb lookup for the items in this player's 
-         *          inventory and equipment.
-         *
-         * \return  Returns a std::multimap<std::string, InteractiveNoun*> with  
-         *          the verb lookup
-         */
-        std::multimap<std::string, InteractiveNoun*> getVerbLookup();
-
-        /*!
-         * \brief   Gets the noun lookup for the items in this player's 
-         *          inventory and equipment.
-         *
-         * \return  Returns a std::multimap<std::string, InteractiveNoun*> with  
-         *          the noun lookup
-         */
-        std::multimap<std::string, InteractiveNoun*> getNounLookup();
-
-        /*!
          * \brief   Adds the specified points to the experience points of 
          *          this player.
          *          
@@ -270,50 +253,29 @@ class Player: public Combatant {
          *          updated.
          */
         bool updateQuest(Quest *aQuest, int step); 
+        
+        /*!
+         * \brief   Adds the specified item to this player's inventory.
+         *
+         * \param[in] anItem    Specifies the item to add.
+         *
+         * \return  Returns a bool indicating whether or not adding the item was 
+         *          successful.
+         */
+        virtual bool addToInventory(Item *anItem);
 
         /*!
-         * \brief   Adds specified verbs/object pair to verb lookup.
-         * 
-         * \param[in] verbs     Specifies verbs to add.
-         * \param[in] anObject  Specifies object associated with the verbs to add.
+         * \brief   Removes the specified item from this player's inventory.
          *
-         * \return  Returns a bool indicating whether or not the verbs were successfully 
-         *          added.
-         */
-        bool addVerbs(std::vector<std::string> verbs, InteractiveNoun *anObject);
-
-        /*!
-         * \brief   Adds specified nouns/object pair to noun lookup.
-         * 
-         * \param[in] nouns     Specifies nouns to add.
-         * \param[in] anObject  Specifies object associated with the nouns to add.
+         * \param[in] anItem    Specifies the item to remove.
          *
-         * \return  Returns a bool indicating whether or not the nouns were successfully 
-         *          added.
-         */
-        bool addNouns(std::vector<std::string> nouns, InteractiveNoun *anObject);
-
-        /*!
-         * \brief   Removes verbs associated with the specified object from the verb
-         *          lookup.
-         * 
-         * \param[in] anObject  Specifies object associated with the verbs to remove.
+         * \note    If the item is equipped, this function unequips the item and
+         *          removes it from inventory.
          *
-         * \return  Returns a bool indicating whether or not the verbs were successfully 
-         *          removed.
+         * \return  Returns a bool indicating whether or not removing the item was 
+         *          successful.
          */
-        bool removeVerbs(InteractiveNoun *anObject);
-
-        /*!
-         * \brief   Removes nouns associated with the specified object from the noun
-         *          lookup.
-         * 
-         * \param[in] anObject  Specifies object associated with the nouns to remove.
-         *
-         * \return  Returns a bool indicating whether or not the nouns were successfully 
-         *          removed.
-         */
-        bool removeNouns(InteractiveNoun *anObject);
+        virtual bool removeFromInventory(Item *anItem);
 
         /*!
          * \brief   Gets the object type.
@@ -607,8 +569,7 @@ class Player: public Combatant {
         std::queue<Command*> combatQueue;
         bool editMode;
         std::vector<std::pair<Quest*, int>> questList;
-        std::multimap<std::string, InteractiveNoun*> verbLookup;
-        std::multimap<std::string, InteractiveNoun*> nounLookup;
+        parser::LexicalData inventoryLexicalData;
 };
 
 }}

@@ -176,7 +176,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not adding the item was 
          *          successful.
          */
-        bool addToInventory(Item *anItem);
+        virtual bool addToInventory(Item *anItem);
 
         /*!
          * \brief   Equips the specified item for this character.
@@ -202,7 +202,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not removing the item was 
          *          successful.
          */
-        bool removeFromInventory(Item *anItem);
+        virtual bool removeFromInventory(Item *anItem);
 
         /*!
          * \brief   Unequips the specified item from this character.
