@@ -226,7 +226,7 @@ void WordManager::removeNoun(std::string alias, engine::InteractiveNoun *pObj) {
     // Block any other threads from accessing _nounAliases until operation is complete.
     std::lock_guard<std::mutex> guard(localNounsLock);
 
-    _localNouns.removeWord(alias, pObj);
+    assert(_localNouns.removeWord(alias, pObj));
 }
 
 // Removes a verb alias-InteractiveNoun pair from the verb alias lookup table.
@@ -237,7 +237,7 @@ void WordManager::removeVerb(std::string alias, engine::InteractiveNoun *pObj) {
     // Block any other threads from accessing _verbAliases until operation is complete.
     std::lock_guard<std::mutex> guard(localVerbsLock);
 
-    _localVerbs.removeWord(alias, pObj);
+    assert(_localVerbs.removeWord(alias, pObj));
 }
 
 // Reset all member variables.

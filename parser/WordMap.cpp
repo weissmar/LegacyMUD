@@ -27,8 +27,7 @@ bool WordMap::addWord(std::string alias, engine::InteractiveNoun *pObject) {
     bool success = false;
 
     if (hasWord(alias)) {
-        std::set<engine::InteractiveNoun *> vals = _wordMap[alias];
-        auto ret = vals.insert(pObject);
+        auto ret = _wordMap[alias].insert(pObject);
         if (ret.second) {
             _count++;
             success = true;
