@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/13/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -86,6 +86,11 @@ std::vector<Feature*> Area::getFeatures(){
 
 std::vector<Exit*> Area::getExits(){
     return exitContents;
+}
+
+
+parser::LexicalData& Area::getLexicalData(){
+    return inventoryLexicalData;
 }
 
 

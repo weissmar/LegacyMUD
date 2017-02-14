@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -136,6 +136,14 @@ class Player: public Combatant {
          *          quest list.
          */
         std::vector<std::pair<Quest*, int>> getQuestList();
+
+        /*!
+         * \brief   Gets the lexical data for this player's inventory.
+         *
+         * \return  Returns a parser::LexicalData by reference with the 
+         *          inventory lexical data.
+         */
+        parser::LexicalData& getLexicalData();
 
         /*!
          * \brief   Adds the specified points to the experience points of 

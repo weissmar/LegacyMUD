@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -106,6 +106,14 @@ class Area: public InteractiveNoun {
          *          in this area.
          */
         std::vector<Exit*> getExits();
+
+        /*!
+         * \brief   Gets the lexical data for this Area's contents.
+         * 
+         * \return  Returns a parser::LexicalData by reference with the 
+         *          contents' lexical data.
+         */
+        parser::LexicalData& getLexicalData();
 
         /*!
          * \brief   Sets the name of this area.

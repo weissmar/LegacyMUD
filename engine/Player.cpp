@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/13/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -113,6 +113,11 @@ bool Player::isEditMode(){
 
 std::vector<std::pair<Quest*, int>> Player::getQuestList(){
     return questList;
+}
+
+
+parser::LexicalData& Player::getLexicalData(){
+    return inventoryLexicalData;
 }
 
 

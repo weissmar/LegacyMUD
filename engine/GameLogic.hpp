@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/12/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -16,6 +16,7 @@
 #include <queue>
 #include <mutex>
 #include <utility>
+#include <map>
 #include "ObjectType.hpp"
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
@@ -69,11 +70,8 @@ class GameLogic {
          * 
          * \param[in] numToProcess  Specifies how many messages to process at a
          *                          time.
-         *
-         * \return  Returns a bool indicating whether or not processing messages
-         *          was successful.
          */
-        bool processInput(int numToProcess);
+        void processInput(int numToProcess);
 
         /*!
          * \brief   Adds a new message into the message queue.
@@ -181,11 +179,15 @@ class GameLogic {
          * 
          * \param[in] aPlayer   Specifies the player to message.
          * \param[in] message   Specifies the message to send.
-         *
-         * \return  Returns a bool indicating whether or not sending the message
-         *          was successful.
          */
-        bool messagePlayer(Player *aPlayer, std::string message);
+        void messagePlayer(Player *aPlayer, std::string message);
+
+        /*!
+         * \brief   Sends the specified message to all active players.
+         * 
+         * \param[in] message   Specifies the message to send.
+         */
+        void messageAllPlayers(std::string message);
 
         /*!
          * \brief   Starts combat between the specfied player and the specified
@@ -234,6 +236,20 @@ class GameLogic {
         bool endConversation(Player *aPlayer);
 
         /*!
+         * \brief   Handles a parse error that has one result.
+         * 
+         * \param[in] result   Specifies the result received from the parser.
+         */
+        void handleParseError(parser::ParseResult result);
+
+        /*!
+         * \brief   Handles a parse error that has multiple results.
+         * 
+         * \param[in] results   Specifies the results received from the parser.
+         */
+        void handleParseError(std::vector<parser::ParseResult> results);
+
+        /*!
          * \brief   Executes the specified command.
          * 
          * \param[in] aCommand      Specifies the command to execute.
@@ -249,7 +265,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not executing the command
          *          was successful.
          */
-        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = ItemPosition::NONE);
+        bool executeCommand(parser:ParseResult);
 
         /*!
          * \brief   Executes the help command.
@@ -779,6 +795,10 @@ class GameLogic {
         GameObjectManager *manager;
         std::queue<std::pair<std::string, int>> messageQueue;
         std::mutex queueMutex;
+        std::map<int, std::pair<std::mutex, std::queue<std::string>>> playerMessageQueues;
+        account::Account* accountManager;
+        parser::TextParser* theTextParser;
+        telnet::Server* theServer;
 };
 
 }}

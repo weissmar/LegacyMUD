@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -9,6 +9,8 @@
  ************************************************************************/
 
 #include <cstdlib>
+#include <parser.hpp>
+#include <Account.hpp>
 #include "GameLogic.hpp"
 #include "GameObjectManager.hpp"
 #include "InteractiveNoun.hpp"
@@ -18,7 +20,7 @@
 
 namespace legacymud { namespace engine {
 
-GameLogic::GameLogic(){
+GameLogic::GameLogic() : accountManager(nullptr), theTextParser(nullptr), theServer(nullptr){
     manager = new GameObjectManager;
 }
 
@@ -53,32 +55,71 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 }
 
 
-bool GameLogic::processInput(int numToProcess){
-    // lock for thread-safety
-    std::lock_guard<std::mutex> lockGuard(queueMutex);
+void GameLogic::processInput(int numToProcess){
+    Player *aPlayer = nullptr;
+    Area *anArea = nullptr;
+    bool isAdmin = false;
     std::pair<std::string, int> aMessage;
+    std::vector<parser::ParseResult> resultVector;
+    bool commandSuccess = false;
+
+    // lock for thread-safety
+    std::unique_lock<std::mutex> lockQueue(queueMutex);
 
     for(int i = 0; i < numToProcess; i++){
-        // get the next message
-        aMessage = messageQueue.front();
-        messageQueue.pop();
+        if (!messageQueue.empty()){
+            // get the next message
+            aMessage = messageQueue.front();
+            messageQueue.pop();
+            lockQueue.unlock();
 
-        // get pointer to player the message is from
+            // get pointer to player the message is from
+            aPlayer = manager->getPlayerByFD(aMessage.second);
+            if (aPlayer != nullptr){
+                // get pointer to area player is currently in
+                anArea = aPlayer->getLocation();
 
-        // TO DO: check if message is expected by a wizard
+                // check if player is admin
+                isAdmin = accountManager.confirmAdmin(aPlayer->getUser());
 
-        // send message to parser
+                // send message to parser
+                resultVector = theTextParser.parse(aMessage.first, aPlayer->getLexicalData(), anArea->getLexicalData(), isAdmin, aPlayer->isEditMode());
 
+                // check results
+                if (resultVector.size() == 1){
+                    if (resultVector.front().status == parser::ParseStatus::VALID){
+                        commandSuccess = executeCommand(resultVector.front());
+                        if (!commandSuccess){
+                            messagePlayer(aPlayer, "You can't do that. (Command failed.)");
+                        }
+                    } else {
+                        handleParseError(resultVector.front());
+                    }
+                } else {
+                    handleParseError(resultVector);
+                }
+            }
+            lockQueue.lock();
+        }
     }
-    return false;
 }
 
 
 bool GameLogic::receivedMessageHandler(std::string message, int fileDescriptor){
-    // lock for thread-safety
-    std::lock_guard<std::mutex> lockGuard(queueMutex);
+    std::pair<std::mutex, std::queue<std::string>> *playerQueue;
 
-    messageQueue.push(std::make_pair(message, fileDescriptor));
+    // check if there's a player-specific queue
+    int specific = playerMessageQueues.count(fileDescriptor);
+
+    if (specific == 1){
+        playerQueue = playerMessageQueues.at(fileDescriptor);
+        std::unique_lock<std::mutex> playerQueueLock(playerQueue.first);
+        playerQueue.second.push(message);
+        playerQueueLock.unlock();
+    } else {
+        std::lock_guard<std::mutex> lockGuard(queueMutex);
+        messageQueue.push(std::make_pair(message, fileDescriptor));
+    }
 
     return true;
 }
@@ -131,8 +172,13 @@ ObjectType GameLogic::getObjectType(const std::string &input){
 }
 
 
-bool GameLogic::messagePlayer(Player *aPlayer, std::string message){
-    return false;
+void GameLogic::messagePlayer(Player *aPlayer, std::string message){
+    theServer.sendMsg(aPlayer->getFileDescriptor(), message, telnet::Server::NEWLINE);
+}
+
+
+void GameLogic::messageAllPlayers(std::string message){
+    
 }
 
 
@@ -155,8 +201,15 @@ bool GameLogic::endConversation(Player *aPlayer){
     return false;
 }
 
+void GameLogic::handleParseError(parser::ParseResult result){
 
-bool GameLogic::executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition){
+}
+
+void GameLogic::handleParseError(std::vector<parser::ParseResult> results){
+    
+}
+
+bool GameLogic::executeCommand(parser::ParseResult){
     return false;
 }
 
