@@ -55,73 +55,73 @@ class Account {
           This function confirms that a proposed username is unique.  This would be used during
           account registration to ensure that all player usernames in the account system are unique.
           
-          \param[in]  userName        player's account user name,  must be unique.
+          \param[in]  username        player's account user name,  must be unique.
           \pre none
           \post Returns true if the username is unique.  Otherwise false.
         */
-        bool uniqueUsername(std::string userName);          
+        bool uniqueUsername(std::string username);          
 
         /*!
           \brief Creates a new user account. 
           
-          This function creates a new user account.  This account will not be created if the userName is not unique.
+          This function creates a new user account.  This account will not be created if the username is not unique.
           
-          \param[in]  userName        player's account user name,  must be unique.
+          \param[in]  username        player's account user name,  must be unique.
           \param[in]  password        player's password
           \param[in]  isAdmin         boolean that indicates if this player is an admin or not 
           \param[in]  userId          ID used to link this user to player game data          
           \pre The game engine sure make sure userId is unique.
           \post Returns true if the account is successfully created.  Returns false if the user is already listed.
         */
-        bool createAccount(std::string userName, std::string password, bool isAdmin, int userId );
+        bool createAccount(std::string username, std::string password, bool isAdmin, int userId );
 
         /*!
           \brief Changes a user's password.
           
-          \param[in]  userName        player's account user name
+          \param[in]  username        player's account user name
           \param[in]  password        player's password                 
           \pre none
           \post Returns true if the password is successfully changed.  Otherwise false.
         */
-        bool changePassword(std::string userName, std::string password );        
+        bool changePassword(std::string username, std::string password );        
 
         /*!
           \brief Verifies an account by username and password.
           
-          \param[in]  userName        player's account user name
+          \param[in]  username        player's account user name
           \param[in]  password        player's password                 
           \pre none
           \post Returns true if the password matches.  Otherwise false.
         */
-        bool verifyAccount(std::string userName, std::string password );      
+        bool verifyAccount(std::string username, std::string password );      
 
         /*!
           \brief Sets a user's admin status. 
           
-          \param[in]  userName        player's account user name
+          \param[in]  username        player's account user name
           \param[in]  isAdmin         boolean that indicates if this player is an admin or not                  
           \pre none
           \post Returns true if the admin status is set.  Returns false if the user was not found.
         */
-        bool setAdmin(std::string userName, bool isAdmin );         
+        bool setAdmin(std::string username, bool isAdmin );         
 
         /*!
           \brief Checks if a player is an admin.
           
-          \param[in]  userName        player's account user name.                 
+          \param[in]  username        player's account user name.                 
           \pre none
           \post Returns true if the user is an admin.  Otherwise false.
         */
-        bool verifyAdmin(std::string userName );                
+        bool verifyAdmin(std::string username );                
         
         /*!
           \brief Deletes an account. 
           
-          \param[in]  userName        player's account user name               
+          \param[in]  username        player's account user name               
           \pre none
           \post Returns true if the account is deleted.  Returns false if the user is not found.
         */
-        bool deleteAccount(std::string userName ); 
+        bool deleteAccount(std::string username ); 
         
         /*!
           \brief Gets the number of accounts in the account system. 
@@ -138,7 +138,7 @@ class Account {
             bool isAdmin;                               // flag that indicates if this user is an admin            
             int userId;                                 // user id that links to user's game data
         };  
-        std::map<std::string, _UserInfo> _userMap;  // map of users and account info, key is the userName
+        std::map<std::string, _UserInfo> _userMap;  // map of users and account info, key is the username
         std::mutex _mu_userMap;                     // mutex used for the player echo map       
 };
 

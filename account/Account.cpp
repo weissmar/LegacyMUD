@@ -34,7 +34,7 @@ Account::Account() {
 bool Account::initialize() {
     
     std::ifstream inFile(_fileName);    // input stream for account file 
-    std::string userName;               // userName string to be read in
+    std::string username;               // username string to be read in
     std::string isAdminStr;             // isAdmin string to be read in
     std::string userIdStr;              // userId string to be read in
     _UserInfo user;                     // user info struct for read in data
@@ -48,7 +48,7 @@ bool Account::initialize() {
     if (inFile.is_open() ) {
         
         /* Read the username. */
-        while (getline(inFile, userName) ){           
+        while (getline(inFile, username) ){           
         
             /* Read the password. */
             if (!getline(inFile, user.password) ) {       
@@ -77,7 +77,7 @@ bool Account::initialize() {
             user.userId = atoi(userIdStr.c_str());      
             
             /* Put the user in the map. */
-            _userMap[userName] = user;         
+            _userMap[username] = user;         
         }
  
         inFile.close();     // close the file
@@ -132,15 +132,15 @@ bool Account::saveToDisk() {
 /******************************************************************************
 * Function:    uniqueUsername                 
 *****************************************************************************/
-bool Account::uniqueUsername(std::string userName) {
+bool Account::uniqueUsername(std::string username) {
     
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
     /* Find the user. */
-    auto user = _userMap.find(userName);
+    auto user = _userMap.find(username);
     
-    /* If the userName is in the map, return false.  Otherwise return true. */
+    /* If the username is in the map, return false.  Otherwise return true. */
     return (user == _userMap.end());    // name is unique if end of map reached
        
 }      
@@ -149,13 +149,13 @@ bool Account::uniqueUsername(std::string userName) {
 /******************************************************************************
 * Function:    createAccount                 
 *****************************************************************************/
-bool Account::createAccount(std::string userName, std::string password, bool isAdmin, int userId ) {
+bool Account::createAccount(std::string username, std::string password, bool isAdmin, int userId ) {
     
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
     /* Find the user. */
-    auto user = _userMap.find(userName);
+    auto user = _userMap.find(username);
     
     /* If the user is not in the map, create the account. */
     if(user != _userMap.end()) 
@@ -165,7 +165,7 @@ bool Account::createAccount(std::string userName, std::string password, bool isA
         newUser.password = password;
         newUser.isAdmin = isAdmin;
         newUser.userId = userId;
-        _userMap[userName] = newUser;   // add the user           
+        _userMap[username] = newUser;   // add the user           
         return true;        
     }   
 }
@@ -174,13 +174,13 @@ bool Account::createAccount(std::string userName, std::string password, bool isA
 /******************************************************************************
 * Function:    changePassword                 
 *****************************************************************************/
-bool Account::changePassword(std::string userName, std::string password ) {
+bool Account::changePassword(std::string username, std::string password ) {
     
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
     /* Find the user. */
-    auto user = _userMap.find(userName);
+    auto user = _userMap.find(username);
     
     /* If the user is in the map, change the password. */
     if(user != _userMap.end()) { 
@@ -195,13 +195,13 @@ bool Account::changePassword(std::string userName, std::string password ) {
 /******************************************************************************
 * Function:    verifyAccount                 
 *****************************************************************************/
-bool Account::verifyAccount(std::string userName, std::string password ) { 
+bool Account::verifyAccount(std::string username, std::string password ) { 
     
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
     /* Find the user. */
-    auto user = _userMap.find(userName);
+    auto user = _userMap.find(username);
     
     /* If the user is in the map, return true if the passwords match. */
     if( (user != _userMap.end()) && (user->second.password == password) ) 
@@ -214,13 +214,13 @@ bool Account::verifyAccount(std::string userName, std::string password ) {
 /******************************************************************************
 * Function:    setAdmin                 
 *****************************************************************************/
-bool Account::setAdmin(std::string userName, bool isAdmin ) {
+bool Account::setAdmin(std::string username, bool isAdmin ) {
     
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
     /* Find the user. */
-    auto user = _userMap.find(userName);
+    auto user = _userMap.find(username);
     
     /* If the user is in the map, set the admin. */
     if(user != _userMap.end()) { 
@@ -235,13 +235,13 @@ bool Account::setAdmin(std::string userName, bool isAdmin ) {
 /******************************************************************************
 * Function:    verifyAdmin                 
 *****************************************************************************/
-bool Account::verifyAdmin(std::string userName ) {
+bool Account::verifyAdmin(std::string username ) {
        
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
     /* Find the user. */
-    auto user = _userMap.find(userName);
+    auto user = _userMap.find(username);
     
     /* If the user is in the map, return true if the user is an admin.  Otherwise return false. */
     if(user != _userMap.end()) 
@@ -254,17 +254,17 @@ bool Account::verifyAdmin(std::string userName ) {
 /******************************************************************************
 * Function:    deleteAccount                 
 *****************************************************************************/
-bool Account::deleteAccount(std::string userName ) {
+bool Account::deleteAccount(std::string username ) {
     
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);   
     
     /* Find the user. */
-    auto user = _userMap.find(userName);
+    auto user = _userMap.find(username);
     
     /* If the user is in the map, delete account and return true. */
     if(user != _userMap.end()) {
-        _userMap.erase(userName);
+        _userMap.erase(username);
         return true;
     } 
     else
