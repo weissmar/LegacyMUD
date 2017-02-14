@@ -70,4 +70,13 @@ void LexicalData::clear() {
     _verbs.clear();
 }
 
+// Borrowed from http://stackoverflow.com/questions/12662891/passing-a-member-function-as-an-argument-in-c
+bool LexicalData::forwardHasNoun(const void *context, std::string arg) {
+    return static_cast<const LexicalData*>(context)->hasNoun(arg);
+}
+
+bool LexicalData::forwardHasVerb(const void *context, std::string arg) {
+    return static_cast<const LexicalData*>(context)->hasNoun(arg);
+}
+
 } }

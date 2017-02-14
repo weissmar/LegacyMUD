@@ -17,7 +17,7 @@ PartOfSpeech::PartOfSpeech() {
     _range = Range(0, 0);
 }
 
-bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, bool (*findWord)(std::string word)) {
+bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, bool (*findWord)(const void *, std::string word), const void *context) {
     if (range.end > tokens.size()) {
         _alias = std::string();
         _originalAlias = std::string();
@@ -32,7 +32,7 @@ bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, boo
     for (; range.end > 0; --range.end) {
         // Try with ignore words
         std::string substring = Tokenizer::joinNormalized(tokens, range, false);
-        if (!substring.empty() && findWord(substring)) {
+        if (!substring.empty() && findWord(context, substring)) {
             // Found a match
             _alias = substring;
             _originalAlias = Tokenizer::joinOriginal(tokens, range);
@@ -41,7 +41,7 @@ bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, boo
         else {
             // Try without ignore words
             substring = Tokenizer::joinNormalized(tokens, range, true);
-            if (!substring.empty() && findWord(substring)) {
+            if (!substring.empty() && findWord(context, substring)) {
                 // Found a match
                 _alias = substring;
                 _originalAlias = Tokenizer::joinOriginal(tokens, range);
@@ -59,6 +59,14 @@ bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, boo
     }
 
     return _isValid;
+}
+
+std::string PartOfSpeech::getAlias() const {
+    return _alias;
+}
+
+std::string PartOfSpeech::getOriginalAlias() const {
+    return _originalAlias;
 }
 
 Range PartOfSpeech::getRange() const {

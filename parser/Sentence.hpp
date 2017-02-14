@@ -2,7 +2,7 @@
   \file     Sentence.hpp
   \author   David Rigert
   \created  02/11/2017
-  \modified 02/12/2017
+  \modified 02/13/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the Sentence class and
@@ -16,12 +16,16 @@
 #include "VerbType.hpp"
 #include "ParseStatus.hpp"
 
+#include <CommandEnum.hpp>
+
 #include <vector>
 
 namespace legacymud { namespace parser {
 
 class Grammar;
 class LexicalData;
+class PartOfSpeech;
+struct Token;
 
 /*!
   \brief Represents one interpretation of the input string.
@@ -31,6 +35,8 @@ class LexicalData;
 */
 class Sentence {
 public:
+    virtual ~Sentence() { }
+
     /*!
       \brief Creates an instance of a Sentence subclass based on Grammar rules.
 
@@ -38,23 +44,23 @@ public:
       on the specified Grammar \a rules.
 
       \param[in] rules      Specifies the Grammar rules to use when making the sentence.
+      \param[in] verb       Specifies the PartOfSpeech object used to find the verb alias.
       \param[in] type       Specifies the type of verb (e.g. edit mode, builder, global, local, etc.)
-      \param[in] playerLex  Specifies the lexical data for objects in the player inventory.
-      \param[in] areaLex    Specifies the lexical data for objects in the current area.
 
       \return Returns a pointer to a concrete Sentence subclass object.
     */
-    static Sentence *makeSentence(Grammar rules, VerbType type, const LexicalData &playerLex, const LexicalData &areaLex);
+    static Sentence *makeSentence(const Grammar &rules, PartOfSpeech verb, VerbType type, engine::CommandEnum command);
 
     /*!
-      \brief Gets a vector of ParseResult objects based on the parsed input string.
-    */
-    virtual std::vector<ParseResult> getResults() = 0;
+      \brief Gets a ParseResult object based on the parsed input string.
 
-    /*!
-      \brief Gets the ParseStatus of the highest ParseResult.
+      \param[in] tokens     Specifies the token sequence to parse.
+      \param[in] playerLex  Specifies the lexical data for objects in the player inventory.
+      \param[in] areaLex    Specifies the lexical data for objects in the current area.
     */
-    virtual ParseStatus getResultStatus() = 0;
+    virtual ParseResult getResult(const std::vector<Token> &tokens, 
+                                  const LexicalData &playerLex, 
+                                  const LexicalData &areaLex) = 0;
 };
 
 } }

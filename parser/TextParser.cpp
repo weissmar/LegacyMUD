@@ -2,13 +2,19 @@
   \file     TextParser.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/12/2017
+  \modified 02/13/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the TextParser class.
 */
 
 #include "TextParser.hpp"
+
+#include "LexicalData.hpp"
+#include "PartOfSpeech.hpp"
+#include "Sentence.hpp"
+#include "Tokenizer.hpp"
+#include "VerbInfo.hpp"
 
 #include <algorithm>
 #include <string.h>
@@ -29,7 +35,38 @@ std::vector<ParseResult> TextParser::parse(
     bool editMode
     ) {
 
+    // Stores the sentence parser
+    Sentence *parser = nullptr;
+    
+    // Stores the parse result
     std::vector<ParseResult> results;
+    ParseResult result;
+
+    // STEP 1: Tokenize input string
+    auto tokens = Tokenizer::tokenizeInput(input);
+    Range range = Range(0, tokens.size());
+
+    // STEP 2: Look for a matching verb alias
+    PartOfSpeech verb;
+
+    // FIRST: Check for edit mode verb match (if user has permission)
+    if (isAdmin) {
+        if (verb.findMatch(tokens, range, &WordManager::hasEditModeVerb)) {
+            // Found edit mode verb; get grammar rules
+            auto it = WordManager::getEditModeVerbs(verb.getAlias()).begin();
+            auto end = WordManager::getEditModeVerbs(verb.getAlias()).end();
+            // Run parser on each grammar definition and store the results
+            for (; it != end; ++it) {
+                parser = Sentence::makeSentence(it->grammar, verb, VerbType::EDITMODE, it->command);
+                if (parser == nullptr) return results;
+                result = parser->getResult(tokens, player, area);
+                results.push_back(result);
+                
+                delete parser;
+            }
+
+        }
+    }
 
     return results;
 }

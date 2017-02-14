@@ -2,7 +2,7 @@
   \file     VTISentence.hpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/12/2017
+  \modified 02/13/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the VTISentence class.
@@ -32,19 +32,22 @@ public:
       The default constructor initializes the VTISentence to an unparsed state.
       The parse() function must be called before calling getResult().
     */
-    VTISentence(VerbType type, const LexicalData &playerLex, const LexicalData &areaLex);
+    VTISentence(PartOfSpeech verb, VerbType type, engine::CommandEnum command);
 
     /*!
-      \brief Gets a vector of ParseResult objects based on the parsed input string.
-    */
-    virtual std::vector<ParseResult> getResults();
+      \brief Gets a ParseResult object based on the parsed input string.
 
-    /*!
-      \brief Gets the ParseStatus of the highest ParseResult.
+      \param[in] tokens     Specifies the token sequence to parse.
+      \param[in] playerLex  Specifies the lexical data for objects in the player inventory.
+      \param[in] areaLex    Specifies the lexical data for objects in the current area.
     */
-    virtual ParseStatus getResultStatus();
+    virtual ParseResult getResult(const std::vector<Token> &tokens, 
+                                  const LexicalData &playerLex, 
+                                  const LexicalData &areaLex);
 
 private:
+    engine::CommandEnum _command;
+    VerbType _type;
     PartOfSpeech _verb;
     PartOfSpeech _direct;
     PartOfSpeech _indirect;

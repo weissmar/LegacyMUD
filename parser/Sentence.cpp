@@ -2,7 +2,7 @@
   \file     Sentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/12/2017
+  \modified 02/13/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the Sentence class.
@@ -25,8 +25,8 @@
 
 namespace legacymud { namespace parser {
 
-// Creates an instance of a Sentence subclass based on Grammar rules.
-Sentence *Sentence::makeSentence(Grammar rules, VerbType type, const LexicalData &playerLex, const LexicalData &areaLex) {
+// Finds a matching verb of VerbType and creates an instance of a Sentence subclass based on Grammar rules.
+Sentence *Sentence::makeSentence(const Grammar &rules, PartOfSpeech verb, VerbType type, engine::CommandEnum command) {
     switch (rules.takesDirectObject()) {
     case Grammar::NO:
         if (rules.takesPreposition()) {
@@ -36,17 +36,17 @@ Sentence *Sentence::makeSentence(Grammar rules, VerbType type, const LexicalData
                 return nullptr;
                 break;
             case Grammar::YES:
-                return new VPISentence(type, playerLex, areaLex);
+                return new VPISentence(verb, type, command);
                 break;
             case Grammar::TEXT:
-                return new VPTSentence(type, playerLex, areaLex);
+                return new VPTSentence(verb, type, command);
                 break;
             }
         }
         else {
             switch (rules.takesIndirectObject()) {
             case Grammar::NO:
-                return new VSentence(type, playerLex, areaLex);
+                return new VSentence(verb, type, command);
                 break;
             case Grammar::YES:
                 // Verb-Indirect Unsupported
@@ -67,23 +67,23 @@ Sentence *Sentence::makeSentence(Grammar rules, VerbType type, const LexicalData
                 return nullptr;
                 break;
             case Grammar::YES:
-                return new VDPISentence(type, playerLex, areaLex);
+                return new VDPISentence(verb, type, command);
                 break;
             case Grammar::TEXT:
-                return new VDPTSentence(type, playerLex, areaLex);
+                return new VDPTSentence(verb, type, command);
                 break;
             }
         }
         else {
             switch (rules.takesIndirectObject()) {
             case Grammar::NO:
-                return new VDSentence(type, playerLex, areaLex);
+                return new VDSentence(verb, type, command);
                 break;
             case Grammar::YES:
-                return new VDISentence(type, playerLex, areaLex);
+                return new VDISentence(verb, type, command);
                 break;
             case Grammar::TEXT:
-                return new VDTSentence(type, playerLex, areaLex);
+                return new VDTSentence(verb, type, command);
                 break;
             }
         }
@@ -96,20 +96,20 @@ Sentence *Sentence::makeSentence(Grammar rules, VerbType type, const LexicalData
                 return nullptr;
                 break;
             case Grammar::YES:
-                return new VTPISentence(type, playerLex, areaLex);
+                return new VTPISentence(verb, type, command);
                 break;
             case Grammar::TEXT:
-                return new VTPTSentence(type, playerLex, areaLex);
+                return new VTPTSentence(verb, type, command);
                 break;
             }
         }
         else {
             switch (rules.takesIndirectObject()) {
             case Grammar::NO:
-                return new VTSentence(type, playerLex, areaLex);
+                return new VTSentence(verb, type, command);
                 break;
             case Grammar::YES:
-                return new VTISentence(type, playerLex, areaLex);
+                return new VTISentence(verb, type, command);
                 break;
             case Grammar::TEXT:
                 // Verb-Direct Text-Indirect Text Unsupported

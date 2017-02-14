@@ -2,7 +2,7 @@
   \file     WordManager.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/07/2017
+  \modified 02/13/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the WordManager class.
@@ -177,17 +177,17 @@ std::vector<VerbInfo> WordManager::getBuilderVerbs(std::string alias) {
 }
 
 // Gets whether the specified noun is in use.
-bool WordManager::hasNoun(std::string alias) {
+bool WordManager::hasNoun(const void *, std::string alias) {
     return _localNouns.hasWord(alias);
 }
 
 // Gets whether the specified verb is in use.
-bool WordManager::hasVerb(std::string alias) {
+bool WordManager::hasVerb(const void *, std::string alias) {
     return _localVerbs.hasWord(alias);
 }
 
 // Gets whether the specified edit mode verb has been added.
-bool WordManager::hasEditModeVerb(std::string alias) {
+bool WordManager::hasEditModeVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
@@ -195,7 +195,7 @@ bool WordManager::hasEditModeVerb(std::string alias) {
 }
 
 // Gets whether the specified global verb has been added.
-bool WordManager::hasGlobalVerb(std::string alias) {
+bool WordManager::hasGlobalVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
@@ -203,7 +203,7 @@ bool WordManager::hasGlobalVerb(std::string alias) {
 }
 
 // Gets whether the specified builder verb has been added.
-bool WordManager::hasBuilderVerb(std::string alias) {
+bool WordManager::hasBuilderVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
@@ -211,7 +211,7 @@ bool WordManager::hasBuilderVerb(std::string alias) {
 }
 
 // Gets whether the specified ignore word has been added.
-bool WordManager::isIgnoreWord(std::string word) {
+bool WordManager::isIgnoreWord(const void *, std::string word) {
     // Convert string to lowercase
     std::transform(word.begin(), word.end(), word.begin(), ::tolower);
 

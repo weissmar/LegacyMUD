@@ -50,12 +50,12 @@ std::string Tokenizer::joinNormalized(const std::vector<Token> &tokens, Range ra
     std::ostringstream oss;
     size_t i = range.start;
     // Append first token
-    if (!(skipIgnoreWords && WordManager::isIgnoreWord(tokens[i].normalized))) {
+    if (!(skipIgnoreWords && WordManager::isIgnoreWord(0, tokens[i].normalized))) {
         oss << tokens[i].normalized;
     }
     // Append remaining tokens separated by space
     for (++i; i < range.end; ++i) {
-        if (!(skipIgnoreWords && WordManager::isIgnoreWord(tokens[i].normalized))) {
+        if (!(skipIgnoreWords && WordManager::isIgnoreWord(0, tokens[i].normalized))) {
             oss << " " << tokens[i].normalized;
         }
     }

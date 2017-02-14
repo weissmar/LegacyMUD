@@ -2,7 +2,7 @@
   \file     VTPISentence.hpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/12/2017
+  \modified 02/13/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the VTPISentence class.
@@ -33,19 +33,18 @@ public:
       The default constructor initializes the VTPISentence to an unparsed state.
       The parse() function must be called before calling getResult().
     */
-    VTPISentence(VerbType type, const LexicalData &playerLex, const LexicalData &areaLex);
+    VTPISentence(PartOfSpeech verb, VerbType type, engine::CommandEnum command);
 
     /*!
-      \brief Gets a vector of ParseResult objects based on the parsed input string.
+      \brief Gets a ParseResult object based on the parsed input string.
     */
-    virtual std::vector<ParseResult> getResults();
-
-    /*!
-      \brief Gets the ParseStatus of the highest ParseResult.
-    */
-    virtual ParseStatus getResultStatus();
+    virtual ParseResult getResult(const std::vector<Token> &tokens, 
+                                  const LexicalData &playerLex, 
+                                  const LexicalData &areaLex);
 
 private:
+    engine::CommandEnum _command;
+    VerbType _type;
     PartOfSpeech _verb;
     PartOfSpeech _direct;
     PartOfSpeech _preposition;
