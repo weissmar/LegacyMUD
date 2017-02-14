@@ -36,9 +36,6 @@ class PlayerClass: public CombatantType {
     public:
         PlayerClass();
         PlayerClass(int primaryStat, std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints);
-        PlayerClass(const PlayerClass &otherPlayerClass);
-        PlayerClass & operator=(const PlayerClass &otherPlayerClass);
-        virtual ~PlayerClass();
 
         /*!
          * \brief   Gets the primary stat for this player class.

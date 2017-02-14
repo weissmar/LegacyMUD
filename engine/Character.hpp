@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -15,10 +15,8 @@
 
 #include <string>
 #include <vector>
-#include <tuple>
-#include "SerializableNoun.hpp"
+#include <utility>
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "EquipmentSlot.hpp"
 
 namespace legacymud { namespace engine {
@@ -30,13 +28,13 @@ class Item;
  * \details     This class defines the inheritable characteristics that define 
  *              all in-game characters. This class should not be instantiated.
  */
-class Character: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class Character: public InteractiveNoun {
     public:
         Character();
         Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
-        Character(const Character &otherCharacter);
+        /*Character(const Character &otherCharacter);
         Character & operator=(const Character &otherCharacter);
-        virtual ~Character();
+        virtual ~Character();*/
 
         /*!
          * \brief   Gets the name of this character.
@@ -72,10 +70,10 @@ class Character: public SerializableNoun, public InteractiveNoun, public UniqueN
          * \note    This function returns all items in inventory, including those
          *          currently equipped, along with where they are equipped.
          *
-         * \return  Returns a std::vector<std::tuple<EquipmentSlot, Item*>> representing 
+         * \return  Returns a std::vector<std::pair<EquipmentSlot, Item*>> representing 
          *          the inventory and equipment of this character.
          */
-        std::vector<std::tuple<EquipmentSlot, Item*>> getInventory();
+        std::vector<std::pair<EquipmentSlot, Item*>> getInventory();
 
         /*!
          * \brief   Gets the inventory of this character.
@@ -93,10 +91,10 @@ class Character: public SerializableNoun, public InteractiveNoun, public UniqueN
          * \note    This function returns only items in inventory that are currently 
          *          equipped, along with where they are equipped.
          *
-         * \return  Returns a std::vector<Item*> representing the equipment of this 
-         *          character.
+         * \return  Returns a std::vector<std::pair<EquipmentSlot, Item*>> representing 
+         *          the equipment of this character.
          */
-        std::vector<std::tuple<EquipmentSlot, Item*>> getEquipped();
+        std::vector<std::pair<EquipmentSlot, Item*>> getEquipped();
 
         /*!
          * \brief   Gets the maximum allowed inventory weight for this character.
@@ -237,7 +235,7 @@ class Character: public SerializableNoun, public InteractiveNoun, public UniqueN
         std::string description;
         int money;
         Area *location;
-        std::vector<std::tuple<EquipmentSlot, Item*>> inventory;
+        std::vector<std::pair<EquipmentSlot, Item*>> inventory;
         int maxInventoryWeight;
 };
 

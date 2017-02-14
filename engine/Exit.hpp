@@ -31,9 +31,9 @@ class Exit: public ConditionalElement {
     public:
         Exit();
         Exit(ExitDirection direction, EffectType effect, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
-        Exit(const Exit &otherExit);
+        /*Exit(const Exit &otherExit);
         Exit & operator=(const Exit &otherExit);
-        virtual ~Exit();
+        virtual ~Exit();*/
 
         /*!
          * \brief   Gets the direction of this exit.

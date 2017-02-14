@@ -33,10 +33,7 @@ namespace legacymud { namespace engine {
 class CreatureType: public CombatantType {
     public:
         CreatureType();
-        CreatureType(CharacterSize size, std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints);
-        CreatureType(const CreatureType &otherCreatureType);
-        CreatureType & operator=(const CreatureType &otherCreatureType);
-        virtual ~CreatureType();
+        CreatureType(CharacterSize size, XPTier difficulty, std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints);
 
         /*!
          * \brief   Gets the size of this creature type.

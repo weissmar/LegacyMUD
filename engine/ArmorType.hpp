@@ -32,9 +32,6 @@ class ArmorType: public ItemType {
     public:
         ArmorType();
         ArmorType(int bonus, DamageType resistantTo, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType);
-        ArmorType(const ArmorType &otherArmorType);
-        ArmorType & operator=(const ArmorType &otherArmorType);
-        virtual ~ArmorType();
 
         /*!
          * \brief   Gets the armor bonus for this armor type.

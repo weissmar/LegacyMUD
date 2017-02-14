@@ -33,9 +33,9 @@ class Creature: public Combatant {
     public:
         Creature();
         Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
-        Creature(const Creature &otherCreature);
+        /*Creature(const Creature &otherCreature);
         Creature & operator=(const Creature &otherCreature);
-        virtual ~Creature();
+        virtual ~Creature();*/
 
         /*!
          * \brief   Gets the type of this creature.

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.hpp
  *
@@ -14,9 +14,7 @@
 #define COMBATANT_TYPE_HPP
 
 #include <string>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "DamageType.hpp"
 
 namespace legacymud { namespace engine {
@@ -27,13 +25,13 @@ class SpecialSkill;
  * \details     This class defines the inheritable characteristics that define 
  *              all in-game combatant types. This class should not be instantiated.
  */
-class CombatantType: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class CombatantType: public InteractiveNoun {
     public:
         CombatantType();
         CombatantType(std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints);
-        CombatantType(const CombatantType &otherCombatantType);
+        /*CombatantType(const CombatantType &otherCombatantType);
         CombatantType & operator=(const CombatantType &otherCombatantType);
-        virtual ~CombatantType();
+        virtual ~CombatantType();*/
 
         /*!
          * \brief   Gets the name of this combatant type.

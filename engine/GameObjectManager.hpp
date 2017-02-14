@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.hpp
  *
@@ -18,7 +18,7 @@
 
 namespace legacymud { namespace engine {
 
-class SerializableNoun;
+class InteractiveNoun;
 class Creature;
 class Player;
 
@@ -42,7 +42,7 @@ class GameObjectManager {
          * \return  Returns a int with the ID of the added object, if adding the 
          *          object was successful. Otherwise, returns -1.
          */
-        int addObject(SerializableNoun *anObject, int objectType);
+        int addObject(InteractiveNoun *anObject, int objectType);
 
         /*!
          * \brief   Removes the specified object from the game manager.
@@ -53,17 +53,7 @@ class GameObjectManager {
          * \return  Returns a int with the ID of the removed object, if removing the 
          *          object was successful. Otherwise, returns -1.
          */
-        int removeObject(SerializableNoun *anObject, int objectType);
-
-        /*!
-         * \brief   Gets the ID of the specified object.
-         *
-         * \param[in] anObject      Specifies the object whose ID is requested.
-         *
-         * \return  Returns a int with the ID of the object, if finding the 
-         *          object was successful. Otherwise, returns -1.
-         */
-        int getID(SerializableNoun *anObject);
+        int removeObject(InteractiveNoun *anObject, int objectType);
 
         /*!
          * \brief   Gets a pointer to the object indicated by the specified
@@ -74,7 +64,7 @@ class GameObjectManager {
          * \return  Returns a SerializableNoun* with the object, if found, otherwise
          *          nullptr.
          */
-        SerializableNoun* getPointer(int ID);
+        InteractiveNoun* getPointer(int ID);
 
         /*!
          * \brief   Gets the list of creatures in the game.
@@ -91,10 +81,19 @@ class GameObjectManager {
          *          the game.
          */
         std::vector<Player*> getPlayers();
+
+        /*!
+         * \brief   Gets the player associated with the fileDescriptor.
+         * 
+         * \param[in] fileDescriptor    Specifies the file descriptor to look up.
+         *
+         * \return  Returns a Player* with the player with the specified fileDescriptor.
+         */
+        Player* getPlayerByFD(int fileDescriptor);
     private:
-        std::map<int, SerializableNoun*> gameObjects;
+        std::map<int, InteractiveNoun*> gameObjects;
         std::vector<Creature*> gameCreatures;
-        std::vector<Player*> gamePlayers;
+        std::map<int, Player*> gamePlayers;
 };
 
 }}

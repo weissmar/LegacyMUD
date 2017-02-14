@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/03/2017
- * \modified    02/03/2017
+ * \modified    02/11/2017
  * \course      CS467, Winter 2017
  * \file        DataType.hpp
  *
@@ -34,6 +34,7 @@ enum class DataType {
     ITEM_POSITION,          //!< The attribute is an ItemPosition
     CHARACTER_SIZE,         //!< The attribute is a CharacterSize
     EXIT_DIRECTION,         //!< The attribute is an ExitDirection
+    X_P_TIER,               //!< The attribute is a XPTier
     AREA_PTR,               //!< The attribute is an Area*
     SPECIAL_SKILL_PTR,      //!< The attribute is a SpecialSkill*
     ITEM_TYPE_PTR,          //!< The attribute is an ItemType*

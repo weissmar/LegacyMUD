@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.hpp
  *
@@ -14,9 +14,7 @@
 #define QUEST_STEP_HPP
 
 #include <string>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
 
@@ -28,13 +26,13 @@ class NonCombatant;
 /*!
  * \details     QuestStep defines the steps that make up an in-game quest.
  */
-class QuestStep: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class QuestStep: public InteractiveNoun {
     public:
         QuestStep();
         QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText);
-        QuestStep(const QuestStep &otherQuestStep);
+        /*QuestStep(const QuestStep &otherQuestStep);
         QuestStep & operator=(const QuestStep &otherQuestStep);
-        virtual ~QuestStep();
+        virtual ~QuestStep();*/
 
         /*!
          * \brief   Gets the ordinal number of the quest step.

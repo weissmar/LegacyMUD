@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/12/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.cpp
  *
@@ -9,7 +9,7 @@
  ************************************************************************/
 
 #include "GameObjectManager.hpp"
-#include "SerializableNoun.hpp"
+#include "InteractiveNoun.hpp"
 #include "Creature.hpp"
 #include "Player.hpp"
 
@@ -26,7 +26,7 @@ GameObjectManager::GameObjectManager(const GameObjectManager &otherGameObjectMan
 
 
 GameObjectManager & GameObjectManager::operator=(const GameObjectManager &otherGameObjectManager){
-
+    return *this;
 }
 
 
@@ -35,33 +35,38 @@ GameObjectManager::~GameObjectManager(){
 }
 
 
-int GameObjectManager::addObject(SerializableNoun *anObject, int objectType){
-
+int GameObjectManager::addObject(InteractiveNoun *anObject, int objectType){
+    return -1;
 }
 
 
-int GameObjectManager::removeObject(SerializableNoun *anObject, int objectType){
-
+int GameObjectManager::removeObject(InteractiveNoun *anObject, int objectType){
+    return -1;
 }
 
 
-int GameObjectManager::getID(SerializableNoun *anObject){
-
-}
-
-
-SerializableNoun* GameObjectManager::getPointer(int){
-
+InteractiveNoun* GameObjectManager::getPointer(int){
+    return nullptr;
 }
 
 
 std::vector<Creature*> GameObjectManager::getCreatures(){
-
+    return gameCreatures;
 }
 
 
 std::vector<Player*> GameObjectManager::getPlayers(){
+    std::vector<Player*> playerVector;
 
+    for (auto player : gamePlayers){
+        playerVector.push_back(player.second);
+    }
+    return playerVector;
+}
+
+
+Player* GameObjectManager::getPlayerByFD(int fileDescriptor){
+    return nullptr;
 }
 
 }}

@@ -33,9 +33,9 @@ class Container: public Item {
     public:
         Container();
         Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type);
-        Container(const Container &otherContainer);
+        /*Container(const Container &otherContainer);
         Container & operator=(const Container &otherContainer);
-        virtual ~Container();
+        virtual ~Container();*/
 
         /*!
          * \brief   Gets whether or not this container is empty

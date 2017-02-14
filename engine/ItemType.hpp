@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/13/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.hpp
  *
@@ -16,9 +16,7 @@
 #define ITEM_TYPE_HPP
 
 #include <string>
-#include "SerializableNoun.hpp"
 #include "InteractiveNoun.hpp"
-#include "UniqueNoun.hpp"
 #include "EquipmentSlot.hpp"
 #include "ItemRarity.hpp"
 #include "DataType.hpp"
@@ -33,13 +31,10 @@ namespace legacymud { namespace engine {
  *              its type. Item types allow the world builder to define a type  
  *              once and then create many items of that type.
  */
-class ItemType: public SerializableNoun, public InteractiveNoun, public UniqueNoun {
+class ItemType: public InteractiveNoun {
     public:
         ItemType();
         ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType);
-        ItemType(const ItemType &otherItemType);
-        ItemType & operator=(const ItemType &otherItemType);
-        virtual ~ItemType();
 
         /*!
          * \brief   Gets the weight of this item type.
