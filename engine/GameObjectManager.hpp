@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.hpp
  *
@@ -37,7 +37,8 @@ class GameObjectManager {
          * \brief   Adds the specified object to the game manager.
          *
          * \param[in] anObject  Specifies the object to be added.
-         * \param[in] FD        If the object is a player, specifies their file descriptor
+         * \param[in] FD        If the object is an active player, specifies their 
+         *                      file descriptor
          *
          * \return  Returns a bool indicating whether or not adding the object was
          *          successful.
@@ -45,7 +46,8 @@ class GameObjectManager {
         bool addObject(InteractiveNoun *anObject, int FD);
 
         /*!
-         * \brief   Removes the specified object from the game manager.
+         * \brief   Removes the specified object from the game manager and releases
+         *          the associated memory if successfully removed.
          *
          * \param[in] anObject  Specifies the object to be removed.
          * \param[in] FD        If the object is a player, specifies their file descriptor
@@ -75,12 +77,19 @@ class GameObjectManager {
         std::vector<Creature*> getCreatures();
 
         /*!
-         * \brief   Gets the list of players in the game.
+         * \brief   Gets the list of pointers to active players in the game.
          *
-         * \return  Returns a std::vector<Player*> with the players in
+         * \return  Returns a std::vector<Player*> with the active players in
          *          the game.
          */
-        std::vector<Player*> getPlayers();
+        std::vector<Player*> getPlayersPtrs();
+
+        /*!
+         * \brief   Gets the list of active player file descriptors in the game.
+         *
+         * \return  Returns a std::vector<int> with the players' file descriptors.
+         */
+        std::vector<int> getPlayersFDs();
 
         /*!
          * \brief   Gets the player associated with the fileDescriptor.
@@ -90,10 +99,41 @@ class GameObjectManager {
          * \return  Returns a Player* with the player with the specified fileDescriptor.
          */
         Player* getPlayerByFD(int fileDescriptor);
+
+        /*!
+         * \brief   Gets the player associated with the username.
+         * 
+         * \param[in] username  Specifies the username to look up.
+         *
+         * \return  Returns a Player* with the player with the specified username.
+         */
+        Player* getPlayerByUsername(std::string username);
+
+        /*!
+         * \brief   Loads the player associated with the username into active players
+         * 
+         * \param[in] username  Specifies the username to look up.
+         * \param[in] FD        Specifies the player's file descriptor.
+         *
+         * \return  Returns a bool indicating whether or not the player was successfully
+         *          loaded.
+         */
+        bool loadPlayer(std::string username, int FD);
+
+        /*!
+         * \brief   Hibernates the player associated with the username into inactive players
+         * 
+         * \param[in] FD        Specifies the player's file descriptor.
+         *
+         * \return  Returns a bool indicating whether or not the player was successfully
+         *          hibernated.
+         */
+        bool hibernatePlayer(int FD);
     private:
         std::map<int, InteractiveNoun*> gameObjects;
         std::map<int, Creature*> gameCreatures;
-        std::map<int, Player*> gamePlayers;
+        std::map<int, Player*> activeGamePlayers;
+        std::map<std::string, Player*> inactivePlayers;
 };
 
 }}

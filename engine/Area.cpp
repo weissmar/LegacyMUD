@@ -90,7 +90,7 @@ std::vector<Exit*> Area::getExits(){
 
 
 parser::LexicalData& Area::getLexicalData(){
-    return inventoryLexicalData;
+    return contentsLexicalData;
 }
 
 

@@ -265,7 +265,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not executing the command
          *          was successful.
          */
-        bool executeCommand(parser:ParseResult);
+        bool executeCommand(parser::ParseResult);
 
         /*!
          * \brief   Executes the help command.

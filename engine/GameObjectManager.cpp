@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/14/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.cpp
  *
@@ -37,33 +37,42 @@ GameObjectManager::~GameObjectManager(){
     // empty data structures
     gameObjects.clear();
     gameCreatures.clear();
-    gamePlayers.clear();
+    activeGamePlayers.clear();
 }
 
 
 bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
-    int anID = anObject->getID();
+    int anID;
     ObjectType aType = anObject->getObjectType();
     bool success = false;
     Creature *aCreature = nullptr;
+    Player *aPlayer = nullptr;
 
-    if (anID >= 0){
-        gameObjects[anID] = anObject;
-        if ((aType == ObjectType::PLAYER) && (FD >= 0)){
-            gamePlayers[FD] = dynamic_cast<Player*>(anObject);
-            if (gamePlayers[FD] != nullptr){
-                success = true;
+    if (anObject != nullptr){
+        anID = anObject->getID();
+        if (anID >= 0){
+            gameObjects[anID] = anObject;
+            if ((aType == ObjectType::PLAYER) && (FD >= 0)){
+                aPlayer = dynamic_cast<Player*>(anObject);
+                if (aPlayer != nullptr){
+                    activeGamePlayers[FD] = aPlayer;
+                    success = true;
+                }
+            } else if (aType == ObjectType::PLAYER){
+                aPlayer = dynamic_cast<Player*>(anObject);
+                if (aPlayer != nullptr){
+                    inactivePlayers[aPlayer->getUser()] = aPlayer;
+                    success = true;
+                }
+            } else if (aType == ObjectType::CREATURE){
+                aCreature = dynamic_cast<Creature*>(anObject);
+                if (aCreature != nullptr){
+                    gameCreatures[anID] = aCreature;
+                    success = true;
+                }
             } else {
-                gamePlayers.erase(FD);
-            }
-        } else if (aType == ObjectType::CREATURE){
-            aCreature = dynamic_cast<Creature*>(anObject);
-            if (aCreature != nullptr){
-                gameCreatures[anID] = aCreature;
                 success = true;
             }
-        } else {
-            success = true;
         }
     }
 
@@ -72,25 +81,42 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
 
 
 bool GameObjectManager::removeObject(InteractiveNoun *anObject, int FD){
-    int anID = anObject->getID();
+    int anID; 
     ObjectType aType = anObject->getObjectType();
     bool success = false;
     int numRemoved;
+    Player *aPlayer = nullptr;
 
-    if (anID >= 0){
-        numRemoved = gameObjects.erase(anID);
-        if ((aType == ObjectType::PLAYER) && (FD >= 0)){
-            numRemoved += gamePlayers.erase(FD);
-            if (numRemoved == 2){
+    if (anObject != nullptr){
+        anID = anObject->getID();
+        if (anID >= 0){
+            numRemoved = gameObjects.erase(anID);
+            if ((aType == ObjectType::PLAYER) && (FD >= 0)){
+                numRemoved += activeGamePlayers.erase(FD);
+                if (numRemoved == 2){
+                    success = true;
+                }
+            } else if (aType == ObjectType::PLAYER){
+                aPlayer = dynamic_cast<Player*>(anObject);
+                if (aPlayer != nullptr){
+                    numRemoved += inactivePlayers.erase(aPlayer->getUser());
+                    if (numRemoved == 2){
+                        success = true;
+                    }
+                }
+            } else if (aType == ObjectType::CREATURE){
+                numRemoved += gameCreatures.erase(anID);
+                if (numRemoved == 2){
+                    success = true;
+                }
+            } else if (numRemoved == 1) {
                 success = true;
             }
-        } else if (aType == ObjectType::CREATURE){
-            numRemoved += gameCreatures.erase(anID);
-            if (numRemoved == 2){
-                success = true;
-            }
-        } else if (numRemoved == 1) {
-            success = true;
+        }
+        // if successfully removed, release memory
+        if (success){
+            delete anObject;
+            anObject = nullptr;
         }
     }
 
@@ -119,23 +145,72 @@ std::vector<Creature*> GameObjectManager::getCreatures(){
 }
 
 
-std::vector<Player*> GameObjectManager::getPlayers(){
+std::vector<Player*> GameObjectManager::getPlayersPtrs(){
     std::vector<Player*> playerVector;
 
-    for (auto player : gamePlayers){
+    for (auto player : activeGamePlayers){
         playerVector.push_back(player.second);
     }
     return playerVector;
 }
 
 
+std::vector<int> GameObjectManager::getPlayersFDs(){
+    std::vector<int> fdVector;
+
+    for (auto player : activeGamePlayers){
+        fdVector.push_back(player.first);
+    }
+    return fdVector;
+}
+
+
 Player* GameObjectManager::getPlayerByFD(int fileDescriptor){
-        int result = gamePlayers.count(fileDescriptor);
+    int result = activeGamePlayers.count(fileDescriptor);
 
     if (result == 1){
-        return gamePlayers.at(fileDescriptor);
+        return activeGamePlayers.at(fileDescriptor);
     } else {
         return nullptr;
+    }
+}
+
+
+Player* GameObjectManager::getPlayerByUsername(std::string username){
+    int result = inactivePlayers.count(username);
+
+    if (result == 1){
+        return inactivePlayers.at(username);
+    } else {
+        return nullptr;
+    }
+}
+
+
+bool GameObjectManager::loadPlayer(std::string username, int FD){
+    int result = inactivePlayers.count(username);
+
+    if ((result == 1) && (FD >= 0)){
+        activeGamePlayers[FD] = inactivePlayers.at(username);
+        inactivePlayers.erase(username);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+bool GameObjectManager::hibernatePlayer(int FD){
+    int result = activeGamePlayers.count(FD);
+    Player *aPlayer = nullptr;
+
+    if (result == 1){
+        aPlayer = activeGamePlayers.at(FD);
+        inactivePlayers[aPlayer->getUser()] = aPlayer;
+        activeGamePlayers.erase(FD);
+        return true;
+    } else {
+        return false;
     }
 }
 

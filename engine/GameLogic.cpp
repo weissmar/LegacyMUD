@@ -11,12 +11,14 @@
 #include <cstdlib>
 #include <parser.hpp>
 #include <Account.hpp>
+#include <Server.hpp>
 #include "GameLogic.hpp"
 #include "GameObjectManager.hpp"
 #include "InteractiveNoun.hpp"
 #include "Player.hpp"
 #include "Creature.hpp"
 #include "NonCombatant.hpp"
+#include "Area.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -80,10 +82,10 @@ void GameLogic::processInput(int numToProcess){
                 anArea = aPlayer->getLocation();
 
                 // check if player is admin
-                isAdmin = accountManager.confirmAdmin(aPlayer->getUser());
+                isAdmin = accountManager->confirmAdmin(aPlayer->getUser());
 
                 // send message to parser
-                resultVector = theTextParser.parse(aMessage.first, aPlayer->getLexicalData(), anArea->getLexicalData(), isAdmin, aPlayer->isEditMode());
+                resultVector = theTextParser->parse(aMessage.first, aPlayer->getLexicalData(), anArea->getLexicalData(), isAdmin, aPlayer->isEditMode());
 
                 // check results
                 if (resultVector.size() == 1){
@@ -112,9 +114,9 @@ bool GameLogic::receivedMessageHandler(std::string message, int fileDescriptor){
     int specific = playerMessageQueues.count(fileDescriptor);
 
     if (specific == 1){
-        playerQueue = playerMessageQueues.at(fileDescriptor);
-        std::unique_lock<std::mutex> playerQueueLock(playerQueue.first);
-        playerQueue.second.push(message);
+        playerQueue = &playerMessageQueues.at(fileDescriptor);
+        std::unique_lock<std::mutex> playerQueueLock(playerQueue->first);
+        playerQueue->second.push(message);
         playerQueueLock.unlock();
     } else {
         std::lock_guard<std::mutex> lockGuard(queueMutex);
@@ -136,11 +138,23 @@ bool GameLogic::updatePlayersInCombat(){
 
 
 bool GameLogic::loadPlayer(Player *aPlayer, int fileDescriptor){
+    if ((aPlayer != nullptr) && (fileDescriptor >= 0)){
+        aPlayer->setFileDescriptor(fileDescriptor);
+        aPlayer->setActive(true);
+        manager->loadPlayer(aPlayer->getUser(), fileDescriptor);
+        return true;
+    }
     return false;
 }
 
 
 bool GameLogic::hibernatePlayer(Player *aPlayer){
+    if (aPlayer != nullptr){
+        aPlayer->setActive(false);
+        manager->hibernatePlayer(aPlayer->getFileDescriptor());
+        aPlayer->setFileDescriptor(-1);
+        return true;
+    }
     return false;
 }
 
@@ -173,12 +187,16 @@ ObjectType GameLogic::getObjectType(const std::string &input){
 
 
 void GameLogic::messagePlayer(Player *aPlayer, std::string message){
-    theServer.sendMsg(aPlayer->getFileDescriptor(), message, telnet::Server::NEWLINE);
+    theServer->sendMsg(aPlayer->getFileDescriptor(), message, telnet::Server::NEWLINE);
 }
 
 
 void GameLogic::messageAllPlayers(std::string message){
-    
+    std::vector<int> fileDescriptors = manager->getPlayersFDs();
+
+    for (auto FD : fileDescriptors){
+        theServer->sendMsg(FD, message, telnet::Server::NEWLINE);
+    }
 }
 
 
