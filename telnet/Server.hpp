@@ -269,7 +269,7 @@ namespace legacymud {
         bool _serverPause;                          // pause state of the server
         legacymud::engine::GameLogic* _gameLogicPt; // game logic pointer the server is using
         std::map<int, bool> _playerEcho;            // map used to set a player's text echo display mode
-        std::mutex _mu_echo;                         // mutex used for the player echo map
+        std::mutex _mu_echo;                        // mutex used for the player echo map
 };
 
 }}
