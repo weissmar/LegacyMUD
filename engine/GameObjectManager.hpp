@@ -21,6 +21,7 @@ namespace legacymud { namespace engine {
 class InteractiveNoun;
 class Creature;
 class Player;
+class PlayerClass;
 
 /*!
  * \details     This class tracks all game objects. It should only be 
@@ -123,17 +124,25 @@ class GameObjectManager {
         /*!
          * \brief   Hibernates the player associated with the username into inactive players
          * 
-         * \param[in] FD        Specifies the player's file descriptor.
+         * \param[in] FD    Specifies the player's file descriptor.
          *
          * \return  Returns a bool indicating whether or not the player was successfully
          *          hibernated.
          */
         bool hibernatePlayer(int FD);
+
+        /*!
+         * \brief   Gets list of PlayerClasses.
+         *
+         * \return  Returns a vector of pointers to PlayerClass.
+         */
+        std::vector<PlayerClass*> getPlayerClasses();
     private:
         std::map<int, InteractiveNoun*> gameObjects;
         std::map<int, Creature*> gameCreatures;
         std::map<int, Player*> activeGamePlayers;
         std::map<std::string, Player*> inactivePlayers;
+        std::vector<PlayerClass*> gamePlayerClasses;
 };
 
 }}

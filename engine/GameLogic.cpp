@@ -19,8 +19,11 @@
 #include "Creature.hpp"
 #include "NonCombatant.hpp"
 #include "Area.hpp"
+#include "PlayerClass.hpp"
 
 namespace legacymud { namespace engine {
+
+const std::string ADMIN_PASSWORD = "default";
 
 GameLogic::GameLogic() : accountManager(nullptr), theTextParser(nullptr), theServer(nullptr){
     manager = new GameObjectManager;
@@ -53,7 +56,170 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName){
 
 
 bool GameLogic::newPlayerHandler(int fileDescriptor){
+    bool success = false;
+    bool newUser = false;
+    bool validUsername = false;
+    bool validPassword = false;
+    bool isAdmin = false;
+    std::string username, password, passwordVerify, playerName, message, number, pDescription;
+    std::vector<PlayerClass*> pClasses;
+    int pClassNumber, playerSize;
+    Player *newPlayer;
+
+    // get username
+    success = getValueFromUser(fileDescriptor, "Please enter your username or [new] if you are new to this world.", username, true);
+    if (!success)
+        return false;
+
+    // check if new 
+    if (username.compare("new") == 0){
+        newUser = true;
+
+        // get username
+        success = getValueFromUser(fileDescriptor, "Please enter your email address. You will use this as your username in the future.", username, true);
+        if (!success)
+            return false;
+
+        // validate username
+        validUsername = accountManager->validateUsername(username);
+        while (!validUsername){
+            success = getValueFromUser(fileDescriptor, "That username is already in use. Please enter an alternate username.", username, true);
+            if (!success)
+                return false;
+            validUsername = accountManager->validateUsername(username);
+        }
+
+        // get password
+        theServer->setPlayerEcho(fileDescriptor, false);
+        success = getValueFromUser(fileDescriptor, "Please enter a password. (Note: This is not a secure connection. Please use a password that you don't mind others potentially seeing.", password, true);
+        if (!success)
+            return false;
+        // check if admin password was entered
+        if (password.compare(ADMIN_PASSWORD) == 0){
+            isAdmin = true;
+            success = getValueFromUser(fileDescriptor, "Welcome Administrator, please enter a new password.", password, true);
+            if (!success)
+                return false;
+        }
+        // verify password
+        while (!validPassword){
+            success = getValueFromUser(fileDescriptor, "Please verify the password.", passwordVerify, true);
+            if (!success)
+                return false;
+            if (password.compare(passwordVerify) == 0){
+                validPassword = true;
+            } else {
+                success = getValueFromUser(fileDescriptor, "The passwords didn't match. Please enter a password.", password, true);
+                if (!success)
+                    return false;
+            }
+        }
+        theServer->setPlayerEcho(fileDescriptor, true);
+
+        // get player name
+        success = getValueFromUser(fileDescriptor, "What would you like your character name to be?", playerName, true);
+        if (!success)
+            return false;
+
+        // get player class
+        message = "What would you like your character class to be? Your options are: ";
+        pClasses = manager->getPlayerClasses();
+        for (int i = 0; i < pClasses.size(); i++){
+            message += "[";
+            message += std::to_string(i + 1);
+            message += "] ";
+            message += pClasses[i]->getName();
+            if (i < (pClasses.size() - 1))
+                message += ", ";
+        }
+        message += ". Please enter the number that corresponds to your choice.";
+        success = getValueFromUser(fileDescriptor, message, number, true);
+        if (!success)
+            return false;
+        pClassNumber = validateStringNumber(number, 1, pClasses.size());
+        while (pClassNumber == -1){
+            success = getValueFromUser(fileDescriptor, "Invalid input. Please enter the number that corresponds to your choice.", number, true);
+            if (!success)
+                return false;
+            pClassNumber = validateStringNumber(number, 1, pClasses.size());
+        }
+
+        // get player size
+        success = getValueFromUser(fileDescriptor, "What size is your character? Your options are: [1] Tiny, [2] Small, [3] Medium, [4] Large, [5] Huge. Please enter the number that corresponds to your choice.", number, true);
+        if (!success)
+            return false;
+        playerSize = validateStringNumber(number, 1, 5);
+        while (playerSize == -1){
+            success = getValueFromUser(fileDescriptor, "Invalid input. Please enter the number that corresponds to your choice.", number, true);
+            if (!success)
+                return false;
+            playerSize = validateStringNumber(number, 1, 5);
+        }
+
+        // get player description
+        success = getValueFromUser(fileDescriptor, "Please enter a description of your character (from a third-person perspective).", pDescription, true);
+        if (!success)
+            return false;
+
+        // create player
+        newPlayer = new Player(playerSize - 1, pClasses[pClassNumber - 1], username, fileDescriptor, playerName, pDescription);
+        manager->addObject(newPlayer);
+
+        // create account
+        success = accountManager->createAccount(username, password, isAdmin, newPlayer->getID());
+        if (!success){
+            // username got taken in the interim DO SOMETHING
+        }
+
+    }
+
+    // ask for password
+
+    // get response
+
+    // check account info
+
     return false;
+}
+
+
+int GameLogic::validateStringNumber(std::string number, int min, int max){
+    int intNum;
+    bool validNumber = true;
+
+    try {
+        intNum = std::stoi(number);
+    } catch (std::invalid_argument){
+        validNumber = false;
+    }
+    if ((validNumber) && ((intNum < min) || (intNum > max))){
+        validNumber = false;
+    }
+
+    if (validNumber){
+        return intNum;
+    } else {
+        return -1;
+    }
+}
+
+
+bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string response, bool newline){
+    bool success;
+    telnet::Server::NewLine useNewline = telnet::Server::NEWLINE;
+
+    if (!newline){
+        useNewline = telnetServer::NO_NEWLINE;
+    }
+
+    theServer->sendMsg(FD, outMessage, useNewline);
+    success = theServer->receiveMsg(FD, response);
+    if (!success){
+        theServer->disconnectPlayer(FD);
+        return false;
+    }
+
+    return true;
 }
 
 

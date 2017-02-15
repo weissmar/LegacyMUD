@@ -190,6 +190,22 @@ class GameLogic {
         void messageAllPlayers(std::string message);
 
         /*!
+         * \brief   Sends message prompt to user and gets response back.
+         * 
+         * \param[in] FD            Specifies the user's file descriptor.
+         * \param[in] outMessage    Specifies the prompt message to send.
+         * \param[out] response     Specifies the variable to return the user's
+         *                          response in.
+         * 
+         * \note    This function disconnects the user if it cannot receive a
+         *          message from them.
+         *
+         * \return  Returns a bool indicating whether or not getting the value
+         *          was successful.
+         */
+        bool getValueFromUser(int FD, std::string outMessage, std::string response, bool newline);
+
+        /*!
          * \brief   Starts combat between the specfied player and the specified
          *          creature.
          * 
@@ -792,6 +808,18 @@ class GameLogic {
          *          was successful.
          */
         bool deleteCommand(Player *aPlayer, InteractiveNoun *directObj);
+
+        /*!
+         * \brief   Converts string to int and validates.
+         * 
+         * \param[in] number    String to attempt to convert.
+         * \param[in] min       Minimum acceptable value.
+         * \param[in] max       Maximum acceptable value.
+         *
+         * \return  Returns an int with the converted number if it passed validation,
+         *          -1 otherwise.
+         */
+        int validateStringNumber(std::string number, int min, int max);
         GameObjectManager *manager;
         std::queue<std::pair<std::string, int>> messageQueue;
         std::mutex queueMutex;

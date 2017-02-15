@@ -51,6 +51,7 @@ struct Command {
 class Player: public Combatant {
     public:
         Player();
+        Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description);
         Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
         /*Player(const Player &otherPlayer);
         Player & operator=(const Player &otherPlayer);

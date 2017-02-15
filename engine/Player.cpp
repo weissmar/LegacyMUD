@@ -18,6 +18,11 @@
 
 namespace legacymud { namespace engine {
 
+const int START_HEALTH = 10;
+const int START_SPECIAL_PTS = 10;
+const int START_MONEY = 10;
+const int MAX_INVENTORY_WEIGHT = 30;
+
 Player::Player()
 : Combatant()
 , experiencePoints(0)
@@ -28,6 +33,20 @@ Player::Player()
 , username("")
 , active(false)
 , fileDescriptor(-1)
+, editMode(false)
+{ }
+
+
+Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description)
+: Combatant(START_HEALTH, nullptr, START_SPECIAL_PTS, name, description, START_MONEY, nullptr, MAX_INVENTORY_WEIGHT)
+, experiencePoints(0)
+, level(1)
+, size(size)
+, playerClass(aClass)
+, inConversation(nullptr)
+, username(username)
+, active(true)
+, fileDescriptor(FD)
 , editMode(false)
 { }
 
