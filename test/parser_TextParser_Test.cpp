@@ -172,8 +172,9 @@ TEST_F(TextParserTest, EditModeValidityCheck) {
     parser::WordManager::addEditModeVerb("editmode", vi);
 
     input = "editmode";
-    auto it = parser::WordManager::getEditModeVerbs(input).begin();
-    ASSERT_TRUE(it != parser::WordManager::getEditModeVerbs(input).end());
+    auto verbs = parser::WordManager::getEditModeVerbs(input);
+    auto it = verbs.begin();
+    ASSERT_TRUE(it != verbs.end());
     EXPECT_EQ(engine::CommandEnum::EDIT_MODE, it->command);
     EXPECT_STREQ("editmode", it->description.c_str());
     EXPECT_EQ(parser::Grammar::NO, it->grammar.takesDirectObject());

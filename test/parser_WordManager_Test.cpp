@@ -103,8 +103,9 @@ TEST_F(WordManagerTest, VerifyVerbInfoIntegrity) {
     parser::WordManager::addEditModeVerb(word, vi);
     EXPECT_TRUE(parser::WordManager::hasEditModeVerb(word));
     // Verify VerbInfo settings after
-    auto it = parser::WordManager::getEditModeVerbs(word).begin();
-    ASSERT_TRUE(it != parser::WordManager::getEditModeVerbs(word).end());
+    auto verbs = parser::WordManager::getEditModeVerbs(word);
+    auto it = verbs.begin();
+    ASSERT_TRUE(it != verbs.end());
     EXPECT_EQ(engine::CommandEnum::EDIT_MODE, it->command);
     EXPECT_STREQ("editmode", it->description.c_str());
     EXPECT_EQ(parser::Grammar::NO, it->grammar.takesDirectObject());
