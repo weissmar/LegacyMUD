@@ -7,7 +7,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 -g -Wall -pthread
 LIB_DIRS = account display engine parser telnet
 LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(lib_dir).a)
-CXXFLAGS += $(foreach include_dir, $(INCLUDE_DIRS), -I$(include_dir))
+CXXFLAGS += $(foreach include_dir, $(LIB_DIRS), -I$(include_dir))
 
 all: $(LIBS)
 	$(CXX) $(CXXFLAGS) -o legacymud main.cpp -Wl,--start-group $^ -Wl,--end-group
