@@ -271,6 +271,26 @@ bool Account::deleteAccount(std::string username ) {
         return false;    
 } 
 
+
+/******************************************************************************
+* Function:    getUserId                 
+*****************************************************************************/
+int Account::getUserId(std::string username ) {
+    
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_userMap);   
+    
+    /* Find the user. */
+    auto user = _userMap.find(username);
+    
+    /* If the user is in the map, return userId. */
+    if(user != _userMap.end()) 
+        return user->second.userId;
+    else
+        return 0;
+}
+
+
 /******************************************************************************
 * Function:    getNumberOfAccounts                 
 *****************************************************************************/

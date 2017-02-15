@@ -122,10 +122,19 @@ class Account {
           \post Returns true if the account is deleted.  Returns false if the user is not found.
         */
         bool deleteAccount(std::string username ); 
+
+        /*!
+          \brief Gets a user's userId that links to game data. 
+
+          \param[in]  username        player's account user name           
+          \pre none
+          \post Returns the userId that links a user to game data. If the username is invalid, a 0 is returned.
+        */
+        int getUserId(std::string username);
         
         /*!
           \brief Gets the number of accounts in the account system. 
-                        
+         
           \pre none
           \post Returns a the number of accounts in the account system.
         */
