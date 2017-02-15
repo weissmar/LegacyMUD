@@ -435,7 +435,7 @@ void TextParserTest_EditModeValidityCheck() {
 
     input = "editmode";
     auto it = parser::WordManager::getEditModeVerbs(input).begin();
-    //ASSERT_TRUE(it != parser::WordManager::getEditModeVerbs(input).end());
+    if (it == parser::WordManager::getEditModeVerbs(input).end()) return;
     if (engine::CommandEnum::EDIT_MODE != it->command) std::cout << "Expected " << static_cast<int>(engine::CommandEnum::EDIT_MODE) << ", Got " << static_cast<int>(it->command) << std::endl;
     if (::strcmp("editmode", it->description.c_str()) != 0) std::cout << "Expected " << "editmode" << ", Got " << it->description.c_str() << std::endl;
     if (parser::Grammar::NO != it->grammar.takesDirectObject()) std::cout << "Expected " << parser::Grammar::NO << ", Got " << it->grammar.takesDirectObject() << std::endl;

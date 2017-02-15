@@ -137,15 +137,6 @@ TEST_F(TextParserTest, LookHappyPath) {
     
     // TODO: Add candle to areaVM
 
-    // results = tp.parse(input, playerLex, areaLex);
-    // ASSERT_EQ(1, results.size());
-    // EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
-    // EXPECT_EQ(results.begin()->command, engine::CommandEnum::LOOK);
-    // ASSERT_EQ(1, results.begin()->direct.size());
-    // EXPECT_EQ(0, results.begin()->indirect.size());
-    // EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
-    // EXPECT_TRUE(results.begin()->unparsed.empty());
-    
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = tp.parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
