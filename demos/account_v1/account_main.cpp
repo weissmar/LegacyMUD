@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  2/12/2017
- * Last Modified: 2/13/2017
+ * Last Modified: 2/14/2017
  * Course:        CS467, Winter 2017
  * Filename:      account_main.cpp
  *
@@ -13,8 +13,9 @@
 #include <iostream> 
 #include <Account.hpp>
 
-int main() {   
-    legacymud::account::Account acc;
+int main() {
+    std::string fileName = "legacy_mud_accounts.txt";
+    legacymud::account::Account acc(fileName);
     std::string userName = "Keith";
     std::string password = "1234";
     bool isAdmin = true;
