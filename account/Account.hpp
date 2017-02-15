@@ -27,16 +27,23 @@ namespace legacymud { namespace account {
 class Account {
     public:
     
-        Account();
+        
+        /*!
+          \brief Account class constructor.
+          
+          \param[in]  fileName        name of text file for account data
+          \pre none
+          \post An account class object is created and it's data file name is set.
+        */
+        Account(std::string fileName);
         
         /*!
           \brief Initialize the account sytem loading the data from disk into memory.
           
-          \param[in]  fileName        name of text file for account data
           \pre none
           \post Returns true if successful.  Otherwise false.
         */
-        bool initialize(std::string fileName);   
+        bool initialize();   
 
         /*!
           \brief Saves all account sytem data to disk.

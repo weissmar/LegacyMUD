@@ -31,7 +31,7 @@ Account::Account(std::string fileName) {
 /******************************************************************************
 * Function:    initialize                 
 *****************************************************************************/
-bool Account::initialize(std::string fileName) {
+bool Account::initialize() {
     
     std::ifstream inFile(_fileName);    // input stream for account file 
     std::string username;               // username string to be read in
