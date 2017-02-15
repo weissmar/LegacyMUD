@@ -116,6 +116,14 @@ class Area: public InteractiveNoun {
         parser::LexicalData& getLexicalData();
 
         /*!
+         * \brief   Gets the full description of an area for first time
+         *          entry.
+         * 
+         * \return  Returns a std::string with the full description.
+         */
+        std::string getFullDescription();
+
+        /*!
          * \brief   Sets the name of this area.
          *
          * \param[in] name  Specifies the name of this area.

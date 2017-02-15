@@ -148,6 +148,12 @@ class InteractiveNoun {
          *          was found and removed successfully.
          */
         bool removeAlias(std::string);
+
+        /*!
+         * \brief   Gets the name. This is a pure virtual function for
+         *          interactive noun.
+         */
+        virtual std::string getName() = 0;
         
         /*!
          * \brief   Gets the object type. This is a pure virtual function for

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/14/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -51,7 +51,7 @@ struct Command {
 class Player: public Combatant {
     public:
         Player();
-        Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description);
+        Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description, Area *startArea);
         Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
         /*Player(const Player &otherPlayer);
         Player & operator=(const Player &otherPlayer);
@@ -203,6 +203,16 @@ class Player: public Combatant {
          *          successfully set.
          */
         bool setFileDescriptor(int FD);
+
+        /*!
+         * \brief   Sets the file descriptor of this player and sets active to true.
+         *          
+         * \param[in] FD    Specifies the file descriptor of the player.
+         *
+         * \return  Returns a bool indicating whether or not the file descriptor and 
+         *          active status was successfully set.
+         */
+        bool activate(int FD);
 
         /*!
          * \brief   Sets the non-combatant that the player is talking to.

@@ -94,6 +94,11 @@ parser::LexicalData& Area::getLexicalData(){
 }
 
 
+std::string Area::getFullDescription(){
+    return longDescription;
+}
+
+
 bool Area::setName(std::string name){
     return false;
 }

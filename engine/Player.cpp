@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/14/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -37,7 +37,7 @@ Player::Player()
 { }
 
 
-Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description)
+Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description, Area *startArea)
 : Combatant(START_HEALTH, nullptr, START_SPECIAL_PTS, name, description, START_MONEY, nullptr, MAX_INVENTORY_WEIGHT)
 , experiencePoints(0)
 , level(1)
@@ -175,6 +175,14 @@ bool Player::setActive(bool active){
 
 bool Player::setFileDescriptor(int FD){
     fileDescriptor = FD;
+
+    return true;
+}
+
+
+bool Player::activate(int FD){
+    fileDescriptor = FD;
+    active = true;
 
     return true;
 }

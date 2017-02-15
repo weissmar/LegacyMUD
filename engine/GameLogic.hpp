@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/14/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -20,6 +20,7 @@
 #include "ObjectType.hpp"
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
+#include "Area.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -190,6 +191,15 @@ class GameLogic {
         void messageAllPlayers(std::string message);
 
         /*!
+         * \brief   Sends the specified message to all active players
+         *          in the specifed area.
+         * 
+         * \param[in] message   Specifies the message to send.
+         * \param[in] anArea    Specifies the area.
+         */
+        void messageAreaPlayers(std::string message, Area *anArea);
+
+        /*!
          * \brief   Sends message prompt to user and gets response back.
          * 
          * \param[in] FD            Specifies the user's file descriptor.
@@ -255,15 +265,41 @@ class GameLogic {
          * \brief   Handles a parse error that has one result.
          * 
          * \param[in] result   Specifies the result received from the parser.
+         * \param[in] aPlayer   Specifies the player that sent the messsage.
          */
-        void handleParseError(parser::ParseResult result);
+        void handleParseError(Player *aPlayer, parser::ParseResult result);
 
         /*!
          * \brief   Handles a parse error that has multiple results.
          * 
          * \param[in] results   Specifies the results received from the parser.
+         * \param[in] aPlayer   Specifies the player that sent the messsage.
          */
-        void handleParseError(std::vector<parser::ParseResult> results);
+        void handleParseError(Player *aPlayer, std::vector<parser::ParseResult> results);
+
+        /*!
+         * \brief   Adds a dedicated message queue for the specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         */
+        void addPlayerMessageQueue(Player *aPlayer);
+
+        /*!
+         * \brief   Removes the dedicated message queue for the specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         */
+        void removePlayerMessageQueue(Player *aPlayer);
+
+        /*!
+         * \brief   Gets a message from the dedicated message queue for the 
+         *          specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         * 
+         * \return  Returns the message or empty string if queue is empty.
+         */
+        std::string getMsgFromPlayerQ(Player *aPlayer);
 
         /*!
          * \brief   Executes the specified command.
@@ -823,10 +859,12 @@ class GameLogic {
         GameObjectManager *manager;
         std::queue<std::pair<std::string, int>> messageQueue;
         std::mutex queueMutex;
-        std::map<int, std::pair<std::mutex, std::queue<std::string>>> playerMessageQueues;
+        std::map<int, std::pair<std::mutex*, std::queue<std::string>*>> playerMessageQueues;
+        std::mutex playerMsgQMutex;
         account::Account* accountManager;
         parser::TextParser* theTextParser;
         telnet::Server* theServer;
+        Area startArea;
 };
 
 }}
