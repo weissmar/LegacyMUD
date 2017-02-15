@@ -37,6 +37,7 @@ bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, boo
             _alias = substring;
             _originalAlias = Tokenizer::joinOriginal(tokens, range);
             _isValid = true;
+            break;
         }
         else {
             // Try without ignore words
@@ -46,9 +47,12 @@ bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, boo
                 _alias = substring;
                 _originalAlias = Tokenizer::joinOriginal(tokens, range);
                 _isValid = true;
+                break;
             }
         }
     }
+    // Store range of match
+    _range = range;
 
     if (!_isValid) {
         // Did not find a match.
@@ -97,6 +101,10 @@ bool PartOfSpeech::setAlias(const std::vector<Token> &tokens, Range range) {
         _isValid = false;
     }
 
+    return _isValid;
+}
+
+bool PartOfSpeech::isValid() const {
     return _isValid;
 }
 

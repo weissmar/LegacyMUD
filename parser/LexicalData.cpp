@@ -76,7 +76,7 @@ bool LexicalData::forwardHasNoun(const void *context, std::string arg) {
 }
 
 bool LexicalData::forwardHasVerb(const void *context, std::string arg) {
-    return static_cast<const LexicalData*>(context)->hasNoun(arg);
+    return static_cast<const LexicalData*>(context)->hasVerb(arg);
 }
 
 } }
