@@ -22,23 +22,23 @@ namespace legacymud { namespace account {
 /******************************************************************************
 * Constructor: Account                        
 *****************************************************************************/
-Account::Account() { 
+Account::Account(std::string fileName) { 
     /* Sets default private member variables. */
-    _fileName = "legacy_mud_accounts.txt";      
+    _fileName = fileName;      
 }
 
 
 /******************************************************************************
 * Function:    initialize                 
 *****************************************************************************/
-bool Account::initialize() {
+bool Account::initialize(std::string fileName) {
     
     std::ifstream inFile(_fileName);    // input stream for account file 
     std::string username;               // username string to be read in
     std::string isAdminStr;             // isAdmin string to be read in
     std::string userIdStr;              // userId string to be read in
     _UserInfo user;                     // user info struct for read in data
-
+  
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_userMap);  
     

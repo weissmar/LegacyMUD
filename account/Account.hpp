@@ -32,10 +32,11 @@ class Account {
         /*!
           \brief Initialize the account sytem loading the data from disk into memory.
           
+          \param[in]  fileName        name of text file for account data
           \pre none
           \post Returns true if successful.  Otherwise false.
         */
-        bool initialize();   
+        bool initialize(std::string fileName);   
 
         /*!
           \brief Saves all account sytem data to disk.
