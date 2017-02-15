@@ -84,6 +84,34 @@ TEST_F(WordManagerTest, AddEditModeVerbTest) {
     EXPECT_EQ(engine::CommandEnum::EDIT_MODE, parser::WordManager::getGlobalVerbs(word)[0].command);
 }
 
+// Verify that the VerbInfo integrity is preserved when added and retrieved
+TEST_F(WordManagerTest, VerifyVerbInfoIntegrity) {
+    std::string word = "editmode";
+    // Grammar objects default to NO direct and NO indirect object
+    parser::VerbInfo vi;
+    // Set the command to EDIT_MODE
+    vi.command = engine::CommandEnum::EDIT_MODE;
+    vi.description = "editmode";
+    
+    // Verify VerbInfo settings before
+    EXPECT_STREQ("editmode", vi.description.c_str());
+    EXPECT_EQ(parser::Grammar::NO, vi.grammar.takesDirectObject());
+    EXPECT_EQ(parser::Grammar::NO, vi.grammar.takesIndirectObject());
+    EXPECT_FALSE(vi.grammar.takesPreposition());
+
+    EXPECT_FALSE(parser::WordManager::hasEditModeVerb(word));
+    parser::WordManager::addEditModeVerb(word, vi);
+    EXPECT_TRUE(parser::WordManager::hasEditModeVerb(word));
+    // Verify VerbInfo settings after
+    auto it = parser::WordManager::getEditModeVerbs(word).begin();
+    ASSERT_TRUE(it != parser::WordManager::getEditModeVerbs(word).end());
+    EXPECT_EQ(engine::CommandEnum::EDIT_MODE, it->command);
+    EXPECT_STREQ("editmode", it->description.c_str());
+    EXPECT_EQ(parser::Grammar::NO, it->grammar.takesDirectObject());
+    EXPECT_EQ(parser::Grammar::NO, it->grammar.takesIndirectObject());
+    EXPECT_FALSE(it->grammar.takesPreposition());
+}
+
 // Verify that a word can correctly be added to the global verb lookup table
 TEST_F(WordManagerTest, AddGlobalVerbTest) {
     std::string word = "eat";

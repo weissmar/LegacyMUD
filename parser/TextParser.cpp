@@ -51,13 +51,18 @@ std::vector<ParseResult> TextParser::parse(
 
     // FIRST: Check for edit mode verb match (if user has permission)
     if (isAdmin) {
-        if (verb.findMatch(tokens, range, &WordManager::hasEditModeVerb)) {
+        if (verb.findMatch(tokens, range, WordManager::hasEditModeVerb)) {
             // Found edit mode verb; get grammar rules
             auto it = WordManager::getEditModeVerbs(verb.getAlias()).begin();
             auto end = WordManager::getEditModeVerbs(verb.getAlias()).end();
             // Run parser on each grammar definition and store the results
             for (; it != end; ++it) {
+                std::cout << "Found edit mode verb: " << it->description << std::endl;
+    std::cout << "direct: " << (it->grammar.takesDirectObject() == Grammar::NO ? "NO" : (it->grammar.takesDirectObject() == Grammar::YES ? "YES" : (it->grammar.takesDirectObject() == Grammar::TEXT ? "TEXT" : "UNKNOWN"))) << " (" << static_cast<int>(it->grammar.takesDirectObject()) << ")" << std::endl;
+    std::cout << "prep: " << (it->grammar.takesPreposition() ? "true" : "false") << std::endl;
+    std::cout << "indirect: " << (it->grammar.takesIndirectObject() == Grammar::NO ? "NO" : (it->grammar.takesIndirectObject() == Grammar::YES ? "YES" : "TEXT")) << std::endl;
                 parser = Sentence::makeSentence(it->grammar, verb, VerbType::EDITMODE, it->command);
+                std::cout << "parser == null: " << (parser == nullptr) << std::endl;
                 if (parser == nullptr) return results;
                 result = parser->getResult(tokens, player, area);
                 results.push_back(result);

@@ -38,6 +38,7 @@ public:
         parser::WordManager::addEditModeVerb("editmode", vi);
         vi.command = engine::CommandEnum::TAKE;
         parser::WordManager::addGlobalVerb("pick up", vi);
+        parser::WordManager::addIgnoreWord("the");
 
         in = new engine::Item();
         areaLex.addVerb("foo", in);
@@ -125,6 +126,18 @@ TEST_F(PartOfSpeechTest, FindLocalNoun) {
     EXPECT_STREQ("bar", pos.getAlias().c_str());
     EXPECT_EQ(1, pos.getRange().start);
     EXPECT_EQ(2, pos.getRange().end);
+}
+
+// Ability to find local noun with ignore word
+TEST_F(PartOfSpeechTest, FindLocalNounWithIgnoreWord) {
+    tokens = parser::Tokenizer::tokenizeInput("foo the bar baz");
+    range = parser::Range(1, tokens.size());
+    parser::PartOfSpeech pos;
+    EXPECT_TRUE(pos.findMatch(tokens, range, &parser::LexicalData::forwardHasNoun, &areaLex));
+    EXPECT_STREQ("bar", pos.getAlias().c_str());
+    EXPECT_STREQ("the bar", pos.getOriginalAlias().c_str());
+    EXPECT_EQ(1, pos.getRange().start);
+    EXPECT_EQ(3, pos.getRange().end);
 }
 
 // Ability to find each word sequentially
