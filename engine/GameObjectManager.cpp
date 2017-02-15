@@ -214,7 +214,7 @@ bool GameObjectManager::hibernatePlayer(int FD){
     }
 }
 
-std::vector<PlayerClass*> getPlayerClasses(){
+std::vector<PlayerClass*> GameObjectManager::getPlayerClasses(){
     return gamePlayerClasses;
 }
 

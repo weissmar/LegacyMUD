@@ -81,12 +81,12 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             return false;
 
         // validate username
-        validUsername = accountManager->validateUsername(username);
+        validUsername = accountManager->uniqueUsername(username);
         while (!validUsername){
             success = getValueFromUser(fileDescriptor, "That username is already in use. Please enter an alternate username.", username, true);
             if (!success)
                 return false;
-            validUsername = accountManager->validateUsername(username);
+            validUsername = accountManager->uniqueUsername(username);
         }
 
         // get password
@@ -162,8 +162,8 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             return false;
 
         // create player
-        newPlayer = new Player(playerSize - 1, pClasses[pClassNumber - 1], username, fileDescriptor, playerName, pDescription);
-        manager->addObject(newPlayer);
+        newPlayer = new Player(static_cast<CharacterSize>(playerSize - 1), pClasses[pClassNumber - 1], username, fileDescriptor, playerName, pDescription);
+        manager->addObject(newPlayer, fileDescriptor);
 
         // create account
         success = accountManager->createAccount(username, password, isAdmin, newPlayer->getID());
@@ -209,7 +209,7 @@ bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string res
     telnet::Server::NewLine useNewline = telnet::Server::NEWLINE;
 
     if (!newline){
-        useNewline = telnetServer::NO_NEWLINE;
+        useNewline = telnet::Server::NO_NEWLINE;
     }
 
     theServer->sendMsg(FD, outMessage, useNewline);
@@ -248,7 +248,7 @@ void GameLogic::processInput(int numToProcess){
                 anArea = aPlayer->getLocation();
 
                 // check if player is admin
-                isAdmin = accountManager->confirmAdmin(aPlayer->getUser());
+                isAdmin = accountManager->verifyAdmin(aPlayer->getUser());
 
                 // send message to parser
                 resultVector = theTextParser->parse(aMessage.first, aPlayer->getLexicalData(), anArea->getLexicalData(), isAdmin, aPlayer->isEditMode());

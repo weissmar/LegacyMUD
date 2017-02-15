@@ -37,7 +37,7 @@ Player::Player()
 { }
 
 
-Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description)
+Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description)
 : Combatant(START_HEALTH, nullptr, START_SPECIAL_PTS, name, description, START_MONEY, nullptr, MAX_INVENTORY_WEIGHT)
 , experiencePoints(0)
 , level(1)
