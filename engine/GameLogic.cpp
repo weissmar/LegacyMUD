@@ -520,11 +520,10 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
     InteractiveNoun *directChoice = nullptr;
     InteractiveNoun *indirectChoice = nullptr;
     parser::ParseResult chosenResult;
-    int i, choice;
-    bool msgRecived = false;
+    int choice;
     bool commandSuccess = false;
 
-    // multiple results - figure out which one to use
+    // get maps and vectors of distinct direct and indirect options
     for (auto result : results){
         for (auto ptr : result.direct){
             directPtrMap[ptr] = result;
@@ -533,7 +532,6 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
             indirectPtrMap[ptr] = result;
         }
     }
-
     for (auto directP : directPtrMap){
         directPtrs.push_back(directP.first);
     }
@@ -544,35 +542,12 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
     // choose between multiple direct options
     if (directPtrs.size() > 1){
         addPlayerMessageQueue(aPlayer);
-        message = "Did you mean ";
-        for (i = 0; i < directPtrs.size(); i++){
-            message += "[";
-            message += std::to_string(i + 1);
-            message += "] ";
-            message += directPtrs[i]->getName();
-            if (i < (directPtrs.size() - 1)){
-                message += ", ";
-            }
-        }
-        message += "? Please enter the number that corresponds to your choice.";
-        messagePlayer(aPlayer, message);
-        while (!msgRecived){
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            message = getMsgFromPlayerQ(aPlayer);
-            if (message != ""){
-                msgRecived = true;
-            }
-        }
+        sendClarifyingQuery(aPlayer, directPtrs);
+        message = blockingGetMsg(aPlayer);
         choice = validateStringNumber(message, 1, directPtrs.size());
         while (choice == -1){
             messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
-            while (!msgRecived){
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                message = getMsgFromPlayerQ(aPlayer);
-                if (message != ""){
-                    msgRecived = true;
-                }
-            }
+            message = blockingGetMsg(aPlayer);
             choice = validateStringNumber(message, 1, directPtrs.size());
         }
         directChoice = directPtrs[choice - 1];
@@ -587,37 +562,13 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
         }
     } else if (indirectPtrs.size() > 1){
         // choose between multiple indirect options
-
         addPlayerMessageQueue(aPlayer);
-        message = "Did you mean ";
-        for (i = 0; i < indirectPtrs.size(); i++){
-            message += "[";
-            message += std::to_string(i + 1);
-            message += "] ";
-            message += indirectPtrs[i]->getName();
-            if (i < (indirectPtrs.size() - 1)){
-                message += ", ";
-            }
-        }
-        message += "? Please enter the number that corresponds to your choice.";
-        messagePlayer(aPlayer, message);
-        while (!msgRecived){
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            message = getMsgFromPlayerQ(aPlayer);
-            if (message != ""){
-                msgRecived = true;
-            }
-        }
+        sendClarifyingQuery(aPlayer, indirectPtrs);
+        message = blockingGetMsg(aPlayer);
         choice = validateStringNumber(message, 1, indirectPtrs.size());
         while (choice == -1){
             messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
-            while (!msgRecived){
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                message = getMsgFromPlayerQ(aPlayer);
-                if (message != ""){
-                    msgRecived = true;
-                }
-            }
+            message = blockingGetMsg(aPlayer);
             choice = validateStringNumber(message, 1, directPtrs.size());
         }
         indirectChoice = indirectPtrs[choice - 1];
@@ -642,6 +593,40 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
             handleParseError(aPlayer, chosenResult);
         }
     }
+}
+
+
+void GameLogic::sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector){
+    std::string message;
+
+    message = "Did you mean ";
+    for (int i = 0; i < optionsVector.size(); i++){
+        message += "[";
+        message += std::to_string(i + 1);
+        message += "] ";
+        message += optionsVector[i]->getName();
+        if (i < (optionsVector.size() - 1)){
+            message += ", ";
+        }
+    }
+    message += "? Please enter the number that corresponds to your choice.";
+    messagePlayer(aPlayer, message);
+}
+
+
+std::string GameLogic::blockingGetMsg(Player *aPlayer){
+    bool msgRecived = false;
+    std::string message = "";
+
+    while (!msgRecived){
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        message = getMsgFromPlayerQ(aPlayer);
+        if (message != ""){
+            msgRecived = true;
+        }
+    }
+
+    return message;
 }
 
 

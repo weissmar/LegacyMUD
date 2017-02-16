@@ -278,6 +278,24 @@ class GameLogic {
         void handleParseError(Player *aPlayer, std::vector<parser::ParseResult> results);
 
         /*!
+         * \brief   Sends a clarifying question with the options to the player.
+         * 
+         * \param[in] aPlayer           Specifies the player that sent the messsage.
+         * \param[in] optionsVector     Specifies the options to choose from.
+         */
+        void sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector);
+
+        /*!
+         * \brief   Blocks until gets a message from the dedicated message  
+         *          queue for the specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         * 
+         * \return  Returns the message.
+         */
+        std::string blockingGetMsg(Player *aPlayer);
+
+        /*!
          * \brief   Adds a dedicated message queue for the specified player.
          * 
          * \param[in] aPlayer   Specifies the player.
