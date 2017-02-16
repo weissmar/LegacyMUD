@@ -17,10 +17,19 @@
 #include <mutex>
 #include <utility>
 #include <map>
+#include <parser.hpp>
 #include "ObjectType.hpp"
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
 #include "Area.hpp"
+
+namespace legacymud { namespace telnet {
+    class Server;
+}}
+
+namespace legacymud { namespace account {
+    class Account;
+}}
 
 namespace legacymud { namespace engine {
 
@@ -50,7 +59,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not starting the game
          *          was successful.
          */
-        bool startGame(bool newGame, const std::string &fileName);
+        bool startGame(bool newGame, const std::string &fileName, parser::TextParser *aParser, telnet::Server *aServer, account::Account *anAccount);
 
         /*!
          * \brief   Loads a new player into the game.

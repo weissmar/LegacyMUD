@@ -66,7 +66,10 @@ GameLogic::~GameLogic(){
 }
 
 
-bool GameLogic::startGame(bool newGame, const std::string &fileName){
+bool GameLogic::startGame(bool newGame, const std::string &fileName, parser::TextParser *aParser, telnet::Server *aServer, account::Account *anAccount){
+    accountManager = anAccount;
+    theTextParser = aParser;
+    theServer = aServer;
     return false;
 }
 
