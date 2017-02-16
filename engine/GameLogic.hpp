@@ -283,6 +283,14 @@ class GameLogic {
         void handleParseError(Player *aPlayer, parser::ParseResult result);
 
         /*!
+         * \brief   Prints the type, status, command, and unparsed fields of the
+         *          specified ParseResult to stdout.
+         * 
+         * \param[in] result   Specifies the result received from the parser.
+         */
+        void printParseResult(parser::ParseResult result);
+
+        /*!
          * \brief   Handles a parse error that has multiple results.
          * 
          * \param[in] results   Specifies the results received from the parser.

@@ -501,6 +501,7 @@ bool GameLogic::endConversation(Player *aPlayer){
 }
 
 void GameLogic::handleParseError(Player *aPlayer, parser::ParseResult result){
+    printParseResult(result);
     if (result.status == parser::ParseStatus::INVALID_VERB){
         // Input string contains invalid verb.
         messagePlayer(aPlayer, "I don't know what you mean by that.");
@@ -523,6 +524,184 @@ void GameLogic::handleParseError(Player *aPlayer, parser::ParseResult result){
         // Input string contains a valid noun alias in the indirect object position but not in current area.
         messagePlayer(aPlayer, "I don't see that here.");
     }
+}
+
+void GameLogic::printParseResult(parser::ParseResult result){
+    std::cout << "Result from parser:\n";
+    std::cout << "status = "; 
+    switch (result.status){
+        case parser::ParseStatus::UNPARSED:
+            std::cout << "UNPARSED\n";
+            break;
+        case parser::ParseStatus::INVALID_VERB:
+            std::cout << "INVALID_VERB\n";
+            break;
+        case parser::ParseStatus::INVALID_DIRECT:
+            std::cout << "INVALID_DIRECT\n";
+            break;
+        case parser::ParseStatus::INVALID_INDIRECT:
+            std::cout << "INVALID_INDIRECT\n";
+            break;
+        case parser::ParseStatus::INVALID_PREPOSITION:
+            std::cout << "INVALID_PREPOSITION\n";
+            break;
+        case parser::ParseStatus::UNAVAILABLE_VERB:
+            std::cout << "UNAVAILABLE_VERB\n";
+            break;
+        case parser::ParseStatus::UNAVAILABLE_DIRECT:
+            std::cout << "UNAVAILABLE_DIRECT\n";
+            break;
+        case parser::ParseStatus::UNAVAILABLE_INDIRECT:
+            std::cout << "UNAVAILABLE_INDIRECT\n";
+            break;
+        case parser::ParseStatus::VALID:
+            std::cout << "VALID\n";
+            break;
+    }
+    std::cout << "commmand = ";
+    switch (result.command){
+        case CommandEnum::HELP:
+            std::cout << "HELP\n";
+            break;
+        case CommandEnum::INVALID:
+            std::cout << "INVALID\n";
+            break;
+        case CommandEnum::LOOK:
+            std::cout << "LOOK\n";
+            break;
+        case CommandEnum::LISTEN:
+            std::cout << "LISTEN\n";
+            break;
+        case CommandEnum::TAKE:
+            std::cout << "TAKE\n";
+            break;
+        case CommandEnum::PUT:
+            std::cout << "PUT\n";
+            break;
+        case CommandEnum::DROP:
+            std::cout << "DROP\n";
+            break;
+        case CommandEnum::INVENTORY:
+            std::cout << "INVENTORY\n";
+            break;
+        case CommandEnum::MORE:
+            std::cout << "MORE\n";
+            break;
+        case CommandEnum::EQUIPMENT:
+            std::cout << "EQUIPMENT\n";
+            break;
+        case CommandEnum::EQUIP:
+            std::cout << "EQUIP\n";
+            break;
+        case CommandEnum::UNEQUIP:
+            std::cout << "UNEQUIP\n";
+            break;
+        case CommandEnum::TRANSFER:
+            std::cout << "TRANSFER\n";
+            break;
+        case CommandEnum::SPEAK:
+            std::cout << "SPEAK\n";
+            break;
+        case CommandEnum::SHOUT:
+            std::cout << "SHOUT\n";
+            break;
+        case CommandEnum::WHISPER:
+            std::cout << "WHISPER\n";
+            break;
+        case CommandEnum::QUIT:
+            std::cout << "QUIT\n";
+            break;
+        case CommandEnum::GO:
+            std::cout << "GO\n";
+            break;
+        case CommandEnum::MOVE:
+            std::cout << "MOVE\n";
+            break;
+        case CommandEnum::STATS:
+            std::cout << "STATS\n";
+            break;
+        case CommandEnum::QUESTS:
+            std::cout << "QUESTS\n";
+            break;
+        case CommandEnum::SKILLS:
+            std::cout << "SKILLS\n";
+            break;
+        case CommandEnum::ATTACK:
+            std::cout << "ATTACK\n";
+            break;
+        case CommandEnum::TALK:
+            std::cout << "TALK\n";
+            break;
+        case CommandEnum::SHOP:
+            std::cout << "SHOP\n";
+            break;
+        case CommandEnum::BUY:
+            std::cout << "BUY\n";
+            break;
+        case CommandEnum::SELL:
+            std::cout << "SELL\n";
+            break;
+        case CommandEnum::SEARCH:
+            std::cout << "SEARCH\n";
+            break;
+        case CommandEnum::USE_SKILL:
+            std::cout << "USE_SKILL\n";
+            break;
+        case CommandEnum::READ:
+            std::cout << "READ\n";
+            break;
+        case CommandEnum::BREAK:
+            std::cout << "BREAK\n";
+            break;
+        case CommandEnum::CLIMB:
+            std::cout << "CLIMB\n";
+            break;
+        case CommandEnum::TURN:
+            std::cout << "TURN\n";
+            break;
+        case CommandEnum::PUSH:
+            std::cout << "PUSH\n";
+            break;
+        case CommandEnum::PULL:
+            std::cout << "PULL\n";
+            break;
+        case CommandEnum::EAT:
+            std::cout << "EAT\n";
+            break;
+        case CommandEnum::DRINK:
+            std::cout << "DRINK\n";
+            break;
+        case CommandEnum::EDIT_MODE:
+            std::cout << "EDIT_MODE\n";
+            break;
+        case CommandEnum::WARP:
+            std::cout << "WARP\n";
+            break;
+        case CommandEnum::COPY:
+            std::cout << "COPY\n";
+            break;
+        case CommandEnum::CREATE:
+            std::cout << "CREATE\n";
+            break;
+        case CommandEnum::EDIT_ATTRIBUTE:
+            std::cout << "EDIT_ATTRIBUTE\n";
+            break;
+        case CommandEnum::EDIT_WIZARD:
+            std::cout << "EDIT_WIZARD\n";
+            break;
+        case CommandEnum::SAVE:
+            std::cout << "SAVE\n";
+            break;
+        case CommandEnum::LOAD:
+            std::cout << "LOAD\n";
+            break;
+        case CommandEnum::DELETE:
+            std::cout << "DELETE\n";
+            break;
+    }
+    std::cout << "unparsed = ";
+    std::cout << result.unparsed;
+    std::cout << "\n";
 }
 
 void GameLogic::handleParseErrorMult(Player *aPlayer, std::vector<parser::ParseResult> results){
