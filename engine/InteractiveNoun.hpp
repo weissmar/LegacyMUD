@@ -21,7 +21,6 @@
 #include <vector>
 #include <map>
 #include <tuple>
-#include <Grammar.hpp>
 #include "CommandEnum.hpp"
 #include "ObjectType.hpp"
 #include "ItemPosition.hpp"

@@ -17,11 +17,15 @@
 #include <mutex>
 #include <utility>
 #include <map>
-#include <parser.hpp>
 #include "ObjectType.hpp"
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
 #include "Area.hpp"
+
+namespace legacymud { namespace parser {
+    class TextParser;
+    struct ParseResult;
+}}
 
 namespace legacymud { namespace telnet {
     class Server;
@@ -222,7 +226,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not getting the value
          *          was successful.
          */
-        bool getValueFromUser(int FD, std::string outMessage, std::string response, bool newline);
+        bool getValueFromUser(int FD, std::string outMessage, std::string &response, bool newline);
 
         /*!
          * \brief   Starts combat between the specfied player and the specified

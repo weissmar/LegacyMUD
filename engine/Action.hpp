@@ -21,10 +21,14 @@
 #include <vector>
 #include <atomic>
 #include <mutex>
-#include <Grammar.hpp>
 #include "CommandEnum.hpp"
 #include "EffectType.hpp"
 #include "DataType.hpp"
+
+namespace legacymud { namespace parser {
+    class Grammar;
+}}
+
 
 namespace legacymud { namespace engine {
 

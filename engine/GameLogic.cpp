@@ -11,7 +11,8 @@
 #include <cstdlib>
 #include <thread>
 #include <chrono>
-#include <parser.hpp>
+#include <iostream>
+#include "parser.hpp"
 #include <Account.hpp>
 #include <Server.hpp>
 #include "GameLogic.hpp"
@@ -67,9 +68,16 @@ GameLogic::~GameLogic(){
 
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, parser::TextParser *aParser, telnet::Server *aServer, account::Account *anAccount){
+    PlayerClass *aClass;
+
     accountManager = anAccount;
     theTextParser = aParser;
     theServer = aServer;
+
+    // create a default player class
+    aClass = new PlayerClass(0, "default class", nullptr, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
+    manager->addObject(aClass, -1);
+
     return false;
 }
 
@@ -196,6 +204,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
             // move player to start area
             startArea.addCharacter(newPlayer);
+            newPlayer->setLocation(&startArea);
             messagePlayer(newPlayer, startArea.getFullDescription());
             message = "You see a player named " + playerName + " enter the area.";
             messageAreaPlayers(message, &startArea);
@@ -225,6 +234,8 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                 messageAreaPlayers(message, anArea);
 
                 validUser = true;
+            } else {
+                theServer->sendMsg(fileDescriptor, "Your username and password didn't match any account we have on file. Please try again.", telnet::Server::NEWLINE);
             } 
         }
     }
@@ -259,7 +270,7 @@ int GameLogic::validateStringNumber(std::string number, int min, int max){
 }
 
 
-bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string response, bool newline){
+bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string &response, bool newline){
     bool success;
     telnet::Server::NewLine useNewline = telnet::Server::NEWLINE;
 
@@ -315,6 +326,8 @@ void GameLogic::processInput(int numToProcess){
                     } else {
                         handleParseError(aPlayer, resultVector.front());
                     }
+                } else if (resultVector.size() == 0){
+                    std::cout << "DEBUG:: parser returned empty result vector\n";
                 } else {
                     std::thread aThread(&GameLogic::handleParseErrorMult, this, aPlayer, resultVector);
                     aThread.detach();

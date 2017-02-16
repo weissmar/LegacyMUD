@@ -9,6 +9,7 @@
  ************************************************************************/
 
 #include "Action.hpp"
+#include "Grammar.hpp"
 
 namespace legacymud { namespace engine {
 

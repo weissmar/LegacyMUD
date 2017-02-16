@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/14/2017
+ * \modified    02/16/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.cpp
  *
@@ -12,6 +12,8 @@
 #include "InteractiveNoun.hpp"
 #include "Creature.hpp"
 #include "Player.hpp"
+#include "PlayerClass.hpp"
+#include <algorithm>
 
 namespace legacymud { namespace engine {
 
@@ -38,17 +40,20 @@ GameObjectManager::~GameObjectManager(){
     gameObjects.clear();
     gameCreatures.clear();
     activeGamePlayers.clear();
+    gamePlayerClasses.clear();
 }
 
 
 bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
     int anID;
-    ObjectType aType = anObject->getObjectType();
+    ObjectType aType;
     bool success = false;
     Creature *aCreature = nullptr;
     Player *aPlayer = nullptr;
+    PlayerClass *aPlayerClass = nullptr;
 
     if (anObject != nullptr){
+        aType = anObject->getObjectType();
         anID = anObject->getID();
         if (anID >= 0){
             gameObjects[anID] = anObject;
@@ -70,6 +75,12 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                     gameCreatures[anID] = aCreature;
                     success = true;
                 }
+            } else if (aType == ObjectType::PLAYER_CLASS){
+                aPlayerClass = dynamic_cast<PlayerClass*>(anObject);
+                if (aPlayerClass != nullptr){
+                    gamePlayerClasses.push_back(aPlayerClass);
+                    success = true;
+                }
             } else {
                 success = true;
             }
@@ -82,12 +93,15 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
 
 bool GameObjectManager::removeObject(InteractiveNoun *anObject, int FD){
     int anID; 
-    ObjectType aType = anObject->getObjectType();
+    ObjectType aType;
     bool success = false;
     int numRemoved;
     Player *aPlayer = nullptr;
+    PlayerClass *aPlayerClass = nullptr;
+    int size;
 
     if (anObject != nullptr){
+        aType = anObject->getObjectType();
         anID = anObject->getID();
         if (anID >= 0){
             numRemoved = gameObjects.erase(anID);
@@ -107,6 +121,13 @@ bool GameObjectManager::removeObject(InteractiveNoun *anObject, int FD){
             } else if (aType == ObjectType::CREATURE){
                 numRemoved += gameCreatures.erase(anID);
                 if (numRemoved == 2){
+                    success = true;
+                }
+            } else if (aType == ObjectType::PLAYER_CLASS){
+                aPlayerClass = dynamic_cast<PlayerClass*>(anObject);
+                size = gamePlayerClasses.size();
+                gamePlayerClasses.erase(std::remove(gamePlayerClasses.begin(), gamePlayerClasses.end(), aPlayerClass), gamePlayerClasses.end());
+                if ((numRemoved == 1) && ((gamePlayerClasses.size() - size) == 1)){
                     success = true;
                 }
             } else if (numRemoved == 1) {

@@ -131,6 +131,7 @@ int Character::subtractMoney(int money){
 
 
 bool Character::setLocation(Area *aLocation){
+    location = aLocation;
     return false;
 }
 
