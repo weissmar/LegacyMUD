@@ -286,6 +286,16 @@ class GameLogic {
         void sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector);
 
         /*!
+         * \brief   Clarifies a choice with the user.
+         * 
+         * \param[in] aPlayer           Specifies the player that sent the messsage.
+         * \param[in] optionsVector     Specifies the options to choose from.
+         * 
+         * \return  Returns a pointer to the chosen object.
+         */
+        InteractiveNoun* clarifyChoice(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector);
+
+        /*!
          * \brief   Blocks until gets a message from the dedicated message  
          *          queue for the specified player.
          * 
@@ -322,20 +332,33 @@ class GameLogic {
         /*!
          * \brief   Executes the specified command.
          * 
-         * \param[in] aCommand      Specifies the command to execute.
-         * \param[in] aPlayer       Specifies the player entering the command.
-         * \param[in] directObj     Specifies the direct object received from the 
-         *                          parser.
-         * \param[in] indirectObj   Specifies the indirect object recevied from the 
-         *                          parser.
-         * \param[in] stringParam   Specifies the string parameter received from the
-         *                          parser.
-         * \param[in] aPosition     Specifies the position received from the parser.
+         * \param[in] aPlayer   Specifies the player entering the command.
+         * \param[in] result    Specifies the results from the parser.
          *
          * \return  Returns a bool indicating whether or not executing the command
          *          was successful.
          */
-        bool executeCommand(parser::ParseResult);
+        bool executeCommand(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Clarifies the direct object to use.
+         * 
+         * \param[in] aPlayer   Specifies the player entering the command.
+         * \param[in] result    Specifies the results from the parser.
+         *
+         * \return  Returns a pointer to the chosen interactive noun.
+         */
+        InteractiveNoun* clarifyDirect(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Clarifies the indirect object to use.
+         * 
+         * \param[in] aPlayer   Specifies the player entering the command.
+         * \param[in] result    Specifies the results from the parser.
+         *
+         * \return  Returns a pointer to the chosen interactive noun.
+         */
+        InteractiveNoun* clarifyIndirect(Player *aPlayer, parser::ParseResult result);
 
         /*!
          * \brief   Executes the help command.
@@ -793,7 +816,7 @@ class GameLogic {
          * \brief   Executes the create command.
          * 
          * \param[in] aPlayer       Specifies the player entering the command.
-         * \param[in] indirectObj   Specifies the indirect object recevied from the 
+         * \param[in] stringParam   Specifies the indirect object recevied from the 
          *                          parser.
          *
          * \return  Returns a bool indicating whether or not executing the create command
@@ -805,7 +828,7 @@ class GameLogic {
          * \brief   Executes the edit attribute command.
          * 
          * \param[in] aPlayer       Specifies the player entering the command.
-         * \param[in] directObj     Specifies the direct object received from the 
+         * \param[in] indirectObj   Specifies the direct object received from the 
          *                          parser.
          * \param[in] stringParam   Specifies the string parameter received from the
          *                          parser.
@@ -813,7 +836,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not executing the edit attribute command
          *          was successful.
          */
-        bool editAttributeCommand(Player *aPlayer, InteractiveNoun *directObj, const std::string &stringParam);
+        bool editAttributeCommand(Player *aPlayer, InteractiveNoun *indirectObj, const std::string &stringParam);
 
         /*!
          * \brief   Executes the edit wizard command.

@@ -308,7 +308,7 @@ void GameLogic::processInput(int numToProcess){
                 // check results
                 if (resultVector.size() == 1){
                     if (resultVector.front().status == parser::ParseStatus::VALID){
-                        commandSuccess = executeCommand(resultVector.front());
+                        commandSuccess = executeCommand(aPlayer, resultVector.front());
                         if (!commandSuccess){
                             messagePlayer(aPlayer, "You can't do that. (Command failed.)");
                         }
@@ -520,7 +520,6 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
     InteractiveNoun *directChoice = nullptr;
     InteractiveNoun *indirectChoice = nullptr;
     parser::ParseResult chosenResult;
-    int choice;
     bool commandSuccess = false;
 
     // get maps and vectors of distinct direct and indirect options
@@ -541,19 +540,10 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
 
     // choose between multiple direct options
     if (directPtrs.size() > 1){
-        addPlayerMessageQueue(aPlayer);
-        sendClarifyingQuery(aPlayer, directPtrs);
-        message = blockingGetMsg(aPlayer);
-        choice = validateStringNumber(message, 1, directPtrs.size());
-        while (choice == -1){
-            messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
-            message = blockingGetMsg(aPlayer);
-            choice = validateStringNumber(message, 1, directPtrs.size());
-        }
-        directChoice = directPtrs[choice - 1];
+        directChoice = clarifyChoice(aPlayer, directPtrs);
         chosenResult = directPtrMap.at(directChoice);
         if (chosenResult.status == parser::ParseStatus::VALID){
-            commandSuccess = executeCommand(chosenResult);
+            commandSuccess = executeCommand(aPlayer, chosenResult);
             if (!commandSuccess){
                 messagePlayer(aPlayer, "You can't do that. (Command failed.)");
             }
@@ -562,19 +552,10 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
         }
     } else if (indirectPtrs.size() > 1){
         // choose between multiple indirect options
-        addPlayerMessageQueue(aPlayer);
-        sendClarifyingQuery(aPlayer, indirectPtrs);
-        message = blockingGetMsg(aPlayer);
-        choice = validateStringNumber(message, 1, indirectPtrs.size());
-        while (choice == -1){
-            messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
-            message = blockingGetMsg(aPlayer);
-            choice = validateStringNumber(message, 1, directPtrs.size());
-        }
-        indirectChoice = indirectPtrs[choice - 1];
+        indirectChoice = clarifyChoice(aPlayer, indirectPtrs);
         chosenResult = indirectPtrMap.at(indirectChoice);
         if (chosenResult.status == parser::ParseStatus::VALID){
-            commandSuccess = executeCommand(chosenResult);
+            commandSuccess = executeCommand(aPlayer, chosenResult);
             if (!commandSuccess){
                 messagePlayer(aPlayer, "You can't do that. (Command failed.)");
             }
@@ -585,7 +566,7 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
         // options all have the same direct and indirect options, use first
         chosenResult = results[0];
         if (chosenResult.status == parser::ParseStatus::VALID){
-            commandSuccess = executeCommand(chosenResult);
+            commandSuccess = executeCommand(aPlayer, chosenResult);
             if (!commandSuccess){
                 messagePlayer(aPlayer, "You can't do that. (Command failed.)");
             }
@@ -611,6 +592,27 @@ void GameLogic::sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun
     }
     message += "? Please enter the number that corresponds to your choice.";
     messagePlayer(aPlayer, message);
+}
+
+
+InteractiveNoun* GameLogic::clarifyChoice(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector){
+    std::string message;
+    int choice;
+    InteractiveNoun *finalChoice;
+
+    addPlayerMessageQueue(aPlayer);
+    sendClarifyingQuery(aPlayer, optionsVector);
+    message = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(message, 1, optionsVector.size());
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        message = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(message, 1, optionsVector.size());
+    }
+    removePlayerMessageQueue(aPlayer);
+    finalChoice = optionsVector[choice - 1];
+
+    return finalChoice;
 }
 
 
@@ -685,8 +687,255 @@ std::string GameLogic::getMsgFromPlayerQ(Player *aPlayer){
 }
 
 
-bool GameLogic::executeCommand(parser::ParseResult){
-    return false;
+bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
+    bool success = false;
+    InteractiveNoun *param = nullptr;
+    InteractiveNoun *directObj = nullptr;
+    InteractiveNoun *indirectObj = nullptr;
+
+    if (result.command == CommandEnum::HELP){           
+        // Displays a list of some available commands.
+        success = helpCommand(aPlayer);
+    } else if (result.command == CommandEnum::LOOK){           
+        // clarify the object being looked at
+        param = clarifyDirect(aPlayer, result);
+        if (param == nullptr){
+            param = clarifyIndirect(aPlayer, result);
+        }
+        // Displays the full description of the current area or specified direct object.
+        success = lookCommand(aPlayer, param);
+    } else if (result.command == CommandEnum::LISTEN){         
+        // Displays an optional description of any sounds in the current area.
+        success = listenCommand(aPlayer);
+    } else if (result.command == CommandEnum::TAKE){
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);
+        // clarify indirect
+        indirectObj = clarifyIndirect(aPlayer, result);
+        // Puts the specified item into inventory.
+        success = takeCommand(aPlayer, directObj, indirectObj);
+    } else if (result.command == CommandEnum::PUT){  
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);
+        // clarify indirect
+        indirectObj = clarifyIndirect(aPlayer, result);         
+        // Puts the specified item in, on, or under the specified container.
+        success = putCommand(aPlayer, directObj, indirectObj, result.position);
+    } else if (result.command == CommandEnum::DROP){       
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);
+        // Drops the specified item onto the ground.
+        success = dropCommand(aPlayer, directObj);
+    } else if (result.command == CommandEnum::INVENTORY){      
+        // Displays the player's inventory and equipped items.
+        success = inventoryCommand(aPlayer);
+    } else if (result.command == CommandEnum::MORE){
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);       
+        // Displays details of the specified item or skill.
+        success = moreCommand(aPlayer, directObj);
+    } else if (result.command == CommandEnum::EQUIPMENT){      
+        // Display the player's equipped items.
+        success = equipmentCommand(aPlayer);
+    } else if (result.command == CommandEnum::EQUIP){    
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);    
+        // Equips the specified item.
+        success = equipCommand(aPlayer, directObj);
+    } else if (result.command == CommandEnum::UNEQUIP){  
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);     
+        // Unequips the specified item.
+        success = unequipCommand(aPlayer, directObj);
+    } else if (result.command == CommandEnum::TRANSFER){
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);
+        // clarify indirect
+        indirectObj = clarifyIndirect(aPlayer, result); 
+        // Gives the specified item to the specified character.
+        success = transferCommand(aPlayer, directObj, indirectObj);
+    } else if (result.command == CommandEnum::SPEAK){          
+        // Says the specified text to all players in the current area.
+        success = speakCommand(aPlayer, result.directAlias);
+    } else if (result.command == CommandEnum::SHOUT){          
+        // Shouts the specified text to all players within n links of the current area.
+        success = shoutCommand(aPlayer, result.directAlias);
+    } else if (result.command == CommandEnum::WHISPER){        
+        indirectObj = clarifyIndirect(aPlayer, result);
+        // Whispers the specified text to the specified player.
+        success = whisperCommand(aPlayer, indirectObj, result.directAlias);
+    } else if (result.command == CommandEnum::QUIT){           
+        // Logs the player out of the game.
+        success = quitCommand(aPlayer);
+    } else if (result.command == CommandEnum::GO){             
+        // clarify where to go
+        param = clarifyDirect(aPlayer, result);
+        if (param == nullptr){
+            param = clarifyIndirect(aPlayer, result);
+        }
+        // Moves the player to the specified area.
+        success = goCommand(aPlayer, param);
+    } else if (result.command == CommandEnum::MOVE){     
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);      
+        // Moves the specified item.
+        success = moveCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::STATS){          
+        // Displays the player's stats.
+        success = statsCommand(aPlayer);    
+    } else if (result.command == CommandEnum::QUESTS){         
+        // Displays the player's quests.
+        success = questsCommand(aPlayer);    
+    } else if (result.command == CommandEnum::SKILLS){         
+        // Displays the player's skills.
+        success = skillsCommand(aPlayer);    
+    } else if (result.command == CommandEnum::ATTACK){    
+        // clarify direct 
+        directObj = clarifyDirect(aPlayer, result);
+        // clarify indirect
+        indirectObj = clarifyIndirect(aPlayer, result);     
+        // Initiates or continues combat with the specified combatant, using either the default attack or the specified attack skill.
+        success = attackCommand(aPlayer, directObj, indirectObj);    
+    } else if (result.command == CommandEnum::TALK){        
+        // clarify who is being talked to
+        param = clarifyDirect(aPlayer, result);
+        if (param == nullptr){
+            param = clarifyIndirect(aPlayer, result);
+        }   
+        // Initiates a conversation with the specified non-combatant.
+        success = talkCommand(aPlayer, param);    
+    } else if (result.command == CommandEnum::SHOP){           
+        // Lists any items the non-combatant the player is talking to has for sale.
+        success = shopCommand(aPlayer);    
+    } else if (result.command == CommandEnum::BUY){    
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);
+        // Purchases the specified item from the non-combatant the player is talking to.
+        success = buyCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::SELL){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);           
+        // Sells the specified item to the non-combatant the player is speaking to.
+        success = sellCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::SEARCH){  
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);       
+        // Lists any items in the specified container.
+        success = searchCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::USE_SKILL){  
+        // clarify direct and indirect
+        directObj = clarifyDirect(aPlayer, result);
+        indirectObj = clarifyIndirect(aPlayer, result);    
+        // Activates the specified skill.
+        success = useSkillCommand(aPlayer, directObj, indirectObj);    
+    } else if (result.command == CommandEnum::READ){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);           
+        // Reads the specified item.
+        success = readCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::BREAK){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);          
+        // Breaks the specified item.
+        success = breakCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::CLIMB){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);          
+        // Climbs the specified item.
+        success = climbCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::TURN){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);           
+        // Turns the specified item.
+        success = turnCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::PUSH){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);           
+        // Pushes the specified item.
+        success = pushCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::PULL){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);           
+        // Pulls the specified item.
+        success = pullCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::EAT){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);            
+        // Eats the specified item.
+        success = eatCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::DRINK){
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);          
+        // Drinks the specified item.
+        success = drinkCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::EDIT_MODE){      
+        // Toggles between edit mode and normal mode.
+        success = editModeCommand(aPlayer);    
+    } else if (result.command == CommandEnum::WARP){ 
+        // clarify where to warp to
+        param = clarifyDirect(aPlayer, result);
+        if (param == nullptr){
+            param = clarifyIndirect(aPlayer, result);
+        }          
+        // World builder command. Moves the player to the specified area.
+        success = warpCommand(aPlayer, param);    
+    } else if (result.command == CommandEnum::COPY){       
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);    
+        // World builder command. Creates a copy of the specified object and places it in the current area.
+        success = copyCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::CREATE){         
+        // World builder command. Starts the creation wizard for the specified object type.
+        success = createCommand(aPlayer, result.directAlias);    
+    } else if (result.command == CommandEnum::EDIT_ATTRIBUTE){ 
+        // clarify indirect
+        indirectObj = clarifyIndirect(aPlayer, result);
+        // World builder command. Edits the specified attribute of the specified object (or the current area if not specified).
+        success = editAttributeCommand(aPlayer, indirectObj, result.directAlias);    
+    } else if (result.command == CommandEnum::EDIT_WIZARD){    
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);
+        // World builder command. Starts the edit wizard for the specified object.
+        success = editWizardCommand(aPlayer, directObj);    
+    } else if (result.command == CommandEnum::SAVE){           
+        // World builder command. Saves the game to the specified file (or the default file if not specified).
+        success = saveCommand(aPlayer, result.indirectAlias);    
+    } else if (result.command == CommandEnum::LOAD){           
+        // World builder command. Loads the game from the specified file (or the default file if not specified).
+        success = loadCommand(aPlayer, result.indirectAlias);    
+    } else if (result.command == CommandEnum::DELETE){         
+        // clarify direct
+        directObj = clarifyDirect(aPlayer, result);
+        // World builder command. Deletes the specified object from the game.
+        success = deleteCommand(aPlayer, directObj);  
+    }
+    return success;
+}
+
+
+InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult result){
+    InteractiveNoun *directObj = nullptr;
+
+    if (result.direct.size() == 1){
+        directObj = result.direct[0];
+    } else if (result.direct.size() > 0){
+        directObj = clarifyChoice(aPlayer, result.direct);
+    }
+
+    return directObj;
+}
+
+
+InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult result){
+    InteractiveNoun *indirectObj = nullptr;
+
+    if (result.indirect.size() == 1){
+        indirectObj = result.indirect[0];
+    } else if (result.indirect.size() > 0){
+        indirectObj = clarifyChoice(aPlayer, result.indirect);
+    }
+
+    return indirectObj;
 }
 
 
