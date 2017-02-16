@@ -275,7 +275,7 @@ class GameLogic {
          * \param[in] results   Specifies the results received from the parser.
          * \param[in] aPlayer   Specifies the player that sent the messsage.
          */
-        void handleParseError(Player *aPlayer, std::vector<parser::ParseResult> results);
+        void handleParseErrorMult(Player *aPlayer, std::vector<parser::ParseResult> results);
 
         /*!
          * \brief   Sends a clarifying question with the options to the player.

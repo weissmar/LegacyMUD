@@ -281,7 +281,6 @@ void GameLogic::processInput(int numToProcess){
     bool isAdmin = false;
     std::pair<std::string, int> aMessage;
     std::vector<parser::ParseResult> resultVector;
-    bool commandSuccess = false;
 
     // lock for thread-safety
     std::unique_lock<std::mutex> lockQueue(queueMutex);
@@ -308,15 +307,14 @@ void GameLogic::processInput(int numToProcess){
                 // check results
                 if (resultVector.size() == 1){
                     if (resultVector.front().status == parser::ParseStatus::VALID){
-                        commandSuccess = executeCommand(aPlayer, resultVector.front());
-                        if (!commandSuccess){
-                            messagePlayer(aPlayer, "You can't do that. (Command failed.)");
-                        }
+                        std::thread aThread(&GameLogic::executeCommand, this, aPlayer, resultVector.front());
+                        aThread.detach();
                     } else {
                         handleParseError(aPlayer, resultVector.front());
                     }
                 } else {
-                    handleParseError(aPlayer, resultVector);
+                    std::thread aThread(&GameLogic::handleParseErrorMult, this, aPlayer, resultVector);
+                    aThread.detach();
                 }
             }
             lockQueue.lock();
@@ -511,7 +509,7 @@ void GameLogic::handleParseError(Player *aPlayer, parser::ParseResult result){
     }
 }
 
-void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResult> results){
+void GameLogic::handleParseErrorMult(Player *aPlayer, std::vector<parser::ParseResult> results){
     std::map<InteractiveNoun*, parser::ParseResult> directPtrMap;
     std::map<InteractiveNoun*, parser::ParseResult> indirectPtrMap;
     std::vector<InteractiveNoun*> directPtrs;
@@ -520,7 +518,6 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
     InteractiveNoun *directChoice = nullptr;
     InteractiveNoun *indirectChoice = nullptr;
     parser::ParseResult chosenResult;
-    bool commandSuccess = false;
 
     // get maps and vectors of distinct direct and indirect options
     for (auto result : results){
@@ -543,10 +540,7 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
         directChoice = clarifyChoice(aPlayer, directPtrs);
         chosenResult = directPtrMap.at(directChoice);
         if (chosenResult.status == parser::ParseStatus::VALID){
-            commandSuccess = executeCommand(aPlayer, chosenResult);
-            if (!commandSuccess){
-                messagePlayer(aPlayer, "You can't do that. (Command failed.)");
-            }
+            executeCommand(aPlayer, chosenResult);
         } else {
             handleParseError(aPlayer, chosenResult);
         }
@@ -555,10 +549,7 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
         indirectChoice = clarifyChoice(aPlayer, indirectPtrs);
         chosenResult = indirectPtrMap.at(indirectChoice);
         if (chosenResult.status == parser::ParseStatus::VALID){
-            commandSuccess = executeCommand(aPlayer, chosenResult);
-            if (!commandSuccess){
-                messagePlayer(aPlayer, "You can't do that. (Command failed.)");
-            }
+            executeCommand(aPlayer, chosenResult);
         } else {
             handleParseError(aPlayer, chosenResult);
         }
@@ -566,10 +557,7 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
         // options all have the same direct and indirect options, use first
         chosenResult = results[0];
         if (chosenResult.status == parser::ParseStatus::VALID){
-            commandSuccess = executeCommand(aPlayer, chosenResult);
-            if (!commandSuccess){
-                messagePlayer(aPlayer, "You can't do that. (Command failed.)");
-            }
+            executeCommand(aPlayer, chosenResult);
         } else {
             handleParseError(aPlayer, chosenResult);
         }
