@@ -10,6 +10,7 @@
 
 #include <TextParser.hpp>
 #include <LexicalData.hpp>
+#include <Item.hpp>
 
 #include <gtest/gtest.h>
 
@@ -1142,6 +1143,44 @@ TEST_F(TextParserTest, InvalidVerbValidDirectObject) {
     EXPECT_EQ(0, results.begin()->direct.size());
     EXPECT_EQ(0, results.begin()->indirect.size());
     EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+}
+
+// Test an unavailable verb
+TEST_F(TextParserTest, UnavailableVerb) {
+    parser::LexicalData lex;
+    engine::InteractiveNoun *in = new engine::Item();
+    lex.addVerb("foo", in);
+    std::string input = "foo";
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_VERB, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::INVALID);
+    EXPECT_STREQ("foo", results.begin()->unparsed.c_str());
+    // Should not be any objects or position
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    lex.clear();
+    delete in;
+}
+
+// Test an unavailable noun
+TEST_F(TextParserTest, UnavailableDirectNoun) {
+    parser::LexicalData lex;
+    engine::InteractiveNoun *in = new engine::Item();
+    lex.addNoun("foo", in);
+    std::string input = "look foo";
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
+    EXPECT_EQ(results.begin()->command, engine::CommandEnum::LOOK);
+    EXPECT_STREQ("foo", results.begin()->unparsed.c_str());
+    // Should not be any objects or position
+    EXPECT_EQ(0, results.begin()->direct.size());
+    EXPECT_EQ(0, results.begin()->indirect.size());
+    EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
+    lex.clear();
+    delete in;
 }
 
 

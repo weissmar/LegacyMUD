@@ -77,7 +77,7 @@ std::vector<ParseResult> TextParser::parse(
                     std::cerr << "Unsupported grammar type detected in " << verb.getAlias() << std::endl;
                     continue;
                 }
-                result = parser->getResult(tokens, player, area);
+                result = parser->getResult(tokens, player, area, it->grammar);
                 candidates.push(result);
                 //std::cout << "Found edit mode candidate with status of " << static_cast<int>(result.status) << std::endl;
                 
@@ -109,7 +109,7 @@ std::vector<ParseResult> TextParser::parse(
                     std::cerr << "Unsupported grammar type detected in " << verb.getAlias() << std::endl;
                     continue;
                 }
-                result = parser->getResult(tokens, player, area);
+                result = parser->getResult(tokens, player, area, it->grammar);
                 //std::cout << "Found builder candidate with status of " << static_cast<int>(result.status) << std::endl;
                 candidates.push(result);
                 
@@ -144,7 +144,7 @@ std::vector<ParseResult> TextParser::parse(
                     std::cerr << "Unsupported grammar type detected in " << verb.getAlias() << std::endl;
                     continue;
                 }
-                result = parser->getResult(tokens, player, area);
+                result = parser->getResult(tokens, player, area, *((*it2)->getGrammar(verb.getAlias())));
                 //std::cout << "Found player candidate with status of " << static_cast<int>(result.status) << std::endl;
                 candidates.push(result);
             }
@@ -169,7 +169,7 @@ std::vector<ParseResult> TextParser::parse(
                     std::cerr << "Unsupported grammar type detected in " << verb.getAlias() << std::endl;
                     continue;
                 }
-                result = parser->getResult(tokens, player, area);
+                result = parser->getResult(tokens, player, area, *((*it2)->getGrammar(verb.getAlias())));
                 //std::cout << "Found area candidate with status of " << static_cast<int>(result.status) << std::endl;
                 candidates.push(result);
             }
@@ -202,7 +202,7 @@ std::vector<ParseResult> TextParser::parse(
                 std::cerr << "Unsupported grammar type detected in " << verb.getAlias() << std::endl;
                 continue;
             }
-            result = parser->getResult(tokens, player, area);
+            result = parser->getResult(tokens, player, area, it->grammar);
             //std::cout << "Found global candidate with status of " << static_cast<int>(result.status) << std::endl;
             candidates.push(result);
             

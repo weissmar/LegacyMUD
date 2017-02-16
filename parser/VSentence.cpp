@@ -22,7 +22,7 @@ VSentence::VSentence(PartOfSpeech verb, VerbType type, engine::CommandEnum comma
 }
 
 // Gets a ParseResult object based on the parsed input string.
-ParseResult VSentence::getResult(const std::vector<Token> &tokens, const LexicalData &playerLex, const LexicalData &areaLex) {
+ParseResult VSentence::getResult(const std::vector<Token> &tokens, const LexicalData &playerLex, const LexicalData &areaLex, const Grammar &grammar) {
     Range range = Range(_verb.getRange().end, tokens.size());
 
     // Prepare container for result
@@ -40,38 +40,8 @@ ParseResult VSentence::getResult(const std::vector<Token> &tokens, const Lexical
         result.status = ParseStatus::UNAVAILABLE_VERB;
         break;
     case VerbType::GLOBAL:
-        // Check for leftover tokens and set status accordingly
-        if (range.start != tokens.size()) {
-            // Add remaining tokens to unparsed
-            result.unparsed = Tokenizer::joinOriginal(tokens, range);
-            result.status = ParseStatus::INVALID_DIRECT;
-        }
-        else {
-            result.status = ParseStatus::VALID;
-        }
-        break;
     case VerbType::LOCAL:
-        // Check for leftover tokens and set status accordingly
-        if (range.start != tokens.size()) {
-            // Add remaining tokens to unparsed
-            result.unparsed = Tokenizer::joinOriginal(tokens, range);
-            result.status = ParseStatus::INVALID_DIRECT;
-        }
-        else {
-            result.status = ParseStatus::VALID;
-        }
-        break;
     case VerbType::BUILDER:
-        // Check for leftover tokens and set status accordingly
-        if (range.start != tokens.size()) {
-            // Add remaining tokens to unparsed
-            result.unparsed = Tokenizer::joinOriginal(tokens, range);
-            result.status = ParseStatus::INVALID_DIRECT;
-        }
-        else {
-            result.status = ParseStatus::VALID;
-        }
-        break;
     case VerbType::EDITMODE:
         // Check for leftover tokens and set status accordingly
         if (range.start != tokens.size()) {

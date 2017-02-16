@@ -18,7 +18,7 @@ VPTSentence::VPTSentence(PartOfSpeech verb, VerbType type, engine::CommandEnum c
 }
 
 // Gets a ParseResult object based on the parsed input string.
-ParseResult VPTSentence::getResult(const std::vector<Token> &tokens, const LexicalData &playerLex, const LexicalData &areaLex) {
+ParseResult VPTSentence::getResult(const std::vector<Token> &tokens, const LexicalData &playerLex, const LexicalData &areaLex, const Grammar &grammar) {
     ParseResult result;
 
     return result;
