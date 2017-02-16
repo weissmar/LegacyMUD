@@ -49,7 +49,7 @@ std::string ItemType::getDescription(){
 }
 
 
-std::string ItemType::getName(){
+std::string ItemType::getName() const{
     return name;
 }
 

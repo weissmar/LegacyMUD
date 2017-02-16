@@ -34,7 +34,7 @@ class SpecialSkill: public InteractiveNoun {
          *
          * \return  Returns a std::string with the name of the special skill.
          */
-        std::string getName();
+        std::string getName() const;
 
         /*!
          * \brief   Gets the damage of the special skill.

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -80,6 +80,11 @@ bool Exit::setConnectArea(Area *anArea){
     }
 
     return false;
+}
+
+
+std::string Exit::getName() const{
+    return this->getDescription();
 }
 
 

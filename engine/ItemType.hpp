@@ -62,7 +62,7 @@ class ItemType: public InteractiveNoun {
          *
          * \return  Returns a std::string with the name of this item type.
          */
-        std::string getName();
+        std::string getName() const;
 
         /*!
          * \brief   Gets the cost of this item type.

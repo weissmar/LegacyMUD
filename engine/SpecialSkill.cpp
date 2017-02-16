@@ -32,7 +32,7 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 { }
 
 
-std::string SpecialSkill::getName(){
+std::string SpecialSkill::getName() const{
     return name;
 }
 

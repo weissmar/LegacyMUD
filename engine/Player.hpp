@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/11/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -19,6 +19,9 @@
 #include <queue>
 #include <vector>
 #include <utility>
+#include <atomic>
+#include <mutex>
+#include <LexicalData.hpp>
 #include "Combatant.hpp"
 #include "CharacterSize.hpp"
 #include "CommandEnum.hpp"
@@ -50,6 +53,7 @@ struct Command {
 class Player: public Combatant {
     public:
         Player();
+        Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description, Area *startArea);
         Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
         /*Player(const Player &otherPlayer);
         Player & operator=(const Player &otherPlayer);
@@ -60,35 +64,35 @@ class Player: public Combatant {
          *
          * \return  Returns an int with the experience points.
          */
-        int getExperiencePoints();
+        int getExperiencePoints() const;
 
         /*!
          * \brief   Gets the level of this player.
          *
          * \return  Returns an int with the level.
          */
-        int getLevel();
+        int getLevel() const;
 
         /*!
          * \brief   Gets the size of this player.
          *
          * \return  Returns a CharacterSize with the size.
          */
-        CharacterSize getSize();
+        CharacterSize getSize() const;
 
         /*!
          * \brief   Gets the user name of this player.
          *
          * \return  Returns a std::string with the user name.
          */
-        std::string getUser();
+        std::string getUser() const;
 
         /*!
          * \brief   Gets the player class of this player.
          *
          * \return  Returns a PlayerClass* with the player class.
          */
-        PlayerClass* getPlayerClass();
+        PlayerClass* getPlayerClass() const;
 
         /*!
          * \brief   Gets the non-combatant this player is in conversation with.
@@ -96,7 +100,7 @@ class Player: public Combatant {
          * \return  Returns a NonCombatant* with the non-combatant this player
          *          is in conversation with.
          */
-        NonCombatant* getInConversation();
+        NonCombatant* getInConversation() const;
 
         /*!
          * \brief   Gets whether or not this player is active.
@@ -104,14 +108,14 @@ class Player: public Combatant {
          * \return  Returns a bool indicating whether or not this player is 
          *          active.
          */
-        bool isActive();
+        bool isActive() const;
 
         /*!
          * \brief   Gets the file descriptor of this player.
          *
          * \return  Returns an int with the file descriptor.
          */
-        int getFileDescriptor();
+        int getFileDescriptor() const;
 
         /*!
          * \brief   Gets whether or not this player's combat queue is empty.
@@ -119,14 +123,14 @@ class Player: public Combatant {
          * \return  Returns a bool whether or not this player's combat queue 
          *          is empty.
          */
-        bool queueIsEmpty();
+        bool queueIsEmpty() const;
 
         /*!
          * \brief   Gets whether or not this player is in edit mode.
          *
          * \return  Returns a bool whether or not this player is in edit mode.
          */
-        bool isEditMode();
+        bool isEditMode() const;
 
         /*!
          * \brief   Gets the quest list of this player.
@@ -134,25 +138,15 @@ class Player: public Combatant {
          * \return  Returns a std::vector<std::pair<Quest*, int>> with the 
          *          quest list.
          */
-        std::vector<std::pair<Quest*, int>> getQuestList();
+        std::vector<std::pair<Quest*, int>> getQuestList() const;
 
         /*!
-         * \brief   Gets the verb lookup for the items in this player's 
-         *          inventory and equipment.
+         * \brief   Gets the lexical data for this player's inventory.
          *
-         * \return  Returns a std::multimap<std::string, InteractiveNoun*> with  
-         *          the verb lookup
+         * \return  Returns a parser::LexicalData with the 
+         *          inventory lexical data.
          */
-        std::multimap<std::string, InteractiveNoun*> getVerbLookup();
-
-        /*!
-         * \brief   Gets the noun lookup for the items in this player's 
-         *          inventory and equipment.
-         *
-         * \return  Returns a std::multimap<std::string, InteractiveNoun*> with  
-         *          the noun lookup
-         */
-        std::multimap<std::string, InteractiveNoun*> getNounLookup();
+        parser::LexicalData getLexicalData() const;
 
         /*!
          * \brief   Adds the specified points to the experience points of 
@@ -213,6 +207,16 @@ class Player: public Combatant {
         bool setFileDescriptor(int FD);
 
         /*!
+         * \brief   Sets the file descriptor of this player and sets active to true.
+         *          
+         * \param[in] FD    Specifies the file descriptor of the player.
+         *
+         * \return  Returns a bool indicating whether or not the file descriptor and 
+         *          active status was successfully set.
+         */
+        bool activate(int FD);
+
+        /*!
          * \brief   Sets the non-combatant that the player is talking to.
          *          
          * \param[in] anNPC     Specifies the non-combatant that the player is talking to.
@@ -270,50 +274,29 @@ class Player: public Combatant {
          *          updated.
          */
         bool updateQuest(Quest *aQuest, int step); 
+        
+        /*!
+         * \brief   Adds the specified item to this player's inventory.
+         *
+         * \param[in] anItem    Specifies the item to add.
+         *
+         * \return  Returns a bool indicating whether or not adding the item was 
+         *          successful.
+         */
+        virtual bool addToInventory(Item *anItem);
 
         /*!
-         * \brief   Adds specified verbs/object pair to verb lookup.
-         * 
-         * \param[in] verbs     Specifies verbs to add.
-         * \param[in] anObject  Specifies object associated with the verbs to add.
+         * \brief   Removes the specified item from this player's inventory.
          *
-         * \return  Returns a bool indicating whether or not the verbs were successfully 
-         *          added.
-         */
-        bool addVerbs(std::vector<std::string> verbs, InteractiveNoun *anObject);
-
-        /*!
-         * \brief   Adds specified nouns/object pair to noun lookup.
-         * 
-         * \param[in] nouns     Specifies nouns to add.
-         * \param[in] anObject  Specifies object associated with the nouns to add.
+         * \param[in] anItem    Specifies the item to remove.
          *
-         * \return  Returns a bool indicating whether or not the nouns were successfully 
-         *          added.
-         */
-        bool addNouns(std::vector<std::string> nouns, InteractiveNoun *anObject);
-
-        /*!
-         * \brief   Removes verbs associated with the specified object from the verb
-         *          lookup.
-         * 
-         * \param[in] anObject  Specifies object associated with the verbs to remove.
+         * \note    If the item is equipped, this function unequips the item and
+         *          removes it from inventory.
          *
-         * \return  Returns a bool indicating whether or not the verbs were successfully 
-         *          removed.
+         * \return  Returns a bool indicating whether or not removing the item was 
+         *          successful.
          */
-        bool removeVerbs(InteractiveNoun *anObject);
-
-        /*!
-         * \brief   Removes nouns associated with the specified object from the noun
-         *          lookup.
-         * 
-         * \param[in] anObject  Specifies object associated with the nouns to remove.
-         *
-         * \return  Returns a bool indicating whether or not the nouns were successfully 
-         *          removed.
-         */
-        bool removeNouns(InteractiveNoun *anObject);
+        virtual bool removeFromInventory(Item *anItem);
 
         /*!
          * \brief   Gets the object type.
@@ -596,19 +579,24 @@ class Player: public Combatant {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int experiencePoints;
-        int level;
-        CharacterSize size;
+        std::atomic<int> experiencePoints;
+        std::atomic<int> level;
+        std::atomic<CharacterSize> size;
         PlayerClass *playerClass;
+        mutable std::mutex playerClassMutex;
         NonCombatant *inConversation;
+        mutable std::mutex inConversationMutex;
         std::string username;
-        bool active;
-        int fileDescriptor;
+        mutable std::mutex usernameMutex;
+        std::atomic<bool> active;
+        std::atomic<int> fileDescriptor;
         std::queue<Command*> combatQueue;
-        bool editMode;
+        mutable std::mutex combatQueueMutex;
+        std::atomic<bool> editMode;
         std::vector<std::pair<Quest*, int>> questList;
-        std::multimap<std::string, InteractiveNoun*> verbLookup;
-        std::multimap<std::string, InteractiveNoun*> nounLookup;
+        mutable std::mutex questListMutex;
+        parser::LexicalData inventoryLexicalData;
+        mutable std::mutex lexicalMutex;
 };
 
 }}

@@ -51,7 +51,7 @@ Character::~Character(){
 }*/
 
 
-std::string Character::getName(){
+std::string Character::getName() const{
     return name;
 }
 
@@ -131,6 +131,7 @@ int Character::subtractMoney(int money){
 
 
 bool Character::setLocation(Area *aLocation){
+    location = aLocation;
     return false;
 }
 

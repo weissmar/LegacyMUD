@@ -21,7 +21,6 @@
 #include <vector>
 #include <map>
 #include <tuple>
-#include <Grammar.hpp>
 #include "CommandEnum.hpp"
 #include "ObjectType.hpp"
 #include "ItemPosition.hpp"
@@ -148,6 +147,12 @@ class InteractiveNoun {
          *          was found and removed successfully.
          */
         bool removeAlias(std::string);
+
+        /*!
+         * \brief   Gets the name. This is a pure virtual function for
+         *          interactive noun.
+         */
+        virtual std::string getName() const = 0;
         
         /*!
          * \brief   Gets the object type. This is a pure virtual function for
