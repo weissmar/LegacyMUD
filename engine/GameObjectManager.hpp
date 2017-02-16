@@ -93,20 +93,22 @@ class GameObjectManager {
         std::vector<int> getPlayersFDs();
 
         /*!
-         * \brief   Gets the player associated with the fileDescriptor.
+         * \brief   Gets the active player associated with the fileDescriptor.
          * 
          * \param[in] fileDescriptor    Specifies the file descriptor to look up.
          *
-         * \return  Returns a Player* with the player with the specified fileDescriptor.
+         * \return  Returns a Player* with the player with the specified fileDescriptor, 
+         *          or nullptr if the player isn't active.
          */
         Player* getPlayerByFD(int fileDescriptor);
 
         /*!
-         * \brief   Gets the player associated with the username.
+         * \brief   Gets the inactive player associated with the username.
          * 
          * \param[in] username  Specifies the username to look up.
          *
-         * \return  Returns a Player* with the player with the specified username.
+         * \return  Returns a Player* with the player with the specified username
+         *          or nullptr if the player isn't inactive.
          */
         Player* getPlayerByUsername(std::string username);
 

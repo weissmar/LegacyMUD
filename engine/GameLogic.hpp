@@ -197,20 +197,25 @@ class GameLogic {
         void messagePlayer(Player *aPlayer, std::string message);
 
         /*!
-         * \brief   Sends the specified message to all active players.
+         * \brief   Sends the specified message to all active players,
+         *          except the specified player.
          * 
+         * \param[in] aPlayer   Optionally specifies the player to exclude 
+         *                      from this message.
          * \param[in] message   Specifies the message to send.
          */
-        void messageAllPlayers(std::string message);
+        void messageAllPlayers(Player *aPlayer, std::string message);
 
         /*!
          * \brief   Sends the specified message to all active players
-         *          in the specifed area.
+         *          in the specifed area, except the specified player.
          * 
+         * \param[in] aPlayer   Optionally specifies the player to exclude 
+         *                      from this message.
          * \param[in] message   Specifies the message to send.
          * \param[in] anArea    Specifies the area.
          */
-        void messageAreaPlayers(std::string message, Area *anArea);
+        void messageAreaPlayers(Player *aPlayer, std::string message, Area *anArea);
 
         /*!
          * \brief   Sends message prompt to user and gets response back.

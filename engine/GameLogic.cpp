@@ -207,7 +207,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             newPlayer->setLocation(&startArea);
             messagePlayer(newPlayer, startArea.getFullDescription());
             message = "You see a player named " + playerName + " enter the area.";
-            messageAreaPlayers(message, &startArea);
+            messageAreaPlayers(newPlayer, message, &startArea);
 
             validUser = true;
         } else {
@@ -221,21 +221,27 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             // check account info
             success = accountManager->verifyAccount(username, password);
             if (success){
-                // load player into game
-                manager->loadPlayer(username, fileDescriptor);
-                aPlayer = manager->getPlayerByFD(fileDescriptor);
-                aPlayer->activate(fileDescriptor);
+                // check if user is already logged in
+                aPlayer = manager->getPlayerByUsername(username);
+                if (aPlayer != nullptr){
+                    // load player into game
+                    manager->loadPlayer(username, fileDescriptor);
+                    aPlayer = manager->getPlayerByFD(fileDescriptor);
+                    aPlayer->activate(fileDescriptor);
 
-                // move player to current location
-                anArea = aPlayer->getLocation();
-                anArea->addCharacter(aPlayer);
-                messagePlayer(aPlayer, anArea->getFullDescription());
-                message = "You see a player named " + aPlayer->getName() + " enter the area.";
-                messageAreaPlayers(message, anArea);
+                    // move player to current location
+                    anArea = aPlayer->getLocation();
+                    anArea->addCharacter(aPlayer);
+                    messagePlayer(aPlayer, anArea->getFullDescription());
+                    message = "You see a player named " + aPlayer->getName() + " enter the area.";
+                    messageAreaPlayers(aPlayer, message, anArea);
 
-                validUser = true;
+                    validUser = true;
+                } else {
+                    theServer->sendMsg(fileDescriptor, "That account is already logged in. Please log in with a different account.", telnet::Server::NEWLINE);
+                }
             } else {
-                theServer->sendMsg(fileDescriptor, "Your username and password didn't match any account we have on file. Please try again.", telnet::Server::NEWLINE);
+                theServer->sendMsg(fileDescriptor, "Your username and password didn't match any accounts we have on file. Please try again.", telnet::Server::NEWLINE);
             } 
         }
     }
@@ -456,18 +462,29 @@ void GameLogic::messagePlayer(Player *aPlayer, std::string message){
 }
 
 
-void GameLogic::messageAllPlayers(std::string message){
+void GameLogic::messageAllPlayers(Player *aPlayer, std::string message){
+    int excludeFD = -1;
     std::vector<int> fileDescriptors = manager->getPlayersFDs();
 
+    if (aPlayer != nullptr){
+        excludeFD = aPlayer->getFileDescriptor();
+    }
+
     for (auto FD : fileDescriptors){
-        theServer->sendMsg(FD, message, telnet::Server::NEWLINE);
+        if (FD != excludeFD)
+            theServer->sendMsg(FD, message, telnet::Server::NEWLINE);
     }
 }
 
 
-void GameLogic::messageAreaPlayers(std::string message, Area *anArea){
+void GameLogic::messageAreaPlayers(Player *aPlayer, std::string message, Area *anArea){
+    int excludeFD = -1;
     std::vector<Character*> areaCharacters = anArea->getCharacters();
     std::vector<int> fileDescriptors;
+
+    if (aPlayer != nullptr){
+        excludeFD = aPlayer->getFileDescriptor();
+    }
 
     for (auto character : areaCharacters){
         if (character->getObjectType() == ObjectType::PLAYER){
@@ -476,7 +493,8 @@ void GameLogic::messageAreaPlayers(std::string message, Area *anArea){
     }
 
     for (auto FD : fileDescriptors){
-        theServer->sendMsg(FD, message, telnet::Server::NEWLINE);
+        if (FD != excludeFD)
+            theServer->sendMsg(FD, message, telnet::Server::NEWLINE);
     }
 }
 
