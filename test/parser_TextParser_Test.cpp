@@ -2,7 +2,7 @@
   \file     parser_TextParser_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/11/2017
+  \modified 02/15/2017
   \course   CS467, Winter 2017
  
   \details This file contains the unit tests for the TextParser class.
@@ -45,23 +45,23 @@ std::vector<parser::ParseResult> results;
 class TextParserTest : public :: testing::Test {
 public:
     static void SetUpTestCase() {
-
-    }
-
-    static void TearDownTestCase() {
-    }
-
-    virtual void SetUp() {
-        // // Set up edit mode verb lookup table
-        // setEditModeVerbs();
+        // Set up edit mode verb lookup table
+        setEditModeVerbs();
 
         // Set up global verb lookup table
         setGlobalVerbs();
 
         // Set up world builder lookup table
         setBuilderVerbs();
+    }
 
-        // Reset TextParser
+    static void TearDownTestCase() {
+        // Clear WordManager data
+        parser::WordManager::resetAll();
+    }
+
+    virtual void SetUp() {
+        // Reset TextParser (shouldn't be necessary)
         tp = parser::TextParser();
     }
 
@@ -74,9 +74,6 @@ public:
 
         // Clear the area VerbMap
         areaLex.clear();
-
-        // Clear WordManager data
-        parser::WordManager::resetAll();
     }
 };
 
@@ -161,25 +158,6 @@ TEST_F(TextParserTest, ListenHappyPath) {
     EXPECT_EQ(0, results.begin()->indirect.size());
     EXPECT_EQ(engine::ItemPosition::NONE, results.begin()->position);
     EXPECT_TRUE(results.begin()->unparsed.empty());
-}
-
-// Test the happy path of the EDIT_MODE command
-TEST_F(TextParserTest, EditModeValidityCheck) {
-    parser::VerbInfo vi;
-    vi.grammar = parser::Grammar(parser::Grammar::NO, false, parser::Grammar::NO);
-    vi.command = engine::CommandEnum::EDIT_MODE;
-    vi.description = "editmode";
-    parser::WordManager::addEditModeVerb("editmode", vi);
-
-    input = "editmode";
-    auto verbs = parser::WordManager::getEditModeVerbs(input);
-    auto it = verbs.begin();
-    ASSERT_TRUE(it != verbs.end());
-    EXPECT_EQ(engine::CommandEnum::EDIT_MODE, it->command);
-    EXPECT_STREQ("editmode", it->description.c_str());
-    EXPECT_EQ(parser::Grammar::NO, it->grammar.takesDirectObject());
-    EXPECT_EQ(parser::Grammar::NO, it->grammar.takesIndirectObject());
-    EXPECT_FALSE(it->grammar.takesPreposition());
 }
 
 // Test the happy path of the TAKE command
@@ -931,12 +909,6 @@ TEST_F(TextParserTest, DrinkHappyPath) {
 
 // Test the happy path of the EDIT_MODE command
 TEST_F(TextParserTest, EditModeHappyPath) {
-    parser::VerbInfo vi;
-    vi.grammar = parser::Grammar(parser::Grammar::NO, false, parser::Grammar::NO);
-    vi.command = engine::CommandEnum::EDIT_MODE;
-    vi.description = "editmode";
-    parser::WordManager::addEditModeVerb("editmode", vi);
-
     input = "editmode";
     results = tp.parse(input, playerLex, areaLex, true);
     ASSERT_EQ(1, results.size());
@@ -1197,8 +1169,9 @@ void setGlobalVerbs() {
     // LOOK command
     vi = parser::VerbInfo();
     vi.command = engine::CommandEnum::LOOK;
-    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     vi.description = "look";
+    parser::WordManager::addGlobalVerb("look", vi);
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
     parser::WordManager::addGlobalVerb("look", vi);
     vi.description = "look at";
     parser::WordManager::addGlobalVerb("look at", vi);

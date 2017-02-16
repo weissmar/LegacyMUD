@@ -2,7 +2,7 @@
   \file     WordManager.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/13/2017
+  \modified 02/15/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the WordManager class.
@@ -136,12 +136,11 @@ void WordManager::addIgnoreWord(std::string word) {
 // Gets the VerbInfos of the specified edit mode verb.
 std::vector<VerbInfo> WordManager::getEditModeVerbs(std::string alias) {
     // Precondition: value must be in map
-    auto it = _editModeVerbs.find(alias);
+    assert(_editModeVerbs.find(alias) != _editModeVerbs.end());
 
-    assert(it != _editModeVerbs.end());
-
+    auto range = _editModeVerbs.equal_range(alias);
     std::vector<VerbInfo> results;
-    for (; it != _editModeVerbs.end(); ++it) {
+    for (auto it = range.first; it != range.second; ++it) {
         results.push_back(it->second);
     }
 
@@ -151,11 +150,11 @@ std::vector<VerbInfo> WordManager::getEditModeVerbs(std::string alias) {
 // Gets the VerbInfos of the specified global verb.
 std::vector<VerbInfo> WordManager::getGlobalVerbs(std::string alias) {
     // Precondition: value must be in map
-    auto it = _globalVerbs.find(alias);
-    assert(it != _globalVerbs.end());
+    assert(_globalVerbs.find(alias) != _globalVerbs.end());
 
+    auto range = _globalVerbs.equal_range(alias);
     std::vector<VerbInfo> results;
-    for (; it != _globalVerbs.end(); ++it) {
+    for (auto it = range.first; it != range.second; ++it) {
         results.push_back(it->second);
     }
 
@@ -165,11 +164,11 @@ std::vector<VerbInfo> WordManager::getGlobalVerbs(std::string alias) {
 // Gets the VerbInfos of the specified builder verb.
 std::vector<VerbInfo> WordManager::getBuilderVerbs(std::string alias) {
     // Precondition: value must be in map
-    auto it = _builderVerbs.find(alias);
-    assert(it != _builderVerbs.end());
+    assert(_builderVerbs.find(alias) != _builderVerbs.end());
 
+    auto range = _builderVerbs.equal_range(alias);
     std::vector<VerbInfo> results;
-    for (; it != _builderVerbs.end(); ++it) {
+    for (auto it = range.first; it != range.second; ++it) {
         results.push_back(it->second);
     }
 

@@ -2,7 +2,7 @@
   \file     VSentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/13/2017
+  \modified 02/15/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VSentence class.
@@ -25,7 +25,7 @@ VSentence::VSentence(PartOfSpeech verb, VerbType type, engine::CommandEnum comma
 ParseResult VSentence::getResult(const std::vector<Token> &tokens, const LexicalData &playerLex, const LexicalData &areaLex) {
     Range range = Range(_verb.getRange().end, tokens.size());
 
-    // Prepair container for result
+    // Prepare container for result
     ParseResult result;
     result.type = _type;
     result.command = _command;
@@ -41,9 +41,9 @@ ParseResult VSentence::getResult(const std::vector<Token> &tokens, const Lexical
         break;
     case VerbType::GLOBAL:
         // Check for leftover tokens and set status accordingly
-        if (range.end != tokens.size()) {
+        if (range.start != tokens.size()) {
             // Add remaining tokens to unparsed
-            result.unparsed = Tokenizer::joinOriginal(tokens, Range(range.end, tokens.size()));
+            result.unparsed = Tokenizer::joinOriginal(tokens, range);
             result.status = ParseStatus::INVALID_DIRECT;
         }
         else {
@@ -52,9 +52,9 @@ ParseResult VSentence::getResult(const std::vector<Token> &tokens, const Lexical
         break;
     case VerbType::LOCAL:
         // Check for leftover tokens and set status accordingly
-        if (range.end != tokens.size()) {
+        if (range.start != tokens.size()) {
             // Add remaining tokens to unparsed
-            result.unparsed = Tokenizer::joinOriginal(tokens, Range(range.end, tokens.size()));
+            result.unparsed = Tokenizer::joinOriginal(tokens, range);
             result.status = ParseStatus::INVALID_DIRECT;
         }
         else {
@@ -63,9 +63,9 @@ ParseResult VSentence::getResult(const std::vector<Token> &tokens, const Lexical
         break;
     case VerbType::BUILDER:
         // Check for leftover tokens and set status accordingly
-        if (range.end != tokens.size()) {
+        if (range.start != tokens.size()) {
             // Add remaining tokens to unparsed
-            result.unparsed = Tokenizer::joinOriginal(tokens, Range(range.end, tokens.size()));
+            result.unparsed = Tokenizer::joinOriginal(tokens, range);
             result.status = ParseStatus::INVALID_DIRECT;
         }
         else {
@@ -74,9 +74,9 @@ ParseResult VSentence::getResult(const std::vector<Token> &tokens, const Lexical
         break;
     case VerbType::EDITMODE:
         // Check for leftover tokens and set status accordingly
-        if (range.end != tokens.size()) {
+        if (range.start != tokens.size()) {
             // Add remaining tokens to unparsed
-            result.unparsed = Tokenizer::joinOriginal(tokens, Range(range.end, tokens.size()));
+            result.unparsed = Tokenizer::joinOriginal(tokens, range);
             result.status = ParseStatus::INVALID_DIRECT;
         }
         else {
