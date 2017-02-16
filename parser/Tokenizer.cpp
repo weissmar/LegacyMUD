@@ -2,7 +2,7 @@
   \file     Tokenizer.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/12/2017
+  \modified 02/14/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the Tokenizer class.
@@ -14,27 +14,21 @@
 #include <algorithm>
 #include <string.h>
 #include <sstream>
+#include <iostream>
 
 namespace legacymud { namespace parser { 
 
 std::vector<Token> Tokenizer::tokenizeInput(std::string input) {
+    std::istringstream iss(input);
     std::vector<Token> tokens;
-    char *buffer = new char[input.size() + 1];
-    ::strcpy(buffer, input.c_str());
-    char *token = ::strtok(buffer, " ");
-    while (token) {
+    std::string token;
+    while (iss >> token) {
         Token t;
-        // Store original word
         t.original = token;
-        // Store word normalized to lowercase
         t.normalized.resize(t.original.size());
         std::transform(t.original.begin(), t.original.end(), t.normalized.begin(), ::tolower);
-        // Add Token to vector
         tokens.push_back(t);
-        // Get next token
-        token = strtok(NULL, " ");
     }
-    delete [] buffer;
 
     return tokens;
 }
@@ -48,15 +42,13 @@ std::string Tokenizer::joinNormalized(const std::vector<Token> &tokens, Range ra
         return std::string();
     
     std::ostringstream oss;
-    size_t i = range.start;
-    // Append first token
-    if (!(skipIgnoreWords && WordManager::isIgnoreWord(tokens[i].normalized))) {
-        oss << tokens[i].normalized;
-    }
-    // Append remaining tokens separated by space
-    for (++i; i < range.end; ++i) {
+    // Append space-delimited tokens depending on skipIgnoreWords setting
+    for (size_t i = range.start; i < range.end; ++i) {
         if (!(skipIgnoreWords && WordManager::isIgnoreWord(tokens[i].normalized))) {
-            oss << " " << tokens[i].normalized;
+            if (!oss.str().empty()) {
+                oss << " ";
+            }
+            oss << tokens[i].normalized;
         }
     }
 

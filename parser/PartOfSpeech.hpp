@@ -54,7 +54,8 @@ public:
       
       \return Returns whether a match was found.
     */
-    bool findMatch(const std::vector<Token> &tokens, Range &range, bool (*findWord)(std::string word));
+    bool findMatch(const std::vector<Token> &tokens, Range &range, bool (*findWord)(const void *, std::string word), const void *context);
+    bool findMatch(const std::vector<Token> &tokens, Range &range, bool (*findWord)(const void *, std::string word)) { return findMatch(tokens, range, findWord, 0); }
 
     /*!
       \brief Gets the normalized alias of the matching part of speech.

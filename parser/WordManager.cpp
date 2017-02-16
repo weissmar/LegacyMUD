@@ -2,7 +2,7 @@
   \file     WordManager.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/07/2017
+  \modified 02/15/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the WordManager class.
@@ -136,12 +136,11 @@ void WordManager::addIgnoreWord(std::string word) {
 // Gets the VerbInfos of the specified edit mode verb.
 std::vector<VerbInfo> WordManager::getEditModeVerbs(std::string alias) {
     // Precondition: value must be in map
-    auto it = _editModeVerbs.find(alias);
+    assert(_editModeVerbs.find(alias) != _editModeVerbs.end());
 
-    assert(it != _editModeVerbs.end());
-
+    auto range = _editModeVerbs.equal_range(alias);
     std::vector<VerbInfo> results;
-    for (; it != _editModeVerbs.end(); ++it) {
+    for (auto it = range.first; it != range.second; ++it) {
         results.push_back(it->second);
     }
 
@@ -151,11 +150,11 @@ std::vector<VerbInfo> WordManager::getEditModeVerbs(std::string alias) {
 // Gets the VerbInfos of the specified global verb.
 std::vector<VerbInfo> WordManager::getGlobalVerbs(std::string alias) {
     // Precondition: value must be in map
-    auto it = _globalVerbs.find(alias);
-    assert(it != _globalVerbs.end());
+    assert(_globalVerbs.find(alias) != _globalVerbs.end());
 
+    auto range = _globalVerbs.equal_range(alias);
     std::vector<VerbInfo> results;
-    for (; it != _globalVerbs.end(); ++it) {
+    for (auto it = range.first; it != range.second; ++it) {
         results.push_back(it->second);
     }
 
@@ -165,11 +164,11 @@ std::vector<VerbInfo> WordManager::getGlobalVerbs(std::string alias) {
 // Gets the VerbInfos of the specified builder verb.
 std::vector<VerbInfo> WordManager::getBuilderVerbs(std::string alias) {
     // Precondition: value must be in map
-    auto it = _builderVerbs.find(alias);
-    assert(it != _builderVerbs.end());
+    assert(_builderVerbs.find(alias) != _builderVerbs.end());
 
+    auto range = _builderVerbs.equal_range(alias);
     std::vector<VerbInfo> results;
-    for (; it != _builderVerbs.end(); ++it) {
+    for (auto it = range.first; it != range.second; ++it) {
         results.push_back(it->second);
     }
 
@@ -177,17 +176,17 @@ std::vector<VerbInfo> WordManager::getBuilderVerbs(std::string alias) {
 }
 
 // Gets whether the specified noun is in use.
-bool WordManager::hasNoun(std::string alias) {
+bool WordManager::hasNoun(const void *, std::string alias) {
     return _localNouns.hasWord(alias);
 }
 
 // Gets whether the specified verb is in use.
-bool WordManager::hasVerb(std::string alias) {
+bool WordManager::hasVerb(const void *, std::string alias) {
     return _localVerbs.hasWord(alias);
 }
 
 // Gets whether the specified edit mode verb has been added.
-bool WordManager::hasEditModeVerb(std::string alias) {
+bool WordManager::hasEditModeVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
@@ -195,7 +194,7 @@ bool WordManager::hasEditModeVerb(std::string alias) {
 }
 
 // Gets whether the specified global verb has been added.
-bool WordManager::hasGlobalVerb(std::string alias) {
+bool WordManager::hasGlobalVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
@@ -203,7 +202,7 @@ bool WordManager::hasGlobalVerb(std::string alias) {
 }
 
 // Gets whether the specified builder verb has been added.
-bool WordManager::hasBuilderVerb(std::string alias) {
+bool WordManager::hasBuilderVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
@@ -211,7 +210,7 @@ bool WordManager::hasBuilderVerb(std::string alias) {
 }
 
 // Gets whether the specified ignore word has been added.
-bool WordManager::isIgnoreWord(std::string word) {
+bool WordManager::isIgnoreWord(const void *, std::string word) {
     // Convert string to lowercase
     std::transform(word.begin(), word.end(), word.begin(), ::tolower);
 
@@ -226,7 +225,7 @@ void WordManager::removeNoun(std::string alias, engine::InteractiveNoun *pObj) {
     // Block any other threads from accessing _nounAliases until operation is complete.
     std::lock_guard<std::mutex> guard(localNounsLock);
 
-    _localNouns.removeWord(alias, pObj);
+    assert(_localNouns.removeWord(alias, pObj));
 }
 
 // Removes a verb alias-InteractiveNoun pair from the verb alias lookup table.
@@ -237,7 +236,7 @@ void WordManager::removeVerb(std::string alias, engine::InteractiveNoun *pObj) {
     // Block any other threads from accessing _verbAliases until operation is complete.
     std::lock_guard<std::mutex> guard(localVerbsLock);
 
-    _localVerbs.removeWord(alias, pObj);
+    assert(_localVerbs.removeWord(alias, pObj));
 }
 
 // Reset all member variables.

@@ -109,6 +109,10 @@ public:
     void removeVerb(std::string alias, engine::InteractiveNoun *pObject);
 
     void clear();
+
+    static bool forwardHasNoun(const void *context, std::string arg);
+    static bool forwardHasVerb(const void *context, std::string arg);
+
 private:
     WordMap _verbs;
     WordMap _nouns;

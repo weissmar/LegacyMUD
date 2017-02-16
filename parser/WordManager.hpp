@@ -2,7 +2,7 @@
   \file     WordManager.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/12/2017
+  \modified 02/13/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the WordManager class.
@@ -209,11 +209,28 @@ public:
       This function gets whether the specified noun alias is currently in use
       by at least one InteractiveNoun object.
 
-      \param[in] alias  Specifies the noun alias to check for.
+      \param[in] context  This parameter is for compatibility with the
+                          \c findWord function pointer of the 
+                          PartOfSpeech::findMatch() function.
+                          The value entered here is ignored.
+                          Use hasNoun(std::string) instead.
+      \param[in] alias    Specifies the noun alias to check for.
 
       \return Returns whether \a alias is in use.
     */
-    static bool hasNoun(std::string alias);
+    static bool hasNoun(const void *context, std::string alias);
+
+    /*!
+      \brief Gets whether the specified noun alias is in use.
+      
+      This function gets whether the specified noun alias is currently in use
+      by at least one InteractiveNoun object.
+
+      \param[in] alias    Specifies the noun alias to check for.
+
+      \return Returns whether \a alias is in use.
+    */
+    static bool hasNoun(std::string alias) { return hasNoun(0, alias); }
 
     /*!
       \brief Gets whether the specified verb is in use.
@@ -221,47 +238,120 @@ public:
       This function gets whether the specified verb alias is currently in use
       by at least one InteractiveNoun object.
 
-      \param[in] alias  Specifies the verb alias to check for.
+      \param[in] context  This parameter is for compatibility with the
+                          \c findWord function pointer of the 
+                          PartOfSpeech::findMatch() function.
+                          The value entered here is ignored.
+                          Use hasNoun(std::string) instead.
+      \param[in] alias    Specifies the verb alias to check for.
 
       \return Returns whether \a alias is in use.
     */
-    static bool hasVerb(std::string alias);
+    static bool hasVerb(const void *context, std::string alias);
+
+    /*!
+      \brief Gets whether the specified verb is in use.
+
+      This function gets whether the specified verb alias is currently in use
+      by at least one InteractiveNoun object.
+
+      \param[in] alias    Specifies the verb alias to check for.
+
+      \return Returns whether \a alias is in use.
+    */
+    static bool hasVerb(std::string alias) { return hasVerb(0, alias); }
 
     /*!
       \brief Gets whether the specified edit mode verb alias has been added.
 
-      \param[in] alias  Specifies the edit mode verb alias to check for.
+      \param[in] context  This parameter is for compatibility with the
+                          \c findWord function pointer of the 
+                          PartOfSpeech::findMatch() function.
+                          The value entered here is ignored.
+                          Use hasNoun(std::string) instead.
+      \param[in] alias    Specifies the edit mode verb alias to check for.
 
       \return Returns whether \a alias has been added.
     */
-    static bool hasEditModeVerb(std::string alias);
+    static bool hasEditModeVerb(const void *context, std::string alias);
+
+    /*!
+      \brief Gets whether the specified edit mode verb alias has been added.
+
+      \param[in] alias    Specifies the edit mode verb alias to check for.
+
+      \return Returns whether \a alias has been added.
+    */
+    static bool hasEditModeVerb(std::string alias) { return hasEditModeVerb(0, alias); }
 
     /*!
       \brief Gets whether the specified world builder verb alias has been added.
 
-      \param[in] alias  Specifies the world builder verb alias to check for.
+      \param[in] context  This parameter is for compatibility with the
+                          \c findWord function pointer of the 
+                          PartOfSpeech::findMatch() function.
+                          The value entered here is ignored.
+                          Use hasNoun(std::string) instead.
+      \param[in] alias    Specifies the world builder verb alias to check for.
 
       \return Returns whether \a alias has been added.
     */
-    static bool hasBuilderVerb(std::string alias);
+    static bool hasBuilderVerb(const void *context, std::string alias);
+
+    /*!
+      \brief Gets whether the specified world builder verb alias has been added.
+
+      \param[in] alias    Specifies the world builder verb alias to check for.
+
+      \return Returns whether \a alias has been added.
+    */
+    static bool hasBuilderVerb(std::string alias) { return hasBuilderVerb(0, alias); }
 
     /*!
       \brief Gets whether the specified global verb alias has been added.
 
-      \param[in] alias  Specifies the global verb alias to check for.
+      \param[in] context  This parameter is for compatibility with the
+                          \c findWord function pointer of the 
+                          PartOfSpeech::findMatch() function.
+                          The value entered here is ignored.
+                          Use hasNoun(std::string) instead.
+      \param[in] alias    Specifies the global verb alias to check for.
 
       \return Returns whether \a alias has been added.
     */
-    static bool hasGlobalVerb(std::string alias);
+    static bool hasGlobalVerb(const void *context, std::string alias);
+
+    /*!
+      \brief Gets whether the specified global verb alias has been added.
+
+      \param[in] alias    Specifies the global verb alias to check for.
+
+      \return Returns whether \a alias has been added.
+    */
+    static bool hasGlobalVerb(std::string alias) { return hasGlobalVerb(0, alias); }
 
     /*!
       \brief Gets whether the specified word is an ignored work.
 
-      \param[in] word   Specifies the word to check against the ignore word list.
+      \param[in] context  This parameter is for compatibility with the
+                          \c findWord function pointer of the 
+                          PartOfSpeech::findMatch() function.
+                          The value entered here is ignored.
+                          Use hasNoun(std::string) instead.
+      \param[in] word     Specifies the word to check against the ignore word list.
 
       \return Returns whether \a word should be ignored.
     */
-    static bool isIgnoreWord(std::string word);
+    static bool isIgnoreWord(const void *context, std::string word);
+
+    /*!
+      \brief Gets whether the specified word is an ignored work.
+
+      \param[in] word     Specifies the word to check against the ignore word list.
+
+      \return Returns whether \a word should be ignored.
+    */
+    static bool isIgnoreWord(std::string word) { return isIgnoreWord(0, word); }
 
     /*!
       \brief Removes the specified noun alias-InteractiveNoun pair from the lookup table.
