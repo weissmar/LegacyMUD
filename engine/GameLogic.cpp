@@ -9,6 +9,8 @@
  ************************************************************************/
 
 #include <cstdlib>
+#include <thread>
+#include <chrono>
 #include <parser.hpp>
 #include <Account.hpp>
 #include <Server.hpp>
@@ -369,6 +371,7 @@ bool GameLogic::hibernatePlayer(Player *aPlayer){
         aPlayer->setActive(false);
         manager->hibernatePlayer(aPlayer->getFileDescriptor());
         aPlayer->setFileDescriptor(-1);
+        removePlayerMessageQueue(aPlayer);
         return true;
     }
     return false;
@@ -514,8 +517,12 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
     std::vector<InteractiveNoun*> directPtrs;
     std::vector<InteractiveNoun*> indirectPtrs;
     std::string message;
-    int i;
+    InteractiveNoun *directChoice = nullptr;
+    InteractiveNoun *indirectChoice = nullptr;
+    parser::ParseResult chosenResult;
+    int i, choice;
     bool msgRecived = false;
+    bool commandSuccess = false;
 
     // multiple results - figure out which one to use
     for (auto result : results){
@@ -534,6 +541,7 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
         indirectPtrs.push_back(indirectP.first);
     }
 
+    // choose between multiple direct options
     if (directPtrs.size() > 1){
         addPlayerMessageQueue(aPlayer);
         message = "Did you mean ";
@@ -547,8 +555,91 @@ void GameLogic::handleParseError(Player *aPlayer, std::vector<parser::ParseResul
             }
         }
         message += "? Please enter the number that corresponds to your choice.";
+        messagePlayer(aPlayer, message);
         while (!msgRecived){
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            message = getMsgFromPlayerQ(aPlayer);
+            if (message != ""){
+                msgRecived = true;
+            }
+        }
+        choice = validateStringNumber(message, 1, directPtrs.size());
+        while (choice == -1){
+            messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+            while (!msgRecived){
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                message = getMsgFromPlayerQ(aPlayer);
+                if (message != ""){
+                    msgRecived = true;
+                }
+            }
+            choice = validateStringNumber(message, 1, directPtrs.size());
+        }
+        directChoice = directPtrs[choice - 1];
+        chosenResult = directPtrMap.at(directChoice);
+        if (chosenResult.status == parser::ParseStatus::VALID){
+            commandSuccess = executeCommand(chosenResult);
+            if (!commandSuccess){
+                messagePlayer(aPlayer, "You can't do that. (Command failed.)");
+            }
+        } else {
+            handleParseError(aPlayer, chosenResult);
+        }
+    } else if (indirectPtrs.size() > 1){
+        // choose between multiple indirect options
 
+        addPlayerMessageQueue(aPlayer);
+        message = "Did you mean ";
+        for (i = 0; i < indirectPtrs.size(); i++){
+            message += "[";
+            message += std::to_string(i + 1);
+            message += "] ";
+            message += indirectPtrs[i]->getName();
+            if (i < (indirectPtrs.size() - 1)){
+                message += ", ";
+            }
+        }
+        message += "? Please enter the number that corresponds to your choice.";
+        messagePlayer(aPlayer, message);
+        while (!msgRecived){
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            message = getMsgFromPlayerQ(aPlayer);
+            if (message != ""){
+                msgRecived = true;
+            }
+        }
+        choice = validateStringNumber(message, 1, indirectPtrs.size());
+        while (choice == -1){
+            messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+            while (!msgRecived){
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                message = getMsgFromPlayerQ(aPlayer);
+                if (message != ""){
+                    msgRecived = true;
+                }
+            }
+            choice = validateStringNumber(message, 1, directPtrs.size());
+        }
+        indirectChoice = indirectPtrs[choice - 1];
+        chosenResult = indirectPtrMap.at(indirectChoice);
+        if (chosenResult.status == parser::ParseStatus::VALID){
+            commandSuccess = executeCommand(chosenResult);
+            if (!commandSuccess){
+                messagePlayer(aPlayer, "You can't do that. (Command failed.)");
+            }
+        } else {
+            handleParseError(aPlayer, chosenResult);
+        }
+    } else {
+        // options all have the same direct and indirect options, use first
+        chosenResult = results[0];
+        if (chosenResult.status == parser::ParseStatus::VALID){
+            commandSuccess = executeCommand(chosenResult);
+            if (!commandSuccess){
+                messagePlayer(aPlayer, "You can't do that. (Command failed.)");
+            }
+        } else {
+            handleParseError(aPlayer, chosenResult);
         }
     }
 }
