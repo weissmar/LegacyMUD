@@ -80,70 +80,77 @@ Player::~Player(){
 }*/
 
 
-int Player::getExperiencePoints(){
-    return experiencePoints;
+int Player::getExperiencePoints() const{
+    return experiencePoints.load();
 }
 
 
-int Player::getLevel(){
-    return level;
+int Player::getLevel() const{
+    return level.load();
 }
 
 
-CharacterSize Player::getSize(){
-    return size;
+CharacterSize Player::getSize() const{
+    return size.load();
 }
 
 
-std::string Player::getUser(){
+std::string Player::getUser() const{
+    std::lock_guard<std::mutex> usernameLock(usernameMutex);
     return username;
 }  
 
 
-PlayerClass* Player::getPlayerClass(){
+PlayerClass* Player::getPlayerClass() const{
+    std::lock_guard<std::mutex> playerClassLock(playerClassMutex);
     return playerClass;
 }
 
 
-NonCombatant* Player::getInConversation(){
+NonCombatant* Player::getInConversation() const{
+    std::lock_guard<std::mutex> inConversationLock(inConversationMutex);
     return inConversation;
 }
 
 
-bool Player::isActive(){
-    return active;
+bool Player::isActive() const{
+    return active.load();
 }
 
 
-int Player::getFileDescriptor(){
-    return fileDescriptor;
+int Player::getFileDescriptor() const{
+    return fileDescriptor.load();
 }
 
 
-bool Player::queueIsEmpty(){
+bool Player::queueIsEmpty() const{
+    std::lock_guard<std::mutex> combatQueueLock(combatQueueMutex);
     return combatQueue.empty();
 }
 
 
-bool Player::isEditMode(){
-    return editMode;
+bool Player::isEditMode() const{
+    return editMode.load();
 }
 
 
-std::vector<std::pair<Quest*, int>> Player::getQuestList(){
+std::vector<std::pair<Quest*, int>> Player::getQuestList() const{
+    std::lock_guard<std::mutex> questListLock(questListMutex);
     return questList;
 }
 
 
-parser::LexicalData& Player::getLexicalData(){
+parser::LexicalData Player::getLexicalData() const{
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
     return inventoryLexicalData;
 }
 
 
 int Player::addToExperiencePts(int gainedXP){
-    experiencePoints += gainedXP;
+    int newXP = experiencePoints.load() + gainedXP;
+    experiencePoints.store(newXP);
 
-    return experiencePoints;
+    return experiencePoints.load();
 }
 
 
@@ -153,13 +160,14 @@ bool Player::levelUp(){
 
 
 bool Player::setSize(CharacterSize size){
-    this->size = size;
+    this->size.store(size);
 
     return true;
 }
 
 
 bool Player::setPlayerClass(PlayerClass *aClass){
+    std::lock_guard<std::mutex> playerClassLock(playerClassMutex);
     playerClass = aClass;
 
     return true;
@@ -167,28 +175,29 @@ bool Player::setPlayerClass(PlayerClass *aClass){
 
 
 bool Player::setActive(bool active){
-    this->active = active;
+    this->active.store(active);
 
     return true;
 } 
 
 
 bool Player::setFileDescriptor(int FD){
-    fileDescriptor = FD;
+    fileDescriptor.store(FD);
 
     return true;
 }
 
 
 bool Player::activate(int FD){
-    fileDescriptor = FD;
-    active = true;
+    fileDescriptor.store(FD);
+    active.store(true);
 
     return true;
 }
 
 
 bool Player::setInConversation(NonCombatant *anNPC){
+    std::lock_guard<std::mutex> inConversationLock(inConversationMutex);
     inConversation = anNPC;
 
     return true;
@@ -196,6 +205,7 @@ bool Player::setInConversation(NonCombatant *anNPC){
 
 
 Command* Player::getNextCommand(){
+    std::lock_guard<std::mutex> combatQueueLock(combatQueueMutex);
     Command *nextCommand = nullptr;
     if (!combatQueue.empty()){
         nextCommand = combatQueue.front();
@@ -207,6 +217,7 @@ Command* Player::getNextCommand(){
 
 
 bool Player::addCommand(Command *aCommand){
+    std::lock_guard<std::mutex> combatQueueLock(combatQueueMutex);
     combatQueue.push(aCommand);
 
     return true;
@@ -214,7 +225,7 @@ bool Player::addCommand(Command *aCommand){
 
 
 bool Player::setEditMode(bool editing){
-    editMode = editing;
+    editMode.store(editing);
 
     return true;
 }

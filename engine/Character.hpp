@@ -41,7 +41,7 @@ class Character: public InteractiveNoun {
          *
          * \return  Returns a std::string with the name of this character.
          */
-        std::string getName();
+        std::string getName() const;
 
         /*!
          * \brief   Gets the description of this character.

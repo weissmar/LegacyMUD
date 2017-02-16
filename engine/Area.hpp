@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/14/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <atomic>
+#include <mutex>
 #include <LexicalData.hpp>
 #include "InteractiveNoun.hpp"
 #include "AreaSize.hpp"
@@ -49,7 +51,7 @@ class Area: public InteractiveNoun {
          *
          * \return  Returns a std::string with the name of this area.
          */
-        std::string getName(); 
+        std::string getName() const; 
 
         /*!
          * \brief   Gets the short description of this area.
@@ -57,7 +59,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::string with the short description
          *          of this area.
          */
-        std::string getShortDesc();
+        std::string getShortDesc() const;
 
         /*!
          * \brief   Gets the long description of this area.
@@ -65,7 +67,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::string with the long description of 
          *          this area.
          */
-        std::string getLongDesc();
+        std::string getLongDesc() const;
 
         /*!
          * \brief   Gets the size of this area.
@@ -73,7 +75,7 @@ class Area: public InteractiveNoun {
          * \return  Returns an AreaSize indicating the size of this
          *          area.
          */
-        AreaSize getSize();
+        AreaSize getSize() const;
 
         /*!
          * \brief   Gets a list of the items in this area.
@@ -81,7 +83,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::vector<Item*> with the list of items
          *          in this area.
          */
-        std::vector<Item*> getItems();
+        std::vector<Item*> getItems() const;
 
         /*!
          * \brief   Gets a list of the characters in this area.
@@ -89,7 +91,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::vector<Item*> with the list of characters
          *          in this area.
          */
-        std::vector<Character*> getCharacters();
+        std::vector<Character*> getCharacters() const;
 
         /*!
          * \brief   Gets a list of the features in this area.
@@ -97,7 +99,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::vector<Item*> with the list of features
          *          in this area.
          */
-        std::vector<Feature*> getFeatures();
+        std::vector<Feature*> getFeatures() const;
 
         /*!
          * \brief   Gets a list of the exits in this area.
@@ -105,7 +107,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::vector<Item*> with the list of exits
          *          in this area.
          */
-        std::vector<Exit*> getExits();
+        std::vector<Exit*> getExits() const;
 
         /*!
          * \brief   Gets the lexical data for this Area's contents.
@@ -113,7 +115,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a parser::LexicalData by reference with the 
          *          contents' lexical data.
          */
-        parser::LexicalData& getLexicalData();
+        parser::LexicalData getLexicalData() const;
 
         /*!
          * \brief   Gets the full description of an area for first time
@@ -121,7 +123,7 @@ class Area: public InteractiveNoun {
          * 
          * \return  Returns a std::string with the full description.
          */
-        std::string getFullDescription();
+        std::string getFullDescription() const;
 
         /*!
          * \brief   Sets the name of this area.
@@ -388,14 +390,22 @@ class Area: public InteractiveNoun {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         std::string shortDescription;
+        mutable std::mutex shortDescMutex;
         std::string longDescription;
-        AreaSize size;
+        mutable std::mutex longDescMutex;
+        std::atomic<AreaSize> size;
         std::vector<Item*> itemContents;
+        mutable std::mutex itemContentMutex;
         std::vector<Character*> characterContents;
+        mutable std::mutex charContentMutex;
         std::vector<Feature*> featureContents;
+        mutable std::mutex featContentMutex;
         std::vector<Exit*> exitContents;
+        mutable std::mutex exitContentMutex;
         parser::LexicalData contentsLexicalData;
+        mutable std::mutex lexicalMutex;
 };
 
 }}

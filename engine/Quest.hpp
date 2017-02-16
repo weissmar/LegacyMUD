@@ -42,7 +42,7 @@ class Quest: public InteractiveNoun {
          *
          * \return  Returns a std::string with the name.
          */
-        std::string getName();
+        std::string getName() const;
 
         /*!
          * \brief   Gets the description of this quest.

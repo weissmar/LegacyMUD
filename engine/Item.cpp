@@ -59,7 +59,7 @@ ItemPosition Item::getPosition(){
 }
 
 
-std::string Item::getName(){
+std::string Item::getName() const{
     return name;
 }
 

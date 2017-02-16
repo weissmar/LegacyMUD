@@ -51,7 +51,7 @@ Character::~Character(){
 }*/
 
 
-std::string Character::getName(){
+std::string Character::getName() const{
     return name;
 }
 

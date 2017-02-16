@@ -38,7 +38,7 @@ class CombatantType: public InteractiveNoun {
          *
          * \return  Returns a std::string with the name of this combatant type.
          */
-        std::string getName();
+        std::string getName() const;
 
         /*!
          * \brief   Gets the special skill of this combatant type.

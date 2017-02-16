@@ -142,7 +142,7 @@ class QuestStep: public InteractiveNoun {
          *
          * \return  Returns a std::string with the description.
          */
-        virtual std::string getName();
+        virtual std::string getName() const;
 
         /*!
          * \brief   Gets the object type.

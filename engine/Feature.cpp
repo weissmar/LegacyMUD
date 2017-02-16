@@ -26,7 +26,7 @@ Feature::Feature(std::string name, std::string placement, bool isConditional, It
 { }
 
 
-std::string Feature::getName(){
+std::string Feature::getName() const{
     return name;
 }
 

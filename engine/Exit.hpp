@@ -91,7 +91,7 @@ class Exit: public ConditionalElement {
          *
          * \return  Returns a std::string with the exit description
          */
-        virtual std::string getName();
+        virtual std::string getName() const;
 
         /*!
          * \brief   Gets the object type.

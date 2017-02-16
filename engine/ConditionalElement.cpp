@@ -56,7 +56,7 @@ ItemType* ConditionalElement::getConditionItem(){
 }
 
 
-std::string ConditionalElement::getDescription(){
+std::string ConditionalElement::getDescription() const{
     return description;
 }
 

@@ -19,6 +19,8 @@
 #include <queue>
 #include <vector>
 #include <utility>
+#include <atomic>
+#include <mutex>
 #include <LexicalData.hpp>
 #include "Combatant.hpp"
 #include "CharacterSize.hpp"
@@ -62,35 +64,35 @@ class Player: public Combatant {
          *
          * \return  Returns an int with the experience points.
          */
-        int getExperiencePoints();
+        int getExperiencePoints() const;
 
         /*!
          * \brief   Gets the level of this player.
          *
          * \return  Returns an int with the level.
          */
-        int getLevel();
+        int getLevel() const;
 
         /*!
          * \brief   Gets the size of this player.
          *
          * \return  Returns a CharacterSize with the size.
          */
-        CharacterSize getSize();
+        CharacterSize getSize() const;
 
         /*!
          * \brief   Gets the user name of this player.
          *
          * \return  Returns a std::string with the user name.
          */
-        std::string getUser();
+        std::string getUser() const;
 
         /*!
          * \brief   Gets the player class of this player.
          *
          * \return  Returns a PlayerClass* with the player class.
          */
-        PlayerClass* getPlayerClass();
+        PlayerClass* getPlayerClass() const;
 
         /*!
          * \brief   Gets the non-combatant this player is in conversation with.
@@ -98,7 +100,7 @@ class Player: public Combatant {
          * \return  Returns a NonCombatant* with the non-combatant this player
          *          is in conversation with.
          */
-        NonCombatant* getInConversation();
+        NonCombatant* getInConversation() const;
 
         /*!
          * \brief   Gets whether or not this player is active.
@@ -106,14 +108,14 @@ class Player: public Combatant {
          * \return  Returns a bool indicating whether or not this player is 
          *          active.
          */
-        bool isActive();
+        bool isActive() const;
 
         /*!
          * \brief   Gets the file descriptor of this player.
          *
          * \return  Returns an int with the file descriptor.
          */
-        int getFileDescriptor();
+        int getFileDescriptor() const;
 
         /*!
          * \brief   Gets whether or not this player's combat queue is empty.
@@ -121,14 +123,14 @@ class Player: public Combatant {
          * \return  Returns a bool whether or not this player's combat queue 
          *          is empty.
          */
-        bool queueIsEmpty();
+        bool queueIsEmpty() const;
 
         /*!
          * \brief   Gets whether or not this player is in edit mode.
          *
          * \return  Returns a bool whether or not this player is in edit mode.
          */
-        bool isEditMode();
+        bool isEditMode() const;
 
         /*!
          * \brief   Gets the quest list of this player.
@@ -136,15 +138,15 @@ class Player: public Combatant {
          * \return  Returns a std::vector<std::pair<Quest*, int>> with the 
          *          quest list.
          */
-        std::vector<std::pair<Quest*, int>> getQuestList();
+        std::vector<std::pair<Quest*, int>> getQuestList() const;
 
         /*!
          * \brief   Gets the lexical data for this player's inventory.
          *
-         * \return  Returns a parser::LexicalData by reference with the 
+         * \return  Returns a parser::LexicalData with the 
          *          inventory lexical data.
          */
-        parser::LexicalData& getLexicalData();
+        parser::LexicalData getLexicalData() const;
 
         /*!
          * \brief   Adds the specified points to the experience points of 
@@ -577,18 +579,24 @@ class Player: public Combatant {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int experiencePoints;
-        int level;
-        CharacterSize size;
+        std::atomic<int> experiencePoints;
+        std::atomic<int> level;
+        std::atomic<CharacterSize> size;
         PlayerClass *playerClass;
+        mutable std::mutex playerClassMutex;
         NonCombatant *inConversation;
+        mutable std::mutex inConversationMutex;
         std::string username;
-        bool active;
-        int fileDescriptor;
+        mutable std::mutex usernameMutex;
+        std::atomic<bool> active;
+        std::atomic<int> fileDescriptor;
         std::queue<Command*> combatQueue;
-        bool editMode;
+        mutable std::mutex combatQueueMutex;
+        std::atomic<bool> editMode;
         std::vector<std::pair<Quest*, int>> questList;
+        mutable std::mutex questListMutex;
         parser::LexicalData inventoryLexicalData;
+        mutable std::mutex lexicalMutex;
 };
 
 }}

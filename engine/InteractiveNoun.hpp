@@ -153,7 +153,7 @@ class InteractiveNoun {
          * \brief   Gets the name. This is a pure virtual function for
          *          interactive noun.
          */
-        virtual std::string getName() = 0;
+        virtual std::string getName() const = 0;
         
         /*!
          * \brief   Gets the object type. This is a pure virtual function for

@@ -83,7 +83,7 @@ bool Exit::setConnectArea(Area *anArea){
 }
 
 
-std::string Exit::getName(){
+std::string Exit::getName() const{
     return this->getDescription();
 }
 

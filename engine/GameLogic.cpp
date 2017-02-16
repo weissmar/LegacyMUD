@@ -40,7 +40,7 @@ GameLogic::GameLogic(const GameLogic &otherGameLogic)
 : accountManager(nullptr)
 , theTextParser(nullptr)
 , theServer(nullptr)
-, startArea(otherGameLogic.startArea){
+, startArea("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE){
     manager = new GameObjectManager(*otherGameLogic.manager);
 }
 

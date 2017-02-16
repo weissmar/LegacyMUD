@@ -132,7 +132,7 @@ bool QuestStep::setCompletionText(std::string completionText){
 } 
 
 
-std::string QuestStep::getName(){
+std::string QuestStep::getName() const{
     return description;
 }
 

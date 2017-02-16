@@ -33,7 +33,7 @@ class Feature: public ConditionalElement {
          *
          * \return  Returns a std::string with the name of this feature.
          */
-        std::string getName();
+        std::string getName() const;
 
         /*!
          * \brief   Gets the placement of this feature.
