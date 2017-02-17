@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/15/2017
+ * \modified    02/17/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -205,7 +205,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             // move player to start area
             startArea.addCharacter(newPlayer);
             newPlayer->setLocation(&startArea);
-            messagePlayer(newPlayer, startArea.getFullDescription());
+            messagePlayer(newPlayer, startArea.getFullDescription(newPlayer->getID()));
             message = "You see a player named " + playerName + " enter the area.";
             messageAreaPlayers(newPlayer, message, &startArea);
 
@@ -232,7 +232,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                     // move player to current location
                     anArea = aPlayer->getLocation();
                     anArea->addCharacter(aPlayer);
-                    messagePlayer(aPlayer, anArea->getFullDescription());
+                    messagePlayer(aPlayer, anArea->getFullDescription(aPlayer->getID()));
                     message = "You see a player named " + aPlayer->getName() + " enter the area.";
                     messageAreaPlayers(aPlayer, message, anArea);
 
@@ -389,6 +389,7 @@ bool GameLogic::loadPlayer(Player *aPlayer, int fileDescriptor){
 bool GameLogic::hibernatePlayer(Player *aPlayer){
     if (aPlayer != nullptr){
         aPlayer->setActive(false);
+        aPlayer->getLocation()->removeCharacter(aPlayer);
         manager->hibernatePlayer(aPlayer->getFileDescriptor());
         aPlayer->setFileDescriptor(-1);
         removePlayerMessageQueue(aPlayer);
@@ -1235,6 +1236,17 @@ bool GameLogic::helpCommand(Player *aPlayer){
 
 
 bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
+    std::string message = "";
+
+    // if command is look
+    if (param == nullptr){
+        message = aPlayer->getLocation()->getFullDescription(aPlayer->getID());
+    } else {
+        // command is look at
+    }
+
+    messagePlayer(aPlayer, message);
+
     return false;
 }
 
@@ -1308,8 +1320,13 @@ bool GameLogic::whisperCommand(Player *aPlayer, InteractiveNoun *indirectObj, co
 
 
 bool GameLogic::quitCommand(Player *aPlayer){
-    removePlayerMessageQueue(aPlayer);
-    return false;
+    std::string message = "A player named " + aPlayer->getName() + " leaves the area.";
+    int FD = aPlayer->getFileDescriptor();
+    messagePlayer(aPlayer, "Logging you out...");
+    messageAreaPlayers(aPlayer, message, aPlayer->getLocation());
+    hibernatePlayer(aPlayer);
+    theServer->disconnectPlayer(FD);
+    return true;
 }
 
 
@@ -1414,7 +1431,15 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::editModeCommand(Player *aPlayer){
-    return false;
+    if (aPlayer->isEditMode()){
+        aPlayer->setEditMode(false);
+        messagePlayer(aPlayer, "Leaving edit mode...");
+    } else {
+        aPlayer->setEditMode(true);
+        messagePlayer(aPlayer, "Entering edit mode...");
+    }
+
+    return true;
 } 
 
 

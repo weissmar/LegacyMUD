@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/15/2017
+ * \modified    02/17/2017
  * \course      CS467, Winter 2017
  * \file        Exit.hpp
  *
@@ -41,6 +41,13 @@ class Exit: public ConditionalElement {
          * \return  Returns an ExitDirection with the direction of this exit.
          */
         ExitDirection getDirection();
+
+        /*!
+         * \brief   Gets the direction of this exit as a string.
+         *
+         * \return  Returns a std::string with the direction of this exit.
+         */
+        std::string getDirectionString();
 
         /*!
          * \brief   Gets the effect of this exit.
