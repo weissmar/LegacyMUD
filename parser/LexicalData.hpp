@@ -2,7 +2,7 @@
   \file     LexicalData.hpp
   \author   David Rigert
   \created  02/11/2017
-  \modified 02/11/2017
+  \modified 02/16/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the LexicalData class.
@@ -110,7 +110,30 @@ public:
 
     void clear();
 
+    /*!
+      \brief Forwards the function call to the hasNoun member function.
+
+      This function forwards the caller to the hasNoun() member function
+      of the LexicalData instance specified in \a context.
+
+      \param[in] context  Specifies a pointer to the LexicalData instance to use.
+      \param[in] arg      Specifies the string argument to use in hasNoun().
+
+      \return Returns the result of hasNoun().
+    */
     static bool forwardHasNoun(const void *context, std::string arg);
+
+    /*!
+      \brief Forwards the function call to the hasVerb member function.
+
+      This function forwards the caller to the hasVerb() member function
+      of the LexicalData instance specified in \a context.
+
+      \param[in] context  Specifies a pointer to the LexicalData instance to use.
+      \param[in] arg      Specifies the string argument to use in hasVerb().
+
+      \return Returns the result of hasVerb().
+    */
     static bool forwardHasVerb(const void *context, std::string arg);
 
 private:
