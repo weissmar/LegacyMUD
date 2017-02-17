@@ -894,221 +894,272 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *directObj = nullptr;
     InteractiveNoun *indirectObj = nullptr;
 
-    if (result.command == CommandEnum::HELP){           
-        // Displays a list of some available commands.
-        success = helpCommand(aPlayer);
-    } else if (result.command == CommandEnum::LOOK){           
-        // clarify the object being looked at
-        param = clarifyDirect(aPlayer, result);
-        if (param == nullptr){
-            param = clarifyIndirect(aPlayer, result);
-        }
-        // Displays the full description of the current area or specified direct object.
-        success = lookCommand(aPlayer, param);
-    } else if (result.command == CommandEnum::LISTEN){         
-        // Displays an optional description of any sounds in the current area.
-        success = listenCommand(aPlayer);
-    } else if (result.command == CommandEnum::TAKE){
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);
-        // clarify indirect
-        indirectObj = clarifyIndirect(aPlayer, result);
-        // Puts the specified item into inventory.
-        success = takeCommand(aPlayer, directObj, indirectObj);
-    } else if (result.command == CommandEnum::PUT){  
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);
-        // clarify indirect
-        indirectObj = clarifyIndirect(aPlayer, result);         
-        // Puts the specified item in, on, or under the specified container.
-        success = putCommand(aPlayer, directObj, indirectObj, result.position);
-    } else if (result.command == CommandEnum::DROP){       
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);
-        // Drops the specified item onto the ground.
-        success = dropCommand(aPlayer, directObj);
-    } else if (result.command == CommandEnum::INVENTORY){      
-        // Displays the player's inventory and equipped items.
-        success = inventoryCommand(aPlayer);
-    } else if (result.command == CommandEnum::MORE){
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);       
-        // Displays details of the specified item or skill.
-        success = moreCommand(aPlayer, directObj);
-    } else if (result.command == CommandEnum::EQUIPMENT){      
-        // Display the player's equipped items.
-        success = equipmentCommand(aPlayer);
-    } else if (result.command == CommandEnum::EQUIP){    
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);    
-        // Equips the specified item.
-        success = equipCommand(aPlayer, directObj);
-    } else if (result.command == CommandEnum::UNEQUIP){  
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);     
-        // Unequips the specified item.
-        success = unequipCommand(aPlayer, directObj);
-    } else if (result.command == CommandEnum::TRANSFER){
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);
-        // clarify indirect
-        indirectObj = clarifyIndirect(aPlayer, result); 
-        // Gives the specified item to the specified character.
-        success = transferCommand(aPlayer, directObj, indirectObj);
-    } else if (result.command == CommandEnum::SPEAK){          
-        // Says the specified text to all players in the current area.
-        success = speakCommand(aPlayer, result.directAlias);
-    } else if (result.command == CommandEnum::SHOUT){          
-        // Shouts the specified text to all players within n links of the current area.
-        success = shoutCommand(aPlayer, result.directAlias);
-    } else if (result.command == CommandEnum::WHISPER){        
-        indirectObj = clarifyIndirect(aPlayer, result);
-        // Whispers the specified text to the specified player.
-        success = whisperCommand(aPlayer, indirectObj, result.directAlias);
-    } else if (result.command == CommandEnum::QUIT){           
-        // Logs the player out of the game.
-        success = quitCommand(aPlayer);
-    } else if (result.command == CommandEnum::GO){             
-        // clarify where to go
-        param = clarifyDirect(aPlayer, result);
-        if (param == nullptr){
-            param = clarifyIndirect(aPlayer, result);
-        }
-        // Moves the player to the specified area.
-        success = goCommand(aPlayer, param);
-    } else if (result.command == CommandEnum::MOVE){     
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);      
-        // Moves the specified item.
-        success = moveCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::STATS){          
-        // Displays the player's stats.
-        success = statsCommand(aPlayer);    
-    } else if (result.command == CommandEnum::QUESTS){         
-        // Displays the player's quests.
-        success = questsCommand(aPlayer);    
-    } else if (result.command == CommandEnum::SKILLS){         
-        // Displays the player's skills.
-        success = skillsCommand(aPlayer);    
-    } else if (result.command == CommandEnum::ATTACK){    
-        // clarify direct 
-        directObj = clarifyDirect(aPlayer, result);
-        // clarify indirect
-        indirectObj = clarifyIndirect(aPlayer, result);     
-        // Initiates or continues combat with the specified combatant, using either the default attack or the specified attack skill.
-        success = attackCommand(aPlayer, directObj, indirectObj);    
-    } else if (result.command == CommandEnum::TALK){        
-        // clarify who is being talked to
-        param = clarifyDirect(aPlayer, result);
-        if (param == nullptr){
-            param = clarifyIndirect(aPlayer, result);
-        }   
-        // Initiates a conversation with the specified non-combatant.
-        success = talkCommand(aPlayer, param);    
-    } else if (result.command == CommandEnum::SHOP){           
-        // Lists any items the non-combatant the player is talking to has for sale.
-        success = shopCommand(aPlayer);    
-    } else if (result.command == CommandEnum::BUY){    
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);
-        // Purchases the specified item from the non-combatant the player is talking to.
-        success = buyCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::SELL){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);           
-        // Sells the specified item to the non-combatant the player is speaking to.
-        success = sellCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::SEARCH){  
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);       
-        // Lists any items in the specified container.
-        success = searchCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::USE_SKILL){  
-        // clarify direct and indirect
-        directObj = clarifyDirect(aPlayer, result);
-        indirectObj = clarifyIndirect(aPlayer, result);    
-        // Activates the specified skill.
-        success = useSkillCommand(aPlayer, directObj, indirectObj);    
-    } else if (result.command == CommandEnum::READ){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);           
-        // Reads the specified item.
-        success = readCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::BREAK){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);          
-        // Breaks the specified item.
-        success = breakCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::CLIMB){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);          
-        // Climbs the specified item.
-        success = climbCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::TURN){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);           
-        // Turns the specified item.
-        success = turnCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::PUSH){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);           
-        // Pushes the specified item.
-        success = pushCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::PULL){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);           
-        // Pulls the specified item.
-        success = pullCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::EAT){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);            
-        // Eats the specified item.
-        success = eatCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::DRINK){
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);          
-        // Drinks the specified item.
-        success = drinkCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::EDIT_MODE){      
-        // Toggles between edit mode and normal mode.
-        success = editModeCommand(aPlayer);    
-    } else if (result.command == CommandEnum::WARP){ 
-        // clarify where to warp to
-        param = clarifyDirect(aPlayer, result);
-        if (param == nullptr){
-            param = clarifyIndirect(aPlayer, result);
-        }          
-        // World builder command. Moves the player to the specified area.
-        success = warpCommand(aPlayer, param);    
-    } else if (result.command == CommandEnum::COPY){       
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);    
-        // World builder command. Creates a copy of the specified object and places it in the current area.
-        success = copyCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::CREATE){         
-        // World builder command. Starts the creation wizard for the specified object type.
-        success = createCommand(aPlayer, result.directAlias);    
-    } else if (result.command == CommandEnum::EDIT_ATTRIBUTE){ 
-        // clarify indirect
-        indirectObj = clarifyIndirect(aPlayer, result);
-        // World builder command. Edits the specified attribute of the specified object (or the current area if not specified).
-        success = editAttributeCommand(aPlayer, indirectObj, result.directAlias);    
-    } else if (result.command == CommandEnum::EDIT_WIZARD){    
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);
-        // World builder command. Starts the edit wizard for the specified object.
-        success = editWizardCommand(aPlayer, directObj);    
-    } else if (result.command == CommandEnum::SAVE){           
-        // World builder command. Saves the game to the specified file (or the default file if not specified).
-        success = saveCommand(aPlayer, result.indirectAlias);    
-    } else if (result.command == CommandEnum::LOAD){           
-        // World builder command. Loads the game from the specified file (or the default file if not specified).
-        success = loadCommand(aPlayer, result.indirectAlias);    
-    } else if (result.command == CommandEnum::DELETE){         
-        // clarify direct
-        directObj = clarifyDirect(aPlayer, result);
-        // World builder command. Deletes the specified object from the game.
-        success = deleteCommand(aPlayer, directObj);  
+    printParseResult(result);
+
+    switch (result.command) {
+        case CommandEnum::HELP:           
+            // Displays a list of some available commands.
+            success = helpCommand(aPlayer);
+            break;
+        case CommandEnum::LOOK:           
+            // clarify the object being looked at
+            param = clarifyDirect(aPlayer, result);
+            if (param == nullptr){
+                param = clarifyIndirect(aPlayer, result);
+            }
+            // Displays the full description of the current area or specified direct object.
+            success = lookCommand(aPlayer, param);
+            break;
+        case CommandEnum::LISTEN:         
+            // Displays an optional description of any sounds in the current area.
+            success = listenCommand(aPlayer);
+            break;
+        case CommandEnum::TAKE:
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);
+            // clarify indirect
+            indirectObj = clarifyIndirect(aPlayer, result);
+            // Puts the specified item into inventory.
+            success = takeCommand(aPlayer, directObj, indirectObj);
+            break;
+        case CommandEnum::PUT:  
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);
+            // clarify indirect
+            indirectObj = clarifyIndirect(aPlayer, result);         
+            // Puts the specified item in, on, or under the specified container.
+            success = putCommand(aPlayer, directObj, indirectObj, result.position);
+            break;
+        case CommandEnum::DROP:       
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);
+            // Drops the specified item onto the ground.
+            success = dropCommand(aPlayer, directObj);
+            break;
+        case CommandEnum::INVENTORY:      
+            // Displays the player's inventory and equipped items.
+            success = inventoryCommand(aPlayer);
+            break;
+        case CommandEnum::MORE:
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);       
+            // Displays details of the specified item or skill.
+            success = moreCommand(aPlayer, directObj);
+            break;
+        case CommandEnum::EQUIPMENT:      
+            // Display the player's equipped items.
+            success = equipmentCommand(aPlayer);
+            break;
+        case CommandEnum::EQUIP:    
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);    
+            // Equips the specified item.
+            success = equipCommand(aPlayer, directObj);
+            break;
+        case CommandEnum::UNEQUIP:  
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);     
+            // Unequips the specified item.
+            success = unequipCommand(aPlayer, directObj);
+            break;
+        case CommandEnum::TRANSFER:
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);
+            // clarify indirect
+            indirectObj = clarifyIndirect(aPlayer, result); 
+            // Gives the specified item to the specified character.
+            success = transferCommand(aPlayer, directObj, indirectObj);
+            break;
+        case CommandEnum::SPEAK:          
+            // Says the specified text to all players in the current area.
+            success = speakCommand(aPlayer, result.directAlias);
+            break;
+        case CommandEnum::SHOUT:          
+            // Shouts the specified text to all players within n links of the current area.
+            success = shoutCommand(aPlayer, result.directAlias);
+            break;
+        case CommandEnum::WHISPER:        
+            indirectObj = clarifyIndirect(aPlayer, result);
+            // Whispers the specified text to the specified player.
+            success = whisperCommand(aPlayer, indirectObj, result.directAlias);
+            break;
+        case CommandEnum::QUIT:           
+            // Logs the player out of the game.
+            success = quitCommand(aPlayer);
+            break;
+        case CommandEnum::GO:             
+            // clarify where to go
+            param = clarifyDirect(aPlayer, result);
+            if (param == nullptr){
+                param = clarifyIndirect(aPlayer, result);
+            }
+            // Moves the player to the specified area.
+            success = goCommand(aPlayer, param);
+            break;
+        case CommandEnum::MOVE:     
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);      
+            // Moves the specified item.
+            success = moveCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::STATS:          
+            // Displays the player's stats.
+            success = statsCommand(aPlayer);    
+            break;
+        case CommandEnum::QUESTS:         
+            // Displays the player's quests.
+            success = questsCommand(aPlayer);    
+            break;
+        case CommandEnum::SKILLS:         
+            // Displays the player's skills.
+            success = skillsCommand(aPlayer);    
+            break;
+        case CommandEnum::ATTACK:    
+            // clarify direct 
+            directObj = clarifyDirect(aPlayer, result);
+            // clarify indirect
+            indirectObj = clarifyIndirect(aPlayer, result);     
+            // Initiates or continues combat with the specified combatant, using either the default attack or the specified attack skill.
+            success = attackCommand(aPlayer, directObj, indirectObj);    
+            break;
+        case CommandEnum::TALK:        
+            // clarify who is being talked to
+            param = clarifyDirect(aPlayer, result);
+            if (param == nullptr){
+                param = clarifyIndirect(aPlayer, result);
+            } 
+            // Initiates a conversation with the specified non-combatant.
+            success = talkCommand(aPlayer, param);    
+            break;
+        case CommandEnum::SHOP:           
+            // Lists any items the non-combatant the player is talking to has for sale.
+            success = shopCommand(aPlayer);    
+            break;
+        case CommandEnum::BUY:    
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);
+            // Purchases the specified item from the non-combatant the player is talking to.
+            success = buyCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::SELL:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);           
+            // Sells the specified item to the non-combatant the player is speaking to.
+            success = sellCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::SEARCH:  
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);       
+            // Lists any items in the specified container.
+            success = searchCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::USE_SKILL:  
+            // clarify direct and indirect
+            directObj = clarifyDirect(aPlayer, result);
+            indirectObj = clarifyIndirect(aPlayer, result);    
+            // Activates the specified skill.
+            success = useSkillCommand(aPlayer, directObj, indirectObj);    
+            break;
+        case CommandEnum::READ:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);           
+            // Reads the specified item.
+            success = readCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::BREAK:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);          
+            // Breaks the specified item.
+            success = breakCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::CLIMB:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);          
+            // Climbs the specified item.
+            success = climbCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::TURN:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);           
+            // Turns the specified item.
+            success = turnCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::PUSH:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);           
+            // Pushes the specified item.
+            success = pushCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::PULL:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);           
+            // Pulls the specified item.
+            success = pullCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::EAT:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);            
+            // Eats the specified item.
+            success = eatCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::DRINK:
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);          
+            // Drinks the specified item.
+            success = drinkCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::EDIT_MODE:      
+            // Toggles between edit mode and normal mode.
+            success = editModeCommand(aPlayer);    
+            break;
+        case CommandEnum::WARP: 
+            // clarify where to warp to
+            param = clarifyDirect(aPlayer, result);
+            if (param == nullptr){
+                param = clarifyIndirect(aPlayer, result);
+            }          
+            // World builder command. Moves the player to the specified area.
+            success = warpCommand(aPlayer, param);    
+            break;
+        case CommandEnum::COPY:       
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);    
+            // World builder command. Creates a copy of the specified object and places it in the current area.
+            success = copyCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::CREATE:         
+            // World builder command. Starts the creation wizard for the specified object type.
+            success = createCommand(aPlayer, result.directAlias);    
+            break;
+        case CommandEnum::EDIT_ATTRIBUTE: 
+            // clarify indirect
+            indirectObj = clarifyIndirect(aPlayer, result);
+            // World builder command. Edits the specified attribute of the specified object (or the current area if not specified).
+            success = editAttributeCommand(aPlayer, indirectObj, result.directAlias);    
+            break;
+        case CommandEnum::EDIT_WIZARD:    
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);
+            // World builder command. Starts the edit wizard for the specified object.
+            success = editWizardCommand(aPlayer, directObj);    
+            break;
+        case CommandEnum::SAVE:           
+            // World builder command. Saves the game to the specified file (or the default file if not specified).
+            success = saveCommand(aPlayer, result.indirectAlias);    
+            break;
+        case CommandEnum::LOAD:           
+            // World builder command. Loads the game from the specified file (or the default file if not specified).
+            success = loadCommand(aPlayer, result.indirectAlias);    
+            break;
+        case CommandEnum::DELETE:         
+            // clarify direct
+            directObj = clarifyDirect(aPlayer, result);
+            // World builder command. Deletes the specified object from the game.
+            success = deleteCommand(aPlayer, directObj);  
+            break;
+        case CommandEnum::INVALID:
+            std::cout << "DEBUG: executeCommand received an INVALID command.\n";
+            break;
     }
     return success;
 }
@@ -1141,6 +1192,40 @@ InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult
 
 
 bool GameLogic::helpCommand(Player *aPlayer){
+    std::string message;
+
+    std::cout << "inside help command\n";
+
+    if (aPlayer != nullptr){
+        if (aPlayer->isEditMode()){
+            message = "Available Edit Mode Commands:\015\012";
+            message += "EDIT_MODE\015\012";
+            message += "WARP to [an area]\015\012";
+            message += "COPY [an object]\015\012";
+            message += "CREATE [ObjectType]\015\012";
+            message += "EDIT_ATTRIBUTE [an attribute] of [an object]\015\012";
+            message += "EDIT_WIZARD [an object]\015\012";
+            message += "SAVE [a file name]\015\012";
+            message += "LOAD [a file name]\015\012";
+            message += "DELETE [an object]\015\012";
+        } else {
+            message = "Some Available Commands:\015\012";
+            message += "look\015\012";
+            message += "listen\015\012";
+            message += "take\015\012";
+            message += "drop\015\012";
+            message += "inventory\015\012";
+            message += "equipment\015\012";
+            message += "speak\015\012";
+            message += "go\015\012";
+            message += "stats\015\012";
+            message += "skills\015\012";
+            message += "equip\015\012";
+            message += "unequip\015\012";
+        }
+        messagePlayer(aPlayer, message);
+        return true;
+    }
     return false;
 }
 
@@ -1201,7 +1286,10 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
 
 
 bool GameLogic::speakCommand(Player *aPlayer, const std::string &stringParam){
-    return false;
+    std::string message = aPlayer->getName() + " says " + stringParam;
+
+    messageAreaPlayers(aPlayer, message, aPlayer->getLocation());
+    return true;
 }
 
 
