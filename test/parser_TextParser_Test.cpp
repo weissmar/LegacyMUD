@@ -23,6 +23,7 @@ namespace engine = legacymud::engine;
 void setEditModeVerbs();
 void setGlobalVerbs();
 void setBuilderVerbs();
+void setSentenceTestVerbs();
 
 // Reuse this variable for a new parser object every test
 parser::TextParser tp;
