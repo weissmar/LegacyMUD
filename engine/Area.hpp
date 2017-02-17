@@ -120,10 +120,13 @@ class Area: public InteractiveNoun {
         /*!
          * \brief   Gets the full description of an area for first time
          *          entry.
+         *          
+         * \param[in] excludeID     Optionally specifies the ID of a
+         *                          player to exclude from the description.
          * 
          * \return  Returns a std::string with the full description.
          */
-        std::string getFullDescription() const;
+        std::string getFullDescription(int excludeID) const;
 
         /*!
          * \brief   Sets the name of this area.

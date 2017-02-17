@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/15/2017
+ * \modified    02/17/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -46,6 +46,48 @@ Exit::~Exit(){
 
 ExitDirection Exit::getDirection(){
     return direction;
+}
+
+
+std::string Exit::getDirectionString(){
+    std::string message;
+
+    switch (direction) {
+        case ExitDirection::NORTH:
+            message = "To the north";
+            break;        
+        case ExitDirection::SOUTH:
+            message = "To the south";
+            break;        
+        case ExitDirection::EAST:
+            message = "To the east";
+            break;        
+        case ExitDirection::WEST:
+            message = "To the west";
+            break;        
+        case ExitDirection::NORTHEAST:
+            message = "To the northeast";
+            break;        
+        case ExitDirection::NORTHWEST:
+            message = "To the northwest";
+            break;        
+        case ExitDirection::SOUTHEAST:
+            message = "To the southeast";
+            break;        
+        case ExitDirection::SOUTHWEST :
+            message = "To the southwest";
+            break;        
+        case ExitDirection::UP:
+            message = "Above";
+            break;        
+        case ExitDirection::DOWN:
+            message = "Below";
+            break;
+        default:
+            message = "";
+    }
+
+    return message;
 }
 
 

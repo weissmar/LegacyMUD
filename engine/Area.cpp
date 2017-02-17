@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/15/2017
+ * \modified    02/17/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -13,6 +13,7 @@
 #include "Exit.hpp"
 #include "Item.hpp"
 #include "Feature.hpp"
+#include <algorithm>
 
 namespace legacymud { namespace engine {
 
@@ -102,8 +103,54 @@ parser::LexicalData Area::getLexicalData() const{
 }
 
 
-std::string Area::getFullDescription() const{
-    return getLongDesc();
+std::string Area::getFullDescription(int excludeID) const{
+    std::string message = getLongDesc();
+    std::vector<Item*> allItems = getItems();
+    std::vector<Character*> allCharacters = getCharacters();
+    std::vector<Feature*> allFeatures = getFeatures();
+    std::vector<Exit*> allExits = getExits();
+
+    message += "\015\012";
+    if (allFeatures.size() != 0){
+        message += "You see ";
+        for (auto feature : allFeatures){
+            message += feature->getName();
+            message += ", ";
+        }
+        message += "\015\012";
+    }
+    
+    for (auto exit : allExits){
+        message += exit->getDirectionString();
+        message += " you see ";
+        message += exit->getName();
+        message += ".\015\012";
+    }
+    if (allItems.size() != 0){
+        message += "Around you, you see ";
+        for (auto item : allItems){
+            message += item->getName();
+            message += ", ";
+        }
+        message += "\015\012";
+    }
+    
+
+    for (int i = 0; i < allCharacters.size(); i++){
+        if (allCharacters[i]->getID() != excludeID){
+            if (allCharacters[i]->getObjectType() == ObjectType::NON_COMBATANT){
+                message += "You see someone named ";
+            } else if (allCharacters[i]->getObjectType() == ObjectType::CREATURE){
+                message += "You see a creature named ";
+            } else if (allCharacters[i]->getObjectType() == ObjectType::PLAYER){
+                message += "You see a player named ";
+            }
+            message += allCharacters[i]->getName();
+            message += ".\015\012";
+        }
+    }
+
+    return message;
 }
 
 
@@ -167,7 +214,8 @@ bool Area::removeItem(Item *anItem){
 
 bool Area::removeCharacter(Character *aCharacter){
     std::lock_guard<std::mutex> charContentLock(charContentMutex);
-    return false;
+    characterContents.erase(std::remove(characterContents.begin(), characterContents.end(), aCharacter), characterContents.end());
+    return true;
 }
 
 
