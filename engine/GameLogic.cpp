@@ -575,8 +575,10 @@ void GameLogic::printParseResult(parser::ParseResult result){
         case parser::ParseStatus::VALID:
             std::cout << "VALID\n";
             break;
+        default:
+            std::cout << "\n";
     }
-    std::cout << "commmand = ";
+    std::cout << "command = ";
     switch (result.command){
         case CommandEnum::HELP:
             std::cout << "HELP\n";
@@ -716,6 +718,8 @@ void GameLogic::printParseResult(parser::ParseResult result){
         case CommandEnum::DELETE:
             std::cout << "DELETE\n";
             break;
+        default:
+            std::cout << "\n";
     }
     std::cout << "unparsed = ";
     std::cout << result.unparsed;
