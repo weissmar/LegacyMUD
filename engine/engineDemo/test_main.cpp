@@ -2,7 +2,7 @@
 #include <Server.hpp>
 #include <GameLogic.hpp>
 #include <parser.hpp>
-#include <account.hpp>
+#include <Account.hpp>
 #include <thread>
 
 namespace parser = legacymud::parser;
