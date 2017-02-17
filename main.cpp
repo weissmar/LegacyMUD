@@ -1,3 +1,23 @@
+/*************************************************************************
+ * Authors:       Team Lynx (Rachel Weissman-Hohler, David Rigert, Keith Adkins)
+ * Date Created:  2/16/2017
+ * Last Modified: 2/16/2017
+ * Course:        CS467, Winter 2017
+ * Filename:      main.cpp
+ *
+ * Overview:
+ *     Main program for LegacyMUD, a multiuser dungeon engine.  This is a 
+ * partial implentation presented for our Midpoint Project check.
+ * The following partial features are implemented:
+ * (1) A telnet server which is multiuser and threaded.
+ * (2) An account system that allows new players to register and returning
+ *     players to log back in.  This includes three integrated system components:
+ *     the game engine, the telnet server, and the account system.
+ * (3) A text parser that interpretes input that includes a verb followed by 
+ *     arbitrary text.  This includes two integrated system components:
+ *     the text parser and the game engine.
+ ************************************************************************/
+
 #include <iostream>
 #include <Server.hpp>
 #include <GameLogic.hpp>
