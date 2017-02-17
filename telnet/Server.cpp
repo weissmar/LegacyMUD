@@ -239,9 +239,9 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
             /* Remove the last character from the in message. */
             inMsg.pop_back();               
             
-            /* Send the delete character to the player's terminal. */
-            ch = 127;
-            if (write(playerFd, &ch, 1) < 0) 
+            /* Delete player's previous character. */
+            unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
+            if (write(playerFd, eraseStr, 3) < 0) 
                 return false;                
         }
             
