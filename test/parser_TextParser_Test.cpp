@@ -2,7 +2,7 @@
   \file     parser_TextParser_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/15/2017
+  \modified 02/16/2017
   \course   CS467, Winter 2017
  
   \details This file contains the unit tests for the TextParser class.
@@ -54,6 +54,9 @@ public:
 
         // Set up world builder lookup table
         setBuilderVerbs();
+
+        // Set up test verbs for all sentence types
+        setSentenceTestVerbs();
     }
 
     static void TearDownTestCase() {
@@ -1187,6 +1190,93 @@ TEST_F(TextParserTest, UnavailableDirectNoun) {
 /******************************************
  * Helper Functions
  *****************************************/
+
+void setSentenceTestVerbs() {
+    // VDISentence
+    parser::VerbInfo vi;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::YES);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VDI";
+    parser::WordManager::addGlobalVerb("vdi", vi);
+
+    // VDPISentence
+    vi.grammar = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::YES);
+    vi.grammar.addPreposition("on", parser::PrepositionType::ON);
+    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VDPI";
+    parser::WordManager::addGlobalVerb("vdpi", vi);
+
+    // VDPTSentence
+    vi.grammar = parser::Grammar(parser::Grammar::YES, true, parser::Grammar::TEXT);
+    vi.grammar.addPreposition("on", parser::PrepositionType::ON);
+    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VDPT";
+    parser::WordManager::addGlobalVerb("vdpt", vi);
+
+    // VDSentence
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VD";
+    parser::WordManager::addGlobalVerb("vd", vi);
+    
+    // VDTSentence
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::TEXT);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VDT";
+    parser::WordManager::addGlobalVerb("vdt", vi);
+
+    // VPISentence
+    vi.grammar = parser::Grammar(parser::Grammar::NO, true, parser::Grammar::YES);
+    vi.grammar.addPreposition("on", parser::PrepositionType::ON);
+    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VPI";
+    parser::WordManager::addGlobalVerb("vpi", vi);
+
+    // VPTSentence
+    vi.grammar = parser::Grammar(parser::Grammar::NO, true, parser::Grammar::TEXT);
+    vi.grammar.addPreposition("on", parser::PrepositionType::ON);
+    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VPT";
+    parser::WordManager::addGlobalVerb("vpt", vi);
+
+    // VSentence
+    vi.grammar = parser::Grammar(parser::Grammar::NO, false, parser::Grammar::NO);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "V";
+    parser::WordManager::addGlobalVerb("v", vi);
+
+    // VTISentence
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::YES);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VTI";
+    parser::WordManager::addGlobalVerb("vti", vi);
+
+    // VTPISentence
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, true, parser::Grammar::YES);
+    vi.grammar.addPreposition("on", parser::PrepositionType::ON);
+    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VTPI";
+    parser::WordManager::addGlobalVerb("vtpi", vi);
+
+    // VTPTSentence
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, true, parser::Grammar::TEXT);
+    vi.grammar.addPreposition("on", parser::PrepositionType::ON);
+    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VTPT";
+    parser::WordManager::addGlobalVerb("vtpt", vi);
+
+    // VTSentence
+    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
+    vi.command = engine::CommandEnum::INVALID;
+    vi.description = "VT";
+    parser::WordManager::addGlobalVerb("vt", vi);
+}
 
 // Set up the edit mode verbs
 void setEditModeVerbs() {
