@@ -2,7 +2,7 @@
   \file     Grammar.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/12/2017
+  \modified 02/16/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the Grammar class and
@@ -143,6 +143,19 @@ public:
       \return Returns whether the associated verb takes an indirect object.
     */
     Support takesIndirectObject() const;
+
+    /*!
+      \brief Forwards the function call to the hasPreposition member function.
+
+      This function forwards the caller to the hasPreposition() member function
+      of the Grammar instance specified in \a context.
+
+      \param[in] context  Specifies a pointer to the Grammar instance to use.
+      \param[in] arg      Specifies the string argument to use in hasPreposition().
+
+      \return Returns the result of hasPreposition().
+    */
+    static bool forwardHasPreposition(const void *context, std::string arg);
 
 private:
     Support _directObject;
