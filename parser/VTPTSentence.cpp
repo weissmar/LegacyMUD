@@ -2,7 +2,7 @@
   \file     VTPTSentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/16/2017
+  \modified 02/17/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VTPTSentence class.
@@ -51,14 +51,13 @@ ParseResult VTPTSentence::getResult(const std::vector<Token> &tokens, const Lexi
             result.status = ParseStatus::INVALID_DIRECT;
         }
         else {
-            // To find the preposition, search one word at a time
-            // starting from second to last and moving forward.
-            // Next, try two at a time, then three, and so on.
+            // To find the preposition, search all remaining tokens except first and last.
+            // Decrement the span by 1 each turn and keep searching, back-to-front.
             bool found = false;
             size_t tCount = range.end - range.start;
             Range prepRange;
             size_t start = 0, end = 0;
-            for (size_t spread = 1; (spread < tCount - 2) && !found; ++spread) {
+            for (size_t spread = tCount - 2; (spread > 0) && !found; --spread) {
                 for (end = range.end - 1, start = end - spread; (start > range.start) && !found; --end, --start) {
                     prepRange.start = start;
                     prepRange.end = end;
