@@ -71,6 +71,28 @@ ParseResult VPTSentence::getResult(const std::vector<Token> &tokens, const Lexic
                     result.indirectAlias = Tokenizer::joinOriginal(tokens, range);
                     result.status = ParseStatus::VALID;
                 }
+
+                // Handle preposition
+                switch (_prepType) {
+                case PrepositionType::ON:
+                    result.position = engine::ItemPosition::ON;
+                    break;
+                case PrepositionType::IN:
+                    result.position = engine::ItemPosition::IN;
+                    break;
+                case PrepositionType::UNDER:
+                    result.position = engine::ItemPosition::UNDER;
+                    break;
+                case PrepositionType::OF:
+                    // No direct alias to swap
+                case PrepositionType::TO:
+                case PrepositionType::WITH:
+                case PrepositionType::FROM:
+                case PrepositionType::ALL:
+                case PrepositionType::NONE:
+                    result.position = engine::ItemPosition::NONE;
+                    break;
+                }
             }
         }
         break;
