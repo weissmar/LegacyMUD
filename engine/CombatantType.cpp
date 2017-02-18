@@ -54,7 +54,7 @@ CombatantType::~CombatantType(){
 }*/
 
 
-std::string CombatantType::getName(){
+std::string CombatantType::getName() const{
     return name;
 }
 

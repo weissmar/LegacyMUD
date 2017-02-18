@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/12/2017
+  \modified 2/16/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -234,13 +234,14 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
             }
         }
             
-        /* Backspace character received. Remove the last character from the in message. */
-        else if (ch == 8 && inMsg.size() > 0) {
+        /* Backspace character received. Supports terminals that send 8 or 127. */ 
+        else if ((ch == 8 || ch == 127) && inMsg.size() > 0) {
+            /* Remove the last character from the in message. */
             inMsg.pop_back();               
             
-            /* Send the delete character to the player's terminal. */
-            ch = 127;
-            if (write(playerFd, &ch, 1) < 0) 
+            /* Delete player's previous character. */
+            unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
+            if (write(playerFd, eraseStr, 3) < 0) 
                 return false;                
         }
             

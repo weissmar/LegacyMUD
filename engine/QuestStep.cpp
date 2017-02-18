@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/13/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.cpp
  *
@@ -130,6 +130,11 @@ bool QuestStep::setCompletionText(std::string completionText){
 
     return true;
 } 
+
+
+std::string QuestStep::getName() const{
+    return description;
+}
 
 
 ObjectType QuestStep::getObjectType(){

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.hpp
  *
@@ -136,6 +136,13 @@ class QuestStep: public InteractiveNoun {
          *          the completion text was successful.
          */
         bool setCompletionText(std::string completionText);   
+
+        /*!
+         * \brief   Gets the description of the step.
+         *
+         * \return  Returns a std::string with the description.
+         */
+        virtual std::string getName() const;
 
         /*!
          * \brief   Gets the object type.

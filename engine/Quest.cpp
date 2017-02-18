@@ -47,7 +47,7 @@ Quest::~Quest(){
 }*/
 
 
-std::string Quest::getName(){
+std::string Quest::getName() const{
     return name;
 }
 

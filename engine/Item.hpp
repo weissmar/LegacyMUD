@@ -54,7 +54,7 @@ class Item: public InteractiveNoun {
          *
          * \return  Returns a std::string with the name of the item.
          */
-        std::string getName();
+        std::string getName() const;
 
         /*!
          * \brief   Gets the type of the item.

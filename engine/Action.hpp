@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        Action.hpp
  *
@@ -19,10 +19,16 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <Grammar.hpp>
+#include <atomic>
+#include <mutex>
 #include "CommandEnum.hpp"
 #include "EffectType.hpp"
 #include "DataType.hpp"
+
+namespace legacymud { namespace parser {
+    class Grammar;
+}}
+
 
 namespace legacymud { namespace engine {
 
@@ -46,7 +52,7 @@ class Action {
          * \return  Returns a CommandEnum indicating the command that is
          *          associated with this action.
          */
-        CommandEnum getCommand();
+        CommandEnum getCommand() const;
 
         /*!
          * \brief   Gets whether this action is currently valid.
@@ -54,7 +60,7 @@ class Action {
          * \return  Returns a bool indicating whether this action is 
          *          currently valid.
          */
-        bool getValid();
+        bool getValid() const;
 
         /*!
          * \brief   Gets the flavor text associated with this action.
@@ -62,7 +68,7 @@ class Action {
          * \return  Returns a std::string with the flavor text associated
          *          with this action.
          */
-        std::string getFlavorText();
+        std::string getFlavorText() const;
 
         /*!
          * \brief   Gets the effect of this action.
@@ -70,7 +76,7 @@ class Action {
          * \return  Returns an EffectType indicating the effect of this
          *          action.
          */
-        EffectType getEffect();
+        EffectType getEffect() const;
 
         /*!
          * \brief   Gets the grammar associated with the specified alias.
@@ -81,7 +87,7 @@ class Action {
          * \return  Returns a parser::Grammar* with the grammar associated
          *          with the indicated alias.
          */
-        parser::Grammar* getGrammar(std::string alias);
+        parser::Grammar* getGrammar(std::string alias) const;
 
         /*!
          * \brief   Gets the aliases and associated grammar for this action.
@@ -89,14 +95,14 @@ class Action {
          * \return  Returns a map of std::string aliases to parser::Grammar*
          *          for this action.
          */        
-        std::map<std::string, parser::Grammar*> getAliasesAndGrammar();
+        std::map<std::string, parser::Grammar*> getAliasesAndGrammar() const;
 
         /*!
          * \brief   Gets the aliases for this action.
          *
          * \return  Returns a vectorof std::string aliases for this action.
          */        
-        std::vector<std::string> getAliases();
+        std::vector<std::string> getAliases() const;
 
         /*!
          * \brief   Sets whether or not this action is currently valid.
@@ -170,11 +176,13 @@ class Action {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        CommandEnum command;
-        bool valid;
+        std::atomic<CommandEnum> command;
+        std::atomic<bool> valid;
         std::string flavorText;
-        EffectType effect;
+        mutable std::mutex flavorTextMutex;
+        std::atomic<EffectType> effect;
         std::map<std::string, parser::Grammar*> aliases;
+        mutable std::mutex aliasesMutex;
 };
 
 }}

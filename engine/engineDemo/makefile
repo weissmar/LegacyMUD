@@ -1,21 +1,18 @@
-# Author:		David Rigert
-# Created:		2/16/2017
-# Course:		CS 467, Winter 2017
-# Description:	Makefile for main.cpp
-
 CXX = g++
 CXXFLAGS = -std=c++11 -g -Wall -pthread 
 # This gets all .cpp filenames in the current directory
 # and stores them as a list of .o filenames
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 # List the relative paths to the libraries being tested here
-LIB_DIRS = account display engine telnet parser
+LIB_DIRS = ../../account ../../display ../../engine ../../telnet ../../parser
 # Get the paths to the static libraries being tested
-LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(patsubst %,%,$(lib_dir)).a)
+LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(patsubst ../../%,%,$(lib_dir)).a)
 # Append the include paths for the libraries to the g++ flags
 CXXFLAGS += $(foreach include_dir, $(LIB_DIRS), -I$(include_dir))
+# Add the external header directory as an include path
+CXXFLAGS += $(foreach ext_inc_dir, $(EXT_INC_DIRS), -I$(ext_inc_dir))
 # Program executable name
-PROG = legacymud
+PROG = demo
 
 all: $(LIBS) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS) -Wl,--start-group $(LIBS) -Wl,--end-group

@@ -52,7 +52,7 @@ class ConditionalElement: public InteractiveNoun {
          * \return  Returns a std::string with the description of this conditional
          *          element.
          */
-        std::string getDescription();
+        std::string getDescription() const;
 
         /*!
          * \brief   Gets the alternate description of this conditional element.

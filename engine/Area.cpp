@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/13/2017
+ * \modified    02/17/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -13,6 +13,7 @@
 #include "Exit.hpp"
 #include "Item.hpp"
 #include "Feature.hpp"
+#include <algorithm>
 
 namespace legacymud { namespace engine {
 
@@ -49,112 +50,183 @@ Area::~Area(){
 }*/
 
 
-std::string Area::getName(){
+std::string Area::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 } 
 
 
-std::string Area::getShortDesc(){
+std::string Area::getShortDesc() const{
+    std::lock_guard<std::mutex> shortDescLock(shortDescMutex);
     return shortDescription;
 }
 
 
-std::string Area::getLongDesc(){
+std::string Area::getLongDesc() const{
+    std::lock_guard<std::mutex> longDescLock(longDescMutex);
     return longDescription;
 }
 
 
-AreaSize Area::getSize(){
-    return size;
+AreaSize Area::getSize() const{
+    return size.load();
 }
 
 
-std::vector<Item*> Area::getItems(){
+std::vector<Item*> Area::getItems() const{
+    std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
     return itemContents;
 }
 
 
-std::vector<Character*> Area::getCharacters(){
+std::vector<Character*> Area::getCharacters() const{
+    std::lock_guard<std::mutex> charContentLock(charContentMutex);
     return characterContents;
 }
 
 
-std::vector<Feature*> Area::getFeatures(){
+std::vector<Feature*> Area::getFeatures() const{
+    std::lock_guard<std::mutex> featContentLock(featContentMutex);
     return featureContents;
 }
 
 
-std::vector<Exit*> Area::getExits(){
+std::vector<Exit*> Area::getExits() const{
+    std::lock_guard<std::mutex> exitContentLock(exitContentMutex);
     return exitContents;
 }
 
 
-std::multimap<std::string, InteractiveNoun*> Area::getVerbLookup(){
-    return verbLookup;
+parser::LexicalData Area::getLexicalData() const{
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+    return contentsLexicalData;
 }
 
 
-std::multimap<std::string, InteractiveNoun*> Area::getNounLookup(){
-    return nounLookup;
+std::string Area::getFullDescription(int excludeID) const{
+    std::string message = getLongDesc();
+    std::vector<Item*> allItems = getItems();
+    std::vector<Character*> allCharacters = getCharacters();
+    std::vector<Feature*> allFeatures = getFeatures();
+    std::vector<Exit*> allExits = getExits();
+
+    message += "\015\012";
+    if (allFeatures.size() != 0){
+        message += "You see ";
+        for (auto feature : allFeatures){
+            message += feature->getName();
+            message += ", ";
+        }
+        message += "\015\012";
+    }
+    
+    for (auto exit : allExits){
+        message += exit->getDirectionString();
+        message += " you see ";
+        message += exit->getName();
+        message += ".\015\012";
+    }
+    if (allItems.size() != 0){
+        message += "Around you, you see ";
+        for (auto item : allItems){
+            message += item->getName();
+            message += ", ";
+        }
+        message += "\015\012";
+    }
+    
+
+    for (int i = 0; i < allCharacters.size(); i++){
+        if (allCharacters[i]->getID() != excludeID){
+            if (allCharacters[i]->getObjectType() == ObjectType::NON_COMBATANT){
+                message += "You see someone named ";
+            } else if (allCharacters[i]->getObjectType() == ObjectType::CREATURE){
+                message += "You see a creature named ";
+            } else if (allCharacters[i]->getObjectType() == ObjectType::PLAYER){
+                message += "You see a player named ";
+            }
+            message += allCharacters[i]->getName();
+            message += ".\015\012";
+        }
+    }
+
+    return message;
 }
 
 
 bool Area::setName(std::string name){
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return false;
 }
 
 
 bool Area::setShortDesc(std::string shortDescription){
+    std::lock_guard<std::mutex> shortDescLock(shortDescMutex);
     return false;
 }
 
 
 bool Area::setLongDesc(std::string longDescription){
+    std::lock_guard<std::mutex> longDescLock(longDescMutex);
     return false;
 }
 
 
 bool Area::setSize(AreaSize size){
-    return false;
+    this->size.store(size);
+    return true;
 }
 
 
 bool Area::addItem(Item *anItem){
-    return false;
+    std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
+    itemContents.push_back(anItem);
+    return true;
 }
 
 
 bool Area::addCharacter(Character *aCharacter){
-    return false;
+    std::lock_guard<std::mutex> charContentLock(charContentMutex);
+    characterContents.push_back(aCharacter);
+    return true;
 }
 
 
 bool Area::addFeature(Feature *aFeature){
-    return false;
+    std::lock_guard<std::mutex> featContentLock(featContentMutex);
+    featureContents.push_back(aFeature);
+    return true;
 }
 
 
 bool Area::addExit(Exit *anExit){
-    return false;
+    std::lock_guard<std::mutex> exitContentLock(exitContentMutex);
+    exitContents.push_back(anExit);
+    return true;
 }
 
 
 bool Area::removeItem(Item *anItem){
+    std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
     return false;
 }
 
 
 bool Area::removeCharacter(Character *aCharacter){
-    return false;
+    std::lock_guard<std::mutex> charContentLock(charContentMutex);
+    characterContents.erase(std::remove(characterContents.begin(), characterContents.end(), aCharacter), characterContents.end());
+    return true;
 }
 
 
 bool Area::removeFeature(Feature *aFeature){
+    std::lock_guard<std::mutex> featContentLock(featContentMutex);
     return false;
 }
 
 
 bool Area::removeExit(Exit *anExit){
+    std::lock_guard<std::mutex> exitContentLock(exitContentMutex);
     return false;
 }
 

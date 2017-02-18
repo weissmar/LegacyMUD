@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/12/2017
+ * \modified    02/15/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -16,9 +16,24 @@
 #include <queue>
 #include <mutex>
 #include <utility>
+#include <map>
 #include "ObjectType.hpp"
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
+#include "Area.hpp"
+
+namespace legacymud { namespace parser {
+    class TextParser;
+    struct ParseResult;
+}}
+
+namespace legacymud { namespace telnet {
+    class Server;
+}}
+
+namespace legacymud { namespace account {
+    class Account;
+}}
 
 namespace legacymud { namespace engine {
 
@@ -48,7 +63,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not starting the game
          *          was successful.
          */
-        bool startGame(bool newGame, const std::string &fileName);
+        bool startGame(bool newGame, const std::string &fileName, parser::TextParser *aParser, telnet::Server *aServer, account::Account *anAccount);
 
         /*!
          * \brief   Loads a new player into the game.
@@ -69,11 +84,8 @@ class GameLogic {
          * 
          * \param[in] numToProcess  Specifies how many messages to process at a
          *                          time.
-         *
-         * \return  Returns a bool indicating whether or not processing messages
-         *          was successful.
          */
-        bool processInput(int numToProcess);
+        void processInput(int numToProcess);
 
         /*!
          * \brief   Adds a new message into the message queue.
@@ -181,11 +193,45 @@ class GameLogic {
          * 
          * \param[in] aPlayer   Specifies the player to message.
          * \param[in] message   Specifies the message to send.
+         */
+        void messagePlayer(Player *aPlayer, std::string message);
+
+        /*!
+         * \brief   Sends the specified message to all active players,
+         *          except the specified player.
+         * 
+         * \param[in] aPlayer   Optionally specifies the player to exclude 
+         *                      from this message.
+         * \param[in] message   Specifies the message to send.
+         */
+        void messageAllPlayers(Player *aPlayer, std::string message);
+
+        /*!
+         * \brief   Sends the specified message to all active players
+         *          in the specifed area, except the specified player.
+         * 
+         * \param[in] aPlayer   Optionally specifies the player to exclude 
+         *                      from this message.
+         * \param[in] message   Specifies the message to send.
+         * \param[in] anArea    Specifies the area.
+         */
+        void messageAreaPlayers(Player *aPlayer, std::string message, Area *anArea);
+
+        /*!
+         * \brief   Sends message prompt to user and gets response back.
+         * 
+         * \param[in] FD            Specifies the user's file descriptor.
+         * \param[in] outMessage    Specifies the prompt message to send.
+         * \param[out] response     Specifies the variable to return the user's
+         *                          response in.
+         * 
+         * \note    This function disconnects the user if it cannot receive a
+         *          message from them.
          *
-         * \return  Returns a bool indicating whether or not sending the message
+         * \return  Returns a bool indicating whether or not getting the value
          *          was successful.
          */
-        bool messagePlayer(Player *aPlayer, std::string message);
+        bool getValueFromUser(int FD, std::string outMessage, std::string &response, bool newline);
 
         /*!
          * \brief   Starts combat between the specfied player and the specified
@@ -234,22 +280,111 @@ class GameLogic {
         bool endConversation(Player *aPlayer);
 
         /*!
+         * \brief   Handles a parse error that has one result.
+         * 
+         * \param[in] result   Specifies the result received from the parser.
+         * \param[in] aPlayer   Specifies the player that sent the messsage.
+         */
+        void handleParseError(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Prints the type, status, command, and unparsed fields of the
+         *          specified ParseResult to stdout.
+         * 
+         * \param[in] result   Specifies the result received from the parser.
+         */
+        void printParseResult(parser::ParseResult result);
+
+        /*!
+         * \brief   Handles a parse error that has multiple results.
+         * 
+         * \param[in] results   Specifies the results received from the parser.
+         * \param[in] aPlayer   Specifies the player that sent the messsage.
+         */
+        void handleParseErrorMult(Player *aPlayer, std::vector<parser::ParseResult> results);
+
+        /*!
+         * \brief   Sends a clarifying question with the options to the player.
+         * 
+         * \param[in] aPlayer           Specifies the player that sent the messsage.
+         * \param[in] optionsVector     Specifies the options to choose from.
+         */
+        void sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector);
+
+        /*!
+         * \brief   Clarifies a choice with the user.
+         * 
+         * \param[in] aPlayer           Specifies the player that sent the messsage.
+         * \param[in] optionsVector     Specifies the options to choose from.
+         * 
+         * \return  Returns a pointer to the chosen object.
+         */
+        InteractiveNoun* clarifyChoice(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector);
+
+        /*!
+         * \brief   Blocks until gets a message from the dedicated message  
+         *          queue for the specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         * 
+         * \return  Returns the message.
+         */
+        std::string blockingGetMsg(Player *aPlayer);
+
+        /*!
+         * \brief   Adds a dedicated message queue for the specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         */
+        void addPlayerMessageQueue(Player *aPlayer);
+
+        /*!
+         * \brief   Removes the dedicated message queue for the specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         */
+        void removePlayerMessageQueue(Player *aPlayer);
+
+        /*!
+         * \brief   Gets a message from the dedicated message queue for the 
+         *          specified player.
+         * 
+         * \param[in] aPlayer   Specifies the player.
+         * 
+         * \return  Returns the message or empty string if queue is empty.
+         */
+        std::string getMsgFromPlayerQ(Player *aPlayer);
+
+        /*!
          * \brief   Executes the specified command.
          * 
-         * \param[in] aCommand      Specifies the command to execute.
-         * \param[in] aPlayer       Specifies the player entering the command.
-         * \param[in] directObj     Specifies the direct object received from the 
-         *                          parser.
-         * \param[in] indirectObj   Specifies the indirect object recevied from the 
-         *                          parser.
-         * \param[in] stringParam   Specifies the string parameter received from the
-         *                          parser.
-         * \param[in] aPosition     Specifies the position received from the parser.
+         * \param[in] aPlayer   Specifies the player entering the command.
+         * \param[in] result    Specifies the results from the parser.
          *
          * \return  Returns a bool indicating whether or not executing the command
          *          was successful.
          */
-        bool executeCommand(CommandEnum aCommand, Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, const std::string &stringParam, ItemPosition aPosition = ItemPosition::NONE);
+        bool executeCommand(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Clarifies the direct object to use.
+         * 
+         * \param[in] aPlayer   Specifies the player entering the command.
+         * \param[in] result    Specifies the results from the parser.
+         *
+         * \return  Returns a pointer to the chosen interactive noun.
+         */
+        InteractiveNoun* clarifyDirect(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Clarifies the indirect object to use.
+         * 
+         * \param[in] aPlayer   Specifies the player entering the command.
+         * \param[in] result    Specifies the results from the parser.
+         *
+         * \return  Returns a pointer to the chosen interactive noun.
+         */
+        InteractiveNoun* clarifyIndirect(Player *aPlayer, parser::ParseResult result);
 
         /*!
          * \brief   Executes the help command.
@@ -707,7 +842,7 @@ class GameLogic {
          * \brief   Executes the create command.
          * 
          * \param[in] aPlayer       Specifies the player entering the command.
-         * \param[in] indirectObj   Specifies the indirect object recevied from the 
+         * \param[in] stringParam   Specifies the indirect object recevied from the 
          *                          parser.
          *
          * \return  Returns a bool indicating whether or not executing the create command
@@ -719,7 +854,7 @@ class GameLogic {
          * \brief   Executes the edit attribute command.
          * 
          * \param[in] aPlayer       Specifies the player entering the command.
-         * \param[in] directObj     Specifies the direct object received from the 
+         * \param[in] indirectObj   Specifies the direct object received from the 
          *                          parser.
          * \param[in] stringParam   Specifies the string parameter received from the
          *                          parser.
@@ -727,7 +862,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not executing the edit attribute command
          *          was successful.
          */
-        bool editAttributeCommand(Player *aPlayer, InteractiveNoun *directObj, const std::string &stringParam);
+        bool editAttributeCommand(Player *aPlayer, InteractiveNoun *indirectObj, const std::string &stringParam);
 
         /*!
          * \brief   Executes the edit wizard command.
@@ -776,9 +911,27 @@ class GameLogic {
          *          was successful.
          */
         bool deleteCommand(Player *aPlayer, InteractiveNoun *directObj);
+
+        /*!
+         * \brief   Converts string to int and validates.
+         * 
+         * \param[in] number    String to attempt to convert.
+         * \param[in] min       Minimum acceptable value.
+         * \param[in] max       Maximum acceptable value.
+         *
+         * \return  Returns an int with the converted number if it passed validation,
+         *          -1 otherwise.
+         */
+        int validateStringNumber(std::string number, int min, int max);
         GameObjectManager *manager;
         std::queue<std::pair<std::string, int>> messageQueue;
         std::mutex queueMutex;
+        std::map<int, std::pair<std::mutex*, std::queue<std::string>*>> playerMessageQueues;
+        std::mutex playerMsgQMutex;
+        account::Account* accountManager;
+        parser::TextParser* theTextParser;
+        telnet::Server* theServer;
+        Area startArea;
 };
 
 }}
