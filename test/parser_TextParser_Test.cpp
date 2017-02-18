@@ -63,6 +63,7 @@ public:
     static void TearDownTestCase() {
         // Clear WordManager data
         parser::WordManager::resetAll();
+
     }
 
     virtual void SetUp() {
@@ -71,6 +72,12 @@ public:
     }
 
     virtual void TearDown() {
+        // free anything in the InteractiveNoun vector
+        for (auto it = ins.begin(); it != ins.end(); ++it) {
+            if (*it != nullptr) delete *it;
+        }
+        ins.clear();
+
         // Clear the candidate list
         results.clear();
 
@@ -1187,6 +1194,314 @@ TEST_F(TextParserTest, UnavailableDirectNoun) {
     delete in;
 }
 
+// Test a verb-direct object-indirect object sentence
+TEST_F(TextParserTest, VDISentenceTest) {
+    input = "vdi item item";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_TRUE(results[0].direct[0] == &item);
+    EXPECT_STREQ("item", results[0].directAlias.c_str());
+    ASSERT_EQ(1, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirect[0] == &item);
+    EXPECT_STREQ("item", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    // Should not be any position
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-direct object-preposition-indirect object sentence
+TEST_F(TextParserTest, VDPISentenceOnTest) {
+    input = "vdpi item 1 on item 2";
+    
+    engine::Item item1;
+    engine::Item item2;
+    playerLex.addNoun("item 1", &item1);
+    playerLex.addNoun("item 2", &item2);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_TRUE(results[0].direct[0] == &item1);
+    EXPECT_STREQ("item 1", results[0].directAlias.c_str());
+    ASSERT_EQ(1, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirect[0] == &item2);
+    EXPECT_STREQ("item 2", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::ON, results[0].position);
+}
+
+// Test a verb-direct object-preposition-indirect object sentence
+TEST_F(TextParserTest, VDPISentenceOfTest) {
+    input = "vdpi item 1 of item 2";
+    
+    engine::Item item1;
+    engine::Item item2;
+    playerLex.addNoun("item 1", &item1);
+    playerLex.addNoun("item 2", &item2);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_TRUE(results[0].direct[0] == &item2);
+    EXPECT_STREQ("item 2", results[0].directAlias.c_str());
+    ASSERT_EQ(1, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirect[0] == &item1);
+    EXPECT_STREQ("item 1", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-direct object-preposition-indirect text sentence
+TEST_F(TextParserTest, VDPTSentenceOnTest) {
+    input = "vdpt item on text";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_TRUE(results[0].direct[0] == &item);
+    EXPECT_STREQ("item", results[0].directAlias.c_str());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_STREQ("text", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::ON, results[0].position);
+}
+
+// Test a verb-direct object-preposition-indirect text sentence
+TEST_F(TextParserTest, VDPTSentenceOfTest) {
+    input = "vdpt item of text";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_STREQ("text", results[0].directAlias.c_str());
+    ASSERT_EQ(1, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirect[0] == &item);
+    EXPECT_STREQ("item", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-direct object sentence
+TEST_F(TextParserTest, VDSentenceTest) {
+    input = "vd item";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_TRUE(results[0].direct[0] == &item);
+    EXPECT_STREQ("item", results[0].directAlias.c_str());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirectAlias.empty());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-direct object sentence
+TEST_F(TextParserTest, VDTSentenceTest) {
+    input = "vdt item text";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_TRUE(results[0].direct[0] == &item);
+    EXPECT_STREQ("item", results[0].directAlias.c_str());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_STREQ("text", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-preposition-indirect object sentence
+TEST_F(TextParserTest, VPISentenceTest) {
+    input = "vpi on item";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_TRUE(results[0].directAlias.empty());
+    ASSERT_EQ(1, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirect[0] == &item);
+    EXPECT_STREQ("item", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::ON, results[0].position);
+}
+
+// Test a verb-preposition-indirect object sentence
+TEST_F(TextParserTest, VPTSentenceTest) {
+    input = "vpt on text";
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_TRUE(results[0].directAlias.empty());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_STREQ("text", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::ON, results[0].position);
+}
+
+// Test a verb-preposition-indirect object sentence
+TEST_F(TextParserTest, VSentenceTest) {
+    input = "v";
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_TRUE(results[0].directAlias.empty());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirectAlias.empty());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-text-indirect object sentence
+TEST_F(TextParserTest, VTISentenceTest) {
+    input = "vti text item";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_STREQ("text", results[0].directAlias.c_str());
+    ASSERT_EQ(1, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirect[0] == &item);
+    EXPECT_STREQ("item", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-text-preposition-indirect object sentence
+TEST_F(TextParserTest, VTPISentenceOnTest) {
+    input = "vtpi text on item";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_STREQ("text", results[0].directAlias.c_str());
+    ASSERT_EQ(1, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirect[0] == &item);
+    EXPECT_STREQ("item", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::ON, results[0].position);
+}
+
+// Test a verb-text-preposition-indirect object sentence
+TEST_F(TextParserTest, VTPISentenceOfTest) {
+    input = "vtpi text of item";
+    
+    engine::Item item;
+    playerLex.addNoun("item", &item);
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_TRUE(results[0].direct[0] == &item);
+    EXPECT_STREQ("item", results[0].directAlias.c_str());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_STREQ("text", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-text-preposition-text sentence
+TEST_F(TextParserTest, VTPTSentenceOnTest) {
+    input = "vtpt text part 1 on text part 2";
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_STREQ("text part 1", results[0].directAlias.c_str());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_STREQ("text part 2", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::ON, results[0].position);
+}
+
+// Test a verb-text-preposition-text sentence
+TEST_F(TextParserTest, VTPTSentenceOfTest) {
+    input = "vtpt text part 1 of text part 2";
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    // Direct and indirect objects should be reversed because of "of" preposition
+    EXPECT_STREQ("text part 2", results[0].directAlias.c_str());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_STREQ("text part 1", results[0].indirectAlias.c_str());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
+
+// Test a verb-text-preposition-text sentence
+TEST_F(TextParserTest, VTSentenceTest) {
+    input = "vt text";
+    
+    results = tp.parse(input, playerLex, areaLex);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
+    EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
+    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_STREQ("text", results[0].directAlias.c_str());
+    EXPECT_EQ(0, results[0].indirect.size());
+    EXPECT_TRUE(results[0].indirectAlias.empty());
+    EXPECT_TRUE(results[0].unparsed.empty());
+    EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
+}
 
 /******************************************
  * Helper Functions
@@ -1231,7 +1546,6 @@ void setSentenceTestVerbs() {
     // VPISentence
     vi.grammar = parser::Grammar(parser::Grammar::NO, true, parser::Grammar::YES);
     vi.grammar.addPreposition("on", parser::PrepositionType::ON);
-    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
     vi.command = engine::CommandEnum::INVALID;
     vi.description = "VPI";
     parser::WordManager::addGlobalVerb("vpi", vi);
@@ -1239,7 +1553,6 @@ void setSentenceTestVerbs() {
     // VPTSentence
     vi.grammar = parser::Grammar(parser::Grammar::NO, true, parser::Grammar::TEXT);
     vi.grammar.addPreposition("on", parser::PrepositionType::ON);
-    vi.grammar.addPreposition("of", parser::PrepositionType::OF);
     vi.command = engine::CommandEnum::INVALID;
     vi.description = "VPT";
     parser::WordManager::addGlobalVerb("vpt", vi);
