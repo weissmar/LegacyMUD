@@ -14,8 +14,6 @@ LIB_DIRS = account display engine telnet parser
 LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(patsubst %,%,$(lib_dir)).a)
 # Append the include paths for the libraries to the g++ flags
 CXXFLAGS += $(foreach include_dir, $(LIB_DIRS), -I$(include_dir))
-# Add the external header directory as an include path
-CXXFLAGS += $(foreach ext_inc_dir, $(EXT_INC_DIRS), -I$(ext_inc_dir))
 # Program executable name
 PROG = legacymud
 
