@@ -2,7 +2,7 @@
   \file     Sentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/13/2017
+  \modified 02/17/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the Sentence class.
@@ -115,6 +115,7 @@ Sentence *Sentence::makeSentence(const Grammar &rules, PartOfSpeech verb, VerbTy
                 break;
             case Grammar::TEXT:
                 // Verb-Direct Text-Indirect Text Unsupported
+                // No way to tell where the direct object begins and the indirect object ends
                 return nullptr;
                 break;
             }
