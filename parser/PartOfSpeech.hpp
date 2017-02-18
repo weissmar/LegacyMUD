@@ -2,7 +2,7 @@
   \file     PartOfSpeech.hpp
   \author   David Rigert
   \created  02/11/2017
-  \modified 02/12/2017
+  \modified 02/18/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the PartOfSpeech class and
@@ -43,19 +43,72 @@ public:
     /*!
       \brief Finds the longest token sequence that matches the part of speech.
 
-      This function uses \a findWord to find the longest matching sequence of words in \a tokens.
-      It only checks the tokens indicated by \a range.
+      This function uses a member function \a findWord to find the longest 
+      matching sequence of words in \a tokens. It only checks the tokens 
+      indicated by \a range, starting with the entire range and dropping one 
+      off the end until there are no tokens left in the range.
 
-      \param[in]     tokens     Specifies the tokenized input text.
-      \param[in,out] range      Specifies the range of tokens to check. This is updated
-                                to the actual range of tokens that matched the part of speech.
-      \param[in]     findWord   Specifies a pointer to the find function of the container
-                                to check for a match in.
+      \param[in]     tokens   Specifies the tokenized input text.
+      \param[in,out] range    Specifies the range of tokens to check. This is updated
+                              to the actual range of tokens that matched the part of speech.
+      \param[in]     findWord Specifies a pointer to the find function of the container
+                              to check for a match in.
+      \param[in]     context  Specifies the instance to use for the \a findWord member function.
       
       \return Returns whether a match was found.
     */
     bool findMatch(const std::vector<Token> &tokens, Range &range, bool (*findWord)(const void *, std::string word), const void *context);
+
+    /*!
+      \brief Finds the longest token sequence that matches the part of speech.
+
+      This function uses a static function \a findWord to find the longest 
+      matching sequence of words in \a tokens. It only checks the tokens 
+      indicated by \a range, starting with the entire range and dropping one 
+      off the end until there are no tokens left in the range.
+
+      \param[in]     tokens   Specifies the tokenized input text.
+      \param[in,out] range    Specifies the range of tokens to check. This is updated
+                              to the actual range of tokens that matched the part of speech.
+      \param[in]     findWord Specifies a pointer to the find function of the container
+                              to check for a match in.
+      
+      \return Returns whether a match was found.
+    */
     bool findMatch(const std::vector<Token> &tokens, Range &range, bool (*findWord)(const void *, std::string word)) { return findMatch(tokens, range, findWord, 0); }
+
+    /*!
+      \brief Finds if the specified token sequence is a part of speech.
+
+      This function uses a member function \a findWord to determine whether 
+      the specified \a range of tokens matches an alias. This is used to 
+      implement custom matching algorithms in the \c Sentence derived classes.
+
+      \param[in]  tokens    Specifies the tokenized input text.
+      \param[in]  range     Specifies the range of tokens to check.
+      \param[in]  findWord  Specifies a pointer to the find function of the container
+                            to check for a match in.
+      \param[in]  context   Specifies the instance to use for the \a findWord member function.
+      
+      \return Returns whether a match was found.
+    */
+    bool findExactMatch(const std::vector<Token> &tokens, const Range &range, bool (*findWord)(const void *, std::string word), const void *context);
+
+    /*!
+      \brief Finds if the specified token sequence is a part of speech.
+
+      This function uses a static function \a findWord to determine whether 
+      the specified \a range of tokens matches an alias. This is used to 
+      implement custom matching algorithms in the \c Sentence derived classes.
+
+      \param[in]  tokens    Specifies the tokenized input text.
+      \param[in]  range     Specifies the range of tokens to check.
+      \param[in]  findWord  Specifies a pointer to the find function of the container
+                            to check for a match in.
+      
+      \return Returns whether a match was found.
+    */
+    bool findExactMatch(const std::vector<Token> &tokens, const Range &range, bool (*findWord)(const void *, std::string word)) { return findExactMatch(tokens, range, findWord, 0); }
 
     /*!
       \brief Gets the normalized alias of the matching part of speech.
