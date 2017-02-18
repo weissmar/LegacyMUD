@@ -2,7 +2,7 @@
   \file     PartOfSpeech.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/12/2017
+  \modified 02/18/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the PartOfSpeech class.
@@ -59,6 +59,49 @@ bool PartOfSpeech::findMatch(const std::vector<Token> &tokens, Range &range, boo
         _alias = std::string();
         _originalAlias = std::string();
         range = originalRange;
+        _isValid = false;
+    }
+
+    return _isValid;
+}
+
+bool PartOfSpeech::findExactMatch(const std::vector<Token> &tokens, const Range &range, bool (*findWord)(const void *, std::string word), const void *context) {
+    if (range.end > tokens.size()) {
+        _alias = std::string();
+        _originalAlias = std::string();
+        _isValid = false;
+        return _isValid;
+    }
+
+    _isValid = false;
+
+    // Search for a match only with the entire specified range.
+    std::string substring = Tokenizer::joinNormalized(tokens, range, false);
+    // Try with ignore words first
+    if (!substring.empty() && findWord(context, substring)) {
+        // Found a match
+        _alias = substring;
+        _originalAlias = Tokenizer::joinOriginal(tokens, range);
+        _isValid = true;
+        _range = range;
+    }
+    else {
+        // Try without ignore words if not found with
+        substring = Tokenizer::joinNormalized(tokens, range, true);
+        if (!substring.empty() && findWord(context, substring)) {
+            // Found a match
+            _alias = substring;
+            _originalAlias = Tokenizer::joinOriginal(tokens, range);
+            _isValid = true;
+            _range = range;
+        }
+    }
+    
+    if (!_isValid) {
+        // Did not find a match.
+        _alias = std::string();
+        _originalAlias = std::string();
+        _range = Range(0, 0);
         _isValid = false;
     }
 

@@ -61,7 +61,7 @@ ParseResult VTPTSentence::getResult(const std::vector<Token> &tokens, const Lexi
                 for (end = range.end - 1, start = end - spread; (start > range.start) && !found; --end, --start) {
                     prepRange.start = start;
                     prepRange.end = end;
-                    if (_preposition.findMatch(tokens, prepRange, &Grammar::forwardHasPreposition, &grammar)) {
+                    if (_preposition.findExactMatch(tokens, prepRange, &Grammar::forwardHasPreposition, &grammar)) {
                         // Preposition found
                         found = true;
                     }
