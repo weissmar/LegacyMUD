@@ -2,7 +2,7 @@
   \file     parser_TextParser_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/16/2017
+  \modified 02/17/2017
   \course   CS467, Winter 2017
  
   \details This file contains the unit tests for the TextParser class.
@@ -27,9 +27,6 @@ void setSentenceTestVerbs();
 
 // Reuse this variable for a new parser object every test
 parser::TextParser tp;
-
-// Store pointers to all InteractiveNouns instances here.
-std::vector<engine::InteractiveNoun *> ins;
 
 // Store the input text here
 std::string input;
@@ -72,12 +69,6 @@ public:
     }
 
     virtual void TearDown() {
-        // free anything in the InteractiveNoun vector
-        for (auto it = ins.begin(); it != ins.end(); ++it) {
-            if (*it != nullptr) delete *it;
-        }
-        ins.clear();
-
         // Clear the candidate list
         results.clear();
 
