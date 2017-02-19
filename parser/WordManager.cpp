@@ -2,7 +2,7 @@
   \file     WordManager.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/15/2017
+  \modified 02/18/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the WordManager class.
@@ -173,6 +173,11 @@ std::vector<VerbInfo> WordManager::getBuilderVerbs(std::string alias) {
     }
 
     return results;
+}
+
+// Gets pointers to local InteractiveNoun objects with the specified noun alias
+std::vector<engine::InteractiveNoun *> WordManager::getLocalNouns(std::string alias) {
+    return _localNouns.getObjects(alias);
 }
 
 // Gets whether the specified noun is in use.
