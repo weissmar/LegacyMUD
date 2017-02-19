@@ -143,7 +143,7 @@ public:
     Range getRange() const;
 
     /*!
-      \brief Sets the alias to the specifies \a range of \a tokens.
+      \brief Sets the alias to the specified \a range of \a tokens.
 
       This function sets the normalized and original aliases to the token 
       sequence specified by \a range, and sets the instance to a valid state
