@@ -2,7 +2,7 @@
   \file     VPTSentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/17/2017
+  \modified 02/18/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VPTSentence class.
@@ -84,7 +84,6 @@ ParseResult VPTSentence::getResult(const std::vector<Token> &tokens, const Lexic
                     result.position = engine::ItemPosition::UNDER;
                     break;
                 case PrepositionType::OF:
-                    // No direct alias to swap
                 case PrepositionType::TO:
                 case PrepositionType::WITH:
                 case PrepositionType::FROM:
