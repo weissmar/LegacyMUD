@@ -150,8 +150,16 @@ bool Server::disconnectPlayer(int playerFd) {
         return false;
  
     else {      
-        _playerCount--;     // decrement player count
-        close(playerFd);
+        _playerCount--;                     // decrement player count
+        shutdown(playerFd, SHUT_RDWR);      // needed to break any blocked reads.
+
+        /* Recycle file descriptors through a que to prevent reuse. */
+        _held_filedescriptors.push_back(playerFd);
+        if (_held_filedescriptors.size() > 250) {   // limit held file descriptors to 250
+            close(_held_filedescriptors.front());   // destroy held socket
+            _held_filedescriptors.pop_front();    
+        }
+        
         std::cout << "Player disconnected. PlayerFd: " << playerFd << std::endl;
         return true;
     }
@@ -159,9 +167,9 @@ bool Server::disconnectPlayer(int playerFd) {
 
 
 /******************************************************************************
-* Function:    shutdown
+* Function:    shutDownServer
 *****************************************************************************/
-bool Server::shutdown() {   
+bool Server::shutDownServer() {   
     
     /* Only shutdown if there are no players on the server and the listening socket 
        is greater than 0. The game logic would have to first pause the server and
