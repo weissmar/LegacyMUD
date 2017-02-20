@@ -2,7 +2,7 @@
   \file     Server.hpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/12/2017
+  \modified 2/19/2017
   \course   CS467, Winter 2017
  
   \details  Declaration file for the Server class.
@@ -85,8 +85,6 @@ namespace legacymud {
         
         /*!
           \brief Closes the server listen socket and sets member variables to default values.
-          
-          This function closes all open server sockets and sets member variables to default values.
                    
           \pre All players on the server have to be disconnected before calling this.
           \post True is returned if the server listen socket is closed and member variables are reset to default values.
@@ -96,8 +94,6 @@ namespace legacymud {
         
         /*!
           \brief Sends a message to a player.
-          
-          This function sends a message to a player.
           
           \param[in]  playerFd          a player identifier 
           \param[in]  outMsg            message to be sent to a player
@@ -109,10 +105,29 @@ namespace legacymud {
         bool sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine);
         
         /*!
+          \brief Sends a message to a player.  No newline is sent after the message.
+          
+          \param[in]  playerFd          a player identifier 
+          \param[in]  outMsg            message to be sent to a player                                  
+          \pre none
+          \post Returns true if the message is successfully sent.  Otherwise it returns false.
+        */        
+        bool sendMsg(int playerFd, std::string outMsg);  
+
+        /*!
+          \brief Sends a newline to a player's terminal. 
+          
+          \param[in]  playerFd          a player identifier                                  
+          \pre none
+          \post Returns true if the newline was successfully sent.  Otherwise it returns false.
+        */        
+        bool sendNewLine(int playerFd);        
+        
+        /*!
           \brief Receives a message from a player.  
           
-          This function receives a message from a player.  It will not return until a message is received 
-          or the player disconnects or times-out.
+          This function receives a message from a player.  It will not return until either a message is received, 
+          the player disconnects, or the player times-out.
           
           \param[in]  playerFd          a player identifier 
           \param[in]  inMsg             message received from a player                                 
@@ -131,8 +146,8 @@ namespace legacymud {
           
           \param[in]  playerFd          a player identifier                               
           \pre none
-          \post Returns false if a player disconnects or times-out. The Game Logic newPlayerHandler should call 
-                disconnectPlayer(playerFd) if a false is received.
+          \post Returns false if a player disconnects, times-outs, or if this playerId is not in the player map. 
+                The Game Logic newPlayerHandler should call disconnectPlayer(playerFd) if a false is received.
         */ 
         bool listenForMsgs(int playerFd);
         
@@ -152,8 +167,6 @@ namespace legacymud {
         /*!
           \brief Sets the max number of players that can be concurrently on the server.  
           
-          This function sets the max number of players that can be concurrently on the server. 
-          
           \param[in]  maxPlayers     max number of players that can be on the server                           
           \pre maxplayers must be an integer greater than 0.
           \post Returns false if maxPlayers is an invalid ammount.  Otherwise the player cap is set and true is returned.
@@ -161,9 +174,7 @@ namespace legacymud {
         bool setMaxPlayers(int maxPlayers);
         
         /*!
-          \brief Sets the time-out period in seconds that the server waits before disconnecting an inactive player.  
-          
-          This function sets the time-out period in seconds that the server waits before disconnecting an inactive player.  
+          \brief Sets the time-out period in seconds that the server waits before disconnecting an inactive player.    
           
           \param[in]  timeOut     time in seconds to set the time-out period to                          
           \pre timeOut must be an integer greater than 0.
@@ -187,8 +198,6 @@ namespace legacymud {
         
         /*!
           \brief Gets the server's pause state.
-          
-          This function gets the server's pause state.
                                 
           \pre none
           \post Returns the server's pause state.
@@ -197,8 +206,6 @@ namespace legacymud {
         
         /*!
           \brief Gets the server's max player setting.
-          
-          This function gets the server's max player setting.
                                 
           \pre none
           \post Returns the server's max player setting.
@@ -217,8 +224,6 @@ namespace legacymud {
         
         /*!
           \brief Gets the server's player time-out period in seconds.
-          
-          This function gets the server's player time-out period in seconds.
                                 
           \pre none
           \post Returns the server's time-out period in seconds.
@@ -227,8 +232,6 @@ namespace legacymud {
         
         /*!
           \brief Gets the server's port.
-          
-          This function gets the server's port.
                                 
           \pre none
           \post Returns the server's port.
@@ -243,17 +246,7 @@ namespace legacymud {
           \pre none
           \post Returns the game logic pointer that the server is using.
         */ 
-        legacymud::engine::GameLogic* getGameLogicPt() const;
-        
-        /*!
-          \brief Gets a player's text display echo mode.
-          
-          This function gets a player's text display echo mode.
-                                
-          \pre none
-          \post Returns a player's text display echo mode.
-        */         
-        bool getPlayerEcho(int playerFd);       
+        legacymud::engine::GameLogic* getGameLogicPt() const;      
         
     private:
         bool _setServerPort(int serverPort);        // function that sets and validates the server port
@@ -268,8 +261,12 @@ namespace legacymud {
         int _playerCount;                           // a count of the number of players on the server
         bool _serverPause;                          // pause state of the server
         legacymud::engine::GameLogic* _gameLogicPt; // game logic pointer the server is using
-        std::map<int, bool> _playerEcho;            // map used to set a player's text echo display mode
-        std::mutex _mu_echo;                         // mutex used for the player echo map
+        struct _Player {                            // struct user info struct
+            bool echo;                              // flag that indicates a player's text echo display mode           
+            std::string readBuffer;                 // a player's read string buffer
+        }; 
+        std::map<int, _Player> _playerMap;          // map used track player's on the server and to capture player specific server data
+        std::mutex _mu_player_map;                  // mutex used for the player map
 };
 
 }}
