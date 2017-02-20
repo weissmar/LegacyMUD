@@ -2,7 +2,7 @@
   \file     VTPISentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/18/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VTPISentence class.
@@ -46,13 +46,13 @@ ParseResult VTPISentence::getResult(const std::vector<Token> &tokens, const Lexi
     case VerbType::BUILDER:
     case VerbType::EDITMODE:
         // Make sure there are enough tokens (at least 3)
-        if (range.end - range.start < 3) {
+        if (range.start >= range.end) {
             result.status = ParseStatus::INVALID_DIRECT;
         }
         // Look for an indirect object match
         Range indirectRange;
         bool found = false;
-        for (range.start += 2; range.start < range.end && !found; ++range.start) {
+        for (; range.start < range.end && !found; ++range.start) {
             // Find indirect object on player
             if (_indirect.findExactMatch(tokens, range, &LexicalData::forwardHasNoun, &playerLex)) {
                 found = true;
@@ -88,7 +88,7 @@ ParseResult VTPISentence::getResult(const std::vector<Token> &tokens, const Lexi
         if (!found) {
             // No results found--check all local nouns to see if invalid or unavailable
             range = Range(_verb.getRange().end, tokens.size());
-            for (range.start += 2; range.start < range.end && !found; ++range.start) {
+            for (; range.start < range.end && !found; ++range.start) {
                 if (_indirect.findExactMatch(tokens, range, WordManager::hasNoun)) {
                     found = true;
                     result.status = ParseStatus::UNAVAILABLE_INDIRECT;
@@ -99,36 +99,40 @@ ParseResult VTPISentence::getResult(const std::vector<Token> &tokens, const Lexi
             }
         }
 
-        // Set possible preposition range (leaving at least 1 token for direct object)
-        range = Range(_verb.getRange().end + 1, indirectRange.start);
-        // Look for a preposition match
-        if (range.start >= range.end) {
-            // Preposition missing--invalid
-            result.status = ParseStatus::INVALID_PREPOSITION;
-        }
-        else if (result.status == ParseStatus::UNPARSED) {
-            // Find the longest matching preposition
-            for (found = false; range.start < range.end && !found; ++range.start) {
-                if (_preposition.findExactMatch(tokens, range, &Grammar::forwardHasPreposition, &grammar)) {
-                    // Preposition found
-                    found = true;
-                }
+        if (result.status == ParseStatus::UNPARSED) {
+            // Set possible preposition range
+            range = Range(_verb.getRange().end, indirectRange.start);
+            // Look for a preposition match
+            if (range.start >= range.end) {
+                // Preposition missing--invalid
+                result.status = ParseStatus::INVALID_PREPOSITION;
             }
-            if (!found) {
-                    // Preposition not found--invalid
-                    result.status = ParseStatus::INVALID_PREPOSITION;
+            else {
+                // Find the longest matching preposition
+                for (found = false; range.start < range.end && !found; ++range.start) {
+                    if (_preposition.findExactMatch(tokens, range, &Grammar::forwardHasPreposition, &grammar)) {
+                        // Preposition found
+                        found = true;
+                    }
+                }
+                if (!found) {
+                        // Preposition not found--invalid
+                        result.status = ParseStatus::INVALID_PREPOSITION;
+                }
             }
         }
 
-        // Set all remaining tokens to the direct alias
-        range = Range(_verb.getRange().end, _preposition.getRange().start);
-        if (range.start >= range.end) {
-            // No tokens left for direct object--invalid
-            result.status = ParseStatus::INVALID_DIRECT;
-        }
-        else if (result.status == ParseStatus::UNPARSED) {
-            // Only set if the preposition and indirect object were valid
-            result.directAlias = Tokenizer::joinOriginal(tokens, range);
+        if (result.status == ParseStatus::UNPARSED) {
+            // Set all remaining tokens to the direct alias
+            range = Range(_verb.getRange().end, _preposition.getRange().start);
+            if (range.start >= range.end) {
+                // No tokens left for direct object--invalid
+                result.status = ParseStatus::INVALID_DIRECT;
+            }
+            else {
+                // Only set if the preposition and indirect object were valid
+                result.directAlias = Tokenizer::joinOriginal(tokens, range);
+            }
         }
 
         // If we make it here with a status of UNPARSED, then everything was valid

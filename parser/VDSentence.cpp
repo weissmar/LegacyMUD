@@ -2,7 +2,7 @@
   \file     VDSentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/18/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VDSentence class.
@@ -39,8 +39,14 @@ ParseResult VDSentence::getResult(const std::vector<Token> &tokens, const Lexica
     case VerbType::UNAVAILABLE:
         result.status = ParseStatus::UNAVAILABLE_VERB;
         break;
-    case VerbType::GLOBAL:
     case VerbType::LOCAL:
+        // Implied GO command requires special code path to use verb as direct object
+        if (_command == engine::CommandEnum::GO) {
+            range.start = 0;
+            range.end = tokens.size();
+        }
+        //FALLTHROUGH
+    case VerbType::GLOBAL:
     case VerbType::BUILDER:
     case VerbType::EDITMODE:
         // Look for a direct object match

@@ -2,7 +2,7 @@
   \file     VTPTSentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/18/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VTPTSentence class.
@@ -46,19 +46,18 @@ ParseResult VTPTSentence::getResult(const std::vector<Token> &tokens, const Lexi
     case VerbType::BUILDER:
     case VerbType::EDITMODE:
         // Check for leftover tokens and set status accordingly
-        if (range.end - range.start < 3 || range.start == tokens.size()) {
-            // We need at least 3 tokens to have a prep with text on each side
+        if (range.start >= range.end) {
             result.status = ParseStatus::INVALID_DIRECT;
         }
         else {
-            // To find the preposition, search all remaining tokens except first and last.
+            // To find the preposition, search all remaining tokens.
             // Decrement the span by 1 each turn and keep searching, back-to-front.
             bool found = false;
             size_t tCount = range.end - range.start;
             Range prepRange;
             size_t start = 0, end = 0;
-            for (size_t spread = tCount - 2; (spread > 0) && !found; --spread) {
-                for (end = range.end - 1, start = end - spread; (start > range.start) && !found; --end, --start) {
+            for (size_t spread = tCount - 1; (spread > 0) && !found; --spread) {
+                for (end = range.end, start = end - spread; (start >= range.start) && !found; --end, --start) {
                     prepRange.start = start;
                     prepRange.end = end;
                     if (_preposition.findExactMatch(tokens, prepRange, &Grammar::forwardHasPreposition, &grammar)) {
@@ -71,17 +70,36 @@ ParseResult VTPTSentence::getResult(const std::vector<Token> &tokens, const Lexi
             if (!found) {
                 // No preposition--invalid
                 result.status = ParseStatus::INVALID_PREPOSITION;
-                result.unparsed = Tokenizer::joinOriginal(tokens, range);
             }
             else {
                 // Set the preposition type
                 _prepType = grammar.getPrepositionType(_preposition.getAlias());
-                // Set directAlias to everything before the preposition
-                result.directAlias = Tokenizer::joinOriginal(tokens, Range(range.start, prepRange.start));
-                // Set indirectAlias to everything after the preposition
-                result.indirectAlias = Tokenizer::joinOriginal(tokens, Range(prepRange.end, tokens.size()));
-                result.status = ParseStatus::VALID;
+            }
 
+            if (result.status == ParseStatus::UNPARSED) {
+                // Make sure we have tokens for directAlias
+                if (range.start < prepRange.start) {
+                    // Set directAlias to everything before the preposition
+                    result.directAlias = Tokenizer::joinOriginal(tokens, Range(range.start, prepRange.start));
+                }
+                else {
+                    result.status = ParseStatus::INVALID_DIRECT;
+                }
+            }
+
+            if (result.status == ParseStatus::UNPARSED) {
+                // Make sure we have tokens for indirectAlias
+                if (prepRange.end < tokens.size()) {
+                    // Set indirectAlias to everything after the preposition
+                    result.indirectAlias = Tokenizer::joinOriginal(tokens, Range(prepRange.end, tokens.size()));
+                    result.status = ParseStatus::VALID;
+                }
+                else {
+                    result.status = ParseStatus::INVALID_INDIRECT;
+                }
+            }
+
+            if (result.status == ParseStatus::VALID) {
                 // Handle preposition
                 switch (_prepType) {
                 case PrepositionType::ON:
@@ -105,6 +123,11 @@ ParseResult VTPTSentence::getResult(const std::vector<Token> &tokens, const Lexi
                     result.position = engine::ItemPosition::NONE;
                     break;
                 }
+            }
+            else {
+                // Not a valid result, put everything in unparsed
+                result.unparsed = Tokenizer::joinOriginal(tokens, range);
+                result.directAlias = std::string();
             }
         }
         break;

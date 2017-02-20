@@ -2,7 +2,7 @@
   \file     VTISentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/18/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VTISentence class.
@@ -51,7 +51,7 @@ ParseResult VTISentence::getResult(const std::vector<Token> &tokens, const Lexic
         // Look for an indirect object match
         Range indirectRange;
         bool found = false;
-        for (range.start += 1; range.start < range.end && !found; ++range.start) {
+        for (; range.start < range.end && !found; ++range.start) {
             // Find indirect object on player
             if (_indirect.findExactMatch(tokens, range, &LexicalData::forwardHasNoun, &playerLex)) {
                 found = true;
@@ -87,7 +87,7 @@ ParseResult VTISentence::getResult(const std::vector<Token> &tokens, const Lexic
         if (!found) {
             // No results found--check all local nouns to see if invalid or unavailable
             range = Range(_verb.getRange().end, tokens.size());
-            for (range.start += 1; range.start < range.end && !found; ++range.start) {
+            for (; range.start < range.end && !found; ++range.start) {
                 if (_indirect.findExactMatch(tokens, range, WordManager::hasNoun)) {
                     found = true;
                     result.status = ParseStatus::UNAVAILABLE_INDIRECT;
@@ -99,20 +99,27 @@ ParseResult VTISentence::getResult(const std::vector<Token> &tokens, const Lexic
         }
 
         // Set all remaining tokens to the direct alias
-        range = Range(_verb.getRange().end, indirectRange.start);
-        if (range.start >= range.end) {
-            // No tokens left for direct object--invalid
-            result.status = ParseStatus::INVALID_DIRECT;
-        }
-        else if (result.status == ParseStatus::UNPARSED) {
-            // Only set if the preposition and indirect object were valid
-            result.directAlias = Tokenizer::joinOriginal(tokens, range);
+        if (result.status == ParseStatus::UNPARSED) {
+            range = Range(_verb.getRange().end, indirectRange.start);
+            if (range.start >= range.end) {
+                // No tokens left for direct object--invalid
+                result.status = ParseStatus::INVALID_DIRECT;
+            }
+            else {
+                // Only set if the preposition and indirect object were valid
+                result.directAlias = Tokenizer::joinOriginal(tokens, range);
+            }
         }
 
         // If we make it here with a status of UNPARSED, then everything was valid
         if (result.status == ParseStatus::UNPARSED) {
             result.status = ParseStatus::VALID;
             result.indirect = _indirectObjects;
+        }
+        else {
+            range = Range(_verb.getRange().end, tokens.size());
+            result.unparsed = Tokenizer::joinOriginal(tokens, range);
+            result.indirectAlias = std::string();
         }
         break;
     }
