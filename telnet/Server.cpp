@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/19/2017
+  \modified 2/20/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -260,30 +260,33 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
     if(player == _playerMap.end()) 
         return false;       
     
-    /* Player in in the player map. Receive a message from this player. */
+    /* Player is in the player map. Receive a message from this player. */
     else {
         player->second.readBuffer.clear();  // initialize this player's read buffer    
-        lock_player_map.unlock();           // unlock the player map mutex 
         inMsg.clear();                      // initialize inMsg
         
         // Read the socket.  Continue to read until a carriage return (ASCII 13) is received.
         while (ch != 13) {  // ASCII carriage return
 
+            /* Unlock the player map mutex for the next read */
+            lock_player_map.unlock(); 
+            
             /* Read a character. */
             if (read(playerFd,&ch,1) <= 0) {              
                 return false;     // error: returned -1 when error reading, or 0 if client disconnected.   
             }
             /* Character received. */
             else {              
-                /* Re-find this player in case disconnectPlayer was called while blocked. */
-                lock_player_map.lock();             // lock the player map mutex 
+                
+                /* Lock the player map mutex. */
+                lock_player_map.lock();             
+                
+                /* Find this player again in case disconnectPlayer was called while blocked. */
                 auto player = _playerMap.find(playerFd); 
  
                 /* If this player file descriptor is not in the map, return false. */
                 if(player == _playerMap.end()) 
                     return false; 
-                
-                lock_player_map.unlock();           // unlock the player map mutex 
 
                 /* Read an ANSI escape code and clear it so it doesn't display in the player's terminal. */
                 if (ch == 27 ) {
@@ -297,7 +300,6 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
                 else if (ch == 8 || ch == 127) {
                     
                     /* If the player's receive buffer has something in it, remove the last character and echo to that player. */
-                    lock_player_map.lock();    // lock the player map mutex.
                     if (player->second.readBuffer.size() > 0) {
                         
                         /* Remove the last character from the in message. */
@@ -308,16 +310,13 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
                         if (write(playerFd, eraseStr, 3) < 0) 
                             return false;  
                     }
-                    lock_player_map.unlock();  // unlock the player map mutex.
                 }
                     
                 /* Character to be added to the message. */
                 else if (ch >=32 && ch <=126) {
                     
                     /* Add the character to the read buffer. */
-                    lock_player_map.lock();    // lock the player map mutex.
                     player->second.readBuffer += ch;
-                    lock_player_map.unlock();  // unlock the player map mutex.
                     
                     /* If echo is set to false, set ch to '*'. */
                     if (player->second.echo == false)
@@ -326,15 +325,16 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
                     /* Display the character on the player's terminal. */
                     if (write(playerFd, &ch, 1) < 0) 
                         return false; 
-                }  
+                }              
             }   
         }
         
         /* Return the read string by setting it to inMsg and clear this player's read buffer. */        
-        lock_player_map.lock();               // lock the player map mutex.
         inMsg = player->second.readBuffer;    // set the return message
         player->second.readBuffer.clear();    // clear the buffer
-        lock_player_map.unlock();             // unlock the player map mutex.
+        
+        /* Unlock the player map mutex.  Need to unlock before calling sendNewLine since it also uses this mutex. */
+        lock_player_map.unlock();            
         
         /* Send new line to the player's terminal. */
         if (sendNewLine(playerFd) == false ) 
@@ -513,7 +513,7 @@ bool Server::_setGameLogicPt(legacymud::engine::GameLogic* gameLogicPt) {
 *****************************************************************************/
 bool Server::_setCharacterMode(int playerFd) {
     unsigned char code[6] = {255,251,1,255,251,3};     // Telnet command IAC WILL ECHO, IAC WILL SUPPRESS_GO_AHEAD
-    unsigned char inCode[6];                           // returned Telnet code from terminal
+    unsigned char inCode[6];                           // will hold returned Telnet code from terminal
     
     /* Write to the socket. */ 
     if (write(playerFd,code,6) < 0)
