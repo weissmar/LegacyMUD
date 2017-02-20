@@ -268,7 +268,8 @@ namespace legacymud {
         }; 
         std::map<int, _Player> _playerMap;          // map used track player's on the server and to capture player specific server data
         std::mutex _mu_player_map;                  // mutex used for the player map
-        std::deque<int> _held_filedescriptors;      // list of file descriptors that haven't been released yet
+        std::deque<int> _fd_held_que;               // que of file descriptors that haven't been released yet
+        std::mutex _mu_fd_held_que;                 // mutex used for the player map
 };
 
 }}
