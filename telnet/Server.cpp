@@ -204,11 +204,15 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
         return false;   // the player is not in the game
         
     else {
-        /* Make sure the text is displayed on a new line by checking the readBuffer size. */
-        if (player->second.readBuffer.size() > 0 ) 
-            outMsg = "\015\012" + outMsg;   // carriage return line feed on the front
+
+        /* If a player is entering text, clear that text from their display. */
+        unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
+        for (int i = 0; i < player->second.readBuffer.size(); i++ ) {
+            if (write(playerFd, eraseStr, 3) < 0) 
+                return false;      
+        }        
         
-        /* Add a newline at the end if desired. */
+        /* Add a newline at the end if requested. */
         if (newLine == NEWLINE) 
             outMsg += "\015\012";       // attach carriage return  and linefeed
         
