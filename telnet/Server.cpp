@@ -154,10 +154,11 @@ bool Server::disconnectPlayer(int playerFd) {
         shutdown(playerFd, SHUT_RDWR);      // needed to break any blocked reads.
 
         /* Recycle file descriptors through a que to prevent reuse. */
-        _held_filedescriptors.push_back(playerFd);
-        if (_held_filedescriptors.size() > 250) {   // limit held file descriptors to 250
-            close(_held_filedescriptors.front());   // destroy held socket
-            _held_filedescriptors.pop_front();    
+        std::lock_guard<std::mutex> lock(_mu_fd_held_que);   // Lock fd que. Lock is released when it goes out of scope. 
+        _fd_held_que.push_back(playerFd);
+        if (_fd_held_que.size() > 250) {   // Limit held file descriptors to 250.  OSU Flip server limit is 1024.
+            close(_fd_held_que.front());   // destroy held socket
+            _fd_held_que.pop_front();    
         }
         
         std::cout << "Player disconnected. PlayerFd: " << playerFd << std::endl;
