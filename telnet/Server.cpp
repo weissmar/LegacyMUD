@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/16/2017
+  \modified 2/19/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -102,7 +102,7 @@ void Server::startListening() {
             std::cout << "Error accepting connection" << std::endl;     // error accepting connection
         }
         else {
-            std::cout << "Connection established. Socket: " << newClientSocketFd << std::endl;              
+            std::cout << "Connection established. PlayerFd: " << newClientSocketFd << std::endl;              
             
             /* Add player to player map. This map is a list of players on the server. */
             if (_addPlayerToMap(newClientSocketFd) == false) {
@@ -111,7 +111,7 @@ void Server::startListening() {
             }
             /* Set the player's Telnet terminal into character mode. */
             else if (_setCharacterMode(newClientSocketFd) == false) {
-                std::cout << "Error setting character mode in the client" << std::endl; // error setting character mode
+                std::cout << "Error setting character mode in the client." << std::endl; // error setting character mode
                 disconnectPlayer(newClientSocketFd);
             }
             /* Disconnect the player if the player cap is exceeded. */
@@ -126,10 +126,10 @@ void Server::startListening() {
             }
             /* Set disconnect timeout on player's socket. */
             else if (setsockopt (newClientSocketFd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeOut, sizeof(timeOut)) < 0) {
-                std::cout << "Error setting socket time-out" << std::endl;   // error setting time-out
+                std::cout << "Error setting socket time-out." << std::endl;   // error setting time-out
                 disconnectPlayer(newClientSocketFd);                
             }
-            /* Create a new thread for this player and send to a new player handler in the game logic. */
+            /* Create a new thread for this player and send to the game logic new player handler. */
             else {
                 std::thread t(&legacymud::engine::GameLogic::newPlayerHandler, _gameLogicPt, newClientSocketFd);    
                 t.detach();                        
@@ -149,9 +149,10 @@ bool Server::disconnectPlayer(int playerFd) {
     if (_removePlayerFromMap(playerFd) == false )     
         return false;
  
-    else {
+    else {      
         _playerCount--;     // decrement player count
         close(playerFd);
+        std::cout << "Player disconnected. PlayerFd: " << playerFd << std::endl;
         return true;
     }
 }
@@ -192,16 +193,55 @@ bool Server::shutdown() {
 *****************************************************************************/
 bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) {
    
-    /* Check if a newline is desired. */
-    if (newLine == NEWLINE) { 
-        outMsg += "\015\012";       // attach carriage return  and linefeed
-    }
-    /* Write to the socket. */ 
-    if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
-        return false;   // Error writing to socket               
-    else         
-        return true;         
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_player_map);    
+
+    /* Find the player. */
+    auto player = _playerMap.find(playerFd);
+    
+    /* If the player is in the map, send the message. */
+    if(player == _playerMap.end()) 
+        return false;   // the player is not in the game
+        
+    else {
+        /* Make sure the text is displayed on a new line by checking the readBuffer size. */
+        if (player->second.readBuffer.size() > 0 ) 
+            outMsg = "\015\012" + outMsg;   // carriage return line feed on the front
+        
+        /* Add a newline at the end if desired. */
+        if (newLine == NEWLINE) 
+            outMsg += "\015\012";       // attach carriage return  and linefeed
+        
+        /* Write to the socket. */ 
+        if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
+            return false;   // Error writing to socket               
+        
+        /* Write the player's read buffer to the socket if it is not empty. */
+        else {
+            if (player->second.readBuffer.size() > 0 ) {
+                if (write(playerFd,player->second.readBuffer.c_str(),strlen(player->second.readBuffer.c_str())) < 0) 
+                    return false;   // Error writing to socket             
+            }
+            return true;     
+        }       
+    }                  
 }  
+
+
+/******************************************************************************
+* Function:    sendMsg
+*****************************************************************************/
+bool Server::sendMsg(int playerFd, std::string outMsg) {   
+    return sendMsg(playerFd, outMsg, NO_NEWLINE);    
+} 
+
+
+/******************************************************************************
+* Function:    sendNewLine
+*****************************************************************************/
+bool Server::sendNewLine(int playerFd) {   
+    return sendMsg(playerFd, "", NEWLINE);   
+} 
     
 
 /******************************************************************************
@@ -209,60 +249,99 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
 *****************************************************************************/
 bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
     unsigned char ch = 0;       // character read from the socket
+      
+    /* Set player map lock. Lock is released when it goes out of scope. */
+    std::unique_lock<std::mutex> lock_player_map(_mu_player_map);
+      
+    /* Find the player. */
+    auto player = _playerMap.find(playerFd);
     
-    inMsg = "";                 // initialize inMsg
+    /* If this player file descriptor is not in the map, return false. */
+    if(player == _playerMap.end()) 
+        return false;       
     
-    // Read the socket.  Continue to read until a carriage return (ASCII 13) is received.
-    while (ch != 13) {  // ASCII carriage return
-        if (read(playerFd,&ch,1) <= 0)  // returns -1 when error reading, returns 0 if client disconnected.
-            return false;        
+    /* Player in in the player map. Receive a message from this player. */
+    else {
+        player->second.readBuffer.clear();  // initialize this player's read buffer    
+        lock_player_map.unlock();           // unlock the player map mutex 
+        inMsg.clear();                      // initialize inMsg
         
-        /* Read an ANSI escape code.  Needed for up arrow. */
-        else if (ch == 27 ) {
-            /* Read the rest if an ansi code. */
-            unsigned char ansiCode[10];
-            if (read(playerFd,ansiCode,10) <= 0)   // returns -1 when error reading, returns 0 if client disconnected.    
-                return false;    
-             
-            /* This is an up arrow. */
-            else if (ansiCode[0] == 91 && ansiCode[1] == 65) {
+        // Read the socket.  Continue to read until a carriage return (ASCII 13) is received.
+        while (ch != 13) {  // ASCII carriage return
 
-                /* Redisplay the message on the player's terminal. */
-                if (inMsg.size() > 0 && getPlayerEcho(playerFd))
-                    if (sendMsg(playerFd, inMsg, NO_NEWLINE) == false) 
-                        return false;      
+            /* Read a character. */
+            if (read(playerFd,&ch,1) <= 0) {              
+                return false;     // error: returned -1 when error reading, or 0 if client disconnected.   
             }
+            /* Character received. */
+            else {              
+                /* Re-find this player in case disconnectPlayer was called while blocked. */
+                lock_player_map.lock();             // lock the player map mutex 
+                auto player = _playerMap.find(playerFd); 
+ 
+                /* If this player file descriptor is not in the map, return false. */
+                if(player == _playerMap.end()) 
+                    return false; 
+                
+                lock_player_map.unlock();           // unlock the player map mutex 
+
+                /* Read an ANSI escape code and clear it so it doesn't display in the player's terminal. */
+                if (ch == 27 ) {
+                    /* Capture the rest if the ansi code. */
+                    unsigned char ansiCode[10];
+                    if (read(playerFd,ansiCode,10) <= 0)   // returns -1 when error reading, returns 0 if client disconnected.    
+                        return false;    
+                }
+                
+                /* Backspace character received. Supports terminals that send 8 or 127. */ 
+                else if (ch == 8 || ch == 127) {
+                    
+                    /* If the player's receive buffer has something in it, remove the last character and echo to that player. */
+                    lock_player_map.lock();    // lock the player map mutex.
+                    if (player->second.readBuffer.size() > 0) {
+                        
+                        /* Remove the last character from the in message. */
+                        player->second.readBuffer.pop_back();               
+                    
+                        /* Delete player's previous character. */
+                        unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
+                        if (write(playerFd, eraseStr, 3) < 0) 
+                            return false;  
+                    }
+                    lock_player_map.unlock();  // unlock the player map mutex.
+                }
+                    
+                /* Character to be added to the message. */
+                else if (ch >=32 && ch <=126) {
+                    
+                    /* Add the character to the read buffer. */
+                    lock_player_map.lock();    // lock the player map mutex.
+                    player->second.readBuffer += ch;
+                    lock_player_map.unlock();  // unlock the player map mutex.
+                    
+                    /* If echo is set to false, set ch to '*'. */
+                    if (player->second.echo == false)
+                        ch = '*';
+                    
+                    /* Display the character on the player's terminal. */
+                    if (write(playerFd, &ch, 1) < 0) 
+                        return false; 
+                }  
+            }   
         }
-            
-        /* Backspace character received. Supports terminals that send 8 or 127. */ 
-        else if ((ch == 8 || ch == 127) && inMsg.size() > 0) {
-            /* Remove the last character from the in message. */
-            inMsg.pop_back();               
-            
-            /* Delete player's previous character. */
-            unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
-            if (write(playerFd, eraseStr, 3) < 0) 
-                return false;                
-        }
-            
-        /* Character to be added to the message. */
-        else if (ch >=32 && ch <=126) {
-            inMsg += ch;
-            
-            /* If echo is set to false, set ch to '*'. */
-            if (!getPlayerEcho(playerFd))
-                ch = '*';
-            
-            /* Display the character on the player's terminal. */
-            if (write(playerFd, &ch, 1) < 0) 
-                return false; 
-        }                   
+        
+        /* Return the read string by setting it to inMsg and clear this player's read buffer. */        
+        lock_player_map.lock();               // lock the player map mutex.
+        inMsg = player->second.readBuffer;    // set the return message
+        player->second.readBuffer.clear();    // clear the buffer
+        lock_player_map.unlock();             // unlock the player map mutex.
+        
+        /* Send new line to the player's terminal. */
+        if (sendNewLine(playerFd) == false ) 
+            return false;     
+        
+        return true;
     }
-    /* Echo new line to the player's terminal. */
-    if (sendMsg(playerFd, "", NEWLINE) == false ) 
-        return false;     
-    
-    return true;
 }
 
 
@@ -273,8 +352,9 @@ bool Server::listenForMsgs(int playerFd) {
     std::string inMsg;             // initialize inMsg
     
     while (1) {
-        if (receiveMsg(playerFd, inMsg) == false )
+        if (receiveMsg(playerFd, inMsg) == false ) {
             return false;
+        }
         
         /* Send the message to the message handler. */
         _gameLogicPt->receivedMessageHandler(inMsg, playerFd);       
@@ -330,17 +410,19 @@ bool Server::setTimeOut(int timeOut) {
 bool Server::setPlayerEcho(int playerFd, bool echo) {  
     
     /* Set lock. Lock is released when it goes out of scope. */
-    std::lock_guard<std::mutex> lock(_mu_echo);   
+    std::lock_guard<std::mutex> lock(_mu_player_map);   
     
-    /* Verify that the player is in the Map. */
-    if(_playerEcho.find(playerFd) == _playerEcho.end()) 
-        return false;
+    /* Find the player. */
+    auto player = _playerMap.find(playerFd);
     
-    /* Set the player's echo value. */
-    else {
-        _playerEcho[playerFd] = echo;            
+    /* If the player is in the map, set the echo. */
+    if(player == _playerMap.end())
+        return false;   // the player is not in the map
+    else { 
+        player->second.echo = echo;
         return true;
-    }   
+    }
+  
 }
 
 
@@ -390,23 +472,6 @@ int Server::getServerPort() const {
 legacymud::engine::GameLogic* Server::getGameLogicPt() const {   
     return _gameLogicPt;  
 } 
-
-
-/******************************************************************************
-* Function:    getPlayerEcho         
-*****************************************************************************/
-bool Server::getPlayerEcho(int playerFd) {   
-
-    /* Set lock. Lock is released when it goes out of scope. */
-    std::lock_guard<std::mutex> lock(_mu_echo);   
-    
-    /* Verify that the player is in the Map. */
-    if(_playerEcho.find(playerFd) == _playerEcho.end()) 
-        return false;     // Don't care.  This player is not in the game.
-    /* Get the player's echo value. */
-    else 
-        return _playerEcho[playerFd];        
-}
 
 
 /******************************************************************************
@@ -472,17 +537,22 @@ bool Server::_setCharacterMode(int playerFd) {
 bool Server::_addPlayerToMap(int playerFd) {  
 
     /* Set lock. Lock is released when it goes out of scope. */
-    std::lock_guard<std::mutex> lock(_mu_echo);    
+    std::lock_guard<std::mutex> lock(_mu_player_map);        
+
+    /* Find the player. */
+    auto player = _playerMap.find(playerFd);
     
-    /* Verify that the player isn't already in the Map. */
-    if(_playerEcho.find(playerFd) != _playerEcho.end()) 
-        return false;     // This player fd is alread in the map.
+    /* If the player is not in the map, add the player. */
+    if(player != _playerMap.end()) 
+        return false;   // This player fd is alread in the map.
     else {
-        /* Add the player.  Default echo is set to true. */
-        _playerCount++;     // increment the player count
-        _playerEcho[playerFd] = true;            
-        return true;
-    }
+        _Player newPlayer;
+        newPlayer.echo = true;              // default echo is set to true
+        newPlayer.readBuffer.clear();       // clear the buffer
+        _playerMap[playerFd] = newPlayer;   // add the player  
+        _playerCount++;                     // increment the player count        
+        return true;        
+    }    
 }
 
 
@@ -492,16 +562,19 @@ bool Server::_addPlayerToMap(int playerFd) {
 bool Server::_removePlayerFromMap(int playerFd ) { 
     
     /* Set lock. Lock is released when it goes out of scope. */
-    std::lock_guard<std::mutex> lock(_mu_echo);    
+    std::lock_guard<std::mutex> lock(_mu_player_map);    
     
-    /* Verify that the player is in the Map. */
-    if(_playerEcho.find(playerFd) == _playerEcho.end()) 
-        return false;       // the player isn't in the list
+    /* Find the player. */
+    auto player = _playerMap.find(playerFd);
+    
+    /* If the player is in the map, delete player and return true. */
+    if(player == _playerMap.end())
+        return false;   // the player isn't in the list
     else {
         /* Remove the player from the map. */
-        _playerEcho.erase(playerFd);     
+        _playerMap.erase(playerFd);
         return true;
-    }
+    } 
 }
 
 
