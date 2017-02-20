@@ -2,7 +2,7 @@
   \file     VDPISentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/18/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VDPISentence class.
@@ -93,71 +93,75 @@ ParseResult VDPISentence::getResult(const std::vector<Token> &tokens, const Lexi
             }
         }
 
-        // Look for a preposition match
-        range = Range(range.end, tokens.size());
-        if (range.start >= range.end) {
-            // Preposition missing--invalid
-            result.status = ParseStatus::INVALID_PREPOSITION;
-        }
-        else if (result.status == ParseStatus::UNPARSED) {
-            // Find the longest matching preposition
-            if (!_preposition.findMatch(tokens, range, &Grammar::forwardHasPreposition, &grammar)) {
-                // Preposition not found--invalid
+        if (result.status == ParseStatus::UNPARSED) {
+            // Look for a preposition match
+            range = Range(range.end, tokens.size());
+            if (range.start >= range.end) {
+                // Preposition missing--invalid
                 result.status = ParseStatus::INVALID_PREPOSITION;
-                result.unparsed = Tokenizer::joinOriginal(tokens, range);
             }
-            else {
-                // Preposition found--set type
-                _prepType = grammar.getPrepositionType(_preposition.getAlias());
-            }
-        }
-
-        // Look for a noun that matches all remaining tokens
-        range = Range(range.end, tokens.size());
-        if (range.start >= range.end) {
-            // No tokens left for indirect object--invalid
-            result.status = ParseStatus::INVALID_INDIRECT;
-        }
-        else if (result.status == ParseStatus::UNPARSED) {
-            // Try to find matching indirect object with remaining tokens
-            // Find indirect object on player
-            if (_indirect.findExactMatch(tokens, range, &LexicalData::forwardHasNoun, &playerLex)) {
-                auto player = playerLex.getObjectsByNoun(_indirect.getAlias());
-                _indirectObjects.insert(_indirectObjects.end(), player.begin(), player.end());
-                result.indirectAlias = _indirect.getAlias();
-            }
-            // Find indirect object in area
-            if (_indirect.findExactMatch(tokens, range, &LexicalData::forwardHasNoun, &areaLex)) {
-                auto area = areaLex.getObjectsByNoun(_indirect.getAlias());
-                _indirectObjects.insert(_indirectObjects.end(), area.begin(), area.end());
-                result.indirectAlias = _indirect.getAlias();
-            }
-
-            // Only search through all local objects if VerbType is BUILDER
-            // and no objects were found in current area or player
-            if (_indirectObjects.empty() && _type == VerbType::BUILDER) {
-                if (_indirect.findExactMatch(tokens, range, WordManager::hasNoun)) {
-                    auto allLocal = WordManager::getLocalNouns(_indirect.getAlias());
-                    _indirectObjects.insert(_indirectObjects.end(), allLocal.begin(), allLocal.end());
-                    result.indirectAlias = _indirect.getAlias();
-                }
-            }
-
-            // See if we found any results
-            if (_indirectObjects.size() > 0) {
-                // Results found--configure indirect noun in result object
-                result.indirect = _indirectObjects;
-                result.status = ParseStatus::VALID;
-            }
-            else {
-                // No results found--check all local nouns to see if invalid or unavailable
-                if (_indirect.findExactMatch(tokens, range, WordManager::hasNoun)) {
-                    result.status = ParseStatus::UNAVAILABLE_INDIRECT;
+            else if (result.status == ParseStatus::UNPARSED) {
+                // Find the longest matching preposition
+                if (!_preposition.findMatch(tokens, range, &Grammar::forwardHasPreposition, &grammar)) {
+                    // Preposition not found--invalid
+                    result.status = ParseStatus::INVALID_PREPOSITION;
+                    result.unparsed = Tokenizer::joinOriginal(tokens, range);
                 }
                 else {
-                    result.status = ParseStatus::INVALID_INDIRECT;
+                    // Preposition found--set type
+                    _prepType = grammar.getPrepositionType(_preposition.getAlias());
                 }
-                result.unparsed = Tokenizer::joinOriginal(tokens, range);
+            }
+        }
+
+        if (result.status == ParseStatus::UNPARSED) {
+            // Look for a noun that matches all remaining tokens
+            range = Range(range.end, tokens.size());
+            if (range.start >= range.end) {
+                // No tokens left for indirect object--invalid
+                result.status = ParseStatus::INVALID_INDIRECT;
+            }
+            else {
+                // Try to find matching indirect object with remaining tokens
+                // Find indirect object on player
+                if (_indirect.findExactMatch(tokens, range, &LexicalData::forwardHasNoun, &playerLex)) {
+                    auto player = playerLex.getObjectsByNoun(_indirect.getAlias());
+                    _indirectObjects.insert(_indirectObjects.end(), player.begin(), player.end());
+                    result.indirectAlias = _indirect.getAlias();
+                }
+                // Find indirect object in area
+                if (_indirect.findExactMatch(tokens, range, &LexicalData::forwardHasNoun, &areaLex)) {
+                    auto area = areaLex.getObjectsByNoun(_indirect.getAlias());
+                    _indirectObjects.insert(_indirectObjects.end(), area.begin(), area.end());
+                    result.indirectAlias = _indirect.getAlias();
+                }
+
+                // Only search through all local objects if VerbType is BUILDER
+                // and no objects were found in current area or player
+                if (_indirectObjects.empty() && _type == VerbType::BUILDER) {
+                    if (_indirect.findExactMatch(tokens, range, WordManager::hasNoun)) {
+                        auto allLocal = WordManager::getLocalNouns(_indirect.getAlias());
+                        _indirectObjects.insert(_indirectObjects.end(), allLocal.begin(), allLocal.end());
+                        result.indirectAlias = _indirect.getAlias();
+                    }
+                }
+
+                // See if we found any results
+                if (_indirectObjects.size() > 0) {
+                    // Results found--configure indirect noun in result object
+                    result.indirect = _indirectObjects;
+                    result.status = ParseStatus::VALID;
+                }
+                else {
+                    // No results found--check all local nouns to see if invalid or unavailable
+                    if (_indirect.findExactMatch(tokens, range, WordManager::hasNoun)) {
+                        result.status = ParseStatus::UNAVAILABLE_INDIRECT;
+                    }
+                    else {
+                        result.status = ParseStatus::INVALID_INDIRECT;
+                    }
+                    result.unparsed = Tokenizer::joinOriginal(tokens, range);
+                }
             }
         }
 

@@ -2,7 +2,7 @@
   \file     VDPTSentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/18/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VDPTSentence class.
@@ -92,33 +92,37 @@ ParseResult VDPTSentence::getResult(const std::vector<Token> &tokens, const Lexi
         }
 
         // Look for a preposition match
-        range = Range(range.end, tokens.size());
-        if (range.start >= range.end) {
-            // Preposition missing--invalid
-            result.status = ParseStatus::INVALID_PREPOSITION;
-        }
-        else if (result.status == ParseStatus::UNPARSED) {
-            // Find the longest matching preposition
-            if (!_preposition.findMatch(tokens, range, &Grammar::forwardHasPreposition, &grammar)) {
-                // Preposition not found--invalid
+        if (result.status == ParseStatus::UNPARSED) {
+            range = Range(range.end, tokens.size());
+            if (range.start >= range.end) {
+                // Preposition missing--invalid
                 result.status = ParseStatus::INVALID_PREPOSITION;
-                result.unparsed = Tokenizer::joinOriginal(tokens, range);
             }
             else {
-                // Preposition found--set type
-                _prepType = grammar.getPrepositionType(_preposition.getAlias());
+                // Find the longest matching preposition
+                if (!_preposition.findMatch(tokens, range, &Grammar::forwardHasPreposition, &grammar)) {
+                    // Preposition not found--invalid
+                    result.status = ParseStatus::INVALID_PREPOSITION;
+                    result.unparsed = Tokenizer::joinOriginal(tokens, range);
+                }
+                else {
+                    // Preposition found--set type
+                    _prepType = grammar.getPrepositionType(_preposition.getAlias());
+                }
             }
         }
 
         // Put all remaining tokens into indirectAlias
-        range = Range(range.end, tokens.size());
-        if (range.start >= range.end) {
-            // No tokens left for indirect alias--invalid
-            result.status = ParseStatus::INVALID_INDIRECT;
-        }
-        else if (result.status == ParseStatus::UNPARSED) {
-            result.indirectAlias = Tokenizer::joinOriginal(tokens, range);
-            result.status = ParseStatus::VALID;
+        if (result.status == ParseStatus::UNPARSED) {
+            range = Range(range.end, tokens.size());
+            if (range.start >= range.end) {
+                // No tokens left for indirect alias--invalid
+                result.status = ParseStatus::INVALID_INDIRECT;
+            }
+            else {
+                result.indirectAlias = Tokenizer::joinOriginal(tokens, range);
+                result.status = ParseStatus::VALID;
+            }
         }
 
         // Handle preposition

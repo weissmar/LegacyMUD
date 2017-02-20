@@ -2,7 +2,7 @@
   \file     VPTSentence.cpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/18/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the VPTSentence class.
@@ -70,27 +70,27 @@ ParseResult VPTSentence::getResult(const std::vector<Token> &tokens, const Lexic
                     // Add all remaining text to indirectAlias
                     result.indirectAlias = Tokenizer::joinOriginal(tokens, range);
                     result.status = ParseStatus::VALID;
-                }
 
-                // Handle preposition
-                switch (_prepType) {
-                case PrepositionType::ON:
-                    result.position = engine::ItemPosition::ON;
-                    break;
-                case PrepositionType::IN:
-                    result.position = engine::ItemPosition::IN;
-                    break;
-                case PrepositionType::UNDER:
-                    result.position = engine::ItemPosition::UNDER;
-                    break;
-                case PrepositionType::OF:
-                case PrepositionType::TO:
-                case PrepositionType::WITH:
-                case PrepositionType::FROM:
-                case PrepositionType::ALL:
-                case PrepositionType::NONE:
-                    result.position = engine::ItemPosition::NONE;
-                    break;
+                    // Handle preposition
+                    switch (_prepType) {
+                    case PrepositionType::ON:
+                        result.position = engine::ItemPosition::ON;
+                        break;
+                    case PrepositionType::IN:
+                        result.position = engine::ItemPosition::IN;
+                        break;
+                    case PrepositionType::UNDER:
+                        result.position = engine::ItemPosition::UNDER;
+                        break;
+                    case PrepositionType::OF:
+                    case PrepositionType::TO:
+                    case PrepositionType::WITH:
+                    case PrepositionType::FROM:
+                    case PrepositionType::ALL:
+                    case PrepositionType::NONE:
+                        result.position = engine::ItemPosition::NONE;
+                        break;
+                    }
                 }
             }
         }
