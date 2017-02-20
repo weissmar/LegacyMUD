@@ -13,6 +13,7 @@
 #define LEGACYMUD_TELNET_SERVER_HPP
 
 #include <map>
+#include <deque>
 #include <mutex>
 
 namespace legacymud {
@@ -90,7 +91,7 @@ namespace legacymud {
           \post True is returned if the server listen socket is closed and member variables are reset to default values.
                 Otherwise, false is returned.
         */        
-        bool shutdown();
+        bool shutDownServer();
         
         /*!
           \brief Sends a message to a player.
@@ -267,6 +268,7 @@ namespace legacymud {
         }; 
         std::map<int, _Player> _playerMap;          // map used track player's on the server and to capture player specific server data
         std::mutex _mu_player_map;                  // mutex used for the player map
+        std::deque<int> _held_filedescriptors;      // list of file descriptors that haven't been released yet
 };
 
 }}
