@@ -30,22 +30,22 @@ WeaponType::WeaponType(int damage, DamageType type, AreaSize range, int critMult
 { }
 
 
-int WeaponType::getDamage(){
+int WeaponType::getDamage() const{
     return damage.load();
 }
 
 
-DamageType WeaponType::getDamageType(){
+DamageType WeaponType::getDamageType() const{
     return damageType.load();
 }
 
 
-AreaSize WeaponType::getRange(){
+AreaSize WeaponType::getRange() const{
     return range.load();
 }
 
 
-int WeaponType::getCritMultiplier(){
+int WeaponType::getCritMultiplier() const{
     return critMultiplier.load();
 }
 
@@ -78,7 +78,7 @@ bool WeaponType::setCritMultiplier(int multiplier){
 }
 
 
-ObjectType WeaponType::getObjectType(){
+ObjectType WeaponType::getObjectType() const{
     return ObjectType::WEAPON_TYPE;
 }
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/17/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -44,12 +44,12 @@ Exit::~Exit(){
 }*/
 
 
-ExitDirection Exit::getDirection(){
+ExitDirection Exit::getDirection() const{
     return direction.load();
 }
 
 
-std::string Exit::getDirectionString(){
+std::string Exit::getDirectionString() const{
     std::string message;
 
     switch (direction.load()) {
@@ -91,12 +91,12 @@ std::string Exit::getDirectionString(){
 }
 
 
-EffectType Exit::getEffect(){
+EffectType Exit::getEffect() const{
     return effect.load();
 }
 
 
-Area* Exit::getConnectArea(){
+Area* Exit::getConnectArea() const{
     std::lock_guard<std::mutex> connectAreaLock(connectAreaMutex);
     return connectArea;
 }
@@ -132,7 +132,7 @@ std::string Exit::getName() const{
 }
 
 
-ObjectType Exit::getObjectType(){
+ObjectType Exit::getObjectType() const{
     return ObjectType::EXIT;
 }
 

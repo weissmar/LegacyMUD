@@ -43,28 +43,28 @@ class SpecialSkill: public InteractiveNoun {
          *
          * \return  Returns an int with the damage of the special skill.
          */
-        int getDamage();
+        int getDamage() const;
 
         /*!
          * \brief   Gets the damage type of the special skill.
          *
          * \return  Returns a DamageType with the damage type of the special skill.
          */
-        DamageType getDamageType();
+        DamageType getDamageType() const;
 
         /*!
          * \brief   Gets the cost of the special skill.
          *
          * \return  Returns an int with the cost of the special skill.
          */
-        int getCost();
+        int getCost() const;
 
         /*!
          * \brief   Gets the cooldown of the special skill.
          *
          * \return  Returns an int with the cooldown of the special skill.
          */
-        int getCooldown();
+        int getCooldown() const;
 
         /*!
          * \brief   Sets the name of the special skill.
@@ -122,7 +122,7 @@ class SpecialSkill: public InteractiveNoun {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

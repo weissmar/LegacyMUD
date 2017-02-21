@@ -50,21 +50,21 @@ class Character: public InteractiveNoun {
          *
          * \return  Returns a std::string with the description of this character.
          */
-        std::string getDescription();
+        std::string getDescription() const;
 
         /*!
          * \brief   Gets the amount money this character possesses.
          *
          * \return  Returns an int with the amount money this character possesses.
          */
-        int getMoney();
+        int getMoney() const;
 
         /*!
          * \brief   Gets the location of this character.
          *
          * \return  Returns an Area* with the location of this character.
          */
-        Area* getLocation();
+        Area* getLocation() const;
 
         /*!
          * \brief   Gets the inventory and equipment of this character.
@@ -75,7 +75,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a std::vector<std::pair<EquipmentSlot, Item*>> representing 
          *          the inventory and equipment of this character.
          */
-        std::vector<std::pair<EquipmentSlot, Item*>> getInventory();
+        std::vector<std::pair<EquipmentSlot, Item*>> getInventory() const;
 
         /*!
          * \brief   Gets the inventory of this character.
@@ -85,7 +85,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a std::vector<Item*> representing the inventory of this 
          *          character.
          */
-        std::vector<Item*> getItemsInventory();
+        std::vector<Item*> getItemsInventory() const;
 
         /*!
          * \brief   Gets the equipment of this character.
@@ -96,7 +96,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a std::vector<std::pair<EquipmentSlot, Item*>> representing 
          *          the equipment of this character.
          */
-        std::vector<std::pair<EquipmentSlot, Item*>> getEquipped();
+        std::vector<std::pair<EquipmentSlot, Item*>> getEquipped() const;
 
         /*!
          * \brief   Gets the maximum allowed inventory weight for this character.
@@ -104,7 +104,7 @@ class Character: public InteractiveNoun {
          * \return  Returns an int with the maximum allowed inventory weight for
          *          this character.
          */
-        int getMaxInventoryWeight();
+        int getMaxInventoryWeight() const;
 
         /*!
          * \brief   Sets the name of this character.

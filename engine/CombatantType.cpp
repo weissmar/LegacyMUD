@@ -60,33 +60,33 @@ std::string CombatantType::getName() const{
 }
 
 
-SpecialSkill* CombatantType::getSpecialSkill(){
+SpecialSkill* CombatantType::getSpecialSkill() const{
     std::lock_guard<std::mutex> specialSkillLock(specialSkillMutex);
     return specialSkill;
 }
 
 
-int CombatantType::getAttackBonus(){
+int CombatantType::getAttackBonus() const{
     return attackBonus.load();
 }
 
 
-int CombatantType::getArmorBonus(){
+int CombatantType::getArmorBonus() const{
     return armorBonus.load();
 }
 
 
-DamageType CombatantType::getResistantTo(){
+DamageType CombatantType::getResistantTo() const{
     return resistantTo.load();
 }
 
 
-DamageType CombatantType::getWeakTo(){
+DamageType CombatantType::getWeakTo() const{
     return weakTo.load();
 }
 
 
-float CombatantType::getHealPoints(){
+float CombatantType::getHealPoints() const{
     return healPoints.load();
 }
 

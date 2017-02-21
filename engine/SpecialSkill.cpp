@@ -38,22 +38,22 @@ std::string SpecialSkill::getName() const{
 }
 
 
-int SpecialSkill::getDamage(){
+int SpecialSkill::getDamage() const{
     return damage.load();
 }
 
 
-DamageType SpecialSkill::getDamageType(){
+DamageType SpecialSkill::getDamageType() const{
     return damageType.load();
 }
 
 
-int SpecialSkill::getCost(){
+int SpecialSkill::getCost() const{
     return cost.load();
 }
 
 
-int SpecialSkill::getCooldown(){
+int SpecialSkill::getCooldown() const{
     return cooldown.load();
 }
 
@@ -94,7 +94,7 @@ bool SpecialSkill::setCooldown(int cooldown){
 }
 
 
-ObjectType SpecialSkill::getObjectType(){
+ObjectType SpecialSkill::getObjectType() const{
     return ObjectType::SPECIAL_SKILL;
 }
 

@@ -57,30 +57,30 @@ std::string Character::getName() const{
 }
 
 
-std::string Character::getDescription(){
+std::string Character::getDescription() const{
     std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
-int Character::getMoney(){
+int Character::getMoney() const{
     return money.load();
 }
 
 
-Area* Character::getLocation(){
+Area* Character::getLocation() const{
     std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
 }
 
 
-std::vector<std::pair<EquipmentSlot, Item*>> Character::getInventory(){
+std::vector<std::pair<EquipmentSlot, Item*>> Character::getInventory() const{
     std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
     return inventory;
 }
 
 
-std::vector<Item*> Character::getItemsInventory(){
+std::vector<Item*> Character::getItemsInventory() const{
     std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
     std::vector<Item*> items;
 
@@ -92,7 +92,7 @@ std::vector<Item*> Character::getItemsInventory(){
 }
 
 
-std::vector<std::pair<EquipmentSlot, Item*>> Character::getEquipped(){
+std::vector<std::pair<EquipmentSlot, Item*>> Character::getEquipped() const{
     std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
     std::vector<std::pair<EquipmentSlot, Item*>> equipment;
 
@@ -106,7 +106,7 @@ std::vector<std::pair<EquipmentSlot, Item*>> Character::getEquipped(){
 }
 
 
-int Character::getMaxInventoryWeight(){
+int Character::getMaxInventoryWeight() const{
     return maxInventoryWeight.load();
 }
 

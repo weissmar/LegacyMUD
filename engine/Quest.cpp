@@ -53,24 +53,24 @@ std::string Quest::getName() const{
 }
 
 
-std::string Quest::getDescription(){
+std::string Quest::getDescription() const{
     std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
-int Quest::getRewardMoney(){
+int Quest::getRewardMoney() const{
     return rewardMoney.load();
 }
 
 
-Item* Quest::getRewardItem(){
+Item* Quest::getRewardItem() const{
     std::lock_guard<std::mutex> rewardItemLock(rewardItemMutex);
     return rewardItem;
 }
 
 
-std::vector<std::pair<int, QuestStep*>> Quest::getSteps(){
+std::vector<std::pair<int, QuestStep*>> Quest::getSteps() const{
     std::lock_guard<std::mutex> stepsLock(stepsMutex);
     return steps;
 }
@@ -130,7 +130,7 @@ bool Quest::removeStep(QuestStep *aStep){
 }
 
 
-ObjectType Quest::getObjectType(){
+ObjectType Quest::getObjectType() const{
     return ObjectType::QUEST;
 }
 

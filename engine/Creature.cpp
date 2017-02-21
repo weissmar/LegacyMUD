@@ -44,13 +44,13 @@ Creature::~Creature(){
 }*/
 
 
-CreatureType* Creature::getType(){
+CreatureType* Creature::getType() const{
     std::lock_guard<std::mutex> typeLock(typeMutex);
     return type;
 }
 
 
-bool Creature::getAmbulatory(){
+bool Creature::getAmbulatory() const{
     return ambulatory.load();
 }
 
@@ -72,7 +72,7 @@ bool Creature::setAmbulatory(bool ambulatory){
 }
 
 
-ObjectType Creature::getObjectType(){
+ObjectType Creature::getObjectType() const{
     return ObjectType::CREATURE;
 }
 

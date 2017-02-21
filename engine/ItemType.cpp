@@ -34,17 +34,17 @@ ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::
 { }
 
 
-int ItemType::getWeight(){
+int ItemType::getWeight() const{
     return weight.load();
 }
 
 
-ItemRarity ItemType::getRarity(){
+ItemRarity ItemType::getRarity() const{
     return rarity.load();
 }
 
 
-std::string ItemType::getDescription(){
+std::string ItemType::getDescription() const{
     std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
@@ -56,12 +56,12 @@ std::string ItemType::getName() const{
 }
 
 
-int ItemType::getCost(){
+int ItemType::getCost() const{
     return cost.load();
 }
 
 
-EquipmentSlot ItemType::getSlotType(){
+EquipmentSlot ItemType::getSlotType() const{
     return slotType.load();
 }
 
@@ -110,32 +110,32 @@ bool ItemType::setSlotType(EquipmentSlot slotType){
 }
 
 
-int ItemType::getArmorBonus(){
+int ItemType::getArmorBonus() const{
     return -1;
 }
 
 
-DamageType ItemType::getResistantTo(){
+DamageType ItemType::getResistantTo() const{
     return DamageType::NONE;
 }
 
 
-int ItemType::getDamage(){
+int ItemType::getDamage() const{
     return -1;
 }
 
 
-DamageType ItemType::getDamageType(){
+DamageType ItemType::getDamageType() const{
     return DamageType::NONE;
 }
 
 
-AreaSize ItemType::getRange(){
+AreaSize ItemType::getRange() const{
     return AreaSize::NONE;
 }
 
 
-int ItemType::getCritMultiplier(){
+int ItemType::getCritMultiplier() const{
     return -1;
 }
 
@@ -170,7 +170,7 @@ bool ItemType::setResistantTo(DamageType){
 }
 
 
-ObjectType ItemType::getObjectType(){
+ObjectType ItemType::getObjectType() const{
     return ObjectType::ITEM_TYPE;
 }
 

@@ -41,7 +41,7 @@ class NonCombatant: public Character {
          *
          * \return  Returns a Quest* with the quest of this non-combatant.
          */
-        Quest* getQuest();
+        Quest* getQuest() const;
 
         /*!
          * \brief   Sets the quest.
@@ -59,7 +59,7 @@ class NonCombatant: public Character {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

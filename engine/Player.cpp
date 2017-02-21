@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/15/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -251,7 +251,7 @@ bool Player::removeFromInventory(Item *anItem){
 }
 
 
-ObjectType Player::getObjectType(){
+ObjectType Player::getObjectType() const{
     return ObjectType::PLAYER;
 }
 

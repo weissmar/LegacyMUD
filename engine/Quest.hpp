@@ -51,21 +51,21 @@ class Quest: public InteractiveNoun {
          *
          * \return  Returns a std::string with the description.
          */
-        std::string getDescription();
+        std::string getDescription() const;
 
         /*!
          * \brief   Gets the reward money for this quest.
          *
          * \return  Returns an int with the reward money.
          */
-        int getRewardMoney();
+        int getRewardMoney() const;
 
         /*!
          * \brief   Gets the reward item for this quest.
          *
          * \return  Returns an Item* with the reward item.
          */
-        Item* getRewardItem();
+        Item* getRewardItem() const;
 
         /*!
          * \brief   Gets the steps of this quest.
@@ -73,7 +73,7 @@ class Quest: public InteractiveNoun {
          * \return  Returns a std::vector<std::pair<int, QuestStep*>> 
          *          with the steps.
          */
-        std::vector<std::pair<int, QuestStep*>> getSteps();
+        std::vector<std::pair<int, QuestStep*>> getSteps() const;
 
         /*!
          * \brief   Sets the name of this quest.
@@ -143,7 +143,7 @@ class Quest: public InteractiveNoun {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

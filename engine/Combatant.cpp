@@ -54,57 +54,57 @@ Combatant::~Combatant(){
 }*/
 
 
-bool Combatant::cooldownIsZero(){
+bool Combatant::cooldownIsZero() const{
     return cooldownClock.load() == 0;
 }
 
 
-int Combatant::getCurrentHealth(){
+int Combatant::getCurrentHealth() const{
     std::lock_guard<std::mutex> healthLock(healthMutex);
     return health.first;
 }
 
 
-int Combatant::getMaxHealth(){
+int Combatant::getMaxHealth() const{
     std::lock_guard<std::mutex> healthLock(healthMutex);
     return health.second;
 }
 
 
-Area* Combatant::getSpawnLocation(){
+Area* Combatant::getSpawnLocation() const{
     std::lock_guard<std::mutex> spawnLocationLock(spawnLocationMutex);
     return spawnLocation;
 }
 
 
-int Combatant::getCurrentSpecialPts(){
+int Combatant::getCurrentSpecialPts() const{
     std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
     return specialPoints.first;
 }
 
 
-int Combatant::getMaxSpecialPts(){
+int Combatant::getMaxSpecialPts() const{
     std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
     return specialPoints.second;
 }
 
 
-int Combatant::getDexterity(){
+int Combatant::getDexterity() const{
     return dexterity.load();
 }
 
 
-int Combatant::getStrength(){
+int Combatant::getStrength() const{
     return strength.load();
 }
 
 
-int Combatant::getIntelligence(){
+int Combatant::getIntelligence() const{
     return intelligence.load();
 }
 
 
-Combatant* Combatant::getInCombat(){
+Combatant* Combatant::getInCombat() const{
     std::lock_guard<std::mutex> inCombatLock(inCombatMutex);
     return inCombat;
 }

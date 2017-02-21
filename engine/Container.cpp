@@ -42,7 +42,7 @@ Container::~Container(){
 }*/
 
 
-bool Container::isEmpty(){
+bool Container::isEmpty() const{
     std::unique_lock<std::mutex> underLock(underMutex, std::defer_lock);
     std::unique_lock<std::mutex> insideLock(insideMutex, std::defer_lock);
     std::unique_lock<std::mutex> onTopOfLock(onTopOfMutex, std::defer_lock);
@@ -62,25 +62,25 @@ bool Container::place(Item *anItem, ItemPosition position){
 }
 
 
-std::vector<Item*> Container::getInsideContents(){
+std::vector<Item*> Container::getInsideContents() const{
     std::lock_guard<std::mutex> insideLock(insideMutex);
     return inside;
 }
 
 
-std::vector<Item*> Container::getUnderContents(){
+std::vector<Item*> Container::getUnderContents() const{
     std::lock_guard<std::mutex> underLock(underMutex);
     return under;
 }
 
 
-std::vector<Item*> Container::getTopContents(){
+std::vector<Item*> Container::getTopContents() const{
     std::lock_guard<std::mutex> onTopOfLock(onTopOfMutex);
     return onTopOf;
 }
 
 
-int Container::getInsideCapacity(){
+int Container::getInsideCapacity() const{
     return insideCapacity.load();
 }
 
@@ -92,7 +92,7 @@ bool Container::setInsideCapacity(int capacity){
 }
 
 
-ObjectType Container::getObjectType(){
+ObjectType Container::getObjectType() const{
     return ObjectType::CONTAINER;
 }
 

@@ -71,12 +71,12 @@ InteractiveNoun::~InteractiveNoun(){
 }
 
 
-int InteractiveNoun::getID(){
+int InteractiveNoun::getID() const{
     return ID;
 }
 
 
-Action* InteractiveNoun::getAction(CommandEnum aCommand){
+Action* InteractiveNoun::getAction(CommandEnum aCommand) const{
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
     for (int i = 0; i < actions.size(); i++){
         if (actions[i]->getCommand() == aCommand){
@@ -87,7 +87,7 @@ Action* InteractiveNoun::getAction(CommandEnum aCommand){
 }
 
 
-std::vector<Action*> InteractiveNoun::getActions(std::string alias){
+std::vector<Action*> InteractiveNoun::getActions(std::string alias) const{
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
     std::vector<Action*> aliasActions;
 
@@ -101,13 +101,13 @@ std::vector<Action*> InteractiveNoun::getActions(std::string alias){
 }
 
 
-std::vector<std::string> InteractiveNoun::getNounAliases(){
+std::vector<std::string> InteractiveNoun::getNounAliases() const{
     std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
     return aliases;
 }
 
 
-std::vector<std::string> InteractiveNoun::getVerbAliases(){
+std::vector<std::string> InteractiveNoun::getVerbAliases() const{
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
     std::vector<std::string> verbAliases;
     std::vector<std::string> aliases;
@@ -121,7 +121,7 @@ std::vector<std::string> InteractiveNoun::getVerbAliases(){
 }
 
 
-bool InteractiveNoun::checkAction(CommandEnum aCommand){
+bool InteractiveNoun::checkAction(CommandEnum aCommand) const{
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
     for (int i = 0; i < actions.size(); i++){
         if (actions[i]->getCommand() == aCommand){

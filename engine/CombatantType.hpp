@@ -48,14 +48,14 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a SpecialSkill* indicating the special skill of this 
          *          combatant type.
          */
-        SpecialSkill* getSpecialSkill();
+        SpecialSkill* getSpecialSkill() const;
 
         /*!
          * \brief   Gets the attack bonus of this combatant type.
          *
          * \return  Returns an int with the attack bonus of this combatant type.
          */
-        int getAttackBonus();
+        int getAttackBonus() const;
 
         /*!
          * \brief   Gets the armor bonus of this combatant type.
@@ -63,7 +63,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns an int indicating the armor bonus of this combatant 
          *          type.
          */
-        int getArmorBonus();
+        int getArmorBonus() const;
 
         /*!
          * \brief   Gets the damage type that this combatant type is resistant to.
@@ -71,7 +71,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a DamageType indicating the damage type that this 
          *          combatant type is resistant to.
          */
-        DamageType getResistantTo();
+        DamageType getResistantTo() const;
 
         /*!
          * \brief   Gets the damage type that this combatant type is weak to.
@@ -79,7 +79,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a DamageType indicating the damage type that this 
          *          combatant type is weak to.
          */
-        DamageType getWeakTo();
+        DamageType getWeakTo() const;
 
         /*!
          * \brief   Gets the heal points for this combatant type.
@@ -87,7 +87,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a float indicating the heal points for this combatant
          *          type.
          */
-        float getHealPoints();
+        float getHealPoints() const;
 
         /*!
          * \brief   Sets the name of this combatant type.

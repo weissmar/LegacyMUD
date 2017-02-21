@@ -44,7 +44,7 @@ class Creature: public Combatant {
          *
          * \return  Returns a CreatureType* with the type of this creature.
          */
-        CreatureType* getType();
+        CreatureType* getType() const;
 
         /*!
          * \brief   Gets whether or not this creature moves autonomously
@@ -53,7 +53,7 @@ class Creature: public Combatant {
          * \return  Returns a bool indicating whether or not this creature 
          *          moves autonomously around the game.
          */
-        bool getAmbulatory();
+        bool getAmbulatory() const;
 
         /*!
          * \brief   Sets the type of this creature.
@@ -83,7 +83,7 @@ class Creature: public Combatant {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

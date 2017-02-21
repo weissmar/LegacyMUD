@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/17/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -231,7 +231,7 @@ bool Area::removeExit(Exit *anExit){
 }
 
 
-ObjectType Area::getObjectType(){
+ObjectType Area::getObjectType() const{
     return ObjectType::AREA;
 }
 

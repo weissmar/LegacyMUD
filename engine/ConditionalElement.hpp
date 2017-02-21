@@ -39,14 +39,14 @@ class ConditionalElement: public InteractiveNoun {
          *
          * \return  Returns a bool indicating whether or not this element is conditional.
          */
-        bool isConditional();
+        bool isConditional() const;
 
         /*!
          * \brief   Gets the item type that fulfills the condition of this element.
          *
          * \return  Returns an ItemType* with the condition item type.
          */
-        ItemType* getConditionItem();
+        ItemType* getConditionItem() const;
 
         /*!
          * \brief   Gets the description of this conditional element.
@@ -62,7 +62,7 @@ class ConditionalElement: public InteractiveNoun {
          * \return  Returns a std::string with the alternate description of this 
          *          conditional element.
          */
-        std::string getAltDescription();
+        std::string getAltDescription() const;
 
         /*!
          * \brief   Sets whether or not this element is conditional.

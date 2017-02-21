@@ -44,7 +44,7 @@ class PlayerClass: public CombatantType {
          * \return  Returns an int indicating the primary stat (0 = dexterity, 
          *          1 = intelligence, 2 = strength).
          */
-        int getPrimaryStat();
+        int getPrimaryStat() const;
 
         /*!
          * \brief   Sets the primary stat for this player class.
@@ -63,7 +63,7 @@ class PlayerClass: public CombatantType {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

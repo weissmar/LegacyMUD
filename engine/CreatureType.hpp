@@ -41,14 +41,14 @@ class CreatureType: public CombatantType {
          *
          * \return  Returns a CharacterSize with the size of this creature type.
          */
-        CharacterSize getSize();
+        CharacterSize getSize() const;
 
         /*!
          * \brief   Gets the difficulty of this creature type.
          *
          * \return  Returns a XPTier with the difficulty of this creature type.
          */
-        XPTier getDifficulty();
+        XPTier getDifficulty() const;
 
         /*!
          * \brief   Sets the size of this creature type.
@@ -76,7 +76,7 @@ class CreatureType: public CombatantType {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

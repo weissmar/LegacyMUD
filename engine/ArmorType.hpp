@@ -40,7 +40,7 @@ class ArmorType: public ItemType {
          *
          * \return  Returns an int with the armor bonus for this armor type.
          */
-        virtual int getArmorBonus();
+        virtual int getArmorBonus() const;
 
         /*!
          * \brief   Gets the damage type this armor type is resistant to.
@@ -48,7 +48,7 @@ class ArmorType: public ItemType {
          * \return  Returns a DamageType with the damage type this armor type is 
          *          resistant to.
          */
-        virtual DamageType getResistantTo();
+        virtual DamageType getResistantTo() const;
 
         /*!
          * \brief   Sets the armor bonus for this armor type.
@@ -77,7 +77,7 @@ class ArmorType: public ItemType {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

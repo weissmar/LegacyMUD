@@ -43,21 +43,21 @@ class ItemType: public InteractiveNoun {
          *
          * \return  Returns an int with the weight of this item type.
          */
-        int getWeight();
+        int getWeight() const;
 
         /*!
          * \brief   Gets the rarity of this item type.
          *
          * \return  Returns an ItemRarity with the rarity of this item type.
          */
-        ItemRarity getRarity();
+        ItemRarity getRarity() const;
 
         /*!
          * \brief   Gets the description of this item type.
          *
          * \return  Returns a std::string with the description of this item type.
          */
-        std::string getDescription();
+        std::string getDescription() const;
 
         /*!
          * \brief   Gets the name of this item type.
@@ -71,14 +71,14 @@ class ItemType: public InteractiveNoun {
          *
          * \return  Returns an int with the cost of this item type.
          */
-        int getCost();
+        int getCost() const;
 
         /*!
          * \brief   Gets the slot type of this item type.
          *
          * \return  Returns an EquipmentSlot with the slot type of this item type.
          */
-        EquipmentSlot getSlotType();
+        EquipmentSlot getSlotType() const;
 
         /*!
          * \brief   Sets the weight of this item type.
@@ -145,7 +145,7 @@ class ItemType: public InteractiveNoun {
          *
          * \return  Returns an int with the armor bonus for this item type.
          */
-        virtual int getArmorBonus();
+        virtual int getArmorBonus() const;
 
         /*!
          * \brief   Gets the damage type this item type is resistant to.
@@ -153,35 +153,35 @@ class ItemType: public InteractiveNoun {
          * \return  Returns a DamageType with the damage type this item type is 
          *          resistant to.
          */
-        virtual DamageType getResistantTo();
+        virtual DamageType getResistantTo() const;
 
         /*!
          * \brief   Gets the damage if this item type has a damage.
          *
          * \return  Returns an int with the damage for this item type.
          */
-        virtual int getDamage();
+        virtual int getDamage() const;
 
         /*!
          * \brief   Gets the damage type if this item type has a damage type.
          *
          * \return  Returns a DamageType with the damage type for this item type.
          */
-        virtual DamageType getDamageType();
+        virtual DamageType getDamageType() const;
 
         /*!
          * \brief   Gets the range if this item type has a range.
          *
          * \return  Returns an AreaSize with the range for this item type.
          */
-        virtual AreaSize getRange();
+        virtual AreaSize getRange() const;
 
         /*!
          * \brief   Gets the crit multiplier if this item type has an crit multiplier.
          *
          * \return  Returns an int with the crit multiplier for this item type.
          */
-        virtual int getCritMultiplier();
+        virtual int getCritMultiplier() const;
 
         /*!
          * \brief   Sets the damage if this item type has a damage.
@@ -250,7 +250,7 @@ class ItemType: public InteractiveNoun {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

@@ -41,7 +41,7 @@ class Feature: public ConditionalElement {
          *
          * \return  Returns a std::string with the placement of this feature.
          */
-        std::string getPlacement();
+        std::string getPlacement() const;
 
         /*!
          * \brief   Sets the name of this feature.
@@ -69,7 +69,7 @@ class Feature: public ConditionalElement {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
