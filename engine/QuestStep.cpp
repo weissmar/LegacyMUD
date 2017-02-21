@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/15/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.cpp
  *
@@ -52,43 +52,49 @@ QuestStep::~QuestStep(){
 
 
 int QuestStep::getOrdinalNumber(){
-    return ordinalNumber;
+    return ordinalNumber.load();
 }
 
 
 std::string QuestStep::getDescription(){
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
 ItemType* QuestStep::getFetchItem(){
+    std::lock_guard<std::mutex> fetchItemLock(fetchItemMutex);
     return fetchItem;
 }
 
 
 NonCombatant* QuestStep::getGiver(){
+    std::lock_guard<std::mutex> giverLock(giverMutex);
     return giver;
 }
 
 
 NonCombatant* QuestStep::getReceiver(){
+    std::lock_guard<std::mutex> receiverLock(receiverMutex);
     return receiver;
 }
 
 
 std::string QuestStep::getCompletionText(){
+    std::lock_guard<std::mutex> completionTextLock(completionTextMutex);
     return completionText;
 }
 
 
 bool QuestStep::setOrdinalNumber(int number){
-    ordinalNumber = number;
+    ordinalNumber.store(number);
 
     return true; 
 }
 
 
 bool QuestStep::setDescription(std::string description){
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     this->description = description;
 
     return true;
@@ -96,6 +102,7 @@ bool QuestStep::setDescription(std::string description){
 
 
 bool QuestStep::setFetchItem(ItemType *anItemType){
+    std::lock_guard<std::mutex> anItemTypeLock(anItemTypeMutex);
     if (anItemType != nullptr){
         fetchItem = anItemType;
         return true;
@@ -106,6 +113,7 @@ bool QuestStep::setFetchItem(ItemType *anItemType){
 
 
 bool QuestStep::setGiver(NonCombatant *giver){
+    std::lock_guard<std::mutex> giverLock(giverMutex);
     if (giver != nullptr){
         this->giver = giver;
         return true;
@@ -116,6 +124,7 @@ bool QuestStep::setGiver(NonCombatant *giver){
 
 
 bool QuestStep::setReceiver(NonCombatant *receiver){
+    std::lock_guard<std::mutex> receiverLock(receiverMutex);
     if (receiver != nullptr){
         this->receiver = receiver;
         return true;
@@ -126,6 +135,7 @@ bool QuestStep::setReceiver(NonCombatant *receiver){
 
 
 bool QuestStep::setCompletionText(std::string completionText){
+    std::lock_guard<std::mutex> completionTextLock(completionTextMutex);
     this->completionText = completionText;
 
     return true;
@@ -133,6 +143,7 @@ bool QuestStep::setCompletionText(std::string completionText){
 
 
 std::string QuestStep::getName() const{
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
