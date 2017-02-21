@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/17/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -30,7 +30,6 @@ const std::string ADMIN_PASSWORD = "default";
 
 GameLogic::GameLogic() 
 : accountManager(nullptr)
-, theTextParser(nullptr)
 , theServer(nullptr)
 , startArea("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE){
     manager = new GameObjectManager;
@@ -39,7 +38,6 @@ GameLogic::GameLogic()
 
 GameLogic::GameLogic(const GameLogic &otherGameLogic)
 : accountManager(nullptr)
-, theTextParser(nullptr)
 , theServer(nullptr)
 , startArea("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE){
     manager = new GameObjectManager(*otherGameLogic.manager);
@@ -67,11 +65,10 @@ GameLogic::~GameLogic(){
 }
 
 
-bool GameLogic::startGame(bool newGame, const std::string &fileName, parser::TextParser *aParser, telnet::Server *aServer, account::Account *anAccount){
+bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
     PlayerClass *aClass;
 
     accountManager = anAccount;
-    theTextParser = aParser;
     theServer = aServer;
 
     // create a default player class
@@ -322,7 +319,7 @@ void GameLogic::processInput(int numToProcess){
                 isAdmin = accountManager->verifyAdmin(aPlayer->getUser());
 
                 // send message to parser
-                resultVector = theTextParser->parse(aMessage.first, aPlayer->getLexicalData(), anArea->getLexicalData(), isAdmin, aPlayer->isEditMode());
+                resultVector = parser::TextParser::parse(aMessage.first, aPlayer->getLexicalData(), anArea->getLexicalData(), isAdmin, aPlayer->isEditMode());
 
                 // check results
                 if (resultVector.size() == 1){
