@@ -181,7 +181,8 @@ bool Server::shutDownServer() {
     }
     else {
         /* Close the listening socket. */
-        close(_listenSocketFd);
+        shutdown(_listenSocketFd, SHUT_RDWR);   // break blocked read/write
+        close(_listenSocketFd);                 // destroy socket
         
         /* Return parameters to default state. */
         _serverPort = 0;     
