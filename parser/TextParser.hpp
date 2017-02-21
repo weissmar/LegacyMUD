@@ -2,7 +2,7 @@
   \file     TextParser.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/12/2017
+  \modified 02/20/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the TextParser class and
@@ -34,9 +34,6 @@ class LexicalData;
 */
 class TextParser {
 public:
-    TextParser() {}
-    ~TextParser();
-
     /*!
       \brief Converts text input from players into potential commands to be run.
 
@@ -74,77 +71,15 @@ public:
               return multiple ParseResult objects. The ParseResult objects with the
               ParseStatus value closest to ParseStatus::VALID are returned.
     */
-    std::vector<ParseResult> parse(
+    static std::vector<ParseResult> parse(
         const std::string input, 
         const LexicalData &player,
         const LexicalData &area,
         bool isAdmin = false,
         bool editMode = false
                          );
-private:
-#if 0
-    // Stores a candidate match
-    struct Match {
-        std::string verbAlias;
-        std::map<std::string, engine::InteractiveNoun *> directObjs;
-        PrepositionType preposition;
-        std::map<std::string, engine::InteractiveNoun *> indirectObjs;
-        std::string unparsed;
-        std::vector<VerbInfo> verbInfos;
-        TextParseStatus status;
-    };
-
-    // Manages the result candidates and keeps track of the best so far.
-    class ResultContainer {
-    public:
-        ResultContainer();
-        // Gets the best ParseStatus so far.
-        ParseStatus getBestStatus() const;
-        // Gets the result(s) with the most complete parse status.
-        // If there are multiple results with the same ParseStatus,
-        // the ones with the highest priority verb type are returned.
-        TextParseStatus getBestResults(std::vector<TextParseResult> &results) const;
-        // Adds a result to the ResultContainer and updates the highest status so far.
-        void addResult(TextParseStatus status, TextParseResult result);
-        size_t getResultCount() const;
-
-    private:
-        size_t _count;
-        ParseStatus _bestSoFar;
-        std::multimap<ParseStatus, ParseResult> _results;
-    };
-
-    // Find a matching alias in a WordMap
-    std::string findLongestLocalAlias(const WordMap &lookupTable, const std::vector<Token> &tokens, Range &range);
-
-    // Find a matching alias using the specified find function
-    std::string findLongestGlobalAlias(bool (*hasAlias)(std::string), const std::vector<Token> &tokens, Range &range);
-
-    // Tries to find a global match based on input tokens and maps
-    Match parseGlobal(
-        const std::vector<Token> &tokens,
-        bool (*hasAlias)(std::string),
-        std::vector<VerbInfo> (*getVerbs)(std::string),
-        const WordMap &playerNounMap,
-        const WordMap &areaNounMap
-    );
-
-    // Tries to find a local match based on input tokens and maps
-    Match parseLocal(
-        const std::vector<Token> &tokens,
-        const WordMap &playerVerbMap,
-        const WordMap &playerNounMap,
-        const WordMap &areaVerbMap,
-        const WordMap &areaNounMap
-    );
-
-    // Converts a PrepositionType value to an ItemPosition value
-    engine::ItemPosition prepositionToPosition(PrepositionType preposition);
-    
-    // Generates TextParseResults from the Match and adds them to the container.
-    void addMatchToResults(VerbType type, const Match m, ResultContainer &results);
-#endif
 };
+
 }}
 
 #endif
