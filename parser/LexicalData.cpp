@@ -2,7 +2,7 @@
   \file     LexicalData.cpp
   \author   David Rigert
   \created  02/11/2017
-  \modified 02/12/2017
+  \modified 02/20/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the LexicalData class.
@@ -13,6 +13,10 @@
 #include "WordManager.hpp"
 
 namespace legacymud { namespace parser {
+
+LexicalData::~LexicalData() {
+    clear();
+}
 
 void LexicalData::addNoun(std::string alias, engine::InteractiveNoun *pObject) {
     if (_nouns.addWord(alias, pObject)) {
