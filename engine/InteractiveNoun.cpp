@@ -19,7 +19,7 @@
 
 namespace legacymud { namespace engine {
 
-std::atomic<int> InteractiveNoun::nextID {1}
+std::atomic<int> InteractiveNoun::nextID {1};
 
 InteractiveNoun::InteractiveNoun() : ID(nextID++){
 
@@ -27,8 +27,8 @@ InteractiveNoun::InteractiveNoun() : ID(nextID++){
 
 
 InteractiveNoun::InteractiveNoun(const InteractiveNoun &otherNoun) : ID(nextID++){
-    std::unique_lock<std::mutex> aliasesLock(otherNoun->aliasesMutex, std::defer_lock);
-    std::unique_lock<std::mutex> actionsLock(otherNoun->actionsMutex, std::defer_lock);
+    std::unique_lock<std::mutex> aliasesLock(otherNoun.aliasesMutex, std::defer_lock);
+    std::unique_lock<std::mutex> actionsLock(otherNoun.actionsMutex, std::defer_lock);
     std::lock(aliasesLock, actionsLock);
     aliases = otherNoun.aliases;
     if (!otherNoun.actions.empty()){
@@ -40,9 +40,9 @@ InteractiveNoun::InteractiveNoun(const InteractiveNoun &otherNoun) : ID(nextID++
 
 
 InteractiveNoun & InteractiveNoun::operator=(const InteractiveNoun &otherNoun){
-    std::unique_lock<std::mutex> otherAliasesLock(otherNoun->aliasesMutex, std::defer_lock);
-    std::unique_lock<std::mutex> otherActionsLock(otherNoun->actionsMutex, std::defer_lock);
-    td::unique_lock<std::mutex> aliasesLock(aliasesMutex, std::defer_lock);
+    std::unique_lock<std::mutex> otherAliasesLock(otherNoun.aliasesMutex, std::defer_lock);
+    std::unique_lock<std::mutex> otherActionsLock(otherNoun.actionsMutex, std::defer_lock);
+    std::unique_lock<std::mutex> aliasesLock(aliasesMutex, std::defer_lock);
     std::unique_lock<std::mutex> actionsLock(actionsMutex, std::defer_lock);
     std::lock(otherAliasesLock, otherActionsLock, aliasesLock, actionsLock);
     if (this != &otherNoun){
@@ -135,7 +135,7 @@ bool InteractiveNoun::checkAction(CommandEnum aCommand){
 Action* InteractiveNoun::addAction(CommandEnum aCommand){
     if (!checkAction(aCommand)){
         std::lock_guard<std::mutex> actionsLock(actionsMutex);
-        Action *anAction = new Action(CommandEnum);
+        Action *anAction = new Action(aCommand);
         actions.push_back(anAction);
         return anAction;
     } else {

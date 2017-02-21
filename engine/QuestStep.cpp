@@ -102,7 +102,7 @@ bool QuestStep::setDescription(std::string description){
 
 
 bool QuestStep::setFetchItem(ItemType *anItemType){
-    std::lock_guard<std::mutex> anItemTypeLock(anItemTypeMutex);
+    std::lock_guard<std::mutex> fetchItemLock(fetchItemMutex);
     if (anItemType != nullptr){
         fetchItem = anItemType;
         return true;

@@ -33,7 +33,7 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 
 
 std::string SpecialSkill::getName() const{
-    std::guard_lock<std::mutex> nameLock(nameMutex);
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
@@ -59,7 +59,7 @@ int SpecialSkill::getCooldown(){
 
 
 bool SpecialSkill::setName(std::string name){
-    std::guard_lock<std::mutex> nameLock(nameMutex);
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
 
     return true;
