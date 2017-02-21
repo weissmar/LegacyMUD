@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -55,42 +55,46 @@ CombatantType::~CombatantType(){
 
 
 std::string CombatantType::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
 
 SpecialSkill* CombatantType::getSpecialSkill(){
+    std::lock_guard<std::mutex> specialSkillLock(specialSkillMutex);
     return specialSkill;
 }
 
 
 int CombatantType::getAttackBonus(){
-    return attackBonus;
+    return attackBonus.load();
 }
 
 
 int CombatantType::getArmorBonus(){
-    return armorBonus;
+    return armorBonus.load();
 }
 
 
 DamageType CombatantType::getResistantTo(){
-    return resistantTo;
+    return resistantTo.load();
 }
 
 
 DamageType CombatantType::getWeakTo(){
-    return weakTo;
+    return weakTo.load();
 }
 
 
 float CombatantType::getHealPoints(){
-    return healPoints;
+    return healPoints.load();
 }
 
 
 bool CombatantType::setName(std::string name){
-    return false;
+    std::lock_guard<std::mutex> nameLock(nameMutex);
+    this->name = name;
+    return true;
 }
 
 

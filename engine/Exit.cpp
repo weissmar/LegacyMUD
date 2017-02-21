@@ -45,14 +45,14 @@ Exit::~Exit(){
 
 
 ExitDirection Exit::getDirection(){
-    return direction;
+    return direction.load();
 }
 
 
 std::string Exit::getDirectionString(){
     std::string message;
 
-    switch (direction) {
+    switch (direction.load()) {
         case ExitDirection::NORTH:
             message = "To the north";
             break;        
@@ -92,30 +92,32 @@ std::string Exit::getDirectionString(){
 
 
 EffectType Exit::getEffect(){
-    return effect;
+    return effect.load();
 }
 
 
 Area* Exit::getConnectArea(){
+    std::lock_guard<std::mutex> connectAreaLock(connectAreaMutex);
     return connectArea;
 }
 
 
 bool Exit::setDirection(ExitDirection aDirection){
-    direction = aDirection;
+    direction.store(aDirection);
 
     return true;
 }
 
 
 bool Exit::setEffect(EffectType anEffect){
-    effect = anEffect;
+    effect.store(anEffect);
 
     return true;
 }
 
 
 bool Exit::setConnectArea(Area *anArea){
+    std::lock_guard<std::mutex> connectAreaLock(connectAreaMutex);
     if (anArea != nullptr){
         connectArea = anArea;
         return true;

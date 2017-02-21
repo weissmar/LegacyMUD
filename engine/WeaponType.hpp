@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.hpp
  *

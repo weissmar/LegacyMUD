@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -52,31 +52,36 @@ Character::~Character(){
 
 
 std::string Character::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
 
 std::string Character::getDescription(){
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
 int Character::getMoney(){
-    return money;
+    return money.load();
 }
 
 
 Area* Character::getLocation(){
+    std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
 }
 
 
 std::vector<std::pair<EquipmentSlot, Item*>> Character::getInventory(){
+    std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
     return inventory;
 }
 
 
 std::vector<Item*> Character::getItemsInventory(){
+    std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
     std::vector<Item*> items;
 
     for (auto item : inventory){
@@ -88,6 +93,7 @@ std::vector<Item*> Character::getItemsInventory(){
 
 
 std::vector<std::pair<EquipmentSlot, Item*>> Character::getEquipped(){
+    std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
     std::vector<std::pair<EquipmentSlot, Item*>> equipment;
 
     for (auto item : inventory){
@@ -101,7 +107,7 @@ std::vector<std::pair<EquipmentSlot, Item*>> Character::getEquipped(){
 
 
 int Character::getMaxInventoryWeight(){
-    return maxInventoryWeight;
+    return maxInventoryWeight.load();
 }
 
 
@@ -121,17 +127,25 @@ bool Character::setMoney(int money){
 
 
 int Character::addMoney(int money){
+    this->money += money;
+
     return money;
 }
 
 
 int Character::subtractMoney(int money){
+    this->money += money;
+
     return money;
 }
 
 
 bool Character::setLocation(Area *aLocation){
-    location = aLocation;
+    if (aLocation != nullptr){
+        std::lock_guard<std::mutex> locationLock(locationMutex);
+        location = aLocation;
+        return true;
+    }
     return false;
 }
 

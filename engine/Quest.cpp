@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -48,31 +48,36 @@ Quest::~Quest(){
 
 
 std::string Quest::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
 
 std::string Quest::getDescription(){
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
 int Quest::getRewardMoney(){
-    return rewardMoney;
+    return rewardMoney.load();
 }
 
 
 Item* Quest::getRewardItem(){
+    std::lock_guard<std::mutex> rewardItemLock(rewardItemMutex);
     return rewardItem;
 }
 
 
 std::vector<std::pair<int, QuestStep*>> Quest::getSteps(){
+    std::lock_guard<std::mutex> stepsLock(stepsMutex);
     return steps;
 }
 
 
 bool Quest::setName(std::string name){
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
 
     return true;
@@ -80,6 +85,7 @@ bool Quest::setName(std::string name){
 
 
 bool Quest::setDescription(std::string description){
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     this->description = description;
 
     return true;
@@ -87,26 +93,40 @@ bool Quest::setDescription(std::string description){
 
 
 bool Quest::setRewardMoney(int money){
-    rewardMoney = money;
+    rewardMoney.store(money);
 
     return true;
 }
 
 
 bool Quest::setRewardItem(Item *rewardItem){
+    std::lock_guard<std::mutex> rewardItemLock(rewardItemMutex);
     this->rewardItem = rewardItem;
 
     return true;
 }
 
 
-bool Quest::addStep(int, QuestStep *aStep){
-    return false;
+bool Quest::addStep(int order, QuestStep *aStep){
+    if(aStep != nullptr){
+        std::lock_guard<std::mutex> stepsLock(stepsMutex);
+        steps.push_back(std::make_pair(order, aStep));
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
 bool Quest::removeStep(QuestStep *aStep){
-    return false;
+    std::lock_guard<std::mutex> stepsLock(stepsMutex);
+    int size = steps.size();
+    steps.erase(std::remove(steps.begin(), steps.end(), aStep), steps.end());
+    if ((steps.size() - size) == 1){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 

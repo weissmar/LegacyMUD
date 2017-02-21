@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/12/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        CreatureType.cpp
  *
@@ -27,24 +27,24 @@ CreatureType::CreatureType(CharacterSize size, XPTier difficulty, std::string na
 
 
 CharacterSize CreatureType::getSize(){
-    return size;
+    return size.load();
 }
 
 
 XPTier CreatureType::getDifficulty(){
-    return difficulty;
+    return difficulty.load();
 }
 
 
 bool CreatureType::setSize(CharacterSize size){
-    this->size = size;
+    this->size.store(size);
 
     return true;
 }
 
 
 bool CreatureType::setDifficulty(XPTier difficulty){
-    this->difficulty = difficulty;
+    this->difficulty.store(difficulty);
 
     return true;
 }

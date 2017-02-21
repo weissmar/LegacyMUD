@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        PlayerClass.cpp
  *
@@ -26,16 +26,15 @@ PlayerClass::PlayerClass(int primaryStat, std::string name, SpecialSkill* skill,
 
 
 int PlayerClass::getPrimaryStat(){
-    return primaryStat;
+    return primaryStat.load();
 }
 
 
 bool PlayerClass::setPrimaryStat(int primaryStat){
     if ((primaryStat >= 0) && (primaryStat <= 2)){
-        this->primaryStat = primaryStat;
+        this->primaryStat.store(primaryStat);
         return true;
     }
-
     return false;
 }
 

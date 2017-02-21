@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/15/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Action.hpp
  *
@@ -41,6 +41,7 @@ namespace legacymud { namespace engine {
 class Action {
     public:
         Action();
+        Action(CommandEnum command);
         Action(CommandEnum command, bool valid, std::string flavorText, EffectType effect);
         Action(const Action &otherAction);
         Action & operator=(const Action &otherAction);
@@ -100,9 +101,20 @@ class Action {
         /*!
          * \brief   Gets the aliases for this action.
          *
-         * \return  Returns a vectorof std::string aliases for this action.
+         * \return  Returns a vector of std::string aliases for this action.
          */        
         std::vector<std::string> getAliases() const;
+
+        /*!
+         * \brief   Gets whether or not the specfied alias is an alias for this
+         *          action.
+         * 
+         * \param[in] anAlias   Specifies the alias to look up.
+         *
+         * \return  Returns true if the specified alias is an alias of this 
+         *          action, false otherwise.
+         */  
+        bool isAlias(std::string anAlias) const;
 
         /*!
          * \brief   Sets whether or not this action is currently valid.

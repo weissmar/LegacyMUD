@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/09/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        ArmorType.cpp
  *
@@ -37,12 +37,14 @@ DamageType ArmorType::getResistantTo(){
 
 
 bool ArmorType::setArmorBonus(int bonus){
-    return false;
+    armorBonus.store(bonus);
+    return true;
 }
 
 
 bool ArmorType::setResistantTo(DamageType resistance){
-    return false;
+    resistantTo.store(resistance);
+    return true;
 }
 
 

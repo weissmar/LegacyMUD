@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/11/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -45,22 +45,30 @@ Creature::~Creature(){
 
 
 CreatureType* Creature::getType(){
+    std::lock_guard<std::mutex> typeLock(typeMutex);
     return type;
 }
 
 
 bool Creature::getAmbulatory(){
-    return ambulatory;
+    return ambulatory.load();
 }
 
 
 bool Creature::setType(CreatureType *aType){
+    if (aType != nullptr){
+        std::lock_guard<std::mutex> typeLock(typeMutex);
+        type = aType;
+        return true;
+    }
+    
     return false;
 }
 
 
 bool Creature::setAmbulatory(bool ambulatory){
-    return false;
+    this->ambulatory.store(ambulatory);
+    return true;
 }
 
 
