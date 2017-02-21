@@ -46,12 +46,12 @@ ConditionalElement::~ConditionalElement(){
 }*/
 
 
-bool ConditionalElement::isConditional(){
+bool ConditionalElement::isConditional() const{
     return conditionSet.load();
 }
 
 
-ItemType* ConditionalElement::getConditionItem(){
+ItemType* ConditionalElement::getConditionItem() const{
     std::lock_guard<std::mutex> conditionItemLock(conditionItemMutex);
     return conditionItem;
 }
@@ -63,7 +63,7 @@ std::string ConditionalElement::getDescription() const{
 }
 
 
-std::string ConditionalElement::getAltDescription(){
+std::string ConditionalElement::getAltDescription() const{
     std::lock_guard<std::mutex> altDescriptionLock(altDescriptionMutex);
     return altDescription;
 }

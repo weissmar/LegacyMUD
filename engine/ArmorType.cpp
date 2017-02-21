@@ -26,12 +26,12 @@ ArmorType::ArmorType(int bonus, DamageType resistantTo, int weight, ItemRarity r
 { }
 
 
-int ArmorType::getArmorBonus(){
+int ArmorType::getArmorBonus() const{
     return armorBonus.load();
 }
 
 
-DamageType ArmorType::getResistantTo(){
+DamageType ArmorType::getResistantTo() const{
     return resistantTo.load();
 }
 
@@ -48,7 +48,7 @@ bool ArmorType::setResistantTo(DamageType resistance){
 }
 
 
-ObjectType ArmorType::getObjectType(){
+ObjectType ArmorType::getObjectType() const{
     return ObjectType::ARMOR_TYPE;
 }
 

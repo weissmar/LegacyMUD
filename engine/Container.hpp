@@ -45,7 +45,7 @@ class Container: public Item {
          * \return  Returns a bool indicating whether or not this container
          *          is empty.
          */
-        bool isEmpty();
+        bool isEmpty() const;
 
         /*!
          * \brief   Removes the speficied item from this container.
@@ -75,7 +75,7 @@ class Container: public Item {
          * \return  Returns a std::vector<Item*> with the inside contents of
          *          this container.
          */
-        std::vector<Item*> getInsideContents();
+        std::vector<Item*> getInsideContents() const;
 
         /*!
          * \brief   Gets the under contents of this container.
@@ -83,7 +83,7 @@ class Container: public Item {
          * \return  Returns a std::vector<Item*> with the under contents of
          *          this container.
          */
-        std::vector<Item*> getUnderContents();
+        std::vector<Item*> getUnderContents() const;
 
         /*!
          * \brief   Gets the top contents of this container.
@@ -91,14 +91,14 @@ class Container: public Item {
          * \return  Returns a std::vector<Item*> with the top contents of
          *          this container.
          */
-        std::vector<Item*> getTopContents();
+        std::vector<Item*> getTopContents() const;
 
         /*!
          * \brief   Gets the inside capacity of this container.
          *
          * \return  Returns an int with the inside capacity of this container.
          */
-        int getInsideCapacity();
+        int getInsideCapacity() const;
 
         /*!
          * \brief   Sets the inside capacity of this container.
@@ -116,7 +116,7 @@ class Container: public Item {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.

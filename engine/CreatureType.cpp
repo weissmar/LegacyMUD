@@ -26,12 +26,12 @@ CreatureType::CreatureType(CharacterSize size, XPTier difficulty, std::string na
 { }
 
 
-CharacterSize CreatureType::getSize(){
+CharacterSize CreatureType::getSize() const{
     return size.load();
 }
 
 
-XPTier CreatureType::getDifficulty(){
+XPTier CreatureType::getDifficulty() const{
     return difficulty.load();
 }
 
@@ -50,7 +50,7 @@ bool CreatureType::setDifficulty(XPTier difficulty){
 }
 
 
-ObjectType CreatureType::getObjectType(){
+ObjectType CreatureType::getObjectType() const{
     return ObjectType::CREATURE_TYPE;
 }
 

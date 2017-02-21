@@ -32,7 +32,7 @@ std::string Feature::getName() const{
 }
 
 
-std::string Feature::getPlacement(){
+std::string Feature::getPlacement() const{
     std::lock_guard<std::mutex> placementLock(placementMutex);
     return placement;
 }
@@ -54,7 +54,7 @@ bool Feature::setPlacement(std::string placement){
 }
 
 
-ObjectType Feature::getObjectType(){
+ObjectType Feature::getObjectType() const{
     return ObjectType::FEATURE;
 }
 

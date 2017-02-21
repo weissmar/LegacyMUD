@@ -49,13 +49,13 @@ Item::~Item(){
 }*/
 
 
-InteractiveNoun* Item::getLocation(){
+InteractiveNoun* Item::getLocation() const{
     std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
 }
 
 
-ItemPosition Item::getPosition(){
+ItemPosition Item::getPosition() const{
     return position.load();
 }
 
@@ -66,7 +66,7 @@ std::string Item::getName() const{
 }
 
 
-ItemType* Item::getType(){
+ItemType* Item::getType() const{
     std::lock_guard<std::mutex> typeLock(typeMutex);
     return type;
 }
@@ -109,7 +109,7 @@ bool Item::setType(ItemType *type){
 }
 
 
-ObjectType Item::getObjectType(){
+ObjectType Item::getObjectType() const{
     return ObjectType::ITEM;
 }
 

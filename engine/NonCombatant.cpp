@@ -41,7 +41,7 @@ NonCombatant::~NonCombatant(){
 }*/
 
 
-Quest* NonCombatant::getQuest(){
+Quest* NonCombatant::getQuest() const{
     std::lock_guard<std::mutex> questLock(questMutex);
     return quest;
 }
@@ -58,7 +58,7 @@ bool NonCombatant::setQuest(Quest *aQuest){
 }
 
 
-ObjectType NonCombatant::getObjectType(){
+ObjectType NonCombatant::getObjectType() const{
     return ObjectType::NON_COMBATANT;
 }
 

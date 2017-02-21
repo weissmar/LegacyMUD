@@ -165,7 +165,7 @@ bool GameObjectManager::removeObject(InteractiveNoun *anObject, int FD){
 }
 
 
-InteractiveNoun* GameObjectManager::getPointer(int ID){
+InteractiveNoun* GameObjectManager::getPointer(int ID) const{
     std::lock_guard<std::mutex> gameObjectsLock(gameObjectsMutex);
     int result = gameObjects.count(ID);
 
@@ -177,7 +177,7 @@ InteractiveNoun* GameObjectManager::getPointer(int ID){
 }
 
 
-std::vector<Creature*> GameObjectManager::getCreatures(){
+std::vector<Creature*> GameObjectManager::getCreatures() const{
     std::lock_guard<std::mutex> gameCreaturesLock(gameCreaturesMutex);
     std::vector<Creature*> creatureVector;
 
@@ -188,7 +188,7 @@ std::vector<Creature*> GameObjectManager::getCreatures(){
 }
 
 
-std::vector<Player*> GameObjectManager::getPlayersPtrs(){
+std::vector<Player*> GameObjectManager::getPlayersPtrs() const{
     std::lock_guard<std::mutex> activeGamePlayersLock(activeGamePlayersMutex);
     std::vector<Player*> playerVector;
 
@@ -199,7 +199,7 @@ std::vector<Player*> GameObjectManager::getPlayersPtrs(){
 }
 
 
-std::vector<int> GameObjectManager::getPlayersFDs(){
+std::vector<int> GameObjectManager::getPlayersFDs() const{
     std::lock_guard<std::mutex> activeGamePlayersLock(activeGamePlayersMutex);
     std::vector<int> fdVector;
 
@@ -210,7 +210,7 @@ std::vector<int> GameObjectManager::getPlayersFDs(){
 }
 
 
-Player* GameObjectManager::getPlayerByFD(int fileDescriptor){
+Player* GameObjectManager::getPlayerByFD(int fileDescriptor) const{
     std::lock_guard<std::mutex> activeGamePlayersLock(activeGamePlayersMutex);
     int result = activeGamePlayers.count(fileDescriptor);
 
@@ -222,7 +222,7 @@ Player* GameObjectManager::getPlayerByFD(int fileDescriptor){
 }
 
 
-Player* GameObjectManager::getPlayerByUsername(std::string username){
+Player* GameObjectManager::getPlayerByUsername(std::string username) const{
     std::lock_guard<std::mutex> inactivePlayersLock(inactivePlayersMutex);
     int result = inactivePlayers.count(username);
 
@@ -267,7 +267,7 @@ bool GameObjectManager::hibernatePlayer(int FD){
     }
 }
 
-std::vector<PlayerClass*> GameObjectManager::getPlayerClasses(){
+std::vector<PlayerClass*> GameObjectManager::getPlayerClasses() const{
     std::lock_guard<std::mutex> gamePlayerClassesLock(gamePlayerClassesMutex);
     return gamePlayerClasses;
 }

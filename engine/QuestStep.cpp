@@ -51,36 +51,36 @@ QuestStep::~QuestStep(){
 }*/
 
 
-int QuestStep::getOrdinalNumber(){
+int QuestStep::getOrdinalNumber() const{
     return ordinalNumber.load();
 }
 
 
-std::string QuestStep::getDescription(){
+std::string QuestStep::getDescription() const{
     std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
-ItemType* QuestStep::getFetchItem(){
+ItemType* QuestStep::getFetchItem() const{
     std::lock_guard<std::mutex> fetchItemLock(fetchItemMutex);
     return fetchItem;
 }
 
 
-NonCombatant* QuestStep::getGiver(){
+NonCombatant* QuestStep::getGiver() const{
     std::lock_guard<std::mutex> giverLock(giverMutex);
     return giver;
 }
 
 
-NonCombatant* QuestStep::getReceiver(){
+NonCombatant* QuestStep::getReceiver() const{
     std::lock_guard<std::mutex> receiverLock(receiverMutex);
     return receiver;
 }
 
 
-std::string QuestStep::getCompletionText(){
+std::string QuestStep::getCompletionText() const{
     std::lock_guard<std::mutex> completionTextLock(completionTextMutex);
     return completionText;
 }
@@ -148,7 +148,7 @@ std::string QuestStep::getName() const{
 }
 
 
-ObjectType QuestStep::getObjectType(){
+ObjectType QuestStep::getObjectType() const{
     return ObjectType::QUEST_STEP;
 }
 

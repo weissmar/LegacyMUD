@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/14/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.hpp
  *
@@ -69,7 +69,7 @@ class GameObjectManager {
          * \return  Returns a SerializableNoun* with the object, if found, otherwise
          *          nullptr.
          */
-        InteractiveNoun* getPointer(int ID);
+        InteractiveNoun* getPointer(int ID) const;
 
         /*!
          * \brief   Gets the list of creatures in the game.
@@ -77,7 +77,7 @@ class GameObjectManager {
          * \return  Returns a std::vector<Creature*> with the creatures in
          *          the game.
          */
-        std::vector<Creature*> getCreatures();
+        std::vector<Creature*> getCreatures() const;
 
         /*!
          * \brief   Gets the list of pointers to active players in the game.
@@ -85,14 +85,14 @@ class GameObjectManager {
          * \return  Returns a std::vector<Player*> with the active players in
          *          the game.
          */
-        std::vector<Player*> getPlayersPtrs();
+        std::vector<Player*> getPlayersPtrs() const;
 
         /*!
          * \brief   Gets the list of active player file descriptors in the game.
          *
          * \return  Returns a std::vector<int> with the players' file descriptors.
          */
-        std::vector<int> getPlayersFDs();
+        std::vector<int> getPlayersFDs() const;
 
         /*!
          * \brief   Gets the active player associated with the fileDescriptor.
@@ -102,7 +102,7 @@ class GameObjectManager {
          * \return  Returns a Player* with the player with the specified fileDescriptor, 
          *          or nullptr if the player isn't active.
          */
-        Player* getPlayerByFD(int fileDescriptor);
+        Player* getPlayerByFD(int fileDescriptor) const;
 
         /*!
          * \brief   Gets the inactive player associated with the username.
@@ -112,7 +112,7 @@ class GameObjectManager {
          * \return  Returns a Player* with the player with the specified username
          *          or nullptr if the player isn't inactive.
          */
-        Player* getPlayerByUsername(std::string username);
+        Player* getPlayerByUsername(std::string username) const;
 
         /*!
          * \brief   Loads the player associated with the username into active players
@@ -140,7 +140,7 @@ class GameObjectManager {
          *
          * \return  Returns a vector of pointers to PlayerClass.
          */
-        std::vector<PlayerClass*> getPlayerClasses();
+        std::vector<PlayerClass*> getPlayerClasses() const;
     private:
         std::map<int, InteractiveNoun*> gameObjects;
         mutable std::mutex gameObjectsMutex;

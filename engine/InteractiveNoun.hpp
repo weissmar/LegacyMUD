@@ -57,7 +57,7 @@ class InteractiveNoun {
          * 
          * \return  Returns an int with the ID.
          */
-        int getID();
+        int getID() const;
 
         /*!
          * \brief   Gets the action that is associated with the specified 
@@ -68,7 +68,7 @@ class InteractiveNoun {
          * \return  Returns an Action* with the action that is associated with
          *          the specified command.
          */
-        Action* getAction(CommandEnum command);
+        Action* getAction(CommandEnum command) const;
 
         /*!
          * \brief   Gets any actions that are associated with the specified 
@@ -79,14 +79,14 @@ class InteractiveNoun {
          * \return  Returns a std::vector<Action*> with the actions that include
          *          the specified alias.
          */
-        std::vector<Action*> getActions(std::string alias);
+        std::vector<Action*> getActions(std::string alias) const;
 
         /*!
          * \brief   Gets all of the noun aliases for this interactive noun.
          *
          * \return  Returns a std::vector<std::string> with the noun aliases.
          */
-        std::vector<std::string> getNounAliases();
+        std::vector<std::string> getNounAliases() const;
 
         /*!
          * \brief   Gets all of the verb aliases for the actions associated with
@@ -94,7 +94,7 @@ class InteractiveNoun {
          *
          * \return  Returns a std::vector<std::string> with the verb aliases.
          */
-        std::vector<std::string> getVerbAliases();
+        std::vector<std::string> getVerbAliases() const;
 
         /*!
          * \brief   Gets whether or not this interactive noun supports the 
@@ -105,7 +105,7 @@ class InteractiveNoun {
          * \return  Returns a bool indicating whether or not this interactive 
          *          noun supports the specified command.
          */
-        bool checkAction(CommandEnum command);
+        bool checkAction(CommandEnum command) const;
 
         /*!
          * \brief   Adds an action containing the specified command, if one 
@@ -160,7 +160,7 @@ class InteractiveNoun {
          * \brief   Gets the object type. This is a pure virtual function for
          *          interactive noun.
          */
-        virtual ObjectType getObjectType() = 0;
+        virtual ObjectType getObjectType() const = 0;
 
         /*!
          * \brief   Gets the object's response to the look command.

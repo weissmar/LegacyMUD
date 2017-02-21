@@ -42,28 +42,28 @@ class Combatant: public Character {
          * \return  Returns a bool indicating if the cooldown is currently
          *          zero.
          */
-        bool cooldownIsZero();
+        bool cooldownIsZero() const;
 
         /*!
          * \brief   Gets the current health of this combatant.
          *
          * \return  Returns an int with the current health of this combatant.
          */
-        int getCurrentHealth();
+        int getCurrentHealth() const;
 
         /*!
          * \brief   Gets the maximum health of this combatant.
          *
          * \return  Returns an int with the maximum health of this combatant.
          */
-        int getMaxHealth();
+        int getMaxHealth() const;
 
         /*!
          * \brief   Gets the spawn location for this combatant.
          *
          * \return  Returns an Area* with the spawn location for this combatant.
          */
-        Area* getSpawnLocation();
+        Area* getSpawnLocation() const;
 
         /*!
          * \brief   Gets the current number of special points for this combatant.
@@ -71,7 +71,7 @@ class Combatant: public Character {
          * \return  Returns an int with the current number of special points for 
          *          this combatant.
          */
-        int getCurrentSpecialPts();
+        int getCurrentSpecialPts() const;
 
         /*!
          * \brief   Gets the maximum number of special points for this combatant.
@@ -79,28 +79,28 @@ class Combatant: public Character {
          * \return  Returns an int with the maximum number of special points for 
          *          this combatant.
          */
-        int getMaxSpecialPts();
+        int getMaxSpecialPts() const;
 
         /*!
          * \brief   Gets the dexterity of this combatant.
          *
          * \return  Returns an int with the dexterity of this combatant.
          */
-        int getDexterity();
+        int getDexterity() const;
 
         /*!
          * \brief   Gets the strength of this combatant.
          *
          * \return  Returns an int with the strength of this combatant.
          */
-        int getStrength();
+        int getStrength() const;
 
         /*!
          * \brief   Gets the intelligence of this combatant.
          *
          * \return  Returns an int with the intelligence of this combatant.
          */
-        int getIntelligence();
+        int getIntelligence() const;
 
         /*!
          * \brief   Gets the whether this combatant is currently in combat.
@@ -109,7 +109,7 @@ class Combatant: public Character {
          *          is currenlty in combat with, or a nullptr if this combatant is 
          *          not currently in combat.
          */
-        Combatant* getInCombat();
+        Combatant* getInCombat() const;
 
         /*!
          * \brief   Sets the cooldown clock for this combatant.

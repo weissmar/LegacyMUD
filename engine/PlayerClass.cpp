@@ -25,7 +25,7 @@ PlayerClass::PlayerClass(int primaryStat, std::string name, SpecialSkill* skill,
 { }
 
 
-int PlayerClass::getPrimaryStat(){
+int PlayerClass::getPrimaryStat() const{
     return primaryStat.load();
 }
 
@@ -39,7 +39,7 @@ bool PlayerClass::setPrimaryStat(int primaryStat){
 }
 
 
-ObjectType PlayerClass::getObjectType(){
+ObjectType PlayerClass::getObjectType() const{
     return ObjectType::PLAYER_CLASS;
 }
 
