@@ -121,7 +121,7 @@ bool Quest::addStep(int order, QuestStep *aStep){
 bool Quest::removeStep(QuestStep *aStep){
     std::lock_guard<std::mutex> stepsLock(stepsMutex);
     int size = steps.size();
-    steps.erase(std::remove(steps.begin(), steps.end(), aStep), steps.end());
+    steps.erase(std::remove(steps.begin(), steps.end(), std::make_pair(aStep->getOrdinalNumber(), aStep)), steps.end());
     if ((steps.size() - size) == 1){
         return true;
     } else {

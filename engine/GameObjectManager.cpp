@@ -88,7 +88,7 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (aPlayerClass != nullptr){
                     std::unique_lock<std::mutex> gamePlayerClassesLock(gamePlayerClassesMutex);
                     gamePlayerClasses.push_back(aPlayerClass);
-                    gamePlayerClassesLock.unlock()
+                    gamePlayerClassesLock.unlock();
                     success = true;
                 }
             } else {
@@ -116,7 +116,7 @@ bool GameObjectManager::removeObject(InteractiveNoun *anObject, int FD){
         if (anID >= 0){
             std::unique_lock<std::mutex> gameObjectsLock(gameObjectsMutex);
             numRemoved = gameObjects.erase(anID);
-            gameObjectsLock.unlock()
+            gameObjectsLock.unlock();
             if ((aType == ObjectType::PLAYER) && (FD >= 0)){
                 std::unique_lock<std::mutex> activeGamePlayersLock(activeGamePlayersMutex);
                 numRemoved += activeGamePlayers.erase(FD);
