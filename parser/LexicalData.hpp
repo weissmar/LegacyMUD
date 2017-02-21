@@ -26,6 +26,13 @@ namespace legacymud { namespace parser {
 class LexicalData {
 public:
     /*!
+      \brief Destructor.
+      
+      The destructor removes all data in the object from the global tables of nouns and verbs.
+    */
+    ~LexicalData();
+
+    /*!
       \brief Adds a noun alias to the lexical data.
 
       This function adds a noun alias to the local lexical data and
@@ -97,7 +104,7 @@ public:
       \brief Removes a noun alias from the lexical data.
 
       This function removes the specified a noun alias and InteractiveNoun pair
-      from the local lexical data and also removes it from the global table of verbs.
+      from the local lexical data and also removes it from the global table of nouns.
       Call this function whenever a noun alias is deleted from an InteractiveNoun, 
       or an InteractiveNoun is moved out of a Player or Area.
 
@@ -106,8 +113,25 @@ public:
     */
     void removeNoun(std::string alias, engine::InteractiveNoun *pObject);
 
+    /*!
+      \brief Removes a verb alias from the lexical data.
+
+      This function removes the specified a verb alias and InteractiveNoun pair
+      from the local lexical data and also removes it from the global table of verbs.
+      Call this function whenever a verb alias is deleted from an InteractiveNoun, 
+      or an InteractiveNoun is moved out of a Player or Area.
+
+      \param[in]  alias   Specifies the alias to add.
+      \param[in]  pObject Specifies a pointer to the InteractiveNoun with the alias.
+    */
     void removeVerb(std::string alias, engine::InteractiveNoun *pObject);
 
+    /*!
+      \brief Clears all of the lexical data.
+
+      This function removes all of the lexical data in this object.
+      It also removes the data from from the global tables of verbs and nouns.
+    */
     void clear();
 
     /*!

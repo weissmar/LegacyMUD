@@ -33,9 +33,6 @@ void setGlobalVerbs();
 void setBuilderVerbs();
 void setSentenceTestVerbs();
 
-// Reuse this variable for a new parser object every test
-parser::TextParser tp;
-
 // Store the input text here
 std::string input;
 
@@ -76,11 +73,6 @@ public:
 
     }
 
-    virtual void SetUp() {
-        // Reset TextParser (shouldn't be necessary)
-        tp = parser::TextParser();
-    }
-
     virtual void TearDown() {
         // Clear the candidate list
         results.clear();
@@ -99,7 +91,7 @@ public:
 // Test the happy path of the HELP command
 TEST_F(TextParserTest, HelpHappyPath) {
     input = "help";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::HELP);
@@ -113,7 +105,7 @@ TEST_F(TextParserTest, HelpHappyPath) {
 // Test the HELP command with invalid input after
 TEST_F(TextParserTest, HelpInvalidSuffix) {
     input = "help me";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::HELP);
@@ -128,7 +120,7 @@ TEST_F(TextParserTest, HelpInvalidSuffix) {
 // Test the happy path of the standalone LOOK command
 TEST_F(TextParserTest, LookStandaloneHappyPath) {
     std::string input = "look";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::LOOK);
@@ -152,7 +144,7 @@ TEST_F(TextParserTest, LookHappyPath) {
     areaLex.addNoun("candle", &candle);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status) << *it;
         EXPECT_EQ(results[0].command, engine::CommandEnum::LOOK) << *it;
@@ -168,7 +160,7 @@ TEST_F(TextParserTest, LookHappyPath) {
 // Test the happy path of the LISTEN command
 TEST_F(TextParserTest, ListenHappyPath) {
     std::string input = "listen";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::LISTEN);
@@ -191,7 +183,7 @@ TEST_F(TextParserTest, TakeHappyPath) {
     areaLex.addNoun("candle", &candle);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::TAKE);
@@ -219,7 +211,7 @@ TEST_F(TextParserTest, PutHappyPath) {
     areaLex.addNoun("table", &table);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::PUT);
@@ -244,7 +236,7 @@ TEST_F(TextParserTest, DropHappyPath) {
     playerLex.addNoun("candle", &candle);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::DROP);
@@ -264,7 +256,7 @@ TEST_F(TextParserTest, InventoryHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::INVENTORY);
@@ -286,7 +278,7 @@ TEST_F(TextParserTest, MoreItemHappyPath) {
     // Item
     input = "more torch";
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::MORE);
@@ -300,7 +292,7 @@ TEST_F(TextParserTest, MoreItemHappyPath) {
     // Skill
     input = "more heal";
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::MORE);
@@ -320,7 +312,7 @@ TEST_F(TextParserTest, EquipmentHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::EQUIPMENT);
@@ -347,7 +339,7 @@ TEST_F(TextParserTest, EquipHappyPath) {
     playerLex.addNoun("helmet", &helmet);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::EQUIP);
@@ -375,7 +367,7 @@ TEST_F(TextParserTest, UnequipHappyPath) {
     playerLex.addNoun("helmet", &helmet);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::UNEQUIP);
@@ -401,7 +393,7 @@ TEST_F(TextParserTest, TransferHappyPath) {
     areaLex.addNoun("Joe", &joe);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::TRANSFER);
@@ -418,7 +410,7 @@ TEST_F(TextParserTest, TransferHappyPath) {
 // Test the happy path of the SPEAK command
 TEST_F(TextParserTest, SpeakHappyPath) {
     input = "say Hi everyone!";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::SPEAK);
@@ -438,7 +430,7 @@ TEST_F(TextParserTest, ShoutHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::SHOUT);
@@ -458,7 +450,7 @@ TEST_F(TextParserTest, WhisperHappyPath) {
     engine::Player joe;
     areaLex.addNoun("Joe", &joe);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::WHISPER);
@@ -479,7 +471,7 @@ TEST_F(TextParserTest, QuitHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::QUIT);
@@ -504,7 +496,7 @@ TEST_F(TextParserTest, GoHappyPath) {
     areaLex.addNoun("north", &north);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::GO);
@@ -532,7 +524,7 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
     areaLex.addVerb("n", &north);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::GO);
@@ -549,7 +541,7 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
 // Test the happy path of the STATS command
 TEST_F(TextParserTest, StatsHappyPath) {
     input = "stats";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::STATS);
@@ -563,7 +555,7 @@ TEST_F(TextParserTest, StatsHappyPath) {
 // Test the happy path of the QUESTS command
 TEST_F(TextParserTest, QuestsHappyPath) {
     input = "quests";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::QUESTS);
@@ -577,7 +569,7 @@ TEST_F(TextParserTest, QuestsHappyPath) {
 // Test the happy path of the SKILLS command
 TEST_F(TextParserTest, SkillsHappyPath) {
     input = "skills";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::SKILLS);
@@ -599,7 +591,7 @@ TEST_F(TextParserTest, AttackHappyPath) {
     areaLex.addNoun("troll", &troll);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size());
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::ATTACK);
@@ -626,7 +618,7 @@ TEST_F(TextParserTest, AttackWithSkillHappyPath) {
     playerLex.addNoun("fireball", &fb);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::ATTACK);
@@ -648,7 +640,7 @@ TEST_F(TextParserTest, TalkHappyPath) {
     engine::NonCombatant sarah;
     areaLex.addNoun("Sarah", &sarah);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::TALK);
@@ -663,7 +655,7 @@ TEST_F(TextParserTest, TalkHappyPath) {
 // Test the happy path of the SHOP command
 TEST_F(TextParserTest, ShopHappyPath) {
     input = "shop";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::SHOP);
@@ -681,7 +673,7 @@ TEST_F(TextParserTest, BuyHappyPath) {
     engine::Item torch;
     areaLex.addNoun("torch", &torch);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::BUY);
@@ -700,7 +692,7 @@ TEST_F(TextParserTest, SellHappyPath) {
     engine::Item torch;
     playerLex.addNoun("torch", &torch);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::SELL);
@@ -725,7 +717,7 @@ TEST_F(TextParserTest, SearchHappyPath) {
     areaLex.addNoun("chest", &chest);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::SEARCH);
@@ -746,7 +738,7 @@ TEST_F(TextParserTest, UseSkillHappyPath) {
     engine::SpecialSkill heal;
     playerLex.addNoun("heal", &heal);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::USE_SKILL);
@@ -767,7 +759,7 @@ TEST_F(TextParserTest, UseSkillOnTargetHappyPath) {
     engine::Player joe;
     areaLex.addNoun("Joe", &joe);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::USE_SKILL);
@@ -792,7 +784,7 @@ TEST_F(TextParserTest, MoveHappyPath) {
     // TODO: Add Action to chair
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::MOVE);
@@ -818,7 +810,7 @@ TEST_F(TextParserTest, ReadHappyPath) {
     // TODO: Add Action to book
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::READ);
@@ -844,7 +836,7 @@ TEST_F(TextParserTest, BreakHappyPath) {
     // TODO: Add Action to book
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::BREAK);
@@ -870,7 +862,7 @@ TEST_F(TextParserTest, ClimbHappyPath) {
     // TODO: Add Action to ladder
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::CLIMB);
@@ -896,7 +888,7 @@ TEST_F(TextParserTest, TurnHappyPath) {
     // TODO: Add Action to knob
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::TURN);
@@ -922,7 +914,7 @@ TEST_F(TextParserTest, PushHappyPath) {
     // TODO: Add Action to table
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::PUSH);
@@ -948,7 +940,7 @@ TEST_F(TextParserTest, PullHappyPath) {
     // TODO: Add Action to table
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::PULL);
@@ -974,7 +966,7 @@ TEST_F(TextParserTest, EatHappyPath) {
     // TODO: Add Action to bread
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::EAT);
@@ -1000,7 +992,7 @@ TEST_F(TextParserTest, DrinkHappyPath) {
     // TODO: Add Action to potion
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex);
+        results = parser::TextParser::parse(*it, playerLex, areaLex);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::DRINK);
@@ -1017,7 +1009,7 @@ TEST_F(TextParserTest, DrinkHappyPath) {
 // Test the happy path of the EDIT_MODE command
 TEST_F(TextParserTest, EditModeHappyPath) {
     input = "editmode";
-    results = tp.parse(input, playerLex, areaLex, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::EDIT_MODE);
@@ -1031,7 +1023,7 @@ TEST_F(TextParserTest, EditModeHappyPath) {
 // Test the EDIT_MODE command without permissions
 TEST_F(TextParserTest, EditModeNotAdmin) {
     input = "editmode";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1053,7 +1045,7 @@ TEST_F(TextParserTest, WarpHappyPath) {
     parser::WordManager::addNoun("1", &area);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex, true, true);
+        results = parser::TextParser::parse(*it, playerLex, areaLex, true, true);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::WARP);
@@ -1076,7 +1068,7 @@ TEST_F(TextParserTest, CopyHappyPath) {
     engine::Item item;
     parser::WordManager::addNoun("1", &item);
 
-    results = tp.parse(input, playerLex, areaLex, true, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::COPY);
@@ -1098,7 +1090,7 @@ TEST_F(TextParserTest, CreateHappyPath) {
     };
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex, true, true);
+        results = parser::TextParser::parse(*it, playerLex, areaLex, true, true);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::CREATE);
@@ -1115,7 +1107,7 @@ TEST_F(TextParserTest, CreateHappyPath) {
 TEST_F(TextParserTest, AddHappyPath) {
     input = "add exit";
 
-    results = tp.parse(input, playerLex, areaLex, true, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::CREATE);
@@ -1129,7 +1121,7 @@ TEST_F(TextParserTest, AddHappyPath) {
 // Test the happy path of the EDIT_ATTRIBUTE command
 TEST_F(TextParserTest, EditAttributeHappyPath) {
     input = "edit long description";
-    results = tp.parse(input, playerLex, areaLex, true, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::EDIT_ATTRIBUTE);
@@ -1147,7 +1139,7 @@ TEST_F(TextParserTest, EditWizardHappyPath) {
     engine::Item torch;
     areaLex.addNoun("torch", &torch);
 
-    results = tp.parse(input, playerLex, areaLex, true, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(2, results.size());
     if (results[0].command == engine::CommandEnum::EDIT_WIZARD) {
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
@@ -1174,7 +1166,7 @@ TEST_F(TextParserTest, EditWizardHappyPath) {
 // Test the happy path of the SAVE command
 TEST_F(TextParserTest, SaveHappyPath) {
     std::string input = "save";
-    results = tp.parse(input, playerLex, areaLex, true, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::SAVE);
@@ -1188,7 +1180,7 @@ TEST_F(TextParserTest, SaveHappyPath) {
 // Test the happy path of the SAVE command with filename
 TEST_F(TextParserTest, SaveFilenameHappyPath) {
     std::string input = "save filename.dat";
-    results = tp.parse(input, playerLex, areaLex, true, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::SAVE);
@@ -1202,7 +1194,7 @@ TEST_F(TextParserTest, SaveFilenameHappyPath) {
 // Test the happy path of the LOAD command
 TEST_F(TextParserTest, LoadHappyPath) {
     std::string input = "load filename.dat";
-    results = tp.parse(input, playerLex, areaLex, true, true);
+    results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::LOAD);
@@ -1226,7 +1218,7 @@ TEST_F(TextParserTest, DeleteHappyPath) {
     parser::WordManager::addNoun("1", &potion);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
-        results = tp.parse(*it, playerLex, areaLex, true, true);
+        results = parser::TextParser::parse(*it, playerLex, areaLex, true, true);
         ASSERT_EQ(1, results.size()) << *it;
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::DELETE);
@@ -1244,7 +1236,7 @@ TEST_F(TextParserTest, DeleteHappyPath) {
 // Test an unknown verb only
 TEST_F(TextParserTest, InvalidVerbOnly) {
     std::string input = "foo";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1258,7 +1250,7 @@ TEST_F(TextParserTest, InvalidVerbOnly) {
 // Test an unknown verb with unknown direct object
 TEST_F(TextParserTest, InvalidVerbInvalidDirectObject) {
     std::string input = "foo bar";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1272,7 +1264,7 @@ TEST_F(TextParserTest, InvalidVerbInvalidDirectObject) {
 // Test an unknown verb with known direct object
 TEST_F(TextParserTest, InvalidVerbValidDirectObject) {
     std::string input = "foo torch";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_VERB, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1289,7 +1281,7 @@ TEST_F(TextParserTest, UnavailableVerb) {
     engine::Item item = engine::Item();
     lex.addVerb("foo", &item);
     std::string input = "foo";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_VERB, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1298,7 +1290,7 @@ TEST_F(TextParserTest, UnavailableVerb) {
     EXPECT_EQ(0, results[0].direct.size());
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    lex.clear();
+    //lex.clear();
 }
 
 // Test an unavailable noun
@@ -1307,7 +1299,7 @@ TEST_F(TextParserTest, UnavailableDirectNoun) {
     engine::Item item = engine::Item();
     lex.addNoun("foo", &item);
     std::string input = "look foo";
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::LOOK);
@@ -1316,7 +1308,7 @@ TEST_F(TextParserTest, UnavailableDirectNoun) {
     EXPECT_EQ(0, results[0].direct.size());
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    lex.clear();
+    //lex.clear();
 }
 
 // Test a verb-direct object-indirect object sentence
@@ -1326,7 +1318,7 @@ TEST_F(TextParserTest, VDISentenceTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1350,7 +1342,7 @@ TEST_F(TextParserTest, VDISentenceDirectUnavailableTest) {
     playerLex.addNoun("item 1", &item1);
     areaLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, areaLex, areaLex);
+    results = parser::TextParser::parse(input, areaLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1370,7 +1362,7 @@ TEST_F(TextParserTest, VDISentenceDirectInvalidTest) {
     playerLex.addNoun("item 1", &item1);
     areaLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, areaLex, areaLex);
+    results = parser::TextParser::parse(input, areaLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1390,7 +1382,7 @@ TEST_F(TextParserTest, VDISentenceIndirectUnavailableTest) {
     playerLex.addNoun("item 1", &item1);
     areaLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, playerLex);
+    results = parser::TextParser::parse(input, playerLex, playerLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1410,7 +1402,7 @@ TEST_F(TextParserTest, VDISentenceIndirectInvalidTest) {
     playerLex.addNoun("item 1", &item1);
     areaLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, playerLex);
+    results = parser::TextParser::parse(input, playerLex, playerLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1430,7 +1422,7 @@ TEST_F(TextParserTest, VDPISentenceOnTest) {
     playerLex.addNoun("item 1", &item1);
     playerLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1453,7 +1445,7 @@ TEST_F(TextParserTest, VDPISentenceOfTest) {
     playerLex.addNoun("item 1", &item1);
     playerLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1474,7 +1466,7 @@ TEST_F(TextParserTest, VDPISentenceOnInvalidDirectTest) {
     engine::Item item2;
     playerLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1491,7 +1483,7 @@ TEST_F(TextParserTest, VDPISentenceOfInvalidDirectTest) {
     engine::Item item2;
     playerLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1505,11 +1497,13 @@ TEST_F(TextParserTest, VDPISentenceOfInvalidDirectTest) {
 TEST_F(TextParserTest, VDPISentenceOnUnavailableDirectTest) {
     input = "vdpi item 1 on item 2";
     
+    engine::Item item1;
     engine::Item item2;
     playerLex.addNoun("item 2", &item2);
-    areaLex.addNoun("item 1", &item2);
+    parser::LexicalData otherLex;
+    otherLex.addNoun("item 1", &item2);
     
-    results = tp.parse(input, playerLex, playerLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1523,11 +1517,13 @@ TEST_F(TextParserTest, VDPISentenceOnUnavailableDirectTest) {
 TEST_F(TextParserTest, VDPISentenceOfUnavailableDirectTest) {
     input = "vdpi item 1 of item 2";
     
+    engine::Item item1;
     engine::Item item2;
     playerLex.addNoun("item 2", &item2);
-    areaLex.addNoun("item 1", &item2);
+    parser::LexicalData otherLex;
+    otherLex.addNoun("item 1", &item2);
     
-    results = tp.parse(input, playerLex, playerLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1546,7 +1542,7 @@ TEST_F(TextParserTest, VDPISentenceInvalidPrepositionTest) {
     playerLex.addNoun("item 1", &item1);
     playerLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1567,7 +1563,7 @@ TEST_F(TextParserTest, VDPISentenceMissingPrepositionTest) {
     playerLex.addNoun("item 1", &item1);
     playerLex.addNoun("item 2", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1586,7 +1582,7 @@ TEST_F(TextParserTest, VDPISentenceOnInvalidIndirectTest) {
     engine::Item item1;
     playerLex.addNoun("item 1", &item1);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1605,7 +1601,7 @@ TEST_F(TextParserTest, VDPISentenceOfInvalidIndirectTest) {
     engine::Item item1;
     playerLex.addNoun("item 1", &item1);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1626,7 +1622,7 @@ TEST_F(TextParserTest, VDPISentenceOnUnavailableIndirectTest) {
     otherArea.addNoun("item 2", &item2);
     areaLex.addNoun("item 1", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1646,7 +1642,7 @@ TEST_F(TextParserTest, VDPISentenceOfUnavailableIndirectTest) {
     otherArea.addNoun("item 2", &item2);
     areaLex.addNoun("item 1", &item2);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1664,7 +1660,7 @@ TEST_F(TextParserTest, VDPTSentenceOnTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1684,7 +1680,7 @@ TEST_F(TextParserTest, VDPTSentenceOfTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1701,7 +1697,7 @@ TEST_F(TextParserTest, VDPTSentenceOfTest) {
 TEST_F(TextParserTest, VDPTSentenceOnInvalidDirectTest) {
     input = "vdpt item on text";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1715,7 +1711,7 @@ TEST_F(TextParserTest, VDPTSentenceOnInvalidDirectTest) {
 TEST_F(TextParserTest, VDPTSentenceOfInvalidDirectTest) {
     input = "vdpt item of text";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1733,7 +1729,7 @@ TEST_F(TextParserTest, VDPTSentenceOnUnavailableDirectTest) {
     parser::LexicalData otherLex;
     otherLex.addNoun("item", &item);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1741,7 +1737,7 @@ TEST_F(TextParserTest, VDPTSentenceOnUnavailableDirectTest) {
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_STREQ("item on text", results[0].unparsed.c_str());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    otherLex.clear();
+    //otherLex.clear();
 }
 
 // Test a verb-direct object-preposition-indirect text sentence
@@ -1752,7 +1748,7 @@ TEST_F(TextParserTest, VDPTSentenceOfUnavailableDirectTest) {
     parser::LexicalData otherLex;
     otherLex.addNoun("item", &item);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1760,7 +1756,7 @@ TEST_F(TextParserTest, VDPTSentenceOfUnavailableDirectTest) {
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_STREQ("item of text", results[0].unparsed.c_str());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    otherLex.clear();
+    //otherLex.clear();
 }
 
 // Test a verb-direct object-preposition-indirect text sentence
@@ -1770,7 +1766,7 @@ TEST_F(TextParserTest, VDPTSentenceMissingPrepositionTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1789,7 +1785,7 @@ TEST_F(TextParserTest, VDPTSentenceInvalidPrepositionTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1808,7 +1804,7 @@ TEST_F(TextParserTest, VDPTSentenceMissingIndirectTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1827,7 +1823,7 @@ TEST_F(TextParserTest, VDSentenceTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1844,7 +1840,7 @@ TEST_F(TextParserTest, VDSentenceTest) {
 TEST_F(TextParserTest, VDSentenceInvalidDirectTest) {
     input = "vd item";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1863,7 +1859,7 @@ TEST_F(TextParserTest, VDSentenceUnavailableDirectTest) {
     engine::Item item;
     otherLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1872,14 +1868,14 @@ TEST_F(TextParserTest, VDSentenceUnavailableDirectTest) {
     EXPECT_TRUE(results[0].indirectAlias.empty());
     EXPECT_STREQ("item", results[0].unparsed.c_str());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    otherLex.clear();
+    //otherLex.clear();
 }
 
 // Test a verb-direct object sentence
 TEST_F(TextParserTest, VDSentenceMissingDirectTest) {
     input = "vd";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1897,7 +1893,7 @@ TEST_F(TextParserTest, VDTSentenceTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1914,7 +1910,7 @@ TEST_F(TextParserTest, VDTSentenceTest) {
 TEST_F(TextParserTest, VDTSentenceInvalidDirectTest) {
     input = "vdt item text";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1932,7 +1928,7 @@ TEST_F(TextParserTest, VDTSentenceUnavailableDirectTest) {
     parser::LexicalData otherLex;
     otherLex.addNoun("item", &item);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1940,7 +1936,7 @@ TEST_F(TextParserTest, VDTSentenceUnavailableDirectTest) {
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_STREQ("item text", results[0].unparsed.c_str());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    otherLex.clear();
+    //otherLex.clear();
 }
 
 // Test a verb-direct object-text sentence
@@ -1950,7 +1946,7 @@ TEST_F(TextParserTest, VDTSentenceMissingIndirectTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1969,7 +1965,7 @@ TEST_F(TextParserTest, VPISentenceTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -1989,7 +1985,7 @@ TEST_F(TextParserTest, VPISentenceInvalidPrepositionTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2007,7 +2003,7 @@ TEST_F(TextParserTest, VPISentenceMissingPrepositionTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2022,7 +2018,7 @@ TEST_F(TextParserTest, VPISentenceMissingPrepositionTest) {
 TEST_F(TextParserTest, VPISentenceInvalidIndirectTest) {
     input = "vpi on item";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2037,7 +2033,7 @@ TEST_F(TextParserTest, VPISentenceInvalidIndirectTest) {
 TEST_F(TextParserTest, VPTSentenceTest) {
     input = "vpt on text";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2053,7 +2049,7 @@ TEST_F(TextParserTest, VPTSentenceTest) {
 TEST_F(TextParserTest, VPTSentenceInvalidPrepositionTest) {
     input = "vpt with text";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2068,7 +2064,7 @@ TEST_F(TextParserTest, VPTSentenceInvalidPrepositionTest) {
 TEST_F(TextParserTest, VPTSentenceMissingPrepositionTest) {
     input = "vpt text";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2083,7 +2079,7 @@ TEST_F(TextParserTest, VPTSentenceMissingPrepositionTest) {
 TEST_F(TextParserTest, VPTSentenceMissingIndirectTest) {
     input = "vpt on";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2098,7 +2094,7 @@ TEST_F(TextParserTest, VPTSentenceMissingIndirectTest) {
 TEST_F(TextParserTest, VSentenceTest) {
     input = "v";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2117,7 +2113,7 @@ TEST_F(TextParserTest, VTISentenceTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2134,7 +2130,7 @@ TEST_F(TextParserTest, VTISentenceTest) {
 TEST_F(TextParserTest, VTISentenceInvalidIndirectTest) {
     input = "vti text item";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2154,7 +2150,7 @@ TEST_F(TextParserTest, VTISentenceUnavailableIndirectTest) {
     parser::LexicalData otherLex;
     otherLex.addNoun("item", &item);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2164,7 +2160,7 @@ TEST_F(TextParserTest, VTISentenceUnavailableIndirectTest) {
     EXPECT_TRUE(results[0].indirectAlias.empty());
     EXPECT_STREQ("text item", results[0].unparsed.c_str());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    otherLex.clear();
+    //otherLex.clear();
 }
 
 // Test a verb-text-indirect object sentence
@@ -2174,7 +2170,7 @@ TEST_F(TextParserTest, VTISentenceMissingDirectTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
 
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2193,7 +2189,7 @@ TEST_F(TextParserTest, VTPISentenceOnTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2213,7 +2209,7 @@ TEST_F(TextParserTest, VTPISentenceOfTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2230,7 +2226,7 @@ TEST_F(TextParserTest, VTPISentenceOfTest) {
 TEST_F(TextParserTest, VTPISentenceOnInvalidIndirectTest) {
     input = "vtpi text on item";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2245,7 +2241,7 @@ TEST_F(TextParserTest, VTPISentenceOnInvalidIndirectTest) {
 TEST_F(TextParserTest, VTPISentenceOfInvalidIndirectTest) {
     input = "vtpi text of item";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2264,7 +2260,7 @@ TEST_F(TextParserTest, VTPISentenceOnUnavailableIndirectTest) {
     parser::LexicalData otherLex;
     otherLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2273,7 +2269,7 @@ TEST_F(TextParserTest, VTPISentenceOnUnavailableIndirectTest) {
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_STREQ("text on item", results[0].unparsed.c_str());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    otherLex.clear();
+    //otherLex.clear();
 }
 
 // Test a verb-text-preposition-indirect object sentence
@@ -2284,7 +2280,7 @@ TEST_F(TextParserTest, VTPISentenceOfUnavailableIndirectTest) {
     parser::LexicalData otherLex;
     otherLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::UNAVAILABLE_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2293,7 +2289,7 @@ TEST_F(TextParserTest, VTPISentenceOfUnavailableIndirectTest) {
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_STREQ("text of item", results[0].unparsed.c_str());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
-    otherLex.clear();
+    //otherLex.clear();
 }
 
 // Test a verb-text-preposition-indirect object sentence
@@ -2303,7 +2299,7 @@ TEST_F(TextParserTest, VTPISentenceInvalidPrepositionTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2321,7 +2317,7 @@ TEST_F(TextParserTest, VTPISentenceMissingPrepositionTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_PREPOSITION, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2339,7 +2335,7 @@ TEST_F(TextParserTest, VTPISentenceMissingDirectTest) {
     engine::Item item;
     playerLex.addNoun("item", &item);
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2354,7 +2350,7 @@ TEST_F(TextParserTest, VTPISentenceMissingDirectTest) {
 TEST_F(TextParserTest, VTPTSentenceOnTest) {
     input = "vtpt text part 1 on text part 2";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2370,7 +2366,7 @@ TEST_F(TextParserTest, VTPTSentenceOnTest) {
 TEST_F(TextParserTest, VTPTSentenceOfTest) {
     input = "vtpt text part 1 of text part 2";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2387,7 +2383,7 @@ TEST_F(TextParserTest, VTPTSentenceOfTest) {
 TEST_F(TextParserTest, VTPTSentenceOnMissingIndirectTest) {
     input = "vtpt text part 1 on";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2403,7 +2399,7 @@ TEST_F(TextParserTest, VTPTSentenceOnMissingIndirectTest) {
 TEST_F(TextParserTest, VTPTSentenceOfMissingIndirectTest) {
     input = "vtpt text part 1 of";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_INDIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2419,7 +2415,7 @@ TEST_F(TextParserTest, VTPTSentenceOfMissingIndirectTest) {
 TEST_F(TextParserTest, VTPTSentenceOnMissingDirectTest) {
     input = "vtpt on text part 2";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2435,7 +2431,7 @@ TEST_F(TextParserTest, VTPTSentenceOnMissingDirectTest) {
 TEST_F(TextParserTest, VTPTSentenceOfMissingDirectTest) {
     input = "vtpt of text part 2";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2451,7 +2447,7 @@ TEST_F(TextParserTest, VTPTSentenceOfMissingDirectTest) {
 TEST_F(TextParserTest, VTSentenceTest) {
     input = "vt text";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
@@ -2467,7 +2463,7 @@ TEST_F(TextParserTest, VTSentenceTest) {
 TEST_F(TextParserTest, VTSentenceMissingDirectTest) {
     input = "vt";
     
-    results = tp.parse(input, playerLex, areaLex);
+    results = parser::TextParser::parse(input, playerLex, areaLex);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::INVALID_DIRECT, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::INVALID);
