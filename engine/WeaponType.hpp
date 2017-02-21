@@ -16,6 +16,7 @@
 #define WEAPON_TYPE_HPP
 
 #include <string>
+#include <atomic>
 #include "ItemType.hpp"
 #include "ItemRarity.hpp"
 #include "EquipmentSlot.hpp"
@@ -288,10 +289,10 @@ class WeaponType: public ItemType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int damage;
-        DamageType damageType;
-        AreaSize range;
-        int critMultiplier;
+        std::atomic<int> damage;
+        std::atomic<DamageType> damageType;
+        std::atomic<AreaSize> range;
+        std::atomic<int> critMultiplier;
 };
 
 }}

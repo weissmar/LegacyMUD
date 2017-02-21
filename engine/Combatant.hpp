@@ -15,6 +15,8 @@
 
 #include <utility>
 #include <string>
+#include <atomic>
+#include <mutex>
 #include "Character.hpp"
 
 namespace legacymud { namespace engine {
@@ -269,14 +271,18 @@ class Combatant: public Character {
          */
         int increaseIntelligence(int intPoints);
     private:
-        int cooldownClock;
+        std::atomic<int> cooldownClock;
         std::pair<int, int> health;
+        mutable std::mutex healthMutex;
         Area* spawnLocation;
+        mutable std::mutex spawnLocationMutex;
         std::pair<int, int> specialPoints;
-        int dexterity;
-        int strength;
-        int intelligence;
+        mutable std::mutex specialPointsMutex;
+        std::atomic<int> dexterity;
+        std::atomic<int> strength;
+        std::atomic<int> intelligence;
         Combatant* inCombat;
+        mutable std::mutex inCombatMutex;
 };
 
 }}

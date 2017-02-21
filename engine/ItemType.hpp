@@ -16,6 +16,8 @@
 #define ITEM_TYPE_HPP
 
 #include <string>
+#include <atomic>
+#include <mutex>
 #include "InteractiveNoun.hpp"
 #include "EquipmentSlot.hpp"
 #include "ItemRarity.hpp"
@@ -426,12 +428,14 @@ class ItemType: public InteractiveNoun {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int weight;
-        ItemRarity rarity;
+        std::atomic<int> weight;
+        std::atomic<ItemRarity> rarity;
         std::string description;
+        mutable std::mutex descriptionMutex;
         std::string name;
-        int cost;
-        EquipmentSlot slotType;
+        mutable std::mutex nameMutex;
+        std::atomic<int> cost;
+        std::atomic<EquipmentSlot> slotType;
 };
 
 }}

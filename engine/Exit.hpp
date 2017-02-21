@@ -14,6 +14,8 @@
 #define EXIT_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "ConditionalElement.hpp"
 #include "EffectType.hpp"
 #include "ExitDirection.hpp"
@@ -300,9 +302,10 @@ class Exit: public ConditionalElement {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        ExitDirection direction;
-        EffectType effect;
+        std::atomic<ExitDirection> direction;
+        std::atomic<EffectType> effect;
         Area *connectArea;
+        mutable std::mutex connectAreaMutex;
 };
 
 }}

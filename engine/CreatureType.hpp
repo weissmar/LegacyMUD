@@ -16,6 +16,7 @@
 #define CREATURE_TYPE_HPP
 
 #include <string>
+#include <atomic>
 #include "CombatantType.hpp"
 #include "CharacterSize.hpp"
 #include "DataType.hpp"
@@ -145,8 +146,8 @@ class CreatureType: public CombatantType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        CharacterSize size;
-        XPTier difficulty;
+        std::atomic<CharacterSize> size;
+        std::atomic<XPTier> difficulty;
 };
 
 }}

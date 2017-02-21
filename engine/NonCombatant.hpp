@@ -14,6 +14,7 @@
 #define NON_COMBATANT_HPP
 
 #include <string>
+#include <mutex>
 #include "Character.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -205,6 +206,7 @@ class NonCombatant: public Character {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         Quest *quest;
+        mutable std::mutex questMutex;
 };
 
 }}

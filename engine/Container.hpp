@@ -16,6 +16,8 @@
 
 #include <vector>
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "Item.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
@@ -512,9 +514,12 @@ class Container: public Item {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::vector<Item*> under;
+        mutable std::mutex underMutex;
         std::vector<Item*> inside;
+        mutable std::mutex insideMutex;
         std::vector<Item*> onTopOf;
-        int insideCapacity;
+        mutable std::mutex onTopOfMutex;
+        std::atomic<int> insideCapacity;
 };
 
 }}

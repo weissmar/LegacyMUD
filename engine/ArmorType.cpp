@@ -27,12 +27,12 @@ ArmorType::ArmorType(int bonus, DamageType resistantTo, int weight, ItemRarity r
 
 
 int ArmorType::getArmorBonus(){
-    return armorBonus;
+    return armorBonus.load();
 }
 
 
 DamageType ArmorType::getResistantTo(){
-    return resistantTo;
+    return resistantTo.load();
 }
 
 

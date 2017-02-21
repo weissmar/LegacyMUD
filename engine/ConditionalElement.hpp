@@ -14,6 +14,8 @@
 #define CONDITIONAL_ELEMENT_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 
 namespace legacymud { namespace engine {
@@ -120,10 +122,13 @@ class ConditionalElement: public InteractiveNoun {
          */
         virtual bool deserialize(std::string);
     private:
-        bool conditionSet;
+        std::atomic<bool> conditionSet;
         ItemType *conditionItem;
+        mutable std::mutex conditionItemMutex;
         std::string description;
+        mutable std::mutex descriptionMutex;
         std::string altDescription;
+        mutable std::mutex altDescriptionMutex;
 };
 
 }}

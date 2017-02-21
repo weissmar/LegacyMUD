@@ -17,6 +17,7 @@
 #define PLAYER_CLASS_HPP
 
 #include <string>
+#include <atomic>
 #include "CombatantType.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
@@ -132,7 +133,7 @@ class PlayerClass: public CombatantType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int primaryStat;
+        std::atomic<int> primaryStat;
 };
 
 }}

@@ -16,6 +16,8 @@
 #define ARMOR_TYPE_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "ItemType.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
@@ -253,8 +255,8 @@ class ArmorType: public ItemType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int armorBonus;
-        DamageType resistantTo;
+        std::atomic<int> armorBonus;
+        std::atomic<DamageType> resistantTo;
 };
 
 }}

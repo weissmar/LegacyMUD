@@ -19,7 +19,7 @@
 
 namespace legacymud { namespace engine {
 
-int InteractiveNoun::nextID = 1;
+std::atomic<int> InteractiveNoun::nextID {1}
 
 InteractiveNoun::InteractiveNoun() : ID(nextID++){
 

@@ -15,6 +15,8 @@
 #define CREATURE_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "Combatant.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -292,7 +294,8 @@ class Creature: public Combatant {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         CreatureType *type;
-        bool ambulatory;
+        mutable std::mutex typeMutex;
+        std::atomic<bool> ambulatory;
 };
 
 }}

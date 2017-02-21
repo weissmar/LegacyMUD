@@ -14,6 +14,8 @@
 #define COMBATANT_TYPE_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DamageType.hpp"
 
@@ -177,12 +179,14 @@ class CombatantType: public InteractiveNoun {
         virtual bool deserialize(std::string);
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         SpecialSkill* specialSkill;
-        int attackBonus;
-        int armorBonus;
-        DamageType resistantTo;
-        DamageType weakTo;
-        float healPoints;
+        mutable std::mutex specialSkillMutex;
+        std::atomic<int> attackBonus;
+        std::atomic<int> armorBonus;
+        std::atomic<DamageType> resistantTo;
+        std::atomic<DamageType> weakTo;
+        std::atomic<float> healPoints;
 };
 
 }}

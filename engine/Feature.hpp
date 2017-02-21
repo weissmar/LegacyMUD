@@ -14,6 +14,7 @@
 #define FEATURE_HPP
 
 #include <string>
+#include <mutex>
 #include "ConditionalElement.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -263,7 +264,9 @@ class Feature: public ConditionalElement {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         std::string placement;
+        mutable std::mutex placementMutex;
 };
 
 }}

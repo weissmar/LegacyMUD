@@ -14,6 +14,8 @@
 #define SPECIAL_SKILL_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
@@ -242,10 +244,11 @@ class SpecialSkill: public InteractiveNoun {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;
-        int damage;
-        DamageType damageType;
-        int cost;
-        int cooldown;
+        mutable std::mutex nameMutex;
+        std::atomic<int> damage;
+        std::atomic<DamageType> damageType;
+        std::atomic<int> cost;
+        std::atomic<int> cooldown;
 };
 
 }}

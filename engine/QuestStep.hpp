@@ -14,6 +14,8 @@
 #define QUEST_STEP_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -220,12 +222,17 @@ class QuestStep: public InteractiveNoun {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int ordinalNumber;
+        std::atomic<int> ordinalNumber;
         std::string description;
+        mutable std::mutex descriptionMutex;
         ItemType *fetchItem;
+        mutable std::mutex fetchItemMutex;
         NonCombatant *giver;
+        mutable std::mutex giverMutex;
         NonCombatant *receiver;
+        mutable std::mutex receiverMutex;
         std::string completionText;
+        mutable std::mutex completionTextMutex;
 };
 
 }}

@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "EquipmentSlot.hpp"
 
@@ -232,11 +234,15 @@ class Character: public InteractiveNoun {
         virtual bool deserialize(std::string);
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         std::string description;
-        int money;
+        mutable std::mutex descriptionMutex;
+        std::atomic<int> money;
         Area *location;
+        mutable std::mutex locationMutex;
         std::vector<std::pair<EquipmentSlot, Item*>> inventory;
-        int maxInventoryWeight;
+        mutable std::mutex inventoryMutex;
+        std::atomic<int> maxInventoryWeight;
 };
 
 }}

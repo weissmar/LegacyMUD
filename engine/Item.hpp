@@ -14,6 +14,8 @@
 #define ITEM_HPP
 
 #include <string>
+#include <atomic>
+#include <mutex>
 #include "InteractiveNoun.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
@@ -492,9 +494,12 @@ class Item: public InteractiveNoun {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         InteractiveNoun* location;
-        ItemPosition position;
+        mutable std::mutex locationMutex;
+        std::atomic<ItemPosition> position;
         std::string name;
+        mutable std::mutex nameMutex;
         ItemType *type;
+        mutable std::mutex typeMutex;
 };
 
 }}

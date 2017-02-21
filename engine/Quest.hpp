@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -212,10 +214,14 @@ class Quest: public InteractiveNoun {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         std::string description;
-        int rewardMoney;
+        mutable std::mutex descriptionMutex;
+        std::atomic<int> rewardMoney;
         Item *rewardItem;
+        mutable std::mutex rewardItemMutex;
         std::vector<std::pair<int, QuestStep*>> steps;
+        mutable std::mutex stepsMutex;
 };
 
 }}

@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <mutex>
+#include <atomic>
 
 namespace legacymud { namespace engine {
 
@@ -141,10 +143,15 @@ class GameObjectManager {
         std::vector<PlayerClass*> getPlayerClasses();
     private:
         std::map<int, InteractiveNoun*> gameObjects;
+        mutable std::mutex gameObjectsMutex;
         std::map<int, Creature*> gameCreatures;
+        mutable std::mutex gameCreaturesMutex;
         std::map<int, Player*> activeGamePlayers;
+        mutable std::mutex activeGamePlayersMutex;
         std::map<std::string, Player*> inactivePlayers;
+        mutable std::mutex inactivePlayersMutex;
         std::vector<PlayerClass*> gamePlayerClasses;
+        mutable std::mutex gamePlayerClassesMutex;
 };
 
 }}

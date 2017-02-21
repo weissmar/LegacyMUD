@@ -21,6 +21,8 @@
 #include <vector>
 #include <map>
 #include <tuple>
+#include <mutex>
+#include <atomic>
 #include "CommandEnum.hpp"
 #include "ObjectType.hpp"
 #include "ItemPosition.hpp"
@@ -456,9 +458,11 @@ class InteractiveNoun {
         virtual bool deserialize(std::string) = 0;
     private:
         std::vector<Action*> actions;
+        mutable std::mutex actionsMutex;
         std::vector<std::string> aliases;
+        mutable std::mutex aliasesMutex;
         const int ID;
-        static int nextID;
+        static std::atomic<int> nextID;
 };
 
 }}
