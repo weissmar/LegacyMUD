@@ -11,6 +11,7 @@
 #include "Quest.hpp"
 #include "Item.hpp"
 #include "QuestStep.hpp"
+#include <algorithm>
 
 namespace legacymud { namespace engine {
 
