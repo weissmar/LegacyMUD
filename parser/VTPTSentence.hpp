@@ -2,7 +2,7 @@
   \file     VTPTSentence.hpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/15/2017
+  \modified 02/19/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the VTPTSentence class.
@@ -24,6 +24,13 @@ namespace legacymud { namespace parser {
 
 /*!
   \brief Represents a Sentence with a verb, a text-only direct object, a preposition, and a text-only indirect object.
+
+  \warning Be careful when using this sentence type.
+           The parser tries to find the longest matching preposition first,
+           starting with all tokens. If it does not find one, it drops one token
+           each iteration and searches from back to front.
+           This may result in the direct and indirect object text being parsed
+           incorrectly if that text also includes the preposition text.
 */
 class VTPTSentence : public virtual Sentence {
     friend class Sentence;

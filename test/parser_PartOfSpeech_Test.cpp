@@ -2,7 +2,7 @@
   \file     parser_PartOfSpeech_Test.cpp
   \author   David Rigert
   \created  02/14/2017
-  \modified 02/14/2017
+  \modified 02/20/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the unit tests for the PartOfSpeech class.
@@ -24,7 +24,6 @@ namespace parser = legacymud::parser;
 namespace engine = legacymud::engine;
 
 parser::LexicalData areaLex;
-engine::InteractiveNoun *in;
 std::vector<parser::Token> tokens;
 parser::Range range;
 
@@ -40,17 +39,17 @@ public:
         parser::WordManager::addGlobalVerb("pick up", vi);
         parser::WordManager::addIgnoreWord("the");
 
-        in = new engine::Item();
-        areaLex.addVerb("foo", in);
-        areaLex.addNoun("bar", in);
-        areaLex.addNoun("baz", in);
+        engine::Item bar;
+        engine::Item baz;
+        areaLex.addVerb("foo", &bar);
+        areaLex.addNoun("bar", &bar);
+        areaLex.addNoun("baz", &baz);
     }
 
     static void TearDownTestCase() {
+        areaLex.clear();
         // Clear WordManager data
         parser::WordManager::resetAll();
-        delete in;
-        in = nullptr;
     }
 
     virtual void SetUp() {

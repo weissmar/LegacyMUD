@@ -2,7 +2,7 @@
   \file     WordManager.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/13/2017
+  \modified 02/18/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the WordManager class.
@@ -202,6 +202,19 @@ public:
       \return Returns a list of VerbInfo objects that corresponds to \a alias.
     */
     static std::vector<VerbInfo> getGlobalVerbs(std::string alias);
+
+    /*!
+      \brief Gets pointers to all local nouns in the game world with the specified alias.
+
+      This function gets a vector of pointers to all InteractiveNoun objects in
+      the game world with the specified noun \a alias.
+      This is intended for use with world builder verbs.
+
+      \param[in] alias  Specifies the alias alias for which to get the InteractiveNoun pointers.
+      
+      \return Returns a list of pointers to InteractiveNoun objects with \a alias as a noun alias.
+    */
+    static std::vector<engine::InteractiveNoun *> getLocalNouns(std::string alias);
 
     /*!
       \brief Gets whether the specified noun alias is in use.

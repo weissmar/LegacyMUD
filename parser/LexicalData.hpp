@@ -2,7 +2,7 @@
   \file     LexicalData.hpp
   \author   David Rigert
   \created  02/11/2017
-  \modified 02/11/2017
+  \modified 02/16/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the LexicalData class.
@@ -25,6 +25,13 @@ namespace legacymud { namespace parser {
 */
 class LexicalData {
 public:
+    /*!
+      \brief Destructor.
+      
+      The destructor removes all data in the object from the global tables of nouns and verbs.
+    */
+    ~LexicalData();
+
     /*!
       \brief Adds a noun alias to the lexical data.
 
@@ -97,7 +104,7 @@ public:
       \brief Removes a noun alias from the lexical data.
 
       This function removes the specified a noun alias and InteractiveNoun pair
-      from the local lexical data and also removes it from the global table of verbs.
+      from the local lexical data and also removes it from the global table of nouns.
       Call this function whenever a noun alias is deleted from an InteractiveNoun, 
       or an InteractiveNoun is moved out of a Player or Area.
 
@@ -106,11 +113,51 @@ public:
     */
     void removeNoun(std::string alias, engine::InteractiveNoun *pObject);
 
+    /*!
+      \brief Removes a verb alias from the lexical data.
+
+      This function removes the specified a verb alias and InteractiveNoun pair
+      from the local lexical data and also removes it from the global table of verbs.
+      Call this function whenever a verb alias is deleted from an InteractiveNoun, 
+      or an InteractiveNoun is moved out of a Player or Area.
+
+      \param[in]  alias   Specifies the alias to add.
+      \param[in]  pObject Specifies a pointer to the InteractiveNoun with the alias.
+    */
     void removeVerb(std::string alias, engine::InteractiveNoun *pObject);
 
+    /*!
+      \brief Clears all of the lexical data.
+
+      This function removes all of the lexical data in this object.
+      It also removes the data from from the global tables of verbs and nouns.
+    */
     void clear();
 
+    /*!
+      \brief Forwards the function call to the hasNoun member function.
+
+      This function forwards the caller to the hasNoun() member function
+      of the LexicalData instance specified in \a context.
+
+      \param[in] context  Specifies a pointer to the LexicalData instance to use.
+      \param[in] arg      Specifies the string argument to use in hasNoun().
+
+      \return Returns the result of hasNoun().
+    */
     static bool forwardHasNoun(const void *context, std::string arg);
+
+    /*!
+      \brief Forwards the function call to the hasVerb member function.
+
+      This function forwards the caller to the hasVerb() member function
+      of the LexicalData instance specified in \a context.
+
+      \param[in] context  Specifies a pointer to the LexicalData instance to use.
+      \param[in] arg      Specifies the string argument to use in hasVerb().
+
+      \return Returns the result of hasVerb().
+    */
     static bool forwardHasVerb(const void *context, std::string arg);
 
 private:

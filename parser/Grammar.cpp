@@ -2,7 +2,7 @@
   \file     Grammar.cpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/12/2017
+  \modified 02/16/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the Grammar class.
@@ -64,6 +64,10 @@ bool Grammar::takesPreposition() const {
 
 Grammar::Support Grammar::takesDirectObject() const {
     return _directObject;
+}
+
+bool Grammar::forwardHasPreposition(const void *context, std::string arg) {
+    return static_cast<const Grammar*>(context)->hasPreposition(arg);
 }
 
 } }

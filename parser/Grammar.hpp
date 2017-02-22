@@ -2,7 +2,7 @@
   \file     Grammar.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/12/2017
+  \modified 02/20/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the Grammar class and
@@ -37,9 +37,9 @@ typedef std::map<std::string, PrepositionType> PrepositionMap;
 class Grammar {
 public:
     enum Support {
-        NO,   //!< Does not support the object type.
-        YES,  //!< Requires the object type.
-        TEXT  //!< Requires text that does not match an InteractiveNoun alias.
+        NO,   //!< Does not support the part of speech.
+        YES,  //!< Requires the part of speech to be an InteractiveNoun.
+        TEXT  //!< Requires at least one token for the part of speech. The part of speech is text only and is not associated with an InteractiveNoun.
     };
 
     /*!
@@ -143,6 +143,19 @@ public:
       \return Returns whether the associated verb takes an indirect object.
     */
     Support takesIndirectObject() const;
+
+    /*!
+      \brief Forwards the function call to the hasPreposition member function.
+
+      This function forwards the caller to the hasPreposition() member function
+      of the Grammar instance specified in \a context.
+
+      \param[in] context  Specifies a pointer to the Grammar instance to use.
+      \param[in] arg      Specifies the string argument to use in hasPreposition().
+
+      \return Returns the result of hasPreposition().
+    */
+    static bool forwardHasPreposition(const void *context, std::string arg);
 
 private:
     Support _directObject;
