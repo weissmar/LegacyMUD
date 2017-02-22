@@ -2,7 +2,7 @@
   \file     TextParser.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/16/2017
+  \modified 02/20/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the TextParser class.
@@ -28,17 +28,18 @@
 
 namespace legacymud { namespace parser {
 
-// Comparator class for ParseResults
+/*!
+  \brief Comparator class to sort ParseResult objects by ParseStatus in descending order.
+
+  This class is intended to be used in a priority queue to put the most complete
+  ParseResult object on top.
+*/
 class ComparePriority {
 public:
     bool operator() (const ParseResult lhs, const ParseResult rhs) {
         return static_cast<int>(lhs.status) < static_cast<int>(rhs.status);
     }
 };
-
-TextParser::~TextParser() {
-
-}
 
 std::vector<ParseResult> TextParser::parse(
     const std::string input, 
