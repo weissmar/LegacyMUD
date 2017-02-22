@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/20/2017
+ * \modified    02/21/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -156,19 +156,22 @@ std::string Area::getFullDescription(int excludeID) const{
 
 bool Area::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
-    return false;
+    this->name = name;
+    return true;
 }
 
 
 bool Area::setShortDesc(std::string shortDescription){
     std::lock_guard<std::mutex> shortDescLock(shortDescMutex);
-    return false;
+    this->shortDescription = shortDescription;
+    return true;
 }
 
 
 bool Area::setLongDesc(std::string longDescription){
     std::lock_guard<std::mutex> longDescLock(longDescMutex);
-    return false;
+    this->longDescription = longDescription;
+    return true;
 }
 
 
@@ -179,54 +182,81 @@ bool Area::setSize(AreaSize size){
 
 
 bool Area::addItem(Item *anItem){
-    std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
-    itemContents.push_back(anItem);
-    return true;
+    if (anItem != nullptr){
+        std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
+        itemContents.push_back(anItem);
+        return true;
+    }
+    return false;
 }
 
 
 bool Area::addCharacter(Character *aCharacter){
-    std::lock_guard<std::mutex> charContentLock(charContentMutex);
-    characterContents.push_back(aCharacter);
-    return true;
+    if (aCharacter != nullptr){
+        std::lock_guard<std::mutex> charContentLock(charContentMutex);
+        characterContents.push_back(aCharacter);
+        return true;
+    }
+    return false;
 }
 
 
 bool Area::addFeature(Feature *aFeature){
-    std::lock_guard<std::mutex> featContentLock(featContentMutex);
-    featureContents.push_back(aFeature);
-    return true;
+    if (aFeature != nullptr){
+        std::lock_guard<std::mutex> featContentLock(featContentMutex);
+        featureContents.push_back(aFeature);
+        return true;
+    }
+    return false;
 }
 
 
 bool Area::addExit(Exit *anExit){
-    std::lock_guard<std::mutex> exitContentLock(exitContentMutex);
-    exitContents.push_back(anExit);
-    return true;
+    if (anExit != nullptr){
+        std::lock_guard<std::mutex> exitContentLock(exitContentMutex);
+        exitContents.push_back(anExit);
+        return true;
+    }
+    return false;
 }
 
 
 bool Area::removeItem(Item *anItem){
-    std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
+    if (anItem != nullptr){
+        std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
+        itemContents.erase(std::remove(itemContents.begin(), itemContents.end(), anItem), itemContents.end());
+        return true;
+    }
     return false;
 }
 
 
 bool Area::removeCharacter(Character *aCharacter){
-    std::lock_guard<std::mutex> charContentLock(charContentMutex);
-    characterContents.erase(std::remove(characterContents.begin(), characterContents.end(), aCharacter), characterContents.end());
-    return true;
+    if (aCharacter != nullptr){
+        std::lock_guard<std::mutex> charContentLock(charContentMutex);
+        characterContents.erase(std::remove(characterContents.begin(), characterContents.end(), aCharacter), characterContents.end());
+        return true;
+    }
+    return false;
 }
 
 
 bool Area::removeFeature(Feature *aFeature){
-    std::lock_guard<std::mutex> featContentLock(featContentMutex);
+    if (aFeature != nullptr){
+        std::lock_guard<std::mutex> featContentLock(featContentMutex);
+        featureContents.erase(std::remove(featureContents.begin(), featureContents.end(), aFeature), featureContents.end());
+        return true;
+    }
     return false;
 }
 
 
 bool Area::removeExit(Exit *anExit){
-    std::lock_guard<std::mutex> exitContentLock(exitContentMutex);
+    if (anExit != nullptr){
+        std::lock_guard<std::mutex> exitContentLock(exitContentMutex);
+        exitContents.erase(std::remove(exitContents.begin(), exitContents.end(), anExit), exitContents.end());
+        return true;
+    }
     return false;
 }
 
