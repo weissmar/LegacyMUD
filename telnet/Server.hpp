@@ -30,12 +30,6 @@ namespace legacymud {
     */
     class Server {
     public:
-        /*!
-          \enum Available new line options.
-        */
-        enum NewLine {
-            NEWLINE, NO_NEWLINE, 
-        };
         
         /*!
           \brief Server class constructor.
@@ -97,7 +91,7 @@ namespace legacymud {
         /*!
           \brief Sends a quetion to a player. 
           
-          This function sends a message to a player.  
+          This function sends a message to a player.  Puts the cursor on a new line after the message.
           
           \param[in]  playerFd          a player identifier 
           \param[in]  outQuestion       message to be sent to a player
@@ -106,11 +100,11 @@ namespace legacymud {
           \pre none
           \post Returns true if the question is successfully sent.  Otherwise it returns false.
         */        
-        bool sendQuestion(int playerFd, std::string outQuestion, Server::NewLine newLine);        
+        bool sendQuestion(int playerFd, std::string outQuestion);        
 
         
         /*!
-          \brief Sends a message to a player.
+          \brief Sends a message to a player.  Puts the cursor on a new line after the message.
           
           \param[in]  playerFd          a player identifier 
           \param[in]  outMsg            message to be sent to a player
@@ -119,17 +113,8 @@ namespace legacymud {
           \pre none
           \post Returns true if the message is successfully sent.  Otherwise it returns false.
         */        
-        bool sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine);
+        bool sendMsg(int playerFd, std::string outMsg);
         
-        /*!
-          \brief Sends a message to a player.  No newline is sent after the message.
-          
-          \param[in]  playerFd          a player identifier 
-          \param[in]  outMsg            message to be sent to a player                                  
-          \pre none
-          \post Returns true if the message is successfully sent.  Otherwise it returns false.
-        */        
-        bool sendMsg(int playerFd, std::string outMsg);  
 
         /*!
           \brief Sends a newline to a player's terminal. 

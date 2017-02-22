@@ -116,12 +116,12 @@ void Server::startListening() {
             }
             /* Disconnect the player if the player cap is exceeded. */
             else if (_playerCount > _maxPlayers) {
-                sendMsg(newClientSocketFd, "Server is full.  Please try again later.", NEWLINE);    // server is full
+                sendMsg(newClientSocketFd, "Server is full.  Please try again later.");    // server is full
                 disconnectPlayer(newClientSocketFd);
             }
             /* Disconnect the new player if game backup is in progress. */
             else if (_serverPause == true) {
-                sendMsg(newClientSocketFd, "Game backup in progress.  Please try again later.", NEWLINE); // game backup in progress
+                sendMsg(newClientSocketFd, "Game backup in progress.  Please try again later."); // game backup in progress
                 disconnectPlayer(newClientSocketFd);    
             }
             /* Set disconnect timeout on player's socket. */
@@ -201,7 +201,7 @@ bool Server::shutDownServer() {
 /******************************************************************************
 * Function:    sendQuestion
 *****************************************************************************/
-bool Server::sendQuestion(int playerFd, std::string outQuestion, Server::NewLine newLine) {
+bool Server::sendQuestion(int playerFd, std::string outQuestion) {
    
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_player_map);    
@@ -225,9 +225,8 @@ bool Server::sendQuestion(int playerFd, std::string outQuestion, Server::NewLine
                 return false;      
         }         
         
-        /* Add a newline at the end if requested. */
-        if (newLine == NEWLINE) 
-            outQuestion += "\015\012";       // attach carriage return  and linefeed
+        /* Add a newline at the end of the question. */
+        outQuestion += "\015\012";       // attach carriage return  and linefeed
         
         /* Write to the socket. */ 
         if (write(playerFd,outQuestion.c_str(),strlen(outQuestion.c_str())) < 0) 
@@ -248,7 +247,7 @@ bool Server::sendQuestion(int playerFd, std::string outQuestion, Server::NewLine
 /******************************************************************************
 * Function:    sendMsg
 *****************************************************************************/
-bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) {
+bool Server::sendMsg(int playerFd, std::string outMsg) {
    
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_player_map);    
@@ -269,19 +268,18 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
                 return false;      
         }        
         
-        /* Add a newline at the end if requested. */
-        if (newLine == NEWLINE) 
-            outMsg += "\015\012";       // attach carriage return  and linefeed
+        /* Add a newline at the end of the message. */ 
+        outMsg += "\015\012";       // attach carriage return  and linefeed
         
         /* Write to the socket. */ 
         if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
             return false;   // Error writing to socket               
-        
-        
+               
         else {
             /* Write the player's question buffer to the socket if it is not empty. */
             if (player->second.questionBuffer.size() > 0 ) {
-                if (write(playerFd,player->second.questionBuffer.c_str(),strlen(player->second.questionBuffer.c_str())) < 0) 
+                std::string questionStr = player->second.questionBuffer + "\015\012";   // end with a carriage return linefeed
+                if (write(playerFd,questionStr.c_str(),strlen(questionStr.c_str())) < 0) 
                     return false;   // Error writing to socket             
             }
             
@@ -298,18 +296,10 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
 
 
 /******************************************************************************
-* Function:    sendMsg
-*****************************************************************************/
-bool Server::sendMsg(int playerFd, std::string outMsg) {   
-    return sendMsg(playerFd, outMsg, NO_NEWLINE);    
-} 
-
-
-/******************************************************************************
 * Function:    sendNewLine
 *****************************************************************************/
 bool Server::sendNewLine(int playerFd) {   
-    return sendMsg(playerFd, "", NEWLINE);   
+    return sendMsg(playerFd, "");   
 } 
     
 
