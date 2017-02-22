@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/20/2017
+  \modified 2/21/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -199,6 +199,53 @@ bool Server::shutDownServer() {
 
 
 /******************************************************************************
+* Function:    sendQuestion
+*****************************************************************************/
+bool Server::sendQuestion(int playerFd, std::string outQuestion, Server::NewLine newLine) {
+   
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_player_map);    
+
+    /* Find the player. */
+    auto player = _playerMap.find(playerFd);
+    
+    /* If the player is in the map, send the message. */
+    if(player == _playerMap.end()) 
+        return false;   // the player is not in the game
+        
+    else {
+
+        /* Add the question to the player's question buffer. */
+        player->second.questionBuffer = outQuestion;
+        
+        /* If a player is entering text, clear that text from their display. */
+        unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
+        for (unsigned int i = 0; i < player->second.readBuffer.size(); i++ ) {
+            if (write(playerFd, eraseStr, 3) < 0) 
+                return false;      
+        }         
+        
+        /* Add a newline at the end if requested. */
+        if (newLine == NEWLINE) 
+            outQuestion += "\015\012";       // attach carriage return  and linefeed
+        
+        /* Write to the socket. */ 
+        if (write(playerFd,outQuestion.c_str(),strlen(outQuestion.c_str())) < 0) 
+            return false;   // Error writing to socket               
+        
+        /* Write the player's read buffer to the socket if it is not empty. */
+        else {
+            if (player->second.readBuffer.size() > 0 ) {
+                if (write(playerFd,player->second.readBuffer.c_str(),strlen(player->second.readBuffer.c_str())) < 0) 
+                    return false;   // Error writing to socket             
+            }
+            return true;     
+        }       
+    }                  
+} 
+
+
+/******************************************************************************
 * Function:    sendMsg
 *****************************************************************************/
 bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) {
@@ -214,10 +261,10 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
         return false;   // the player is not in the game
         
     else {
-
-        /* If a player is entering text, clear that text from their display. */
         unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
-        for (unsigned int i = 0; i < player->second.readBuffer.size(); i++ ) {
+        
+        /* If a player is entering text or has a question to be answered, clear that text from their display. */
+        for (unsigned int i = 0; i < player->second.readBuffer.size() + player->second.questionBuffer.size(); i++ ) {
             if (write(playerFd, eraseStr, 3) < 0) 
                 return false;      
         }        
@@ -230,12 +277,20 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
         if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
             return false;   // Error writing to socket               
         
-        /* Write the player's read buffer to the socket if it is not empty. */
+        
         else {
+            /* Write the player's question buffer to the socket if it is not empty. */
+            if (player->second.questionBuffer.size() > 0 ) {
+                if (write(playerFd,player->second.questionBuffer.c_str(),strlen(player->second.questionBuffer.c_str())) < 0) 
+                    return false;   // Error writing to socket             
+            }
+            
+            /* Write the player's read buffer to the socket if it is not empty. */
             if (player->second.readBuffer.size() > 0 ) {
                 if (write(playerFd,player->second.readBuffer.c_str(),strlen(player->second.readBuffer.c_str())) < 0) 
                     return false;   // Error writing to socket             
             }
+            
             return true;     
         }       
     }                  
@@ -343,9 +398,11 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
             }   
         }
         
-        /* Return the read string by setting it to inMsg and clear this player's read buffer. */        
+        /* Return the read string by setting it to inMsg and clear this player's buffers. */        
         inMsg = player->second.readBuffer;    // set the return message
-        player->second.readBuffer.clear();    // clear the buffer
+        player->second.readBuffer.clear();    // clear the read buffer
+        if (player->second.questionBuffer.size() > 0 ) 
+            player->second.questionBuffer.clear();    // clear the question buffer
         
         /* Unlock the player map mutex.  Need to unlock before calling sendNewLine since it also uses this mutex. */
         lock_player_map.unlock();            

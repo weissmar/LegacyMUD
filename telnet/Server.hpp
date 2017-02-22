@@ -2,7 +2,7 @@
   \file     Server.hpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/20/2017
+  \modified 2/21/2017
   \course   CS467, Winter 2017
  
   \details  Declaration file for the Server class.
@@ -92,6 +92,22 @@ namespace legacymud {
                 Otherwise, false is returned.
         */        
         bool shutDownServer();
+
+        
+        /*!
+          \brief Sends a quetion to a player. 
+          
+          This function sends a message to a player.  
+          
+          \param[in]  playerFd          a player identifier 
+          \param[in]  outQuestion       message to be sent to a player
+          \param[in]  newLine           indicates where the cursor is to be located on the player's screen 
+                                        after the message is displayed                                   
+          \pre none
+          \post Returns true if the question is successfully sent.  Otherwise it returns false.
+        */        
+        bool sendQuestion(int playerFd, std::string outQuestion, Server::NewLine newLine);        
+
         
         /*!
           \brief Sends a message to a player.
@@ -128,7 +144,7 @@ namespace legacymud {
           \brief Receives a message from a player.  
           
           This function receives a message from a player.  It will not return until either a message is received, 
-          the player disconnects, or the player times-out.
+          the player disconnects, or the player times-out.  
           
           \param[in]  playerFd          a player identifier 
           \param[in]  inMsg             message received from a player                                 
@@ -265,6 +281,7 @@ namespace legacymud {
         struct _Player {                            // struct user info struct
             bool echo;                              // flag that indicates a player's text echo display mode           
             std::string readBuffer;                 // a player's read string buffer
+            std::string questionBuffer;             // a question sent to the player that's waiting for a response
         }; 
         std::map<int, _Player> _playerMap;          // map used track player's on the server and to capture player specific server data
         std::mutex _mu_player_map;                  // mutex used for the player map
