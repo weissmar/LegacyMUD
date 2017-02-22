@@ -136,7 +136,7 @@ std::string Area::getFullDescription(int excludeID) const{
     }
     
 
-    for (int i = 0; i < allCharacters.size(); i++){
+    for (size_t i = 0; i < allCharacters.size(); i++){
         if (allCharacters[i]->getID() != excludeID){
             if (allCharacters[i]->getObjectType() == ObjectType::NON_COMBATANT){
                 message += "You see someone named ";

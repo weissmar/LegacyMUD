@@ -181,7 +181,8 @@ bool Server::shutDownServer() {
     }
     else {
         /* Close the listening socket. */
-        close(_listenSocketFd);
+        shutdown(_listenSocketFd, SHUT_RDWR);   // break blocked read/write
+        close(_listenSocketFd);                 // destroy socket
         
         /* Return parameters to default state. */
         _serverPort = 0;     
@@ -216,7 +217,7 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
 
         /* If a player is entering text, clear that text from their display. */
         unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
-        for (int i = 0; i < player->second.readBuffer.size(); i++ ) {
+        for (unsigned int i = 0; i < player->second.readBuffer.size(); i++ ) {
             if (write(playerFd, eraseStr, 3) < 0) 
                 return false;      
         }        
