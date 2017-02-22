@@ -81,7 +81,6 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
 
 bool GameLogic::newPlayerHandler(int fileDescriptor){
     bool success = false;
-    bool newUser = false;
     bool validUsername = false;
     bool validPassword = false;
     bool isAdmin = false;
@@ -101,7 +100,6 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
         // check if new 
         if (username.compare("new") == 0){
-            newUser = true;
 
             // get username
             success = getValueFromUser(fileDescriptor, "Please enter your email address. You will use this as your username in the future.", username, true);
@@ -152,7 +150,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             // get player class
             message = "What would you like your character class to be? Your options are: ";
             pClasses = manager->getPlayerClasses();
-            for (int i = 0; i < pClasses.size(); i++){
+            for (size_t i = 0; i < pClasses.size(); i++){
                 message += "[";
                 message += std::to_string(i + 1);
                 message += "] ";
@@ -784,7 +782,7 @@ void GameLogic::sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun
     std::string message;
 
     message = "Did you mean ";
-    for (int i = 0; i < optionsVector.size(); i++){
+    for (size_t i = 0; i < optionsVector.size(); i++){
         message += "[";
         message += std::to_string(i + 1);
         message += "] ";
