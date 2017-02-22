@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -41,12 +41,14 @@ NonCombatant::~NonCombatant(){
 }*/
 
 
-Quest* NonCombatant::getQuest(){
+Quest* NonCombatant::getQuest() const{
+    std::lock_guard<std::mutex> questLock(questMutex);
     return quest;
 }
 
 
 bool NonCombatant::setQuest(Quest *aQuest){
+    std::lock_guard<std::mutex> questLock(questMutex);
     if (aQuest != nullptr){
         quest = aQuest;
         return true;
@@ -56,7 +58,7 @@ bool NonCombatant::setQuest(Quest *aQuest){
 }
 
 
-ObjectType NonCombatant::getObjectType(){
+ObjectType NonCombatant::getObjectType() const{
     return ObjectType::NON_COMBATANT;
 }
 

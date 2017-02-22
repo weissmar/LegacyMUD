@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.cpp
  *
@@ -46,28 +46,32 @@ ConditionalElement::~ConditionalElement(){
 }*/
 
 
-bool ConditionalElement::isConditional(){
-    return conditionSet;
+bool ConditionalElement::isConditional() const{
+    return conditionSet.load();
 }
 
 
-ItemType* ConditionalElement::getConditionItem(){
+ItemType* ConditionalElement::getConditionItem() const{
+    std::lock_guard<std::mutex> conditionItemLock(conditionItemMutex);
     return conditionItem;
 }
 
 
 std::string ConditionalElement::getDescription() const{
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
-std::string ConditionalElement::getAltDescription(){
+std::string ConditionalElement::getAltDescription() const{
+    std::lock_guard<std::mutex> altDescriptionLock(altDescriptionMutex);
     return altDescription;
 }
 
 
 bool ConditionalElement::setConditional(bool isConditional){
-    return false;
+    conditionSet.store(isConditional);
+    return true;
 }
 
 

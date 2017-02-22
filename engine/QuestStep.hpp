@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/15/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.hpp
  *
@@ -14,6 +14,8 @@
 #define QUEST_STEP_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -39,42 +41,42 @@ class QuestStep: public InteractiveNoun {
          *
          * \return  Returns an int with the ordinal number.
          */
-        int getOrdinalNumber();
+        int getOrdinalNumber() const;
 
         /*!
          * \brief   Gets the description of the quest step.
          *
          * \return  Returns a std::string with the description.
          */
-        std::string getDescription();
+        std::string getDescription() const;
 
         /*!
          * \brief   Gets the fetch item for the quest step.
          *
          * \return  Returns an ItemType* with the fetch item.
          */
-        ItemType* getFetchItem();
+        ItemType* getFetchItem() const;
 
         /*!
          * \brief   Gets the giver of the quest step.
          *
          * \return  Returns a NonCombatant* with the giver.
          */
-        NonCombatant* getGiver();
+        NonCombatant* getGiver() const;
 
         /*!
          * \brief   Gets the receiver of the quest step.
          *
          * \return  Returns a NonCombatant* with the receiver.
          */
-        NonCombatant* getReceiver();
+        NonCombatant* getReceiver() const;
 
         /*!
          * \brief   Gets the completion text for the quest step.
          *
          * \return  Returns a std::string with the completion text.
          */
-        std::string getCompletionText();
+        std::string getCompletionText() const;
 
         /*!
          * \brief   Sets the ordinal number of the quest step.
@@ -150,7 +152,7 @@ class QuestStep: public InteractiveNoun {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -220,12 +222,17 @@ class QuestStep: public InteractiveNoun {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int ordinalNumber;
+        std::atomic<int> ordinalNumber;
         std::string description;
+        mutable std::mutex descriptionMutex;
         ItemType *fetchItem;
+        mutable std::mutex fetchItemMutex;
         NonCombatant *giver;
+        mutable std::mutex giverMutex;
         NonCombatant *receiver;
+        mutable std::mutex receiverMutex;
         std::string completionText;
+        mutable std::mutex completionTextMutex;
 };
 
 }}

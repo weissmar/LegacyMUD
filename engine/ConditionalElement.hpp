@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.hpp
  *
@@ -14,6 +14,8 @@
 #define CONDITIONAL_ELEMENT_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 
 namespace legacymud { namespace engine {
@@ -37,14 +39,14 @@ class ConditionalElement: public InteractiveNoun {
          *
          * \return  Returns a bool indicating whether or not this element is conditional.
          */
-        bool isConditional();
+        bool isConditional() const;
 
         /*!
          * \brief   Gets the item type that fulfills the condition of this element.
          *
          * \return  Returns an ItemType* with the condition item type.
          */
-        ItemType* getConditionItem();
+        ItemType* getConditionItem() const;
 
         /*!
          * \brief   Gets the description of this conditional element.
@@ -60,7 +62,7 @@ class ConditionalElement: public InteractiveNoun {
          * \return  Returns a std::string with the alternate description of this 
          *          conditional element.
          */
-        std::string getAltDescription();
+        std::string getAltDescription() const;
 
         /*!
          * \brief   Sets whether or not this element is conditional.
@@ -120,10 +122,13 @@ class ConditionalElement: public InteractiveNoun {
          */
         virtual bool deserialize(std::string);
     private:
-        bool conditionSet;
+        std::atomic<bool> conditionSet;
         ItemType *conditionItem;
+        mutable std::mutex conditionItemMutex;
         std::string description;
+        mutable std::mutex descriptionMutex;
         std::string altDescription;
+        mutable std::mutex altDescriptionMutex;
 };
 
 }}

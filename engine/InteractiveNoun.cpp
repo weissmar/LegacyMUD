@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -19,7 +19,7 @@
 
 namespace legacymud { namespace engine {
 
-int InteractiveNoun::nextID = 1;
+std::atomic<int> InteractiveNoun::nextID {1};
 
 InteractiveNoun::InteractiveNoun() : ID(nextID++){
 
@@ -27,6 +27,9 @@ InteractiveNoun::InteractiveNoun() : ID(nextID++){
 
 
 InteractiveNoun::InteractiveNoun(const InteractiveNoun &otherNoun) : ID(nextID++){
+    std::unique_lock<std::mutex> aliasesLock(otherNoun.aliasesMutex, std::defer_lock);
+    std::unique_lock<std::mutex> actionsLock(otherNoun.actionsMutex, std::defer_lock);
+    std::lock(aliasesLock, actionsLock);
     aliases = otherNoun.aliases;
     if (!otherNoun.actions.empty()){
         for (auto action : otherNoun.actions){
@@ -37,6 +40,11 @@ InteractiveNoun::InteractiveNoun(const InteractiveNoun &otherNoun) : ID(nextID++
 
 
 InteractiveNoun & InteractiveNoun::operator=(const InteractiveNoun &otherNoun){
+    std::unique_lock<std::mutex> otherAliasesLock(otherNoun.aliasesMutex, std::defer_lock);
+    std::unique_lock<std::mutex> otherActionsLock(otherNoun.actionsMutex, std::defer_lock);
+    std::unique_lock<std::mutex> aliasesLock(aliasesMutex, std::defer_lock);
+    std::unique_lock<std::mutex> actionsLock(actionsMutex, std::defer_lock);
+    std::lock(otherAliasesLock, otherActionsLock, aliasesLock, actionsLock);
     if (this != &otherNoun){
         for (auto action : actions){
             delete action;
@@ -63,29 +71,44 @@ InteractiveNoun::~InteractiveNoun(){
 }
 
 
-int InteractiveNoun::getID(){
+int InteractiveNoun::getID() const{
     return ID;
 }
 
 
-Action* InteractiveNoun::getAction(CommandEnum){
+Action* InteractiveNoun::getAction(CommandEnum aCommand) const{
+    std::lock_guard<std::mutex> actionsLock(actionsMutex);
+    for (size_t i = 0; i < actions.size(); i++){
+        if (actions[i]->getCommand() == aCommand){
+            return actions[i];
+        }
+    }
     return nullptr;
 }
 
 
-std::vector<Action*> InteractiveNoun::getActions(std::string alias){
-    std::vector<Action*> actions;
+std::vector<Action*> InteractiveNoun::getActions(std::string alias) const{
+    std::lock_guard<std::mutex> actionsLock(actionsMutex);
+    std::vector<Action*> aliasActions;
 
-    return actions;
+    for (size_t i = 0; i < actions.size(); i++){
+        if (actions[i]->isAlias(alias) == true){
+            aliasActions.push_back(actions[i]);
+        }
+    }
+
+    return aliasActions;
 }
 
 
-std::vector<std::string> InteractiveNoun::getNounAliases(){
+std::vector<std::string> InteractiveNoun::getNounAliases() const{
+    std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
     return aliases;
 }
 
 
-std::vector<std::string> InteractiveNoun::getVerbAliases(){
+std::vector<std::string> InteractiveNoun::getVerbAliases() const{
+    std::lock_guard<std::mutex> actionsLock(actionsMutex);
     std::vector<std::string> verbAliases;
     std::vector<std::string> aliases;
 
@@ -98,27 +121,79 @@ std::vector<std::string> InteractiveNoun::getVerbAliases(){
 }
 
 
-bool InteractiveNoun::checkAction(CommandEnum){
+bool InteractiveNoun::checkAction(CommandEnum aCommand) const{
+    std::lock_guard<std::mutex> actionsLock(actionsMutex);
+    for (size_t i = 0; i < actions.size(); i++){
+        if (actions[i]->getCommand() == aCommand){
+            return true;
+        }
+    }
     return false;
 }
 
 
-Action* InteractiveNoun::addAction(CommandEnum){
-    return nullptr;
+Action* InteractiveNoun::addAction(CommandEnum aCommand){
+    if (!checkAction(aCommand)){
+        std::lock_guard<std::mutex> actionsLock(actionsMutex);
+        Action *anAction = new Action(aCommand);
+        actions.push_back(anAction);
+        return anAction;
+    } else {
+        return getAction(aCommand);
+    }
 }
 
 
-bool InteractiveNoun::removeAction(CommandEnum){
+bool InteractiveNoun::removeAction(CommandEnum aCommand){
+    std::lock_guard<std::mutex> actionsLock(actionsMutex);
+    int index = -1;
+
+    for (size_t i = 0; i < actions.size(); i++){
+        if (actions[i]->getCommand() == aCommand){
+            index = i;
+        }
+    }
+
+    if (index != -1){
+        actions.erase(actions.begin() + index);
+        return true;
+    }
+
     return false;
 }
 
 
-bool InteractiveNoun::addAlias(std::string){
+bool InteractiveNoun::addAlias(std::string anAlias){
+    std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
+    bool found = false;
+
+    for (size_t i = 0; i < aliases.size(); i++){
+        if (aliases[i] == anAlias)
+            found = true;
+    }
+
+    if (!found){
+        aliases.push_back(anAlias);
+        return true;
+    }
     return false;
 }
 
 
-bool InteractiveNoun::removeAlias(std::string){
+bool InteractiveNoun::removeAlias(std::string anAlias){
+    std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
+    int index = -1;
+
+    for (size_t i = 0; i < aliases.size(); i++){
+        if (aliases[i] == anAlias)
+            index = i;
+    }
+
+    if (index != -1){
+        aliases.erase(aliases.begin() + index);
+        return true;
+    }
+
     return false;
 }
 

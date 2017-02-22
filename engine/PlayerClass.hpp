@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        PlayerClass.hpp
  *
@@ -17,6 +17,7 @@
 #define PLAYER_CLASS_HPP
 
 #include <string>
+#include <atomic>
 #include "CombatantType.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
@@ -43,7 +44,7 @@ class PlayerClass: public CombatantType {
          * \return  Returns an int indicating the primary stat (0 = dexterity, 
          *          1 = intelligence, 2 = strength).
          */
-        int getPrimaryStat();
+        int getPrimaryStat() const;
 
         /*!
          * \brief   Sets the primary stat for this player class.
@@ -62,7 +63,7 @@ class PlayerClass: public CombatantType {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -132,7 +133,7 @@ class PlayerClass: public CombatantType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int primaryStat;
+        std::atomic<int> primaryStat;
 };
 
 }}

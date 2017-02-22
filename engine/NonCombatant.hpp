@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.hpp
  *
@@ -14,6 +14,7 @@
 #define NON_COMBATANT_HPP
 
 #include <string>
+#include <mutex>
 #include "Character.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -40,7 +41,7 @@ class NonCombatant: public Character {
          *
          * \return  Returns a Quest* with the quest of this non-combatant.
          */
-        Quest* getQuest();
+        Quest* getQuest() const;
 
         /*!
          * \brief   Sets the quest.
@@ -58,7 +59,7 @@ class NonCombatant: public Character {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -205,6 +206,7 @@ class NonCombatant: public Character {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         Quest *quest;
+        mutable std::mutex questMutex;
 };
 
 }}

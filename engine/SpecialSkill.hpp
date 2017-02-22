@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.hpp
  *
@@ -14,6 +14,8 @@
 #define SPECIAL_SKILL_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
@@ -41,28 +43,28 @@ class SpecialSkill: public InteractiveNoun {
          *
          * \return  Returns an int with the damage of the special skill.
          */
-        int getDamage();
+        int getDamage() const;
 
         /*!
          * \brief   Gets the damage type of the special skill.
          *
          * \return  Returns a DamageType with the damage type of the special skill.
          */
-        DamageType getDamageType();
+        DamageType getDamageType() const;
 
         /*!
          * \brief   Gets the cost of the special skill.
          *
          * \return  Returns an int with the cost of the special skill.
          */
-        int getCost();
+        int getCost() const;
 
         /*!
          * \brief   Gets the cooldown of the special skill.
          *
          * \return  Returns an int with the cooldown of the special skill.
          */
-        int getCooldown();
+        int getCooldown() const;
 
         /*!
          * \brief   Sets the name of the special skill.
@@ -120,7 +122,7 @@ class SpecialSkill: public InteractiveNoun {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -242,10 +244,11 @@ class SpecialSkill: public InteractiveNoun {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;
-        int damage;
-        DamageType damageType;
-        int cost;
-        int cooldown;
+        mutable std::mutex nameMutex;
+        std::atomic<int> damage;
+        std::atomic<DamageType> damageType;
+        std::atomic<int> cost;
+        std::atomic<int> cooldown;
 };
 
 }}

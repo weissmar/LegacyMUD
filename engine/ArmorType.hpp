@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        ArmorType.hpp
  *
@@ -16,6 +16,8 @@
 #define ARMOR_TYPE_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "ItemType.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
@@ -38,7 +40,7 @@ class ArmorType: public ItemType {
          *
          * \return  Returns an int with the armor bonus for this armor type.
          */
-        virtual int getArmorBonus();
+        virtual int getArmorBonus() const;
 
         /*!
          * \brief   Gets the damage type this armor type is resistant to.
@@ -46,7 +48,7 @@ class ArmorType: public ItemType {
          * \return  Returns a DamageType with the damage type this armor type is 
          *          resistant to.
          */
-        virtual DamageType getResistantTo();
+        virtual DamageType getResistantTo() const;
 
         /*!
          * \brief   Sets the armor bonus for this armor type.
@@ -75,7 +77,7 @@ class ArmorType: public ItemType {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -253,8 +255,8 @@ class ArmorType: public ItemType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int armorBonus;
-        DamageType resistantTo;
+        std::atomic<int> armorBonus;
+        std::atomic<DamageType> resistantTo;
 };
 
 }}

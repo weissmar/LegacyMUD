@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/17/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Exit.hpp
  *
@@ -14,6 +14,8 @@
 #define EXIT_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "ConditionalElement.hpp"
 #include "EffectType.hpp"
 #include "ExitDirection.hpp"
@@ -40,28 +42,28 @@ class Exit: public ConditionalElement {
          *
          * \return  Returns an ExitDirection with the direction of this exit.
          */
-        ExitDirection getDirection();
+        ExitDirection getDirection() const;
 
         /*!
          * \brief   Gets the direction of this exit as a string.
          *
          * \return  Returns a std::string with the direction of this exit.
          */
-        std::string getDirectionString();
+        std::string getDirectionString() const;
 
         /*!
          * \brief   Gets the effect of this exit.
          *
          * \return  Returns an EffectType with the effect of this exit.
          */
-        EffectType getEffect();
+        EffectType getEffect() const;
 
         /*!
          * \brief   Gets the area that this exit connects to.
          *
          * \return  Returns an Area* with the area that this exit connects to.
          */
-        Area* getConnectArea();
+        Area* getConnectArea() const;
 
         /*!
          * \brief   Sets the direction of this exit.
@@ -106,7 +108,7 @@ class Exit: public ConditionalElement {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -300,9 +302,10 @@ class Exit: public ConditionalElement {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        ExitDirection direction;
-        EffectType effect;
+        std::atomic<ExitDirection> direction;
+        std::atomic<EffectType> effect;
         Area *connectArea;
+        mutable std::mutex connectAreaMutex;
 };
 
 }}

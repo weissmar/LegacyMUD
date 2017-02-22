@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/09/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        ArmorType.cpp
  *
@@ -26,27 +26,29 @@ ArmorType::ArmorType(int bonus, DamageType resistantTo, int weight, ItemRarity r
 { }
 
 
-int ArmorType::getArmorBonus(){
-    return armorBonus;
+int ArmorType::getArmorBonus() const{
+    return armorBonus.load();
 }
 
 
-DamageType ArmorType::getResistantTo(){
-    return resistantTo;
+DamageType ArmorType::getResistantTo() const{
+    return resistantTo.load();
 }
 
 
 bool ArmorType::setArmorBonus(int bonus){
-    return false;
+    armorBonus.store(bonus);
+    return true;
 }
 
 
 bool ArmorType::setResistantTo(DamageType resistance){
-    return false;
+    resistantTo.store(resistance);
+    return true;
 }
 
 
-ObjectType ArmorType::getObjectType(){
+ObjectType ArmorType::getObjectType() const{
     return ObjectType::ARMOR_TYPE;
 }
 

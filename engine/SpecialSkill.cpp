@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -33,31 +33,33 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 
 
 std::string SpecialSkill::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
 
-int SpecialSkill::getDamage(){
-    return damage;
+int SpecialSkill::getDamage() const{
+    return damage.load();
 }
 
 
-DamageType SpecialSkill::getDamageType(){
-    return damageType;
+DamageType SpecialSkill::getDamageType() const{
+    return damageType.load();
 }
 
 
-int SpecialSkill::getCost(){
-    return cost;
+int SpecialSkill::getCost() const{
+    return cost.load();
 }
 
 
-int SpecialSkill::getCooldown(){
-    return cooldown;
+int SpecialSkill::getCooldown() const{
+    return cooldown.load();
 }
 
 
 bool SpecialSkill::setName(std::string name){
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
 
     return true;
@@ -65,34 +67,34 @@ bool SpecialSkill::setName(std::string name){
 
 
 bool SpecialSkill::setDamage(int damage){
-    this->damage = damage;
+    this->damage.store(damage);
 
     return true;
 }
 
 
 bool SpecialSkill::setDamageType(DamageType type){
-    damageType = type;
+    damageType.store(type);
 
     return true; 
 }
 
 
 bool SpecialSkill::setCost(int cost){
-    this->cost = cost;
+    this->cost.store(cost);
 
     return true;
 }
 
 
 bool SpecialSkill::setCooldown(int cooldown){
-    this->cooldown = cooldown;
+    this->cooldown.store(cooldown);
 
     return true;
 }
 
 
-ObjectType SpecialSkill::getObjectType(){
+ObjectType SpecialSkill::getObjectType() const{
     return ObjectType::SPECIAL_SKILL;
 }
 

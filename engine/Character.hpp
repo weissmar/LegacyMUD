@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "EquipmentSlot.hpp"
 
@@ -48,21 +50,21 @@ class Character: public InteractiveNoun {
          *
          * \return  Returns a std::string with the description of this character.
          */
-        std::string getDescription();
+        std::string getDescription() const;
 
         /*!
          * \brief   Gets the amount money this character possesses.
          *
          * \return  Returns an int with the amount money this character possesses.
          */
-        int getMoney();
+        int getMoney() const;
 
         /*!
          * \brief   Gets the location of this character.
          *
          * \return  Returns an Area* with the location of this character.
          */
-        Area* getLocation();
+        Area* getLocation() const;
 
         /*!
          * \brief   Gets the inventory and equipment of this character.
@@ -73,7 +75,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a std::vector<std::pair<EquipmentSlot, Item*>> representing 
          *          the inventory and equipment of this character.
          */
-        std::vector<std::pair<EquipmentSlot, Item*>> getInventory();
+        std::vector<std::pair<EquipmentSlot, Item*>> getInventory() const;
 
         /*!
          * \brief   Gets the inventory of this character.
@@ -83,7 +85,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a std::vector<Item*> representing the inventory of this 
          *          character.
          */
-        std::vector<Item*> getItemsInventory();
+        std::vector<Item*> getItemsInventory() const;
 
         /*!
          * \brief   Gets the equipment of this character.
@@ -94,7 +96,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a std::vector<std::pair<EquipmentSlot, Item*>> representing 
          *          the equipment of this character.
          */
-        std::vector<std::pair<EquipmentSlot, Item*>> getEquipped();
+        std::vector<std::pair<EquipmentSlot, Item*>> getEquipped() const;
 
         /*!
          * \brief   Gets the maximum allowed inventory weight for this character.
@@ -102,7 +104,7 @@ class Character: public InteractiveNoun {
          * \return  Returns an int with the maximum allowed inventory weight for
          *          this character.
          */
-        int getMaxInventoryWeight();
+        int getMaxInventoryWeight() const;
 
         /*!
          * \brief   Sets the name of this character.
@@ -232,11 +234,15 @@ class Character: public InteractiveNoun {
         virtual bool deserialize(std::string);
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         std::string description;
-        int money;
+        mutable std::mutex descriptionMutex;
+        std::atomic<int> money;
         Area *location;
+        mutable std::mutex locationMutex;
         std::vector<std::pair<EquipmentSlot, Item*>> inventory;
-        int maxInventoryWeight;
+        mutable std::mutex inventoryMutex;
+        std::atomic<int> maxInventoryWeight;
 };
 
 }}

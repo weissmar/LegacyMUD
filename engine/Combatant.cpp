@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/11/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -54,52 +54,58 @@ Combatant::~Combatant(){
 }*/
 
 
-bool Combatant::cooldownIsZero(){
-    return cooldownClock == 0;
+bool Combatant::cooldownIsZero() const{
+    return cooldownClock.load() == 0;
 }
 
 
-int Combatant::getCurrentHealth(){
+int Combatant::getCurrentHealth() const{
+    std::lock_guard<std::mutex> healthLock(healthMutex);
     return health.first;
 }
 
 
-int Combatant::getMaxHealth(){
+int Combatant::getMaxHealth() const{
+    std::lock_guard<std::mutex> healthLock(healthMutex);
     return health.second;
 }
 
 
-Area* Combatant::getSpawnLocation(){
+Area* Combatant::getSpawnLocation() const{
+    std::lock_guard<std::mutex> spawnLocationLock(spawnLocationMutex);
     return spawnLocation;
 }
 
 
-int Combatant::getCurrentSpecialPts(){
+int Combatant::getCurrentSpecialPts() const{
+    std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
     return specialPoints.first;
 }
 
 
-int Combatant::getMaxSpecialPts(){
+int Combatant::getMaxSpecialPts() const{
+    std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
     return specialPoints.second;
 }
 
 
-int Combatant::getDexterity(){
-    return dexterity;
+int Combatant::getDexterity() const{
+    return dexterity.load();
 }
 
 
-int Combatant::getStrength(){
-    return strength;
+int Combatant::getStrength() const{
+    return strength.load();
 }
 
 
-int Combatant::getIntelligence(){
-    return intelligence;
+int Combatant::getIntelligence() const{
+    return intelligence.load();
 }
 
 
-Combatant* Combatant::getInCombat(){
+Combatant* Combatant::getInCombat() const{
+    std::lock_guard<std::mutex> inCombatLock(inCombatMutex);
     return inCombat;
 }
 
@@ -125,11 +131,13 @@ bool Combatant::setMaxHealth(int maxHealth){
 
 
 int Combatant::addToCurrentHealth(int healing){
+    std::lock_guard<std::mutex> healthLock(healthMutex);
     return health.first;
 }
 
 
 int Combatant::subtractFromCurrentHealth(int damage){
+    std::lock_guard<std::mutex> healthLock(healthMutex);
     return health.first;
 }
 
@@ -145,24 +153,26 @@ bool Combatant::setMaxSpecialPts(int maxSpecialPts){
 
 
 int Combatant::addToCurrentSpecialPts(int gainedPoints){
+    std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
     return specialPoints.first;
 }
 
 
 int Combatant::subtractFromCurrSpecialPts(int usedPoints){
+    std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
     return specialPoints.first;
 }
 
 
 bool Combatant::rollStats(){
-    dexterity = 0;
-    strength = 0;
-    intelligence = 0;
+    dexterity.store(0);
+    strength.store(0);
+    intelligence.store(0);
 
     while ((dexterity + strength + intelligence) != 36){
-        dexterity = (std::rand() % 18) + 1;
-        strength = (std::rand() % 18) + 1;
-        intelligence = (std::rand() % 18) + 1;
+        dexterity.store((std::rand() % 18) + 1);
+        strength.store((std::rand() % 18) + 1);
+        intelligence.store((std::rand() % 18) + 1);
     }
 
     return true;
@@ -187,21 +197,21 @@ bool Combatant::deserialize(std::string){
 int Combatant::increaseDexterity(int dexPoints){
     dexterity += dexPoints;
 
-    return dexterity;
+    return dexterity.load();
 }
 
 
 int Combatant::increaseStrength(int strengthPoints){
     strength += strengthPoints;
 
-    return strength;
+    return strength.load();
 }
 
 
 int Combatant::increaseIntelligence(int intPoints){
     intelligence += intPoints;
 
-    return intelligence;
+    return intelligence.load();
 }
 
 }}

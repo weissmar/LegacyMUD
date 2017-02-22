@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/15/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -23,7 +23,6 @@
 #include "Area.hpp"
 
 namespace legacymud { namespace parser {
-    class TextParser;
     struct ParseResult;
 }}
 
@@ -63,7 +62,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not starting the game
          *          was successful.
          */
-        bool startGame(bool newGame, const std::string &fileName, parser::TextParser *aParser, telnet::Server *aServer, account::Account *anAccount);
+        bool startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount);
 
         /*!
          * \brief   Loads a new player into the game.
@@ -929,7 +928,6 @@ class GameLogic {
         std::map<int, std::pair<std::mutex*, std::queue<std::string>*>> playerMessageQueues;
         std::mutex playerMsgQMutex;
         account::Account* accountManager;
-        parser::TextParser* theTextParser;
         telnet::Server* theServer;
         Area startArea;
 };

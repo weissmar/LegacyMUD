@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -34,51 +34,54 @@ ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::
 { }
 
 
-int ItemType::getWeight(){
-    return weight;
+int ItemType::getWeight() const{
+    return weight.load();
 }
 
 
-ItemRarity ItemType::getRarity(){
-    return rarity;
+ItemRarity ItemType::getRarity() const{
+    return rarity.load();
 }
 
 
-std::string ItemType::getDescription(){
+std::string ItemType::getDescription() const{
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     return description;
 }
 
 
 std::string ItemType::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
 
-int ItemType::getCost(){
-    return cost;
+int ItemType::getCost() const{
+    return cost.load();
 }
 
 
-EquipmentSlot ItemType::getSlotType(){
-    return slotType;
+EquipmentSlot ItemType::getSlotType() const{
+    return slotType.load();
 }
 
 
 bool ItemType::setWeight(int weight){
-    this->weight = weight;
+    this->weight.store(weight);
 
     return true;
 }
 
 
 bool ItemType::setRarity(ItemRarity rarity){
-    this->rarity = rarity;
+    this->rarity.store(rarity);
 
     return true;
 }
 
 
 bool ItemType::setDescription(std::string description){
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
     this->description = description;
 
     return true;
@@ -86,6 +89,7 @@ bool ItemType::setDescription(std::string description){
 
 
 bool ItemType::setName(std::string name){
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
 
     return true;
@@ -93,45 +97,45 @@ bool ItemType::setName(std::string name){
 
 
 bool ItemType::setCost(int cost){
-    this->cost = cost;
+    this->cost.store(cost);
 
     return true;
 }
 
 
 bool ItemType::setSlotType(EquipmentSlot slotType){
-    this->slotType = slotType;
+    this->slotType.store(slotType);
 
     return true;
 }
 
 
-int ItemType::getArmorBonus(){
+int ItemType::getArmorBonus() const{
     return -1;
 }
 
 
-DamageType ItemType::getResistantTo(){
+DamageType ItemType::getResistantTo() const{
     return DamageType::NONE;
 }
 
 
-int ItemType::getDamage(){
+int ItemType::getDamage() const{
     return -1;
 }
 
 
-DamageType ItemType::getDamageType(){
+DamageType ItemType::getDamageType() const{
     return DamageType::NONE;
 }
 
 
-AreaSize ItemType::getRange(){
+AreaSize ItemType::getRange() const{
     return AreaSize::NONE;
 }
 
 
-int ItemType::getCritMultiplier(){
+int ItemType::getCritMultiplier() const{
     return -1;
 }
 
@@ -166,7 +170,7 @@ bool ItemType::setResistantTo(DamageType){
 }
 
 
-ObjectType ItemType::getObjectType(){
+ObjectType ItemType::getObjectType() const{
     return ObjectType::ITEM_TYPE;
 }
 

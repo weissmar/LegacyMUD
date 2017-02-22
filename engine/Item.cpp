@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -49,27 +49,31 @@ Item::~Item(){
 }*/
 
 
-InteractiveNoun* Item::getLocation(){
+InteractiveNoun* Item::getLocation() const{
+    std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
 }
 
 
-ItemPosition Item::getPosition(){
-    return position;
+ItemPosition Item::getPosition() const{
+    return position.load();
 }
 
 
 std::string Item::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
 
-ItemType* Item::getType(){
+ItemType* Item::getType() const{
+    std::lock_guard<std::mutex> typeLock(typeMutex);
     return type;
 }
 
 
 bool Item::setLocation(InteractiveNoun* containingNoun){
+    std::lock_guard<std::mutex> locationLock(locationMutex);
     if (containingNoun != nullptr){
         location = containingNoun;
         return true;
@@ -80,13 +84,14 @@ bool Item::setLocation(InteractiveNoun* containingNoun){
 
 
 bool Item::setPosition(ItemPosition position){
-    this->position = position;
+    this->position.store(position);
 
     return true;
 }
 
 
 bool Item::setName(std::string name){
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
 
     return true;
@@ -94,6 +99,7 @@ bool Item::setName(std::string name){
 
 
 bool Item::setType(ItemType *type){
+    std::lock_guard<std::mutex> typeLock(typeMutex);
     if (type != nullptr){
         this->type = type;
         return true;
@@ -103,7 +109,7 @@ bool Item::setType(ItemType *type){
 }
 
 
-ObjectType Item::getObjectType(){
+ObjectType Item::getObjectType() const{
     return ObjectType::ITEM;
 }
 

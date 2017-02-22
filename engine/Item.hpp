@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Item.hpp
  *
@@ -14,6 +14,8 @@
 #define ITEM_HPP
 
 #include <string>
+#include <atomic>
+#include <mutex>
 #include "InteractiveNoun.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
@@ -40,14 +42,14 @@ class Item: public InteractiveNoun {
          *
          * \return  Returns an InteractiveNoun* with the location of the item.
          */
-        InteractiveNoun* getLocation();
+        InteractiveNoun* getLocation() const;
 
         /*!
          * \brief   Gets the position of the item.
          *
          * \return  Returns an ItemPosition with the position of the item.
          */
-        ItemPosition getPosition();
+        ItemPosition getPosition() const;
 
         /*!
          * \brief   Gets the name of the item.
@@ -61,7 +63,7 @@ class Item: public InteractiveNoun {
          *
          * \return  Returns an ItemType* with the type of the item.
          */
-        ItemType* getType();
+        ItemType* getType() const;
 
         /*!
          * \brief   Sets the location of the item.
@@ -109,7 +111,7 @@ class Item: public InteractiveNoun {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -492,9 +494,12 @@ class Item: public InteractiveNoun {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         InteractiveNoun* location;
-        ItemPosition position;
+        mutable std::mutex locationMutex;
+        std::atomic<ItemPosition> position;
         std::string name;
+        mutable std::mutex nameMutex;
         ItemType *type;
+        mutable std::mutex typeMutex;
 };
 
 }}

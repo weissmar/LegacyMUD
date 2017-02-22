@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/12/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -27,16 +27,19 @@ Feature::Feature(std::string name, std::string placement, bool isConditional, It
 
 
 std::string Feature::getName() const{
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     return name;
 }
 
 
-std::string Feature::getPlacement(){
+std::string Feature::getPlacement() const{
+    std::lock_guard<std::mutex> placementLock(placementMutex);
     return placement;
 }
 
 
 bool Feature::setName(std::string name){
+    std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
 
     return true;
@@ -44,13 +47,14 @@ bool Feature::setName(std::string name){
 
 
 bool Feature::setPlacement(std::string placement){
+    std::lock_guard<std::mutex> placementLock(placementMutex);
     this->placement = placement;
 
     return true;
 }
 
 
-ObjectType Feature::getObjectType(){
+ObjectType Feature::getObjectType() const{
     return ObjectType::FEATURE;
 }
 

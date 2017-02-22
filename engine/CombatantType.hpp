@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.hpp
  *
@@ -14,6 +14,8 @@
 #define COMBATANT_TYPE_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DamageType.hpp"
 
@@ -46,14 +48,14 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a SpecialSkill* indicating the special skill of this 
          *          combatant type.
          */
-        SpecialSkill* getSpecialSkill();
+        SpecialSkill* getSpecialSkill() const;
 
         /*!
          * \brief   Gets the attack bonus of this combatant type.
          *
          * \return  Returns an int with the attack bonus of this combatant type.
          */
-        int getAttackBonus();
+        int getAttackBonus() const;
 
         /*!
          * \brief   Gets the armor bonus of this combatant type.
@@ -61,7 +63,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns an int indicating the armor bonus of this combatant 
          *          type.
          */
-        int getArmorBonus();
+        int getArmorBonus() const;
 
         /*!
          * \brief   Gets the damage type that this combatant type is resistant to.
@@ -69,7 +71,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a DamageType indicating the damage type that this 
          *          combatant type is resistant to.
          */
-        DamageType getResistantTo();
+        DamageType getResistantTo() const;
 
         /*!
          * \brief   Gets the damage type that this combatant type is weak to.
@@ -77,7 +79,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a DamageType indicating the damage type that this 
          *          combatant type is weak to.
          */
-        DamageType getWeakTo();
+        DamageType getWeakTo() const;
 
         /*!
          * \brief   Gets the heal points for this combatant type.
@@ -85,7 +87,7 @@ class CombatantType: public InteractiveNoun {
          * \return  Returns a float indicating the heal points for this combatant
          *          type.
          */
-        float getHealPoints();
+        float getHealPoints() const;
 
         /*!
          * \brief   Sets the name of this combatant type.
@@ -177,12 +179,14 @@ class CombatantType: public InteractiveNoun {
         virtual bool deserialize(std::string);
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         SpecialSkill* specialSkill;
-        int attackBonus;
-        int armorBonus;
-        DamageType resistantTo;
-        DamageType weakTo;
-        float healPoints;
+        mutable std::mutex specialSkillMutex;
+        std::atomic<int> attackBonus;
+        std::atomic<int> armorBonus;
+        std::atomic<DamageType> resistantTo;
+        std::atomic<DamageType> weakTo;
+        std::atomic<float> healPoints;
 };
 
 }}

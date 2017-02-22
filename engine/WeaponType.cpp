@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/12/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.cpp
  *
@@ -30,55 +30,55 @@ WeaponType::WeaponType(int damage, DamageType type, AreaSize range, int critMult
 { }
 
 
-int WeaponType::getDamage(){
-    return damage;
+int WeaponType::getDamage() const{
+    return damage.load();
 }
 
 
-DamageType WeaponType::getDamageType(){
-    return damageType;
+DamageType WeaponType::getDamageType() const{
+    return damageType.load();
 }
 
 
-AreaSize WeaponType::getRange(){
-    return range;
+AreaSize WeaponType::getRange() const{
+    return range.load();
 }
 
 
-int WeaponType::getCritMultiplier(){
-    return critMultiplier;
+int WeaponType::getCritMultiplier() const{
+    return critMultiplier.load();
 }
 
 
 bool WeaponType::setDamage(int damage){
-    this->damage = damage;
+    this->damage.store(damage);
 
     return true;
 }
 
 
 bool WeaponType::setDamageType(DamageType type){
-    damageType = type;
+    damageType.store(type);
 
     return true;
 }
 
 
 bool WeaponType::setRange(AreaSize range){
-    this->range = range;
+    this->range.store(range);
 
     return true;
 }
 
 
 bool WeaponType::setCritMultiplier(int multiplier){
-    critMultiplier = multiplier;
+    critMultiplier.store(multiplier);
 
     return true;
 }
 
 
-ObjectType WeaponType::getObjectType(){
+ObjectType WeaponType::getObjectType() const{
     return ObjectType::WEAPON_TYPE;
 }
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/15/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Action.cpp
  *
@@ -21,11 +21,19 @@ Action::Action()
 { }
 
 
+Action::Action(CommandEnum aCommand) 
+: command(aCommand)
+, valid(false)
+, flavorText("")
+, effect(EffectType::NONE)
+{ }
+
+
 Action::Action(CommandEnum command, bool valid, std::string flavorText, EffectType effect)
 : command(command)
 , valid(valid)
 , flavorText(flavorText)
-, effect(effect)
+, effect(effect) 
 { }
 
 
@@ -119,6 +127,18 @@ std::vector<std::string> Action::getAliases() const{
     }
 
     return justAliases;
+}
+
+
+bool Action::isAlias(std::string anAlias) const{
+    std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
+    int count = aliases.count(anAlias);
+
+    if (count == 1){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 

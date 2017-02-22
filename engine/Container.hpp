@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -16,6 +16,8 @@
 
 #include <vector>
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "Item.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
@@ -43,7 +45,7 @@ class Container: public Item {
          * \return  Returns a bool indicating whether or not this container
          *          is empty.
          */
-        bool isEmpty();
+        bool isEmpty() const;
 
         /*!
          * \brief   Removes the speficied item from this container.
@@ -73,7 +75,7 @@ class Container: public Item {
          * \return  Returns a std::vector<Item*> with the inside contents of
          *          this container.
          */
-        std::vector<Item*> getInsideContents();
+        std::vector<Item*> getInsideContents() const;
 
         /*!
          * \brief   Gets the under contents of this container.
@@ -81,7 +83,7 @@ class Container: public Item {
          * \return  Returns a std::vector<Item*> with the under contents of
          *          this container.
          */
-        std::vector<Item*> getUnderContents();
+        std::vector<Item*> getUnderContents() const;
 
         /*!
          * \brief   Gets the top contents of this container.
@@ -89,14 +91,14 @@ class Container: public Item {
          * \return  Returns a std::vector<Item*> with the top contents of
          *          this container.
          */
-        std::vector<Item*> getTopContents();
+        std::vector<Item*> getTopContents() const;
 
         /*!
          * \brief   Gets the inside capacity of this container.
          *
          * \return  Returns an int with the inside capacity of this container.
          */
-        int getInsideCapacity();
+        int getInsideCapacity() const;
 
         /*!
          * \brief   Sets the inside capacity of this container.
@@ -114,7 +116,7 @@ class Container: public Item {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -512,9 +514,12 @@ class Container: public Item {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::vector<Item*> under;
+        mutable std::mutex underMutex;
         std::vector<Item*> inside;
+        mutable std::mutex insideMutex;
         std::vector<Item*> onTopOf;
-        int insideCapacity;
+        mutable std::mutex onTopOfMutex;
+        std::atomic<int> insideCapacity;
 };
 
 }}

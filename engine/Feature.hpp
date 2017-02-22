@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Feature.hpp
  *
@@ -14,6 +14,7 @@
 #define FEATURE_HPP
 
 #include <string>
+#include <mutex>
 #include "ConditionalElement.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -40,7 +41,7 @@ class Feature: public ConditionalElement {
          *
          * \return  Returns a std::string with the placement of this feature.
          */
-        std::string getPlacement();
+        std::string getPlacement() const;
 
         /*!
          * \brief   Sets the name of this feature.
@@ -68,7 +69,7 @@ class Feature: public ConditionalElement {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -263,7 +264,9 @@ class Feature: public ConditionalElement {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         std::string placement;
+        mutable std::mutex placementMutex;
 };
 
 }}

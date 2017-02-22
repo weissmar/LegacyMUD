@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        CreatureType.hpp
  *
@@ -16,6 +16,7 @@
 #define CREATURE_TYPE_HPP
 
 #include <string>
+#include <atomic>
 #include "CombatantType.hpp"
 #include "CharacterSize.hpp"
 #include "DataType.hpp"
@@ -40,14 +41,14 @@ class CreatureType: public CombatantType {
          *
          * \return  Returns a CharacterSize with the size of this creature type.
          */
-        CharacterSize getSize();
+        CharacterSize getSize() const;
 
         /*!
          * \brief   Gets the difficulty of this creature type.
          *
          * \return  Returns a XPTier with the difficulty of this creature type.
          */
-        XPTier getDifficulty();
+        XPTier getDifficulty() const;
 
         /*!
          * \brief   Sets the size of this creature type.
@@ -75,7 +76,7 @@ class CreatureType: public CombatantType {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -145,8 +146,8 @@ class CreatureType: public CombatantType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        CharacterSize size;
-        XPTier difficulty;
+        std::atomic<CharacterSize> size;
+        std::atomic<XPTier> difficulty;
 };
 
 }}

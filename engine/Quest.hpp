@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/13/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Quest.hpp
  *
@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <mutex>
+#include <atomic>
 #include "InteractiveNoun.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -49,21 +51,21 @@ class Quest: public InteractiveNoun {
          *
          * \return  Returns a std::string with the description.
          */
-        std::string getDescription();
+        std::string getDescription() const;
 
         /*!
          * \brief   Gets the reward money for this quest.
          *
          * \return  Returns an int with the reward money.
          */
-        int getRewardMoney();
+        int getRewardMoney() const;
 
         /*!
          * \brief   Gets the reward item for this quest.
          *
          * \return  Returns an Item* with the reward item.
          */
-        Item* getRewardItem();
+        Item* getRewardItem() const;
 
         /*!
          * \brief   Gets the steps of this quest.
@@ -71,7 +73,7 @@ class Quest: public InteractiveNoun {
          * \return  Returns a std::vector<std::pair<int, QuestStep*>> 
          *          with the steps.
          */
-        std::vector<std::pair<int, QuestStep*>> getSteps();
+        std::vector<std::pair<int, QuestStep*>> getSteps() const;
 
         /*!
          * \brief   Sets the name of this quest.
@@ -141,7 +143,7 @@ class Quest: public InteractiveNoun {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -212,10 +214,14 @@ class Quest: public InteractiveNoun {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         std::string name;
+        mutable std::mutex nameMutex;
         std::string description;
-        int rewardMoney;
+        mutable std::mutex descriptionMutex;
+        std::atomic<int> rewardMoney;
         Item *rewardItem;
+        mutable std::mutex rewardItemMutex;
         std::vector<std::pair<int, QuestStep*>> steps;
+        mutable std::mutex stepsMutex;
 };
 
 }}

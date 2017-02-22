@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/09/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -15,6 +15,8 @@
 #define CREATURE_HPP
 
 #include <string>
+#include <mutex>
+#include <atomic>
 #include "Combatant.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -42,7 +44,7 @@ class Creature: public Combatant {
          *
          * \return  Returns a CreatureType* with the type of this creature.
          */
-        CreatureType* getType();
+        CreatureType* getType() const;
 
         /*!
          * \brief   Gets whether or not this creature moves autonomously
@@ -51,7 +53,7 @@ class Creature: public Combatant {
          * \return  Returns a bool indicating whether or not this creature 
          *          moves autonomously around the game.
          */
-        bool getAmbulatory();
+        bool getAmbulatory() const;
 
         /*!
          * \brief   Sets the type of this creature.
@@ -81,7 +83,7 @@ class Creature: public Combatant {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -292,7 +294,8 @@ class Creature: public Combatant {
         static std::map<std::string, DataType> getAttributeSignature();
     private:
         CreatureType *type;
-        bool ambulatory;
+        mutable std::mutex typeMutex;
+        std::atomic<bool> ambulatory;
 };
 
 }}

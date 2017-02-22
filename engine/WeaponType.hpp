@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/10/2017
+ * \modified    02/20/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.hpp
  *
@@ -16,6 +16,7 @@
 #define WEAPON_TYPE_HPP
 
 #include <string>
+#include <atomic>
 #include "ItemType.hpp"
 #include "ItemRarity.hpp"
 #include "EquipmentSlot.hpp"
@@ -41,28 +42,28 @@ class WeaponType: public ItemType {
          *
          * \return  Returns an int with the damage for this weapon type.
          */
-        virtual int getDamage();
+        virtual int getDamage() const;
 
         /*!
          * \brief   Gets the damage type of this weapon type. 
          *
          * \return  Returns a DamageType with the damage type for this weapon type.
          */
-        virtual DamageType getDamageType();
+        virtual DamageType getDamageType() const;
 
         /*!
          * \brief   Gets the range of this weapon type.
          *
          * \return  Returns an AreaSize with the range for this weapon type.
          */
-        virtual AreaSize getRange();
+        virtual AreaSize getRange() const;
 
         /*!
          * \brief   Gets the crit multiplier of this weapon type.
          *
          * \return  Returns an int with the crit multiplier for this weapon type.
          */
-        virtual int getCritMultiplier();
+        virtual int getCritMultiplier() const;
 
         /*!
          * \brief   Sets the damage of this weapon type.
@@ -110,7 +111,7 @@ class WeaponType: public ItemType {
          * \return  Returns an ObjectType indicating the actual class the object
          *          belongs to.
          */
-        virtual ObjectType getObjectType();
+        virtual ObjectType getObjectType() const;
 
         /*!
          * \brief   Serializes this object for writing to file.
@@ -288,10 +289,10 @@ class WeaponType: public ItemType {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
-        int damage;
-        DamageType damageType;
-        AreaSize range;
-        int critMultiplier;
+        std::atomic<int> damage;
+        std::atomic<DamageType> damageType;
+        std::atomic<AreaSize> range;
+        std::atomic<int> critMultiplier;
 };
 
 }}
