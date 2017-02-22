@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  1/30/2017
- * Last Modified: 2/12/2017
+ * Last Modified: 2/20/2017
  * Course:        CS467, Winter 2017
  * Filename:      Server_Test.cpp
  *
@@ -70,7 +70,7 @@ TEST(ServerTest, InitializeServer) {
             << "Expect true for all parameters being valid.  Could return false if port is already taken.";
     
     /* Shut the server down. */
-    EXPECT_TRUE(ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutDownServer() ) 
         << "Expect true that the server is shutdown.";
     
     /* Invalid server port of 999. */
@@ -120,7 +120,7 @@ TEST(ServerTest, ListeningServer) {
     std::thread serverThread(&legacymud::telnet::Server::startListening, &ts);   
     
     /* Shut the server down. */
-    EXPECT_TRUE(ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutDownServer() ) 
         << "Expect true that the server is shutdown.";  
         
     serverThread.join();          
@@ -158,7 +158,7 @@ TEST(ServerTest, HandlingPlayers) {
         << "Expect false since there are no players.";              
     
     /* Shut the server down. */
-    EXPECT_TRUE(ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutDownServer() ) 
         << "Expect true that the server is shutdown.";  
         
     serverThread.join();          
@@ -222,7 +222,7 @@ TEST(ServerTest, SettersandGetters) {
         << "Expect true.";         
     
     /* Shut the server down. */
-    EXPECT_TRUE(ts.shutdown() ) 
+    EXPECT_TRUE(ts.shutDownServer() ) 
         << "Expect true that the server is shutdown.";  
         
     serverThread.join();          
