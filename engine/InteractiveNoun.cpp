@@ -78,7 +78,7 @@ int InteractiveNoun::getID() const{
 
 Action* InteractiveNoun::getAction(CommandEnum aCommand) const{
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
-    for (int i = 0; i < actions.size(); i++){
+    for (size_t i = 0; i < actions.size(); i++){
         if (actions[i]->getCommand() == aCommand){
             return actions[i];
         }
@@ -91,7 +91,7 @@ std::vector<Action*> InteractiveNoun::getActions(std::string alias) const{
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
     std::vector<Action*> aliasActions;
 
-    for (int i = 0; i < actions.size(); i++){
+    for (size_t i = 0; i < actions.size(); i++){
         if (actions[i]->isAlias(alias) == true){
             aliasActions.push_back(actions[i]);
         }
@@ -123,7 +123,7 @@ std::vector<std::string> InteractiveNoun::getVerbAliases() const{
 
 bool InteractiveNoun::checkAction(CommandEnum aCommand) const{
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
-    for (int i = 0; i < actions.size(); i++){
+    for (size_t i = 0; i < actions.size(); i++){
         if (actions[i]->getCommand() == aCommand){
             return true;
         }
@@ -148,7 +148,7 @@ bool InteractiveNoun::removeAction(CommandEnum aCommand){
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
     int index = -1;
 
-    for (int i = 0; i < actions.size(); i++){
+    for (size_t i = 0; i < actions.size(); i++){
         if (actions[i]->getCommand() == aCommand){
             index = i;
         }
@@ -167,7 +167,7 @@ bool InteractiveNoun::addAlias(std::string anAlias){
     std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
     bool found = false;
 
-    for (int i = 0; i < aliases.size(); i++){
+    for (size_t i = 0; i < aliases.size(); i++){
         if (aliases[i] == anAlias)
             found = true;
     }
@@ -184,7 +184,7 @@ bool InteractiveNoun::removeAlias(std::string anAlias){
     std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
     int index = -1;
 
-    for (int i = 0; i < aliases.size(); i++){
+    for (size_t i = 0; i < aliases.size(); i++){
         if (aliases[i] == anAlias)
             index = i;
     }
