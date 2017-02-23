@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/21/2017
+ * \modified    02/22/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -13,6 +13,8 @@
 #include "Exit.hpp"
 #include "Item.hpp"
 #include "Feature.hpp"
+#include "CommandEnum.hpp"
+#include "Action.hpp"
 #include <algorithm>
 
 namespace legacymud { namespace engine {
@@ -277,12 +279,39 @@ bool Area::deserialize(std::string){
 
 
 std::string Area::look(){
-    return "";
+    return getFullDescription(-1);
 }  
 
 
 std::string Area::listen(){
-    return "";
+    std::string message;
+    Action *anAction = nullptr;
+    EffectType anEffect;
+
+    std::unique_lock<std::mutex> featContentLock(featContentMutex, std::defer_lock);
+    std::unique_lock<std::mutex> exitContentLock(exitContentMutex, std::defer_lock);
+    std::lock(featContentLock, exitContentLock);
+
+    anAction = this->getAction(CommandEnum::LISTEN);
+    if (anAction != nullptr){
+        if (anAction->getValid()){
+            message = anAction->getFlavorText();
+            anEffect = anAction->getEffect();
+            // figure out how to get the effect back to game logic... *****************************************
+        }
+    } else {
+        message = "";
+    }
+
+    for (auto feature : featureContents){
+        message += feature->listen();
+        message += " ";
+    }
+    for (auto exit : exitContents){
+        message += exit->listen();
+        message += " ";
+    }
+    return message;
 } 
 
 

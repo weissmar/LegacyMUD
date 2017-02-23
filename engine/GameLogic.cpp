@@ -1280,16 +1280,20 @@ bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
         message = aPlayer->getLocation()->getFullDescription(aPlayer->getID());
     } else {
         // command is look at
+        message = param->look();
     }
 
     messagePlayer(aPlayer, message);
 
-    return false;
+    return true;
 }
 
 
 bool GameLogic::listenCommand(Player *aPlayer){
-    return false;
+    std::string message = aPlayer->getLocation()->listen();
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 
