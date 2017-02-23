@@ -2,7 +2,7 @@
   \file     Server.hpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/22/2017
+  \modified 2/23/2017
   \course   CS467, Winter 2017
  
   \details  Declaration file for the Server class.
@@ -263,7 +263,7 @@ namespace legacymud {
         int _playerCount;                           // a count of the number of players on the server
         bool _serverPause;                          // pause state of the server
         legacymud::engine::GameLogic* _gameLogicPt; // game logic pointer the server is using
-        struct _Player {                            // struct user info struct
+        struct _Player {                            // struct for a player's server info 
             bool echo;                              // flag that indicates a player's text echo display mode           
             std::string readBuffer;                 // a player's read string buffer
             std::string questionBuffer;             // a question sent to the player that's waiting for a response
@@ -271,7 +271,7 @@ namespace legacymud {
         std::map<int, _Player> _playerMap;          // map used track player's on the server and to capture player specific server data
         std::mutex _mu_player_map;                  // mutex used for the player map
         std::deque<int> _fd_held_que;               // que of file descriptors that haven't been released yet
-        std::mutex _mu_fd_held_que;                 // mutex used for the player map
+        std::mutex _mu_fd_held_que;                 // mutex used for the held file descriptor que
 };
 
 }}

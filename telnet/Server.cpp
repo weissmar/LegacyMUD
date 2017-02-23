@@ -2,14 +2,14 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/22/2017
+  \modified 2/23/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
 */
 
 
-#include <stdio.h>          // sprintf and other input,output operations
+#include <stdio.h>          // input,output operations
 #include <stdlib.h>         // general purpose functions
 #include <string.h>         // c strings
 #include <string>           // std::string
@@ -228,7 +228,7 @@ bool Server::sendQuestion(int playerFd, std::string outQuestion) {
         /* Add a newline at the end of the question. */
         outQuestion += "\015\012";       // attach carriage return  and linefeed
         
-        /* Write to the socket. */ 
+        /* Write question to the socket. */ 
         if (write(playerFd,outQuestion.c_str(),strlen(outQuestion.c_str())) < 0) 
             return false;   // Error writing to socket               
         
@@ -271,7 +271,7 @@ bool Server::sendMsg(int playerFd, std::string outMsg) {
             }             
         }
                
-        /* If a has a question to be answered, clear that text from their display. */
+        /* If a player has a question to be answered, clear that text from their display. */
         int questionBufferSize = player->second.questionBuffer.size();
         if (questionBufferSize > 0) {
             for (int i = 0; i < questionBufferSize; i++ ) {
@@ -281,19 +281,13 @@ bool Server::sendMsg(int playerFd, std::string outMsg) {
             /* Erase rest of current line.  Additional characters remain depending on how wide a user's terminal display is. */
             std::string clearLineandMoveCursorToLeft = "\033\[2K\033\[2000D";  // ANSI code to eraseline and moves cursor to beginning of this line
             if (write(playerFd, clearLineandMoveCursorToLeft.c_str(), strlen(clearLineandMoveCursorToLeft.c_str())) < 0) 
-                    return false; 
-            
+                    return false;          
         }
-         
-        /* Erase current line. */
-        std::string moveLeft = "\033\[2K\033\[2000D";  // erases line and moves cursor to beginning of this line
-        if (write(playerFd, moveLeft.c_str(), strlen(moveLeft.c_str())) < 0) 
-                return false; 
         
         /* Add a newline at the end of the message. */ 
         outMsg += "\015\012";       // attach carriage return  and linefeed
         
-        /* Write to the socket. */ 
+        /* Write message to the socket. */ 
         if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
             return false;   // Error writing to socket               
                
