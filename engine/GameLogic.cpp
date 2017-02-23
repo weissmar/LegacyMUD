@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/22/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -94,7 +94,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
     while (!validUser){
         // get username
-        success = getValueFromUser(fileDescriptor, "Please enter your username or [new] if you are new to this world.", username, true);
+        success = getValueFromUser(fileDescriptor, "Please enter your username or [new] if you are new to this world.", username);
         if (!success)
             return false;
 
@@ -102,14 +102,14 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
         if (username.compare("new") == 0){
 
             // get username
-            success = getValueFromUser(fileDescriptor, "Please enter your email address. You will use this as your username in the future.", username, true);
+            success = getValueFromUser(fileDescriptor, "Please enter your email address. You will use this as your username in the future.", username);
             if (!success)
                 return false;
 
             // validate username
             validUsername = accountManager->uniqueUsername(username);
             while (!validUsername){
-                success = getValueFromUser(fileDescriptor, "That username is already in use. Please enter an alternate username.", username, true);
+                success = getValueFromUser(fileDescriptor, "That username is already in use. Please enter an alternate username.", username);
                 if (!success)
                     return false;
                 validUsername = accountManager->uniqueUsername(username);
@@ -117,25 +117,25 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
             // get password
             theServer->setPlayerEcho(fileDescriptor, false);
-            success = getValueFromUser(fileDescriptor, "Please enter a password. (Note: This is not a secure connection. Please use a password that you don't mind others potentially seeing.", password, true);
+            success = getValueFromUser(fileDescriptor, "Please enter a password. (Note: This is not a secure connection. Please use a password that you don't mind others potentially seeing.", password);
             if (!success)
                 return false;
             // check if admin password was entered
             if (password.compare(ADMIN_PASSWORD) == 0){
                 isAdmin = true;
-                success = getValueFromUser(fileDescriptor, "Welcome Administrator, please enter a new password.", password, true);
+                success = getValueFromUser(fileDescriptor, "Welcome Administrator, please enter a new password.", password);
                 if (!success)
                     return false;
             }
             // verify password
             while (!validPassword){
-                success = getValueFromUser(fileDescriptor, "Please verify the password.", passwordVerify, true);
+                success = getValueFromUser(fileDescriptor, "Please verify the password.", passwordVerify);
                 if (!success)
                     return false;
                 if (password.compare(passwordVerify) == 0){
                     validPassword = true;
                 } else {
-                    success = getValueFromUser(fileDescriptor, "The passwords didn't match. Please enter a password.", password, true);
+                    success = getValueFromUser(fileDescriptor, "The passwords didn't match. Please enter a password.", password);
                     if (!success)
                         return false;
                 }
@@ -143,7 +143,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             theServer->setPlayerEcho(fileDescriptor, true);
 
             // get player name
-            success = getValueFromUser(fileDescriptor, "What would you like your character name to be?", playerName, true);
+            success = getValueFromUser(fileDescriptor, "What would you like your character name to be?", playerName);
             if (!success)
                 return false;
 
@@ -159,31 +159,31 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                     message += ", ";
             }
             message += ". Please enter the number that corresponds to your choice.";
-            success = getValueFromUser(fileDescriptor, message, number, true);
+            success = getValueFromUser(fileDescriptor, message, number);
             if (!success)
                 return false;
             pClassNumber = validateStringNumber(number, 1, pClasses.size());
             while (pClassNumber == -1){
-                success = getValueFromUser(fileDescriptor, "Invalid input. Please enter the number that corresponds to your choice.", number, true);
+                success = getValueFromUser(fileDescriptor, "Invalid input. Please enter the number that corresponds to your choice.", number);
                 if (!success)
                     return false;
                 pClassNumber = validateStringNumber(number, 1, pClasses.size());
             }
 
             // get player size
-            success = getValueFromUser(fileDescriptor, "What size is your character? Your options are: [1] Tiny, [2] Small, [3] Medium, [4] Large, [5] Huge. Please enter the number that corresponds to your choice.", number, true);
+            success = getValueFromUser(fileDescriptor, "What size is your character? Your options are: [1] Tiny, [2] Small, [3] Medium, [4] Large, [5] Huge. Please enter the number that corresponds to your choice.", number);
             if (!success)
                 return false;
             playerSize = validateStringNumber(number, 1, 5);
             while (playerSize == -1){
-                success = getValueFromUser(fileDescriptor, "Invalid input. Please enter the number that corresponds to your choice.", number, true);
+                success = getValueFromUser(fileDescriptor, "Invalid input. Please enter the number that corresponds to your choice.", number);
                 if (!success)
                     return false;
                 playerSize = validateStringNumber(number, 1, 5);
             }
 
             // get player description
-            success = getValueFromUser(fileDescriptor, "Please enter a description of your character (from a third-person perspective).", pDescription, true);
+            success = getValueFromUser(fileDescriptor, "Please enter a description of your character (from a third-person perspective).", pDescription);
             if (!success)
                 return false;
 
@@ -208,7 +208,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
         } else {
             // ask for password
             theServer->setPlayerEcho(fileDescriptor, false);
-            success = getValueFromUser(fileDescriptor, "Please enter your password.", password, true);
+            success = getValueFromUser(fileDescriptor, "Please enter your password.", password);
             if (!success)
                 return false;
             theServer->setPlayerEcho(fileDescriptor, true);
@@ -233,10 +233,10 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
                     validUser = true;
                 } else {
-                    theServer->sendMsg(fileDescriptor, "That account is already logged in. Please log in with a different account.", telnet::Server::NEWLINE);
+                    theServer->sendMsg(fileDescriptor, "That account is already logged in. Please log in with a different account.");
                 }
             } else {
-                theServer->sendMsg(fileDescriptor, "Your username and password didn't match any accounts we have on file. Please try again.", telnet::Server::NEWLINE);
+                theServer->sendMsg(fileDescriptor, "Your username and password didn't match any accounts we have on file. Please try again.");
             } 
         }
     }
@@ -271,15 +271,10 @@ int GameLogic::validateStringNumber(std::string number, int min, int max){
 }
 
 
-bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string &response, bool newline){
+bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string &response){
     bool success;
-    telnet::Server::NewLine useNewline = telnet::Server::NEWLINE;
 
-    if (!newline){
-        useNewline = telnet::Server::NO_NEWLINE;
-    }
-
-    theServer->sendMsg(FD, outMessage, useNewline);
+    theServer->sendMsg(FD, outMessage);
     success = theServer->receiveMsg(FD, response);
     if (!success){
         theServer->disconnectPlayer(FD);
@@ -454,7 +449,7 @@ ObjectType GameLogic::getObjectType(const std::string &input){
 
 
 void GameLogic::messagePlayer(Player *aPlayer, std::string message){
-    theServer->sendMsg(aPlayer->getFileDescriptor(), message, telnet::Server::NEWLINE);
+    theServer->sendMsg(aPlayer->getFileDescriptor(), message);
 }
 
 
@@ -468,7 +463,7 @@ void GameLogic::messageAllPlayers(Player *aPlayer, std::string message){
 
     for (auto FD : fileDescriptors){
         if (FD != excludeFD)
-            theServer->sendMsg(FD, message, telnet::Server::NEWLINE);
+            theServer->sendMsg(FD, message);
     }
 }
 
@@ -490,7 +485,7 @@ void GameLogic::messageAreaPlayers(Player *aPlayer, std::string message, Area *a
 
     for (auto FD : fileDescriptors){
         if (FD != excludeFD)
-            theServer->sendMsg(FD, message, telnet::Server::NEWLINE);
+            theServer->sendMsg(FD, message);
     }
 }
 

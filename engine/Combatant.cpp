@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/21/2017
+ * \modified    02/22/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -111,13 +111,13 @@ Combatant* Combatant::getInCombat() const{
 
 
 bool Combatant::setCooldown(int cooldown){
-    this->cooldown.store(cooldown);
+    cooldownClock.store(cooldown);
     return true;
 }
 
 
 bool Combatant::decrementCooldown(){
-    cooldown--;
+    cooldownClock--;
     return true;
 }
 

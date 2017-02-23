@@ -86,22 +86,16 @@ bool ConditionalElement::setConditionItem(ItemType *anItemType){
 
 
 bool ConditionalElement::setDescription(std::string description){
-    if (description != nullptr){
-        std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
-        this->description = description;
-        return true;
-    }
-    return false;
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
+    this->description = description;
+    return true;
 }
 
 
 bool ConditionalElement::setAltDescription(std::string altDescription){
-    if (description != nullptr){
-        std::lock_guard<std::mutex> altDescriptionLock(altDescriptionMutex);
-        this->altDescription = altDescription;
-        return true;
-    }
-    return false;
+    std::lock_guard<std::mutex> altDescriptionLock(altDescriptionMutex);
+    this->altDescription = altDescription;
+    return true;
 }
 
 

@@ -230,7 +230,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not getting the value
          *          was successful.
          */
-        bool getValueFromUser(int FD, std::string outMessage, std::string &response, bool newline);
+        bool getValueFromUser(int FD, std::string outMessage, std::string &response);
 
         /*!
          * \brief   Starts combat between the specfied player and the specified
