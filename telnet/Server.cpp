@@ -2,7 +2,7 @@
   \file     Server.cpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/20/2017
+  \modified 2/22/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the Server class.
@@ -116,12 +116,12 @@ void Server::startListening() {
             }
             /* Disconnect the player if the player cap is exceeded. */
             else if (_playerCount > _maxPlayers) {
-                sendMsg(newClientSocketFd, "Server is full.  Please try again later.", NEWLINE);    // server is full
+                sendMsg(newClientSocketFd, "Server is full.  Please try again later.");    // server is full
                 disconnectPlayer(newClientSocketFd);
             }
             /* Disconnect the new player if game backup is in progress. */
             else if (_serverPause == true) {
-                sendMsg(newClientSocketFd, "Game backup in progress.  Please try again later.", NEWLINE); // game backup in progress
+                sendMsg(newClientSocketFd, "Game backup in progress.  Please try again later."); // game backup in progress
                 disconnectPlayer(newClientSocketFd);    
             }
             /* Set disconnect timeout on player's socket. */
@@ -199,9 +199,9 @@ bool Server::shutDownServer() {
 
 
 /******************************************************************************
-* Function:    sendMsg
+* Function:    sendQuestion
 *****************************************************************************/
-bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) {
+bool Server::sendQuestion(int playerFd, std::string outQuestion) {
    
     /* Set lock. Lock is released when it goes out of scope. */
     std::lock_guard<std::mutex> lock(_mu_player_map);    
@@ -215,19 +215,21 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
         
     else {
 
+        /* Add the question to the player's question buffer. */
+        player->second.questionBuffer = outQuestion;
+        
         /* If a player is entering text, clear that text from their display. */
         unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
         for (unsigned int i = 0; i < player->second.readBuffer.size(); i++ ) {
             if (write(playerFd, eraseStr, 3) < 0) 
                 return false;      
-        }        
+        }         
         
-        /* Add a newline at the end if requested. */
-        if (newLine == NEWLINE) 
-            outMsg += "\015\012";       // attach carriage return  and linefeed
+        /* Add a newline at the end of the question. */
+        outQuestion += "\015\012";       // attach carriage return  and linefeed
         
         /* Write to the socket. */ 
-        if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
+        if (write(playerFd,outQuestion.c_str(),strlen(outQuestion.c_str())) < 0) 
             return false;   // Error writing to socket               
         
         /* Write the player's read buffer to the socket if it is not empty. */
@@ -239,22 +241,87 @@ bool Server::sendMsg(int playerFd, std::string outMsg, Server::NewLine newLine) 
             return true;     
         }       
     }                  
-}  
+} 
 
 
 /******************************************************************************
 * Function:    sendMsg
 *****************************************************************************/
-bool Server::sendMsg(int playerFd, std::string outMsg) {   
-    return sendMsg(playerFd, outMsg, NO_NEWLINE);    
-} 
+bool Server::sendMsg(int playerFd, std::string outMsg) {
+   
+    /* Set lock. Lock is released when it goes out of scope. */
+    std::lock_guard<std::mutex> lock(_mu_player_map);    
+
+    /* Find the player. */
+    auto player = _playerMap.find(playerFd);
+    
+    /* If the player is in the map, send the message. */
+    if(player == _playerMap.end()) 
+        return false;   // the player is not in the game
+        
+    else {
+        unsigned char eraseStr[3] = {8,32,8};     // ASCII backspace, space, backspace
+
+        /* If a player is entering text clear that text from their display. */
+        int readBufferSize = player->second.readBuffer.size();
+        if (readBufferSize > 0) {
+            for (int i = 0; i < readBufferSize; i++ ) {
+                if (write(playerFd, eraseStr, 3) < 0) 
+                    return false;      
+            }             
+        }
+               
+        /* If a has a question to be answered, clear that text from their display. */
+        int questionBufferSize = player->second.questionBuffer.size();
+        if (questionBufferSize > 0) {
+            for (int i = 0; i < questionBufferSize; i++ ) {
+                if (write(playerFd, eraseStr, 3) < 0) 
+                    return false;      
+            }  
+            /* Erase rest of current line.  Additional characters remain depending on how wide a user's terminal display is. */
+            std::string clearLineandMoveCursorToLeft = "\033\[2K\033\[2000D";  // ANSI code to eraseline and moves cursor to beginning of this line
+            if (write(playerFd, clearLineandMoveCursorToLeft.c_str(), strlen(clearLineandMoveCursorToLeft.c_str())) < 0) 
+                    return false; 
+            
+        }
+         
+        /* Erase current line. */
+        std::string moveLeft = "\033\[2K\033\[2000D";  // erases line and moves cursor to beginning of this line
+        if (write(playerFd, moveLeft.c_str(), strlen(moveLeft.c_str())) < 0) 
+                return false; 
+        
+        /* Add a newline at the end of the message. */ 
+        outMsg += "\015\012";       // attach carriage return  and linefeed
+        
+        /* Write to the socket. */ 
+        if (write(playerFd,outMsg.c_str(),strlen(outMsg.c_str())) < 0) 
+            return false;   // Error writing to socket               
+               
+        else {
+            /* Write the player's question buffer to the socket if it is not empty. */
+            if (player->second.questionBuffer.size() > 0 ) {
+                std::string questionStr = player->second.questionBuffer + "\015\012";   // end with a carriage return linefeed
+                if (write(playerFd,questionStr.c_str(),strlen(questionStr.c_str())) < 0) 
+                    return false;   // Error writing to socket             
+            }
+            
+            /* Write the player's read buffer to the socket if it is not empty. */
+            if (player->second.readBuffer.size() > 0 ) {
+                if (write(playerFd,player->second.readBuffer.c_str(),strlen(player->second.readBuffer.c_str())) < 0) 
+                    return false;   // Error writing to socket             
+            }
+            
+            return true;     
+        }       
+    }                  
+}  
 
 
 /******************************************************************************
 * Function:    sendNewLine
 *****************************************************************************/
 bool Server::sendNewLine(int playerFd) {   
-    return sendMsg(playerFd, "", NEWLINE);   
+    return sendMsg(playerFd, "");   
 } 
     
 
@@ -343,9 +410,11 @@ bool Server::receiveMsg(int playerFd, std::string &inMsg ) {
             }   
         }
         
-        /* Return the read string by setting it to inMsg and clear this player's read buffer. */        
+        /* Return the read string by setting it to inMsg and clear this player's buffers. */        
         inMsg = player->second.readBuffer;    // set the return message
-        player->second.readBuffer.clear();    // clear the buffer
+        player->second.readBuffer.clear();    // clear the read buffer
+        if (player->second.questionBuffer.size() > 0 ) 
+            player->second.questionBuffer.clear();    // clear the question buffer
         
         /* Unlock the player map mutex.  Need to unlock before calling sendNewLine since it also uses this mutex. */
         lock_player_map.unlock();            

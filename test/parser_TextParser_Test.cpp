@@ -2,7 +2,7 @@
   \file     parser_TextParser_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/19/2017
+  \modified 02/21/2017
   \course   CS467, Winter 2017
  
   \details This file contains the unit tests for the TextParser class.
@@ -19,6 +19,7 @@
 #include <NonCombatant.hpp>
 #include <Feature.hpp>
 #include <Area.hpp>
+#include <Action.hpp>
 
 #include <gtest/gtest.h>
 
@@ -518,10 +519,16 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
     };
 
     engine::Exit north;
-    // TODO: Add Action to exit
-    areaLex.addNoun("north", &north);
+    ASSERT_TRUE(north.addAlias("north"));
+    ASSERT_TRUE(north.addAlias("n"));
+    engine::Action *act = north.addAction(engine::CommandEnum::GO);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("north", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    ASSERT_TRUE(act->addAlias("n", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
     areaLex.addVerb("north", &north);
     areaLex.addVerb("n", &north);
+    areaLex.addNoun("north", &north);
+    areaLex.addNoun("n", &north);
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -780,8 +787,11 @@ TEST_F(TextParserTest, MoveHappyPath) {
     };
 
     engine::Item chair;
+    engine::Action *act = chair.addAction(engine::CommandEnum::MOVE);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("move", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("move", &chair);
     areaLex.addNoun("chair", &chair);
-    // TODO: Add Action to chair
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -806,8 +816,11 @@ TEST_F(TextParserTest, ReadHappyPath) {
     };
 
     engine::Item book;
+    engine::Action *act = book.addAction(engine::CommandEnum::READ);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("read", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("read", &book);
     areaLex.addNoun("book", &book);
-    // TODO: Add Action to book
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -832,8 +845,11 @@ TEST_F(TextParserTest, BreakHappyPath) {
     };
 
     engine::Item book;
+    engine::Action *act = book.addAction(engine::CommandEnum::BREAK);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("break", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("break", &book);
     areaLex.addNoun("book", &book);
-    // TODO: Add Action to book
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -858,8 +874,11 @@ TEST_F(TextParserTest, ClimbHappyPath) {
     };
 
     engine::Item ladder;
+    engine::Action *act = ladder.addAction(engine::CommandEnum::CLIMB);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("climb", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("climb", &ladder);
     areaLex.addNoun("ladder", &ladder);
-    // TODO: Add Action to ladder
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -884,8 +903,11 @@ TEST_F(TextParserTest, TurnHappyPath) {
     };
 
     engine::Feature knob;
+    engine::Action *act = knob.addAction(engine::CommandEnum::TURN);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("turn", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("turn", &knob);
     areaLex.addNoun("knob", &knob);
-    // TODO: Add Action to knob
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -910,8 +932,11 @@ TEST_F(TextParserTest, PushHappyPath) {
     };
 
     engine::Item table;
+    engine::Action *act = table.addAction(engine::CommandEnum::PUSH);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("push", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("push", &table);
     areaLex.addNoun("table", &table);
-    // TODO: Add Action to table
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -936,8 +961,11 @@ TEST_F(TextParserTest, PullHappyPath) {
     };
 
     engine::Item table;
+    engine::Action *act = table.addAction(engine::CommandEnum::PULL);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("pull", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("pull", &table);
     areaLex.addNoun("table", &table);
-    // TODO: Add Action to table
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -962,8 +990,11 @@ TEST_F(TextParserTest, EatHappyPath) {
     };
 
     engine::Item bread;
+    engine::Action *act = bread.addAction(engine::CommandEnum::EAT);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("eat", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("eat", &bread);
     areaLex.addNoun("bread", &bread);
-    // TODO: Add Action to bread
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -988,8 +1019,11 @@ TEST_F(TextParserTest, DrinkHappyPath) {
     };
 
     engine::Item potion;
+    engine::Action *act = potion.addAction(engine::CommandEnum::DRINK);
+    ASSERT_NE(nullptr, act);
+    ASSERT_TRUE(act->addAlias("drink", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
+    areaLex.addVerb("drink", &potion);
     playerLex.addNoun("potion", &potion);
-    // TODO: Add Action to potion
 
     for (auto it = inputs.begin(); it != inputs.end(); ++it) {
         results = parser::TextParser::parse(*it, playerLex, areaLex);
@@ -1278,7 +1312,7 @@ TEST_F(TextParserTest, InvalidVerbValidDirectObject) {
 // Test an unavailable verb
 TEST_F(TextParserTest, UnavailableVerb) {
     parser::LexicalData lex;
-    engine::Item item = engine::Item();
+    engine::Item item;
     lex.addVerb("foo", &item);
     std::string input = "foo";
     results = parser::TextParser::parse(input, playerLex, areaLex);
@@ -1296,7 +1330,7 @@ TEST_F(TextParserTest, UnavailableVerb) {
 // Test an unavailable noun
 TEST_F(TextParserTest, UnavailableDirectNoun) {
     parser::LexicalData lex;
-    engine::Item item = engine::Item();
+    engine::Item item;
     lex.addNoun("foo", &item);
     std::string input = "look foo";
     results = parser::TextParser::parse(input, playerLex, areaLex);

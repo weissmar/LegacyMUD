@@ -2,7 +2,7 @@
   \file     TextParser.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/20/2017
+  \modified 02/21/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the TextParser class.
@@ -138,7 +138,7 @@ std::vector<ParseResult> TextParser::parse(
        // Run parser on each grammar definition and store the results
         for (auto it = ins.begin(); it != ins.end(); ++it) {
             std::vector<engine::Action *> actions = (*it)->getActions(verb.getAlias());
-            for (auto it2 = actions.begin(); it2 != actions.end(); ++it) {
+            for (auto it2 = actions.begin(); it2 != actions.end(); ++it2) {
                 parser = Sentence::makeSentence(*((*it2)->getGrammar(verb.getAlias())), verb, VerbType::LOCAL, (*it2)->getCommand());
                 // Skip if unsupported grammar type
                 if (parser == nullptr) {
@@ -163,7 +163,7 @@ std::vector<ParseResult> TextParser::parse(
         // Run parser on each grammar definition and store the results
         for (auto it = ins.begin(); it != ins.end(); ++it) {
             std::vector<engine::Action *> actions = (*it)->getActions(verb.getAlias());
-            for (auto it2 = actions.begin(); it2 != actions.end(); ++it) {
+            for (auto it2 = actions.begin(); it2 != actions.end(); ++it2) {
                 parser = Sentence::makeSentence(*((*it2)->getGrammar(verb.getAlias())), verb, VerbType::LOCAL, (*it2)->getCommand());
                 // Skip if unsupported grammar type
                 if (parser == nullptr) {
