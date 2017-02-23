@@ -712,6 +712,53 @@ void GameLogic::printParseResult(parser::ParseResult result){
         default:
             std::cout << "\n";
     }
+    std::cout << "direct = ";
+    for (size_t i = 0; i < result.direct.size(); i++){
+        if (result.direct[i] != nullptr){
+            std::cout << result.direct[i]->getName();
+        } else {
+            std::cout << "nullptr";
+        }
+        std::cout << ", ";
+    }
+    
+    std::cout << "\ndirectAlias = " << result.directAlias;
+    std::cout << "indirect = ";
+    for (size_t i = 0; i < result.direct.size(); i++){
+        if (result.indirect[i] != nullptr){
+            std::cout << result.indirect[i]->getName();
+        } else {
+            std::cout << "nullptr";
+        }
+        std::cout << ", ";
+    }
+    std::cout << "\nindirectAlias = " << result.indirectAlias;
+    std::cout << "\n position = ";
+    switch (result.position){
+        case ItemPosition::NONE:
+            std::cout << "none\n";
+            break;
+        case ItemPosition::GROUND:
+            std::cout << "ground\n";
+            break;
+        case ItemPosition::INVENTORY:
+            std::cout << "inventory\n";
+            break;
+        case ItemPosition::EQUIPPED:
+            std::cout << "equipped\n";
+            break;
+        case ItemPosition::IN:
+            std::cout << "in\n";
+            break;
+        case ItemPosition::ON:
+            std::cout << "on\n";
+            break;
+        case ItemPosition::UNDER :
+            std::cout << "under\n";
+            break;
+        default:
+            std::cout << "\n";
+    }
     std::cout << "unparsed = ";
     std::cout << result.unparsed;
     std::cout << "\n";
