@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -140,7 +140,7 @@ std::vector<std::pair<Quest*, int>> Player::getQuestList() const{
 }
 
 
-parser::LexicalData Player::getLexicalData() const{
+const parser::LexicalData& Player::getLexicalData() const{
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
     return inventoryLexicalData;
 }

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -143,10 +143,10 @@ class Player: public Combatant {
         /*!
          * \brief   Gets the lexical data for this player's inventory.
          *
-         * \return  Returns a parser::LexicalData with the 
+         * \return  Returns a const reference to parser::LexicalData with the 
          *          inventory lexical data.
          */
-        parser::LexicalData getLexicalData() const;
+        const parser::LexicalData & getLexicalData() const;
 
         /*!
          * \brief   Adds the specified points to the experience points of 
