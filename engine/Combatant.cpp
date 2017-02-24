@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/20/2017
+ * \modified    02/22/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -111,55 +111,81 @@ Combatant* Combatant::getInCombat() const{
 
 
 bool Combatant::setCooldown(int cooldown){
-    return false;
+    cooldownClock.store(cooldown);
+    return true;
 }
 
 
 bool Combatant::decrementCooldown(){
-    return false;
+    cooldownClock--;
+    return true;
 }
 
 
 bool Combatant::setInCombat(Combatant *aCombatant){
+    if (aCombatant != nullptr){
+        std::lock_guard<std::mutex> inCombatLock(inCombatMutex);
+        inCombat = aCombatant;
+        return true;
+    }
     return false;
 }
 
 
 bool Combatant::setMaxHealth(int maxHealth){
-    return false;
+    std::lock_guard<std::mutex> healthLock(healthMutex);
+    health.second = maxHealth;
+    return true;
 }
 
 
 int Combatant::addToCurrentHealth(int healing){
     std::lock_guard<std::mutex> healthLock(healthMutex);
+    health.first += healing;
     return health.first;
 }
 
 
 int Combatant::subtractFromCurrentHealth(int damage){
     std::lock_guard<std::mutex> healthLock(healthMutex);
+    health.first -= damage;
+    if (health.first < 0){
+        health.first = 0;
+    }
     return health.first;
 }
 
 
 bool Combatant::setSpawnLocation(Area *spawnLocation){
+    if (spawnLocation != nullptr){
+        std::lock_guard<std::mutex> spawnLocationLock(spawnLocationMutex);
+        this->spawnLocation = spawnLocation;
+        return true;
+    }
     return false;
 }
 
 
 bool Combatant::setMaxSpecialPts(int maxSpecialPts){
-    return false;
+    std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
+    specialPoints.second = maxSpecialPts;
+    return true;
 }
 
 
 int Combatant::addToCurrentSpecialPts(int gainedPoints){
     std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
+    specialPoints.first += gainedPoints;
     return specialPoints.first;
 }
 
 
 int Combatant::subtractFromCurrSpecialPts(int usedPoints){
     std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
+    specialPoints.first -= usedPoints;
+    if (specialPoints.first < 0){
+        specialPoints.first = 0;
+    }
     return specialPoints.first;
 }
 
@@ -180,7 +206,7 @@ bool Combatant::rollStats(){
 
 
 bool Combatant::respawn(){
-    return false;
+    return this->setLocation(spawnLocation);
 }
 
 

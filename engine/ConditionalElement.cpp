@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/20/2017
+ * \modified    02/22/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.cpp
  *
@@ -76,17 +76,26 @@ bool ConditionalElement::setConditional(bool isConditional){
 
 
 bool ConditionalElement::setConditionItem(ItemType *anItemType){
-    return false;
+    if (anItemType != nullptr){
+        std::lock_guard<std::mutex> conditionItemLock(conditionItemMutex);
+        conditionItem = anItemType;
+        return true;
+    }
+    return false; 
 }
 
 
 bool ConditionalElement::setDescription(std::string description){
-    return false;
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
+    this->description = description;
+    return true;
 }
 
 
 bool ConditionalElement::setAltDescription(std::string altDescription){
-    return false;
+    std::lock_guard<std::mutex> altDescriptionLock(altDescriptionMutex);
+    this->altDescription = altDescription;
+    return true;
 }
 
 

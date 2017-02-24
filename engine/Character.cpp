@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/20/2017
+ * \modified    02/22/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -11,6 +11,7 @@
 #include "Character.hpp"
 #include "Area.hpp"
 #include "Item.hpp"
+#include "ItemType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -112,17 +113,22 @@ int Character::getMaxInventoryWeight() const{
 
 
 bool Character::setName(std::string name){
-    return false;
+    std::lock_guard<std::mutex> nameLock(nameMutex);
+    this->name = name;
+    return true;
 }
 
 
 bool Character::setDescription(std::string description){
-    return false;
+    std::lock_guard<std::mutex> descriptionLock(descriptionMutex);
+    this->description = description;
+    return true;
 }
 
 
 bool Character::setMoney(int money){
-    return false;
+    this->money.store(money);
+    return true;
 }
 
 
@@ -151,21 +157,77 @@ bool Character::setLocation(Area *aLocation){
 
 
 bool Character::addToInventory(Item *anItem){
+    if (anItem != nullptr){
+        std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+        inventory.push_back(std::make_pair(EquipmentSlot::NONE, anItem));
+        return true;
+    }
     return false;
 }
 
 
 bool Character::equipItem(Item *anItem){
+    if (anItem != nullptr){
+        std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+        EquipmentSlot slot = anItem->getType()->getSlotType();
+        size_t index = -1;
+
+        for (size_t i = 0; i < inventory.size(); i++){
+            if (inventory[i].second == anItem){
+                index = i;
+            }
+        }
+
+        if ((index != -1) && (slot != EquipmentSlot::NONE)){
+            inventory[index].first = slot;
+            return true;
+        } else if (slot != EquipmentSlot::NONE) {
+            inventory.push_back(std::make_pair(slot, anItem));
+            return true;
+        }
+    }
     return false;
 }
 
 
 bool Character::removeFromInventory(Item *anItem){
+    if (anItem != nullptr){
+        std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+        size_t index = -1;
+
+        for (size_t i = 0; i < inventory.size(); i++){
+            if (inventory[i].second == anItem){
+                index = i;
+            }
+        }
+
+        if (index != -1){
+            inventory.erase(inventory.begin() + index);
+            return true;
+        }
+    }
     return false;
 }
 
 
 bool Character::unequipItem(Item *anItem){
+    if (anItem != nullptr){
+        std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+        size_t index = -1;
+
+        for (size_t i = 0; i < inventory.size(); i++){
+            if (inventory[i].second == anItem){
+                index = i;
+            }
+        }
+
+        if (index != -1){
+            if (inventory[index].first != EquipmentSlot::NONE){
+                inventory[index].first = EquipmentSlot::NONE;
+                return true;
+            }
+        }
+    }
     return false;
 }
 

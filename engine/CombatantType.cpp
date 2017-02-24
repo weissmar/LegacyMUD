@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/20/2017
+ * \modified    02/21/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -99,32 +99,42 @@ bool CombatantType::setName(std::string name){
 
 
 bool CombatantType::setSpecialSkill(SpecialSkill* skill){
+    if (skill != nullptr){
+        std::lock_guard<std::mutex> specialSkillLock(specialSkillMutex);
+        specialSkill = skill;
+        return true;
+    }
     return false;
 }
 
 
 bool CombatantType::setAttackBonus(int bonus){
-    return false;
+    attackBonus.store(bonus);
+    return true;
 }
 
 
 bool CombatantType::setArmorBonus(int bonus){
-    return false;
+    armorBonus.store(bonus);
+    return true;
 }
 
 
 bool CombatantType::setResistantTo(DamageType type){
-    return false;
+    resistantTo.store(type);
+    return true;
 }
 
 
 bool CombatantType::setWeakTo(DamageType type){
-    return false;
+    weakTo.store(type);
+    return true;
 }
 
 
 bool CombatantType::setHealPoints(float healPoints){
-    return false;
+    this->healPoints.store(healPoints);
+    return true;
 }
 
 
