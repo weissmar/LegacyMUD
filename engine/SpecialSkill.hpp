@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.hpp
  *
@@ -16,10 +16,12 @@
 #include <string>
 #include <mutex>
 #include <atomic>
+#include <vector>
 #include "InteractiveNoun.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -145,11 +147,13 @@ class SpecialSkill: public InteractiveNoun {
          * \brief   Gets the response of this object to the command more.
          * 
          * This function returns a string with details about this skill.
+         * 
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          more.
          */
-        virtual std::string more(); 
+        virtual std::string more(std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Executes the attack command using this skill.
@@ -167,13 +171,13 @@ class SpecialSkill: public InteractiveNoun {
          * \param[in] character         Specifies the character that is either the attacker
          *                              or attackee, depending on the value of playerAttacker.
          * \param[in] playerAttacker    Specifies whether or not the player is the attacker.
+         * \param[out] effects          Specifies the effects of the action.
          * 
          * \pre The skill must be a skill available to the attacker.
          *
-         * \return  Returns a bool indicating whether or not the attack was executed
-         *          successfully.
+         * \return  Returns a std::string with the results of the attack.
          */
-        virtual bool attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker);
+        virtual std::string attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes this skill on the specified recipient.
@@ -187,10 +191,11 @@ class SpecialSkill: public InteractiveNoun {
          *                          is false, or the character receiving the skill.
          * \param[in] aRecipient    Specifies the recipient of the skill.
          * \param[in] playerSkill   Specifies whether or not the player is using the skill.
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \return  Returns a std::string with the results of the skill.
          */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill);
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Creates a copy of this object.

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/22/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -23,6 +23,8 @@
 #include "NonCombatant.hpp"
 #include "Area.hpp"
 #include "PlayerClass.hpp"
+#include "EffectType.hpp"
+#include "Container.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -1274,14 +1276,16 @@ bool GameLogic::helpCommand(Player *aPlayer){
 
 bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
     std::string message = "";
+    std::vector<EffectType> effects;
 
     // if command is look
     if (param == nullptr){
         message = aPlayer->getLocation()->getFullDescription(aPlayer->getID());
     } else {
         // command is look at
-        message = param->look();
+        message = param->look(&effects);
     }
+    // ********************************************************* do something with effects
 
     messagePlayer(aPlayer, message);
 
@@ -1290,15 +1294,42 @@ bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
 
 
 bool GameLogic::listenCommand(Player *aPlayer){
-    std::string message = aPlayer->getLocation()->listen();
+    std::vector<EffectType> effects;
+    std::string message = aPlayer->getLocation()->listen(&effects);
     messagePlayer(aPlayer, message);
+
+    // ********************************************************* do something with effects
 
     return true;
 }
 
 
 bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
-    return false;
+    bool success = false;
+    Container *aContainer;
+    Item *anItem;
+    std::vector<EffectType> effects;
+    std::string message;
+
+    if (directObj != nullptr){
+        if ((indirectObj != nullptr) && (indirectObj->getObjectType() == ObjectType::CONTAINER) && ((directObj->getObjectType() == ObjectType::ITEM) || (directObj->getObjectType() == ObjectType::CONTAINER))){
+            aContainer = dynamic_cast<Container*>(indirectObj);
+            anItem = dynamic_cast<Item*>(directObj);
+
+            // command is of the form: take ___ from ___
+            if (aContainer->isContained(anItem)){
+                aContainer->remove(anItem);
+            }
+        }
+        message = directObj->take(aPlayer, nullptr, nullptr, &effects);
+        if (message.compare("false") != 0){
+            success = true;
+        }
+    }
+
+    // ********************************************************* do something with effects and message
+
+    return success;
 }
 
 

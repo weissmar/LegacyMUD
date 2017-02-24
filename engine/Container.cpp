@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -51,6 +51,31 @@ bool Container::isEmpty() const{
     return under.empty() && inside.empty() && onTopOf.empty();
 }
 
+bool Container::isContained(Item *anItem) const{
+    if (anItem != nullptr){
+        std::unique_lock<std::mutex> underLock(underMutex, std::defer_lock);
+        std::unique_lock<std::mutex> insideLock(insideMutex, std::defer_lock);
+        std::unique_lock<std::mutex> onTopOfLock(onTopOfMutex, std::defer_lock);
+        std::lock(underLock, insideLock, onTopOfLock);
+
+        for (auto item : under){
+            if (item == anItem){
+                return true;
+            }
+        }
+        for (auto item : inside){
+            if (item == anItem){
+                return true;
+            }
+        }
+        for (auto item : onTopOf){
+            if (item == anItem){
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 bool Container::remove(Item *anItem){
     return false;
@@ -107,107 +132,107 @@ bool Container::deserialize(std::string){
 }
 
 
-std::string Container::look(){
+std::string Container::look(std::vector<EffectType> *effects){
     return "";
 }  
 
 
-bool Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter){
-    return false;
+std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Container::put(Player *aPlayer, Item *anItem, InteractiveNoun*, ItemPosition position){
-    return false;
+std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun*, ItemPosition position, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Container::drop(Player *aPlayer){
-    return false;
+std::string Container::drop(Player *aPlayer, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Container::more(){
+std::string Container::more(std::vector<EffectType> *effects){
     return "";
 } 
 
 
-bool Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun*){
-    return false;
+std::string Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Container::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*){
-    return false;
+std::string Container::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*){
-    return false;
+std::string Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Container::move(Player *aPlayer){
+std::string Container::move(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-bool Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool playerAttacker){
-    return false;
+std::string Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool playerAttacker, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Container::buy(Player *aPlayer, Item *anItem){
-    return false;
+std::string Container::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Container::sell(Player *aPlayer, Item *anItem){
-    return false;
+std::string Container::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Container::search(Player *aPlayer){
+std::string Container::search(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::read(Player *aPlayer){
+std::string Container::read(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::breakIt(Player *aPlayer){
+std::string Container::breakIt(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::climb(Player *aPlayer){
+std::string Container::climb(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::turn(Player *aPlayer){
+std::string Container::turn(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::push(Player *aPlayer){
+std::string Container::push(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::pull(Player *aPlayer){
+std::string Container::pull(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::eat(Player *aPlayer){
+std::string Container::eat(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Container::drink(Player *aPlayer){
+std::string Container::drink(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 

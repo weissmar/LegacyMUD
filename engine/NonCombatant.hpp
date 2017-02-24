@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.hpp
  *
@@ -15,9 +15,11 @@
 
 #include <string>
 #include <mutex>
+#include <vector>
 #include "Character.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -80,11 +82,13 @@ class NonCombatant: public Character {
 
         /*!
          * \brief   Gets the response of this object to the command look.
+         * 
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(); 
+        virtual std::string look(std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Executes the take command on this non-combatant.
@@ -95,13 +99,14 @@ class NonCombatant: public Character {
          * \param[in] aPlayer   Specifies the player that entered the command.
          * \param[in] anItem    Specifies the item that is being taken.
          * \param[in] character Specifies the character that is taking the item.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the character.
          *
-         * \return  Returns a bool indicating whether or not the item was taken
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          take.
          */
-        virtual bool take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter);
+        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the transfer command on this non-combatant.
@@ -114,15 +119,16 @@ class NonCombatant: public Character {
          * \param[in] anItem        Specifies the item being transferred.
          * \param[in] character     Specifies the character that is transferring the item.
          * \param[in] destination   Specifies the character the item is being transferred to.
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \note    May cause an effect on the non-combatant.
          * 
          * \pre The item must be in the inventory of the specified transferring character.
          *
-         * \return  Returns a bool indicating whether or not the item was transferred
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          transfer.
          */
-        virtual bool transfer(Player *aPlayer, Item *anItem, InteractiveNoun *character, InteractiveNoun *destination);
+        virtual std::string transfer(Player *aPlayer, Item *anItem, InteractiveNoun *character, InteractiveNoun *destination, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Moves this non-combatant to the specified area.
@@ -133,11 +139,12 @@ class NonCombatant: public Character {
          * \param[in] anArea    Specifies the area to add the character to.  
          * \param[in] character Specifies the character to move to the specified
          *                      area.
+         * \param[out] effects  Specifies the effects of the action.
          *
-         * \return  Returns a bool indicating whether or not moving the non-combatant
-         *          to this area was successful.
+         * \return  Returns a std::string with the response to the command
+         *          go.
          */
-        virtual bool go(Player *aPlayer, Area *anArea, InteractiveNoun *character);
+        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command talk. 
@@ -148,11 +155,12 @@ class NonCombatant: public Character {
          * 
          * \param[in] aPlayer   Specifies the player that is talking with the non-combatant.
          * \param[out] aNPC     Specifies the non-combatant the player is talking to.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          talk.
          */
-        virtual std::string talk(Player *aPlayer, NonCombatant *aNPC); 
+        virtual std::string talk(Player *aPlayer, NonCombatant *aNPC, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Creates a copy of this object.

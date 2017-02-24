@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Item.hpp
  *
@@ -16,10 +16,12 @@
 #include <string>
 #include <atomic>
 #include <mutex>
+#include <vector>
 #include "InteractiveNoun.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -132,11 +134,13 @@ class Item: public InteractiveNoun {
 
         /*!
          * \brief   Gets the response of this object to the command look.
+         * 
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look();  
+        virtual std::string look(std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Executes the take command on this item.
@@ -152,13 +156,14 @@ class Item: public InteractiveNoun {
          * \param[out] anItem   Specifies the item that is being taken.
          * \param[in] character Optionally specifies the character that is taking the 
          *                      item, or nullptr if the player is the one taking.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player/character.
          *
-         * \return  Returns a bool indicating whether or not the item was taken
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          take.
          */
-        virtual bool take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter);
+        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the put command on this item.
@@ -174,11 +179,12 @@ class Item: public InteractiveNoun {
          *                          in/on/under.
          * \param[in] position      Optionally specifies the position of the item in/
          *                          /on/under the container.
+         * \param[out] effects      Specifies the effects of the action.
          *
-         * \return  Returns a bool indicating whether or not the item was placed
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          put.
          */
-        virtual bool put(Player *aPlayer, Item *anItem, InteractiveNoun *container, ItemPosition position);
+        virtual std::string put(Player *aPlayer, Item *anItem, InteractiveNoun *container, ItemPosition position, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the drop command on this item.
@@ -187,23 +193,26 @@ class Item: public InteractiveNoun {
          * it in the area that the player is currently in.
          *
          * \param[in] aPlayer   Specifies the player that is dropping the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
-         * \return  Returns a bool indicating whether or not the item was dropped
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          drop.
          */
-        virtual bool drop(Player *aPlayer);
+        virtual std::string drop(Player *aPlayer, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command more.
+         * 
+         * \param[out] effects  Specifies the effects of the action.
          * 
          * This function returns a string with details about this item.
          *
          * \return  Returns a std::string with the response to the command
          *          more.
          */
-        virtual std::string more(); 
+        virtual std::string more(std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Executes the equip command on this item.
@@ -219,13 +228,14 @@ class Item: public InteractiveNoun {
          * \param[out] anItem   Specifies the item being equipped.
          * \param[in] character Optionally specifies the character that is equipping the 
          *                      item, or nullptr if the player is the one equipping.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a bool indicating whether or not the item was equipped
          *          successfully.
          */
-        virtual bool equip(Player *aPlayer, Item *anItem, InteractiveNoun *character);
+        virtual std::string equip(Player *aPlayer, Item *anItem, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the unequip command on this item.
@@ -241,6 +251,7 @@ class Item: public InteractiveNoun {
          * \param[out] anItem   Specifies the item being unequipped.
          * \param[in] character Optionally specifies the character that is unequipping  
          *                      the item, or nullptr if the player is the one unequipping.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          * 
@@ -249,7 +260,7 @@ class Item: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not the item was unequipped
          *          successfully.
          */
-        virtual bool unequip(Player *aPlayer, Item *anItem, InteractiveNoun *character);
+        virtual std::string unequip(Player *aPlayer, Item *anItem, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the transfer command on this item.
@@ -266,6 +277,7 @@ class Item: public InteractiveNoun {
          * \param[in] character     Optionally specifies the character that is transferring  
          *                          the item, or nullptr if the player is the one transferring.
          * \param[in] destination   Specifies the character the item is being transferred to.
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          * 
@@ -274,19 +286,20 @@ class Item: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not the item was transferred
          *          successfully.
          */
-        virtual bool transfer(Player *aPlayer, Item *anItem, InteractiveNoun *character, InteractiveNoun *destination);
+        virtual std::string transfer(Player *aPlayer, Item *anItem, InteractiveNoun *character, InteractiveNoun *destination, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command move.
          *
          * \param[in] aPlayer   Specifies the player that is moving the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          move.
          */
-        virtual std::string move(Player *aPlayer); 
+        virtual std::string move(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Executes the attack command using this item.
@@ -304,6 +317,7 @@ class Item: public InteractiveNoun {
          * \param[in] character         Specifies the character that is either the attacker
          *                              or attackee, depending on the value of playerAttacker.
          * \param[in] playerAttacker    Specifies whether or not the player is the attacker.
+         * \param[out] effects          Specifies the effects of the action.
          * 
          * \note If the item is in inventory, but not equipped, this function will also equip it.
          * 
@@ -312,7 +326,7 @@ class Item: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not the attack was executed
          *          successfully.
          */
-        virtual bool attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker);
+        virtual std::string attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the buy command on this item.
@@ -322,13 +336,14 @@ class Item: public InteractiveNoun {
          *
          * \param[in] aPlayer   Specifies the player that is buying the object.
          * \param[out] anItem   Specifies the item being purchased.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a bool that indicates whether or not buying the item
          *          was successful.
          */
-        virtual bool buy(Player *aPlayer, Item *anItem);
+        virtual std::string buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the sell command on this item.
@@ -338,109 +353,118 @@ class Item: public InteractiveNoun {
          *
          * \param[in] aPlayer   Specifies the player that is selling the object.
          * \param[out] anItem   Specifies the item being sold.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a bool that indicates whether or not selling the item
          *          was successful.
          */
-        virtual bool sell(Player *aPlayer, Item *anItem);
+        virtual std::string sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command read.
          *
          * \param[in] aPlayer   Specifies the player that is reading the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          read.
          */
-        virtual std::string read(Player *aPlayer); 
+        virtual std::string read(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command break.
          *
          * \param[in] aPlayer   Specifies the player that is breaking the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          break.
          */
-        virtual std::string breakIt(Player *aPlayer); 
+        virtual std::string breakIt(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command climb.
          *
          * \param[in] aPlayer   Specifies the player that is climbing the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          climb.
          */
-        virtual std::string climb(Player *aPlayer); 
+        virtual std::string climb(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command turn.
          *
          * \param[in] aPlayer   Specifies the player that is turning the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          turn.
          */
-        virtual std::string turn(Player *aPlayer); 
+        virtual std::string turn(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command push.
          *
          * \param[in] aPlayer   Specifies the player that is pushing the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          push.
          */
-        virtual std::string push(Player *aPlayer); 
+        virtual std::string push(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command pull.
          *
          * \param[in] aPlayer   Specifies the player that is pulling the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          pull.
          */
-        virtual std::string pull(Player *aPlayer); 
+        virtual std::string pull(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command eat.
          *
          * \param[in] aPlayer   Specifies the player that is eating the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          eat.
          */
-        virtual std::string eat(Player *aPlayer); 
+        virtual std::string eat(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command drink.
          *
          * \param[in] aPlayer   Specifies the player that is drinking the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          drink.
          */
-        virtual std::string drink(Player *aPlayer); 
+        virtual std::string drink(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Creates a copy of this object.

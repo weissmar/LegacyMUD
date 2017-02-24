@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -17,9 +17,11 @@
 #include <string>
 #include <mutex>
 #include <atomic>
+#include <vector>
 #include "Combatant.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -104,11 +106,13 @@ class Creature: public Combatant {
 
         /*!
          * \brief   Gets the response of this object to the command look.
+         * 
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look();  
+        virtual std::string look(std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Executes the take command on this creature.
@@ -119,13 +123,14 @@ class Creature: public Combatant {
          * \param[in] aPlayer   Specifies the player that entered the command.
          * \param[in] anItem    Specifies the item that is being taken.
          * \param[in] character Specifies the character that is taking the item.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the character.
          *
-         * \return  Returns a bool indicating whether or not the item was taken
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          take.
          */
-        virtual bool take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter);
+        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the equip command on this character.
@@ -133,16 +138,17 @@ class Creature: public Combatant {
          * This function equips the specified item on this creature.
          *
          * \param[in] aPlayer   Specifies the player that entered the command.
-         * \param[in] anItem   Specifies the item being equipped.
+         * \param[in] anItem    Specifies the item being equipped.
          * \param[in] character Specifies the character that is equipping the 
          *                      item.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the creature.
          *
-         * \return  Returns a bool indicating whether or not the item was equipped
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          equip.
          */
-        virtual bool equip(Player *aPlayer, Item *anItem, InteractiveNoun *character);
+        virtual std::string equip(Player *aPlayer, Item *anItem, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the unequip command on this creature.
@@ -150,17 +156,18 @@ class Creature: public Combatant {
          * This function unequips the specified item from this creature.
          *
          * \param[in] aPlayer   Specifies the player that entered the command.
-         * \param[in] anItem   Specifies the item being unequipped.
+         * \param[in] anItem    Specifies the item being unequipped.
          * \param[in] character Specifies the character that is unequipping the item.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the creature.
          * 
          * \pre The item must be equipped on this creature.
          *
-         * \return  Returns a bool indicating whether or not the item was unequipped
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          unequip.
          */
-        virtual bool unequip(Player *aPlayer, Item *anItem, InteractiveNoun *character);
+        virtual std::string unequip(Player *aPlayer, Item *anItem, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Moves this creature to the specified area.
@@ -168,14 +175,15 @@ class Creature: public Combatant {
          * This function moves this creature to the specified area. 
          *
          * \param[in] aPlayer   Specifes the player that entered the command.
-         * \param[in] anArea   Specifies the area to add the character to.  
+         * \param[in] anArea    Specifies the area to add the character to.  
          * \param[in] character Specifies the character to move to the specified
          *                      area.
+         * \param[out] effects  Specifies the effects of the action.
          *
-         * \return  Returns a bool indicating whether or not moving the creature
-         *          to this area was successful.
+         * \return  Returns a std::string with the response to the command
+         *          go.
          */
-        virtual bool go(Player *aPlayer, Area *anArea, InteractiveNoun *character);
+        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the transfer command on this creature.
@@ -188,15 +196,16 @@ class Creature: public Combatant {
          * \param[in] anItem        Specifies the item being transferred.
          * \param[in] character     Specifies the character that is transferring the item.
          * \param[in] destination   Specifies the character the item is being transferred to.
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \note    May cause an effect on the creature.
          * 
          * \pre The item must be in the inventory of the specified transferring character.
          *
-         * \return  Returns a bool indicating whether or not the item was transferred
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          transfer.
          */
-        virtual bool transfer(Player *aPlayer, Item *anItem, InteractiveNoun *character, InteractiveNoun *destination);
+        virtual std::string transfer(Player *aPlayer, Item *anItem, InteractiveNoun *character, InteractiveNoun *destination, std::vector<EffectType> *effects);
         
 
         /*!
@@ -206,21 +215,22 @@ class Creature: public Combatant {
          * against the specified player.
          *
          * \param[in] aPlayer           Specifies the player that is being attacked.
-         * \param[in] anItem           Optionally specifies the item being used in the attack.
+         * \param[in] anItem            Optionally specifies the item being used in the attack.
          * \param[in] aSkill            Optionally specifies the skill being used in the attack.
          * \param[in] character         Specifies the character that is attacking.
          * \param[in] playerAttacker    Specifies whether or not the player is the attacker. This
          *                              parameter should be false when this function is called on
          *                              a creature.
+         * \param[out] effects          Specifies the effects of the action.
          * 
          * \pre The item, if specified, must be in the inventory of this creature.
          * \pre The skill, if specified, must be the skill of this creature's creatureType.
          * \pre The playerAttacker parameter should be false when this function is called on a creature.
          *
-         * \return  Returns a bool indicating whether or not the attack was executed 
-         *          successfully.
+         * \return  Returns a std::string with the response to the command
+         *          attack.
          */
-        virtual bool attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker);
+        virtual std::string attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the specified skill on either this creature or the player,
@@ -237,10 +247,11 @@ class Creature: public Combatant {
          *                          is true, or the character that is using the skill otherwise.
          * \param[out] aRecipient   Specifies the recipient of the skill, if playerSkill is true.  
          * \param[in] playerSkill   Specifies whether or not the player is using the skill.  
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \return  Returns a std::string with the results of the skill.
          */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill); 
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Creates a copy of this object.
