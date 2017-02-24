@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -73,27 +73,27 @@ bool NonCombatant::deserialize(std::string){
 }
 
 
-std::string NonCombatant::look(){
+std::string NonCombatant::look(std::vector<EffectType> *effects){
     return "";
 }  
 
 
-bool NonCombatant::take(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string NonCombatant::take(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool NonCombatant::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
-    return false;
+std::string NonCombatant::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool NonCombatant::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
-    return false;
+std::string NonCombatant::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string NonCombatant::talk(Player*, NonCombatant*){
+std::string NonCombatant::talk(Player*, NonCombatant*, std::vector<EffectType> *effects){
     return "";
 } 
 

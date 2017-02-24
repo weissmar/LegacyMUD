@@ -170,7 +170,7 @@ bool Character::equipItem(Item *anItem){
     if (anItem != nullptr){
         std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
         EquipmentSlot slot = anItem->getType()->getSlotType();
-        size_t index = -1;
+        size_t index = 100000000;
 
         for (size_t i = 0; i < inventory.size(); i++){
             if (inventory[i].second == anItem){
@@ -178,7 +178,7 @@ bool Character::equipItem(Item *anItem){
             }
         }
 
-        if ((index != -1) && (slot != EquipmentSlot::NONE)){
+        if ((index != 100000000) && (slot != EquipmentSlot::NONE)){
             inventory[index].first = slot;
             return true;
         } else if (slot != EquipmentSlot::NONE) {
@@ -193,7 +193,7 @@ bool Character::equipItem(Item *anItem){
 bool Character::removeFromInventory(Item *anItem){
     if (anItem != nullptr){
         std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
-        size_t index = -1;
+        size_t index = 100000000;
 
         for (size_t i = 0; i < inventory.size(); i++){
             if (inventory[i].second == anItem){
@@ -201,7 +201,7 @@ bool Character::removeFromInventory(Item *anItem){
             }
         }
 
-        if (index != -1){
+        if (index != 100000000){
             inventory.erase(inventory.begin() + index);
             return true;
         }
@@ -213,7 +213,7 @@ bool Character::removeFromInventory(Item *anItem){
 bool Character::unequipItem(Item *anItem){
     if (anItem != nullptr){
         std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
-        size_t index = -1;
+        size_t index = 100000000;
 
         for (size_t i = 0; i < inventory.size(); i++){
             if (inventory[i].second == anItem){
@@ -221,7 +221,7 @@ bool Character::unequipItem(Item *anItem){
             }
         }
 
-        if (index != -1){
+        if (index != 100000000){
             if (inventory[index].first != EquipmentSlot::NONE){
                 inventory[index].first = EquipmentSlot::NONE;
                 return true;

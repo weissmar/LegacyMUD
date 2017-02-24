@@ -197,4 +197,19 @@ bool InteractiveNoun::removeAlias(std::string anAlias){
     return false;
 }
 
+std::string InteractiveNoun::getTextAndEffect(CommandEnum aCommand, EffectType &anEffect) const{
+    std::string message = "";
+    Action *anAction = nullptr;
+
+    anAction = this->getAction(aCommand);
+    if (anAction != nullptr){
+        if (anAction->getValid()){
+            message = anAction->getFlavorText();
+            anEffect = anAction->getEffect();
+        }
+    }
+
+    return message;
+}
+
 }}

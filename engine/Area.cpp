@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/22/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -278,49 +278,55 @@ bool Area::deserialize(std::string){
 }
 
 
-std::string Area::look(){
-    return getFullDescription(-1);
+std::string Area::look(std::vector<EffectType> *effects){
+    std::string message = getFullDescription(-1);
+    EffectType anEffect = EffectType::NONE;
+
+    message += " ";
+
+    message += getTextAndEffect(CommandEnum::LOOK, anEffect);
+
+    if ((anEffect != EffectType::NONE) && (effects != nullptr)){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 }  
 
 
-std::string Area::listen(){
+std::string Area::listen(std::vector<EffectType> *effects){
     std::string message;
-    Action *anAction = nullptr;
     EffectType anEffect;
+
+    message = getTextAndEffect(CommandEnum::LISTEN, anEffect);
+
+    if ((anEffect != EffectType::NONE) && (effects != nullptr)){
+        effects->push_back(anEffect);
+    }
 
     std::unique_lock<std::mutex> featContentLock(featContentMutex, std::defer_lock);
     std::unique_lock<std::mutex> exitContentLock(exitContentMutex, std::defer_lock);
     std::lock(featContentLock, exitContentLock);
 
-    anAction = this->getAction(CommandEnum::LISTEN);
-    if (anAction != nullptr){
-        if (anAction->getValid()){
-            message = anAction->getFlavorText();
-            anEffect = anAction->getEffect();
-            // figure out how to get the effect back to game logic... *****************************************
-        }
-    } else {
-        message = "";
-    }
-
     for (auto feature : featureContents){
-        message += feature->listen();
+        message += feature->listen(effects);
         message += " ";
     }
     for (auto exit : exitContents){
-        message += exit->listen();
+        message += exit->listen(effects);
         message += " ";
     }
+
     return message;
 } 
 
 
-bool Area::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
-    return false;
+std::string Area::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Area::search(Player *aPlayer){
+std::string Area::search(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Feature.hpp
  *
@@ -15,9 +15,11 @@
 
 #include <string>
 #include <mutex>
+#include <vector>
 #include "ConditionalElement.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -94,7 +96,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look();  
+        virtual std::string look(std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Gets the response of this object to the command listen.
@@ -102,7 +104,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          listen.
          */
-        virtual std::string listen(); 
+        virtual std::string listen(std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command move.
@@ -114,7 +116,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          move.
          */
-        virtual std::string move(Player *aPlayer); 
+        virtual std::string move(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command read.
@@ -126,7 +128,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          read.
          */
-        virtual std::string read(Player *aPlayer); 
+        virtual std::string read(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command break.
@@ -138,7 +140,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          break.
          */
-        virtual std::string breakIt(Player *aPlayer); 
+        virtual std::string breakIt(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command climb.
@@ -150,7 +152,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          climb.
          */
-        virtual std::string climb(Player *aPlayer); 
+        virtual std::string climb(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command turn.
@@ -162,7 +164,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          turn.
          */
-        virtual std::string turn(Player *aPlayer); 
+        virtual std::string turn(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command push.
@@ -174,7 +176,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          push.
          */
-        virtual std::string push(Player *aPlayer); 
+        virtual std::string push(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command pull.
@@ -186,7 +188,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          pull.
          */
-        virtual std::string pull(Player *aPlayer); 
+        virtual std::string pull(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command eat.
@@ -198,7 +200,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          eat.
          */
-        virtual std::string eat(Player *aPlayer); 
+        virtual std::string eat(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Gets the response of this object to the command drink.
@@ -210,7 +212,7 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the response to the command
          *          drink.
          */
-        virtual std::string drink(Player *aPlayer); 
+        virtual std::string drink(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Creates a copy of this object.

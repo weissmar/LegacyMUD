@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -25,6 +25,7 @@
 #include "AreaSize.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -279,19 +280,23 @@ class Area: public InteractiveNoun {
 
         /*!
          * \brief   Gets the response of this object to the command look.
+         * 
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look();  
+        virtual std::string look(std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Gets the response of this object to the command listen.
+         * 
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          listen.
          */
-        virtual std::string listen(); 
+        virtual std::string listen(std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Moves the specified player or character to this area.
@@ -307,23 +312,25 @@ class Area: public InteractiveNoun {
          * \param[out] anArea   Specifies the area to add the player/character to.  
          * \param[in] character Optionally specifies the character to move to this
          *                      area, or nullptr if the player is the one moving.
+         * \param[out] effects  Specifies the effects of the action.
          *
-         * \return  Returns a bool indicating whether or not moving the player
-         *          or character to this area was successful.
+         * \return  Returns a std::string with the response to the command
+         *          search.
          */
-        virtual bool go(Player *aPlayer, Area *anArea, InteractiveNoun *character);
+        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command search.
          *
          * \param[in] aPlayer   Specifies the player that is searching the object.
+         * \param[out] effects  Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          search.
          */
-        virtual std::string search(Player *aPlayer); 
+        virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Moves the specified player to this area.

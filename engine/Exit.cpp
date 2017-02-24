@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -147,57 +147,57 @@ bool Exit::deserialize(std::string){
 }
 
 
-std::string Exit::look(){
+std::string Exit::look(std::vector<EffectType> *effects){
     return "";
 }  
 
 
-std::string Exit::listen(){
+std::string Exit::listen(std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::move(Player*){
+std::string Exit::move(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::read(Player*){
+std::string Exit::read(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::breakIt(Player*){
+std::string Exit::breakIt(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::climb(Player*){
+std::string Exit::climb(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::turn(Player*){
+std::string Exit::turn(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::push(Player*){
+std::string Exit::push(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::pull(Player*){
+std::string Exit::pull(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::eat(Player*){
+std::string Exit::eat(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Exit::drink(Player*){
+std::string Exit::drink(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 

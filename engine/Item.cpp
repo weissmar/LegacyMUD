@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -124,102 +124,102 @@ bool Item::deserialize(std::string){
 }
 
 
-std::string Item::look(){
+std::string Item::look(std::vector<EffectType> *effects){
     return "";
 }  
 
 
-bool Item::take(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Item::take(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Item::put(Player*, Item*, InteractiveNoun*, ItemPosition){
-    return false;
+std::string Item::put(Player*, Item*, InteractiveNoun*, ItemPosition, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Item::drop(Player*){
-    return false;
+std::string Item::drop(Player*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Item::more(){
+std::string Item::more(std::vector<EffectType> *effects){
     return "";
 } 
 
 
-bool Item::equip(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Item::equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Item::unequip(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Item::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Item::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
-    return false;
+std::string Item::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Item::move(Player*){
+std::string Item::move(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-bool Item::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
-    return false;
+std::string Item::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Item::buy(Player*, Item*){
-    return false;
+std::string Item::buy(Player*, Item*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Item::sell(Player*, Item*){
-    return false;
+std::string Item::sell(Player*, Item*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Item::read(Player*){
+std::string Item::read(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Item::breakIt(Player*){
+std::string Item::breakIt(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Item::climb(Player*){
+std::string Item::climb(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Item::turn(Player*){
+std::string Item::turn(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Item::push(Player*){
+std::string Item::push(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Item::pull(Player*){
+std::string Item::pull(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Item::eat(Player*){
+std::string Item::eat(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Item::drink(Player*){
+std::string Item::drink(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 

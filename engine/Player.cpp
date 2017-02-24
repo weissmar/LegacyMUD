@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -140,7 +140,7 @@ std::vector<std::pair<Quest*, int>> Player::getQuestList() const{
 }
 
 
-parser::LexicalData Player::getLexicalData() const{
+const parser::LexicalData& Player::getLexicalData() const{
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
     return inventoryLexicalData;
 }
@@ -266,62 +266,62 @@ bool Player::deserialize(std::string){
 }
 
 
-std::string Player::look(){
+std::string Player::look(std::vector<EffectType> *effects){
     return "";
 }  
 
 
-bool Player::take(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Player::take(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Player::equip(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Player::equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Player::unequip(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Player::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Player::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
-    return false;
+std::string Player::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
-    return false;
+std::string Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Player::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
-    return false;
+std::string Player::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Player::talk(Player*, NonCombatant*){
+std::string Player::talk(Player*, NonCombatant*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-bool Player::buy(Player*, Item*){
-    return false;
+std::string Player::buy(Player*, Item*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Player::sell(Player*, Item*){
-    return false;
+std::string Player::sell(Player*, Item*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Player::search(Player*){
+std::string Player::search(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
+std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
     return "";
 } 
 

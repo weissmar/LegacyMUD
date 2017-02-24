@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -185,47 +185,47 @@ bool ItemType::deserialize(std::string){
 }
 
 
-std::string ItemType::move(Player*){
+std::string ItemType::move(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::read(Player*){
+std::string ItemType::read(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::breakIt(Player*){
+std::string ItemType::breakIt(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::climb(Player*){
+std::string ItemType::climb(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::turn(Player*){
+std::string ItemType::turn(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::push(Player*){
+std::string ItemType::push(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::pull(Player*){
+std::string ItemType::pull(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::eat(Player*){
+std::string ItemType::eat(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string ItemType::drink(Player*){
+std::string ItemType::drink(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 

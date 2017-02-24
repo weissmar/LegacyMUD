@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -87,42 +87,42 @@ bool Creature::deserialize(std::string){
 }
 
 
-std::string Creature::look(){
+std::string Creature::look(std::vector<EffectType> *effects){
     return "";
 }  
 
 
-bool Creature::take(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Creature::take(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Creature::equip(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Creature::equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Creature::unequip(Player*, Item*, InteractiveNoun*){
-    return false;
+std::string Creature::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *character){
-    return false;
+std::string Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Creature::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*){
-    return false;
+std::string Creature::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-bool Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
-    return false;
+std::string Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string Creature::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
+std::string Creature::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
     return "";
 } 
 

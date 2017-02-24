@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/23/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -109,17 +109,17 @@ bool SpecialSkill::deserialize(std::string){
 }
 
 
-std::string SpecialSkill::more(){
+std::string SpecialSkill::more(std::vector<EffectType> *effects){
     return "";
 } 
 
 
-bool SpecialSkill::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool){
-    return false;
+std::string SpecialSkill::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+    return "";
 }
 
 
-std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill){
+std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
     return "";
 } 
 
