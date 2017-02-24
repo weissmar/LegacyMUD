@@ -14,6 +14,8 @@
 #include "WordMap.hpp"
 #include <InteractiveNoun.hpp>
 
+#include <mutex>
+
 namespace legacymud { namespace parser {
 
 /*!
@@ -163,6 +165,8 @@ public:
 private:
     WordMap _verbs;
     WordMap _nouns;
+    mutable std::mutex _verbLock;
+    mutable std::mutex _nounLock;
 };
 
 } }

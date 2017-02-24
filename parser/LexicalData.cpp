@@ -19,12 +19,14 @@ LexicalData::~LexicalData() {
 }
 
 void LexicalData::addNoun(std::string alias, engine::InteractiveNoun *pObject) {
+    std::lock_guard<std::mutex> guard(_nounLock);
     if (_nouns.addWord(alias, pObject)) {
         WordManager::addNoun(alias, pObject);
     }
 }
 
 void LexicalData::addVerb(std::string alias, engine::InteractiveNoun *pObject) {
+    std::lock_guard<std::mutex> guard(_verbLock);
     if (_verbs.addWord(alias, pObject)) {
         WordManager::addVerb(alias, pObject);
     }
@@ -47,12 +49,14 @@ std::vector<engine::InteractiveNoun *> LexicalData::getObjectsByVerb(std::string
 }
 
 void LexicalData::removeNoun(std::string alias, engine::InteractiveNoun *pObject) {
+    std::lock_guard<std::mutex> guard(_nounLock);
     if (_nouns.removeWord(alias, pObject)) {
         WordManager::removeNoun(alias, pObject);
     }
 }
 
 void LexicalData::removeVerb(std::string alias, engine::InteractiveNoun *pObject) {
+    std::lock_guard<std::mutex> guard(_verbLock);
     if (_verbs.removeWord(alias, pObject)) {
         WordManager::removeVerb(alias, pObject);
     }
@@ -60,18 +64,23 @@ void LexicalData::removeVerb(std::string alias, engine::InteractiveNoun *pObject
 
 void LexicalData::clear() {
     // Remove all data from WordManager
+    _nounLock.lock();
     for (auto it = _nouns.begin(); it != _nouns.end(); ++it) {
         for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
             WordManager::removeNoun(it->first, *it2);
         }
     }
+    _nouns.clear();
+    _nounLock.unlock();
+
+    _verbLock.lock();
     for (auto it = _verbs.begin(); it != _verbs.end(); ++it) {
         for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
             WordManager::removeVerb(it->first, *it2);
         }
     }
-    _nouns.clear();
     _verbs.clear();
+    _verbLock.unlock();
 }
 
 // Borrowed from http://stackoverflow.com/questions/12662891/passing-a-member-function-as-an-argument-in-c
