@@ -19,13 +19,13 @@
 namespace {
 
 // Mutex for global verbs
-std::mutex globallocalWordsLock;
+std::mutex globalVerbLock;
 
 // Mutex for builder verbs
-std::mutex builderlocalWordsLock;
+std::mutex builderVerbLock;
 
 // Mutex for edit mode verbs
-std::mutex editModelocalWordsLock;
+std::mutex editModeVerbLock;
 
 // Mutex for local nouns
 std::mutex localNounsLock;
@@ -64,7 +64,7 @@ void WordManager::addGlobalVerb(std::string alias, VerbInfo info) {
     assert(!alias.empty());
 
     // Block any other threads from accessing _globalVerbs until operation is complete.
-    std::lock_guard<std::mutex> guard(globallocalWordsLock);
+    std::lock_guard<std::mutex> guard(globalVerbLock);
 
     addToMap(_globalVerbs, alias, info);
 }
@@ -75,7 +75,7 @@ void WordManager::addBuilderVerb(std::string alias, VerbInfo info) {
     assert(!alias.empty());
 
     // Block any other threads from accessing _builderVerbs until operation is complete.
-    std::lock_guard<std::mutex> guard(builderlocalWordsLock);
+    std::lock_guard<std::mutex> guard(builderVerbLock);
 
     addToMap(_builderVerbs, alias, info);
 }
@@ -86,7 +86,7 @@ void WordManager::addEditModeVerb(std::string alias, VerbInfo info) {
     assert(!alias.empty());
 
     // Block any other threads from accessing _editModeVerbs until operation is complete.
-    std::lock_guard<std::mutex> guard(editModelocalWordsLock);
+    std::lock_guard<std::mutex> guard(editModeVerbLock);
 
     addToMap(_editModeVerbs, alias, info);
 }
@@ -135,6 +135,8 @@ void WordManager::addIgnoreWord(std::string word) {
 
 // Gets the VerbInfos of the specified edit mode verb.
 std::vector<VerbInfo> WordManager::getEditModeVerbs(std::string alias) {
+    std::lock_guard<std::mutex> guard(editModeVerbLock);
+
     // Precondition: value must be in map
     assert(_editModeVerbs.find(alias) != _editModeVerbs.end());
 
@@ -149,6 +151,8 @@ std::vector<VerbInfo> WordManager::getEditModeVerbs(std::string alias) {
 
 // Gets the VerbInfos of the specified global verb.
 std::vector<VerbInfo> WordManager::getGlobalVerbs(std::string alias) {
+    std::lock_guard<std::mutex> guard(globalVerbLock);
+
     // Precondition: value must be in map
     assert(_globalVerbs.find(alias) != _globalVerbs.end());
 
@@ -163,6 +167,8 @@ std::vector<VerbInfo> WordManager::getGlobalVerbs(std::string alias) {
 
 // Gets the VerbInfos of the specified builder verb.
 std::vector<VerbInfo> WordManager::getBuilderVerbs(std::string alias) {
+    std::lock_guard<std::mutex> guard(builderVerbLock);
+
     // Precondition: value must be in map
     assert(_builderVerbs.find(alias) != _builderVerbs.end());
 
@@ -177,16 +183,19 @@ std::vector<VerbInfo> WordManager::getBuilderVerbs(std::string alias) {
 
 // Gets pointers to local InteractiveNoun objects with the specified noun alias
 std::vector<engine::InteractiveNoun *> WordManager::getLocalNouns(std::string alias) {
+    std::lock_guard<std::mutex> guard(localNounsLock);
     return _localNouns.getObjects(alias);
 }
 
 // Gets whether the specified noun is in use.
 bool WordManager::hasNoun(const void *, std::string alias) {
+    std::lock_guard<std::mutex> guard(localNounsLock);
     return _localNouns.hasWord(alias);
 }
 
 // Gets whether the specified verb is in use.
 bool WordManager::hasVerb(const void *, std::string alias) {
+    std::lock_guard<std::mutex> guard(localVerbsLock);
     return _localVerbs.hasWord(alias);
 }
 
@@ -195,6 +204,7 @@ bool WordManager::hasEditModeVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
+    std::lock_guard<std::mutex> guard(editModeVerbLock);
     return _editModeVerbs.find(alias) != _editModeVerbs.end();
 }
 
@@ -203,6 +213,7 @@ bool WordManager::hasGlobalVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
+    std::lock_guard<std::mutex> guard(globalVerbLock);
     return _globalVerbs.find(alias) != _globalVerbs.end();
 }
 
@@ -211,6 +222,7 @@ bool WordManager::hasBuilderVerb(const void *, std::string alias) {
     // Convert string to lowercase
     std::transform(alias.begin(), alias.end(), alias.begin(), ::tolower);
 
+    std::lock_guard<std::mutex> guard(builderVerbLock);
     return _builderVerbs.find(alias) != _builderVerbs.end();
 }
 
@@ -219,6 +231,7 @@ bool WordManager::isIgnoreWord(const void *, std::string word) {
     // Convert string to lowercase
     std::transform(word.begin(), word.end(), word.begin(), ::tolower);
 
+    std::lock_guard<std::mutex> guard(ignoreWordLock);
     return _ignoreWords.find(word) != _ignoreWords.end();
 }
 
@@ -247,9 +260,9 @@ void WordManager::removeVerb(std::string alias, engine::InteractiveNoun *pObj) {
 // Reset all member variables.
 void WordManager::resetAll() {
     // Block any other threads from accessing private members until operation is complete.
-    std::lock_guard<std::mutex> editModeVerbGuard(editModelocalWordsLock);
-    std::lock_guard<std::mutex> globalVerbGuard(globallocalWordsLock);
-    std::lock_guard<std::mutex> builderVerbGuard(builderlocalWordsLock);
+    std::lock_guard<std::mutex> editModeVerbGuard(editModeVerbLock);
+    std::lock_guard<std::mutex> globalVerbGuard(globalVerbLock);
+    std::lock_guard<std::mutex> builderVerbGuard(builderVerbLock);
     std::lock_guard<std::mutex> localNounGuard(localNounsLock);
     std::lock_guard<std::mutex> localVerbGuard(localVerbsLock);
     std::lock_guard<std::mutex> ignoreWordGuard(ignoreWordLock);
