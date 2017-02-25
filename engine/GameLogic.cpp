@@ -737,7 +737,7 @@ void GameLogic::printParseResult(parser::ParseResult result){
     
     std::cout << "\ndirectAlias = " << result.directAlias;
     std::cout << "indirect = ";
-    for (size_t i = 0; i < result.direct.size(); i++){
+    for (size_t i = 0; i < result.indirect.size(); i++){
         if (result.indirect[i] != nullptr){
             std::cout << result.indirect[i]->getName();
         } else {
@@ -970,6 +970,7 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             success = listenCommand(aPlayer);
             break;
         case CommandEnum::TAKE:
+        std::cout << "inside case CommandEnum::TAKE in executeCommand\n";
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);
             // clarify indirect
@@ -1222,6 +1223,7 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
 
 InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *directObj = nullptr;
+std::cout << "inside clarifyDirect\n";
 
     if (result.direct.size() == 1){
         directObj = result.direct[0];
@@ -1235,6 +1237,7 @@ InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult r
 
 InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *indirectObj = nullptr;
+std::cout << "inside clarifyIndirect\n";
 
     if (result.indirect.size() == 1){
         indirectObj = result.indirect[0];
@@ -1398,6 +1401,8 @@ bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, Interac
     std::vector<EffectType> effects;
     std::string message;
 
+std::cout << "inside GameLogic::takeCommand\n";
+
     if (directObj != nullptr){
         message += "You pick up the " + directObj->getName() + ". ";
         if ((indirectObj != nullptr) && (indirectObj->getObjectType() == ObjectType::CONTAINER) && ((directObj->getObjectType() == ObjectType::ITEM) || (directObj->getObjectType() == ObjectType::CONTAINER))){
@@ -1405,13 +1410,14 @@ bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, Interac
             message += directObj->take(aPlayer, nullptr, indirectObj, nullptr, &effects);
         } else {
             message += directObj->take(aPlayer, nullptr, nullptr, nullptr, &effects);
+std::cout << "after item::take\n";
         }
         if (message.compare("false") != 0){
             success = true;
         }
     }
 
-    if (success){
+    if (success){ 
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);

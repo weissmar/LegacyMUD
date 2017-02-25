@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -11,6 +11,7 @@
 #include "Container.hpp"
 #include "SpecialSkill.hpp"
 #include "Player.hpp"
+#include "Area.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -84,7 +85,29 @@ bool Container::remove(Item *anItem){
 
 
 bool Container::place(Item *anItem, ItemPosition position){
-    return false;
+    bool success = false; 
+
+    if (anItem != nullptr){
+        if (position == ItemPosition::IN){
+            std::lock_guard<std::mutex> insideLock(insideMutex);
+            inside.push_back(anItem);
+            success = true;
+        } else if (position == ItemPosition::ON){
+            std::lock_guard<std::mutex> onTopOfLock(onTopOfMutex);
+            onTopOf.push_back(anItem);
+            success = true;
+        } else if (position == ItemPosition::UNDER){
+            std::lock_guard<std::mutex> underLock(underMutex);
+            under.push_back(anItem);
+            success = true;
+        }
+    }
+
+    if (success){
+        // ************************************************************** figure out when to add/remove contents aliases
+    }
+
+    return success;
 }
 
 
@@ -141,6 +164,9 @@ std::string Container::look(std::vector<EffectType> *effects){
 std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
     EffectType anEffect = EffectType::NONE;
+    Area *anArea = nullptr;
+    ItemPosition position = getPosition();
+    InteractiveNoun *location = getLocation();
 
     if (this == dynamic_cast<Container*>(aContainer)){
         // this is the containing object
@@ -149,6 +175,27 @@ std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCon
         }
     } else {
         // this is the item being taken
+
+        // check if this item is contained within a container
+        if ((position == ItemPosition::IN) || (position == ItemPosition::ON) || (position == ItemPosition::UNDER)){
+            if ((location == aContainer) && (aContainer != nullptr)){
+                aContainer->take(nullptr, this, aContainer, nullptr, nullptr);
+            } else {
+                return "false";
+            }
+        } else if (position == ItemPosition::GROUND) {
+            // location is an area
+            anArea = dynamic_cast<Area*>(location);
+            if (anArea != nullptr){
+                // remove item from area
+                anArea->removeItem(this);
+            } else {
+                return "false";
+            }
+        } else {
+            return "false";
+        }
+
         setPosition(ItemPosition::INVENTORY);
         // get results of take for this object
         message = getTextAndEffect(CommandEnum::TAKE, anEffect);
@@ -164,9 +211,6 @@ std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCon
             // aPlayer is doing the taking
             setLocation(aPlayer);
             message += aPlayer->take(aPlayer, this, nullptr, nullptr, effects);
-        }
-        if (aContainer != nullptr){
-            aContainer->take(nullptr, this, aContainer, nullptr, nullptr);
         }
     }
 

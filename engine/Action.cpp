@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/20/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Action.cpp
  *
@@ -163,6 +163,11 @@ bool Action::setEffect(EffectType type){
 
 bool Action::addAlias(std::string alias, parser::Grammar *grammar){
     std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
+    int count = aliases.count(alias);
+
+    if (count == 1){
+        delete aliases.at(alias);
+    }
     aliases[alias] = grammar;
     return true;
 }
@@ -173,6 +178,7 @@ bool Action::removeAlias(std::string alias){
     int count = aliases.count(alias);
 
     if (count == 1){
+        delete aliases.at(alias);
         aliases.erase(alias);
         return true;
     }

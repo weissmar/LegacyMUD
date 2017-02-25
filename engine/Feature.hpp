@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Feature.hpp
  *
@@ -24,13 +24,15 @@
 
 namespace legacymud { namespace engine {
 
+class Area;
+
 /*!
  * \details     Features define in-game features of areas.
  */
 class Feature: public ConditionalElement {
     public:
         Feature();
-        Feature(std::string name, std::string placement, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
+        Feature(std::string name, std::string placement, Area *location, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
 
         /*!
          * \brief   Gets the name of this feature.
@@ -45,6 +47,13 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the placement of this feature.
          */
         std::string getPlacement() const;
+
+        /*!
+         * \brief   Gets the location of this feature.
+         *
+         * \return  Returns an Area* with the location of this feature.
+         */
+        Area* getLocation() const;
 
         /*!
          * \brief   Sets the name of this feature.
@@ -65,6 +74,16 @@ class Feature: public ConditionalElement {
          *          was successful.
          */
         bool setPlacement(std::string placement);
+
+        /*!
+         * \brief   Sets the location of this feature.
+         * 
+         * \param[in] anArea    Specifies the location of this feature.
+         *
+         * \return  Returns a bool indicating whether or not setting the location 
+         *          was successful.
+         */
+        bool setLocation(Area *anArea);
 
         /*!
          * \brief   Adds the specified noun alias to this interactive noun.
@@ -324,6 +343,8 @@ class Feature: public ConditionalElement {
         mutable std::mutex nameMutex;
         std::string placement;
         mutable std::mutex placementMutex;
+        Area *location;
+        mutable std::mutex locationMutex;
 };
 
 }}

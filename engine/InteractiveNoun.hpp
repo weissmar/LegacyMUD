@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -185,6 +185,38 @@ class InteractiveNoun {
          *          specified alias succeeded.
          */
         virtual bool removeVerbAlias(CommandEnum aCommand, std::string alias);
+
+        /*!
+         * \brief   Registers the specified alias - object pair in this object's 
+         *          lexical data.
+         * 
+         * \param[in] isVerb    Specifies whether or not the alias is a verb.
+         * \param[in] alias     Specifies the alias to register.
+         * \param[in] anObject  Specifies the object being aliased.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support registering aliases.
+         *
+         * \return  Returns a bool indicating whether or not registering the
+         *          specified alias succeeded.
+         */
+        virtual bool registerAlias(bool isVerb, std::string alias, InteractiveNoun *anObject) { return false; }
+
+        /*!
+         * \brief   Unregisters the specified alias - object pair in this object's 
+         *          lexical data.
+         * 
+         * \param[in] isVerb    Specifies whether or not the alias is a verb.
+         * \param[in] alias     Specifies the alias to unregister.
+         * \param[in] anObject  Specifies the object being aliased.
+         * 
+         * \note    This function will be overridden in child classes that 
+         *          support registering aliases.
+         *
+         * \return  Returns a bool indicating whether or not unregistering the
+         *          specified alias succeeded.
+         */
+        virtual bool unregisterAlias(bool isVerb, std::string alias, InteractiveNoun *anObject) { return false; }
 
         /*!
          * \brief   Gets the text and effect for the specified command.

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -192,6 +192,11 @@ bool Area::addItem(Item *anItem){
         std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
         itemContents.push_back(anItem);
         addAllLexicalData(anItem);
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            //***************************************************** figure out adding aliases of contained items
+        }
+
         return true;
     }
     return false;
@@ -273,6 +278,11 @@ bool Area::removeItem(Item *anItem){
         std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
         itemContents.erase(std::remove(itemContents.begin(), itemContents.end(), anItem), itemContents.end());
         removeAllLexicalData(anItem);
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            //***************************************************** figure out adding aliases of contained items
+        }
+        
         return true;
     }
     return false;
@@ -357,6 +367,36 @@ bool Area::removeVerbAlias(CommandEnum aCommand, std::string alias){
     success = InteractiveNoun::removeVerbAlias(aCommand, alias);
 
     return success;
+}
+
+
+bool Area::registerAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            contentsLexicalData.addVerb(alias, anObject);
+        } else {
+            contentsLexicalData.addNoun(alias, anObject);
+        }
+        return true;
+    }
+    return false;
+}
+
+
+bool Area::unregisterAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            contentsLexicalData.removeVerb(alias, anObject);
+        } else {
+            contentsLexicalData.removeNoun(alias, anObject);
+        }
+        return true;
+    }
+    return false;
 }
 
 

@@ -1,13 +1,14 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
  * \details     Implementation file for Player class. 
  ************************************************************************/
 
+#include <iostream>
 #include "Player.hpp"
 #include "Area.hpp"
 #include "Quest.hpp"
@@ -15,6 +16,7 @@
 #include "PlayerClass.hpp"
 #include "InteractiveNoun.hpp"
 #include "SpecialSkill.hpp"
+#include "Item.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -242,11 +244,131 @@ bool Player::updateQuest(Quest *aQuest, int step){
 
 
 bool Player::addToInventory(Item *anItem){
-    return false;
+    bool success = false; 
+    std::vector<std::string> nounAliases, verbAliases;
+
+    if (anItem != nullptr){
+        success = Character::addToInventory(anItem);
+
+        std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+        nounAliases = anItem->getNounAliases();
+        verbAliases = anItem->getVerbAliases();
+
+        for (auto noun : nounAliases){
+            inventoryLexicalData.addNoun(noun, anItem);
+        }
+        for (auto verb : verbAliases){
+            inventoryLexicalData.addVerb(verb, anItem);
+        }
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            //***************************************************** figure out adding aliases of contained items
+        }
+    }
+    return success;
 }
 
 
 bool Player::removeFromInventory(Item *anItem){
+    bool success = false; 
+    std::vector<std::string> nounAliases, verbAliases;
+
+    if (anItem != nullptr){
+        success = Character::removeFromInventory(anItem);
+
+        std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+        nounAliases = anItem->getNounAliases();
+        verbAliases = anItem->getVerbAliases();
+
+        for (auto noun : nounAliases){
+            inventoryLexicalData.removeNoun(noun, anItem);
+        }
+        for (auto verb : verbAliases){
+            inventoryLexicalData.removeVerb(verb, anItem);
+        }
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            //***************************************************** figure out removing aliases of contained items
+        }
+    }
+    return success;
+}
+
+
+bool Player::addNounAlias(std::string alias){
+    bool success = false;
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    inventoryLexicalData.addNoun(alias, this);
+    success = InteractiveNoun::addNounAlias(alias);
+
+    return success;
+}
+
+
+bool Player::removeNounAlias(std::string alias){
+    bool success = false;
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    inventoryLexicalData.removeNoun(alias, this);
+    success = InteractiveNoun::removeNounAlias(alias);
+
+    return success;
+}
+
+
+bool Player::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    inventoryLexicalData.addVerb(alias, this);
+    success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+
+    return success;
+}
+
+
+bool Player::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    inventoryLexicalData.removeVerb(alias, this);
+    success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+
+    return success;
+}
+
+
+bool Player::registerAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            inventoryLexicalData.addVerb(alias, anObject);
+        } else {
+            inventoryLexicalData.addNoun(alias, anObject);
+        }
+        return true;
+    }
+    return false;
+}
+
+
+bool Player::unregisterAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            inventoryLexicalData.removeVerb(alias, anObject);
+        } else {
+            inventoryLexicalData.removeNoun(alias, anObject);
+        }
+        return true;
+    }
     return false;
 }
 
@@ -275,6 +397,8 @@ std::string Player::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContai
     std::string message = "";
     EffectType anEffect = EffectType::NONE;
     bool success;
+
+std::cout << "inside Player::take\n";
 
     success = addToInventory(anItem);
     if (success){
