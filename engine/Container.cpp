@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/23/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -10,6 +10,7 @@
 
 #include "Container.hpp"
 #include "SpecialSkill.hpp"
+#include "Player.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -137,8 +138,39 @@ std::string Container::look(std::vector<EffectType> *effects){
 }  
 
 
-std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
-    return "";
+std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    if (this == dynamic_cast<Container*>(aContainer)){
+        // this is the containing object
+        if (isContained(anItem)){
+            remove(anItem);
+        }
+    } else {
+        // this is the item being taken
+        setPosition(ItemPosition::INVENTORY);
+        // get results of take for this object
+        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+        // call this function on player or character, and container
+        if (aCharacter != nullptr){
+            // aCharacter is doing the taking
+            setLocation(aCharacter);
+            message += aCharacter->take(nullptr, this, nullptr, aCharacter, effects);
+        } else {
+            // aPlayer is doing the taking
+            setLocation(aPlayer);
+            message += aPlayer->take(aPlayer, this, nullptr, nullptr, effects);
+        }
+        if (aContainer != nullptr){
+            aContainer->take(nullptr, this, aContainer, nullptr, nullptr);
+        }
+    }
+
+    return message;
 }
 
 

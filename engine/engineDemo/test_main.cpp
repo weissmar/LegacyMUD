@@ -16,7 +16,6 @@ int main(int argc, char *argv[]) {
     legacymud::telnet::Server ts;
     legacymud::account::Account accountM("");
     legacymud::engine::GameLogic logic;
-    legacymud::parser::TextParser theParser;
     int serverPort;
 
     // Validate command line entry. 
@@ -42,7 +41,7 @@ int main(int argc, char *argv[]) {
     serverThread.detach();
     
     // start logic
-    logic.startGame(true, "", &theParser, &ts, &accountM);
+    logic.startGame(true, "", &ts, &accountM);
     while(1){
         logic.processInput(1);
     }

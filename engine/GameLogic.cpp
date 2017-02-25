@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/23/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -25,6 +25,8 @@
 #include "PlayerClass.hpp"
 #include "EffectType.hpp"
 #include "Container.hpp"
+#include "Item.hpp"
+#include "ItemType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -69,6 +71,8 @@ GameLogic::~GameLogic(){
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
     PlayerClass *aClass;
+    ItemType *anItemType;
+    Item *anItem;
 
     accountManager = anAccount;
     theServer = aServer;
@@ -76,6 +80,13 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     // create a default player class
     aClass = new PlayerClass(0, "default class", nullptr, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
     manager->addObject(aClass, -1);
+
+    // create a test item type and item
+    anItemType = new ItemType(5, ItemRarity::COMMON, "a bright and shiny apple", "apple", 1, EquipmentSlot::NONE); 
+    manager->addObject(anItemType, -1);
+    anItem = new Item(&startArea, ItemPosition::GROUND, "red apple", anItemType);
+    manager->addObject(anItem, -1);
+    startArea.addItem(anItem);
 
     return false;
 }
@@ -1274,6 +1285,81 @@ bool GameLogic::helpCommand(Player *aPlayer){
 }
 
 
+std::string GameLogic::handleEffects(Player *aPlayer, std::vector<EffectType> effects){
+    std::string message, allMessages;
+    int health;
+    int money;
+    int specialPts;
+    Item *anItem;
+
+    for (auto effect : effects){
+        switch (effect){
+            case EffectType::NONE:
+                message = "";
+                break;
+            case EffectType::DAMAGE:
+                health = aPlayer->subtractFromCurrentHealth(5);
+                message = "You take 5 damage, leaving you with ";
+                message += std::to_string(health);
+                message += " health.";
+                break;
+            case EffectType::FALL:
+                health = aPlayer->subtractFromCurrentHealth(5);
+                message = "You fall a short distance and loose 5 health, leaving you with ";
+                message += std::to_string(health);
+                message += " health.";
+                break;
+            case EffectType::LONG_FALL:
+                health = aPlayer->subtractFromCurrentHealth(10);
+                message = "You fall a long distance and loose 10 health, leaving you with ";
+                message += std::to_string(health);
+                message += " health.";
+                break;
+            case EffectType::LOST_ITEM:
+                anItem = aPlayer->removeRandomFromInventory();
+                message = "You trip and drop your ";
+                message += anItem->getName();
+                message += ".";
+                break;
+            case EffectType::DROP_ALL_ITEMS:
+                aPlayer->removeAllFromInventory();
+                message = "You trip and drop everything you were carrying.";
+                break;
+            case EffectType::GAIN_MONEY:
+                money = aPlayer->addMoney(10);
+                message = "You gain 10 coins, bringing your total money to ";
+                message += std::to_string(money);
+                message += " coins.";
+                break;
+            case EffectType::LOSE_MONEY:
+                money = aPlayer->subtractMoney(10);
+                message = "You lose 10 coins, bringing your total money to ";
+                message += std::to_string(money);
+                message += " coins.";
+                break;
+            case EffectType::HEAL:
+                health = aPlayer->addToCurrentHealth(10);
+                message = "You gain 10 health, bringing your total to ";
+                message += std::to_string(health);
+                message += " health.";
+                break;
+            case EffectType::GET_SPECIAL_POINTS:
+                specialPts = aPlayer->addToCurrentSpecialPts(10);
+                message = "You gain 10 special points, bringing your total to ";
+                message += std::to_string(specialPts);
+                message += " special points.";
+                break;
+            default:
+                message = "";
+                break;
+        }
+        allMessages += message;
+        allMessages += " ";
+    }
+    return allMessages;
+}
+
+
 bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
     std::string message = "";
     std::vector<EffectType> effects;
@@ -1285,7 +1371,9 @@ bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
         // command is look at
         message = param->look(&effects);
     }
-    // ********************************************************* do something with effects
+    
+    message += " ";
+    message += handleEffects(aPlayer, effects);
 
     messagePlayer(aPlayer, message);
 
@@ -1298,7 +1386,8 @@ bool GameLogic::listenCommand(Player *aPlayer){
     std::string message = aPlayer->getLocation()->listen(&effects);
     messagePlayer(aPlayer, message);
 
-    // ********************************************************* do something with effects
+    message += " ";
+    message += handleEffects(aPlayer, effects);
 
     return true;
 }
@@ -1306,29 +1395,28 @@ bool GameLogic::listenCommand(Player *aPlayer){
 
 bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
     bool success = false;
-    Container *aContainer;
-    Item *anItem;
     std::vector<EffectType> effects;
     std::string message;
 
     if (directObj != nullptr){
+        message += "You pick up the " + directObj->getName() + ". ";
         if ((indirectObj != nullptr) && (indirectObj->getObjectType() == ObjectType::CONTAINER) && ((directObj->getObjectType() == ObjectType::ITEM) || (directObj->getObjectType() == ObjectType::CONTAINER))){
-            aContainer = dynamic_cast<Container*>(indirectObj);
-            anItem = dynamic_cast<Item*>(directObj);
-
             // command is of the form: take ___ from ___
-            if (aContainer->isContained(anItem)){
-                aContainer->remove(anItem);
-            }
+            message += directObj->take(aPlayer, nullptr, indirectObj, nullptr, &effects);
+        } else {
+            message += directObj->take(aPlayer, nullptr, nullptr, nullptr, &effects);
         }
-        message = directObj->take(aPlayer, nullptr, nullptr, &effects);
         if (message.compare("false") != 0){
             success = true;
         }
     }
 
-    // ********************************************************* do something with effects and message
-
+    if (success){
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+    
     return success;
 }
 

@@ -174,7 +174,7 @@ class Action {
          * \return  Returns a bool indicating whether or not removing the
          *          specified alias succeeded.
          */
-        bool removeAlias(std::string alais);
+        bool removeAlias(std::string alias);
 
         /*!
          * \brief   Gets the attribute signature of the class.

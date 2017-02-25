@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -232,6 +232,24 @@ class Character: public InteractiveNoun {
          *          the string into an Action succeeded.
          */
         virtual bool deserialize(std::string);
+
+        /*!
+         * \brief   Removes all items from this character's inventory.
+         *
+         * \return  Returns a bool indicating whether or not removing the items was 
+         *          successful.
+         */
+        virtual bool removeAllFromInventory();
+
+        /*!
+         * \brief   Removes a random item from this character's inventory.
+         *
+         * \note    If the item is equipped, this function unequips the item and
+         *          removes it from inventory.
+         *
+         * \return  Returns a pointer to the removed item.
+         */
+        virtual Item* removeRandomFromInventory();
     private:
         std::string name;
         mutable std::mutex nameMutex;

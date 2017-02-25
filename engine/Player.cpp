@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/23/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -271,8 +271,22 @@ std::string Player::look(std::vector<EffectType> *effects){
 }  
 
 
-std::string Player::take(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Player::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacters, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    bool success;
+
+    success = addToInventory(anItem);
+    if (success){
+        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    } else {
+        message = "false";
+    }
+
+    return message;
 }
 
 

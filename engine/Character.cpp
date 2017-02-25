@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/22/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -240,5 +240,16 @@ std::string Character::serialize(){
 bool Character::deserialize(std::string){
     return false;
 }
+
+
+bool Character::removeAllFromInventory(){
+    return false;
+}
+
+
+Item* Character::removeRandomFromInventory(){
+    return nullptr;
+}
+
 
 }}

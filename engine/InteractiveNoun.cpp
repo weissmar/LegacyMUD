@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -163,7 +163,7 @@ bool InteractiveNoun::removeAction(CommandEnum aCommand){
 }
 
 
-bool InteractiveNoun::addAlias(std::string anAlias){
+bool InteractiveNoun::addNounAlias(std::string anAlias){
     std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
     bool found = false;
 
@@ -180,7 +180,7 @@ bool InteractiveNoun::addAlias(std::string anAlias){
 }
 
 
-bool InteractiveNoun::removeAlias(std::string anAlias){
+bool InteractiveNoun::removeNounAlias(std::string anAlias){
     std::lock_guard<std::mutex> aliasesLock(aliasesMutex);
     int index = -1;
 
@@ -196,6 +196,39 @@ bool InteractiveNoun::removeAlias(std::string anAlias){
 
     return false;
 }
+
+
+bool InteractiveNoun::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    Action *anAction = getAction(aCommand);
+    parser::Grammar *aGrammar;
+
+    if (anAction != nullptr){
+        if (prepositions.empty()){
+            aGrammar = new parser::Grammar(direct, false, indirect);
+        } else {
+            aGrammar = new parser::Grammar(direct, true, indirect);
+            for (auto prep : prepositions){
+                aGrammar->addPreposition(prep.first, prep.second);
+            }
+        }
+        anAction->addAlias(alias, aGrammar);
+        return true;
+    }
+
+    return false;
+}
+
+
+bool InteractiveNoun::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    Action *anAction = getAction(aCommand);
+
+    if (anAction != nullptr){
+        anAction->removeAlias(alias);
+        return true;
+    }
+    return false;
+}
+
 
 std::string InteractiveNoun::getTextAndEffect(CommandEnum aCommand, EffectType &anEffect) const{
     std::string message = "";

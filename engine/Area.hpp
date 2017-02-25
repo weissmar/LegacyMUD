@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -21,6 +21,7 @@
 #include <atomic>
 #include <mutex>
 #include <LexicalData.hpp>
+#include "parser.hpp"
 #include "InteractiveNoun.hpp"
 #include "AreaSize.hpp"
 #include "DataType.hpp"
@@ -116,7 +117,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a parser::LexicalData by reference with the 
          *          contents' lexical data.
          */
-        parser::LexicalData getLexicalData() const;
+        const parser::LexicalData& getLexicalData() const;
 
         /*!
          * \brief   Gets the full description of an area for first time
@@ -252,6 +253,59 @@ class Area: public InteractiveNoun {
          *          exit from this area succeeded.
          */
         bool removeExit(Exit *anExit);
+
+        /*!
+         * \brief   Adds the specified noun alias to this area.
+         *
+         * \param[in] alias     Specifies the noun alias to add.
+         *
+         * \return  Returns a bool indicating whether or not the noun alias 
+         *          was added successfully.
+         */
+        virtual bool addNounAlias(std::string);
+
+        /*!
+         * \brief   Removes the specified noun alias from this area.
+         *
+         * \param[in] alias     Specifies the noun alias to remove
+         *
+         * \return  Returns a bool indicating whether or not the noun alias 
+         *          was found and removed successfully.
+         */
+        virtual bool removeNounAlias(std::string);
+
+        /*!
+         * \brief   Adds an alias of the specified command for this area.
+         *
+         * This function adds an alias-grammar pair to the map of aliases
+         * for the Action associated with the specified command for this area.
+         * 
+         * \param[in] aCommand      Specifies the command the alias is aliasing.
+         * \param[in] alias         Specifies the verb alias to be added.
+         * \param[in] direct        Specifies support for direct objects.
+         * \param[in] indirect      Specifies support for indirect objects.
+         * \param[in] prepositions  Specifies supported prepositions.
+         *
+         * \return  Returns a bool indicating whether or not adding the
+         *          alias to the interactive noun succeeded.
+         */
+        virtual bool addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions);
+
+        /*!
+         * \brief   Removes the verb alias for the specified command from this 
+         *          area.
+         *
+         * This function removes the alias-grammar pair indicated by the
+         * specified alias string from the Action associated with the specified 
+         * command for this area.
+         * 
+         * \param[in] aCommand  Specifies the command the alias is aliasing.
+         * \param[in] alias     Specifies the verb alias to remove.
+         *
+         * \return  Returns a bool indicating whether or not removing the
+         *          specified alias succeeded.
+         */
+        virtual bool removeVerbAlias(CommandEnum aCommand, std::string alias);
 
         /*!
          * \brief   Gets the object type.
@@ -399,6 +453,9 @@ class Area: public InteractiveNoun {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
+        void addAllLexicalData(InteractiveNoun *anObject);
+        void removeAllLexicalData(InteractiveNoun *anObject);
+
         std::string name;
         mutable std::mutex nameMutex;
         std::string shortDescription;

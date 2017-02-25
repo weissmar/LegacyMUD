@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -21,7 +21,7 @@
 #include <utility>
 #include <atomic>
 #include <mutex>
-#include <LexicalData.hpp>
+#include "parser.hpp"
 #include "Combatant.hpp"
 #include "CharacterSize.hpp"
 #include "CommandEnum.hpp"
@@ -340,17 +340,19 @@ class Player: public Combatant {
          * This function takes the specified item and places it in the inventory of 
          * this player.
          *
-         * \param[in] aPlayer   Specifies the player that is taking the item.
-         * \param[in] anItem    Specifies the item that is being taken.
-         * \param[in] character This parameter is ignored in this case
-         * \param[out] effects  Specifies the effects of the action.
+         * \param[in] aPlayer       Specifies the player that is taking the item.
+         * \param[in] anItem        Specifies the item that is being taken.
+         * \param[in] aContainer    Optionally specifies the container that held 
+         *                          the item.
+         * \param[in] aCharacter     This parameter is ignored in this case.
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \note    May cause an effect on the player.
          *
          * \return  Returns a std::string with the response to the command
          *          take.
          */
-        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
+        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the equip command on this player.
