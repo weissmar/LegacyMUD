@@ -519,8 +519,8 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
     };
 
     engine::Exit north;
-    ASSERT_TRUE(north.addAlias("north"));
-    ASSERT_TRUE(north.addAlias("n"));
+    ASSERT_TRUE(north.addNounAlias("north"));
+    ASSERT_TRUE(north.addNounAlias("n"));
     engine::Action *act = north.addAction(engine::CommandEnum::GO);
     ASSERT_NE(nullptr, act);
     ASSERT_TRUE(act->addAlias("north", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));
