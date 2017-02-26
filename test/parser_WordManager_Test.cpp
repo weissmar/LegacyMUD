@@ -286,7 +286,9 @@ TEST_F(WordManagerTest, RemoveMismatchedVerbTest) {
     parser::WordManager::addVerb(word2, in2);
     EXPECT_TRUE(parser::WordManager::hasVerb(word1));
     EXPECT_TRUE(parser::WordManager::hasVerb(word2));
-    EXPECT_DEATH(parser::WordManager::removeVerb(word1, in2), "");
+    ::testing::internal::CaptureStderr();
+    parser::WordManager::removeVerb(word1, in2);
+    EXPECT_TRUE(::testing::internal::RE::FullMatch(::testing::internal::GetCapturedStderr(), ::testing::internal::RE("Attempted to remove unknown verb alias.*")));
 }
 
 // Verify behavior when attempting to remove mismatched key-value
@@ -299,7 +301,9 @@ TEST_F(WordManagerTest, RemoveMismatchedNounTest) {
     parser::WordManager::addNoun(word2, in2);
     EXPECT_TRUE(parser::WordManager::hasNoun(word1));
     EXPECT_TRUE(parser::WordManager::hasNoun(word2));
-    EXPECT_DEATH(parser::WordManager::removeVerb(word1, in2), "");
+    ::testing::internal::CaptureStderr();
+    parser::WordManager::removeNoun(word1, in2);
+    EXPECT_TRUE(::testing::internal::RE::FullMatch(::testing::internal::GetCapturedStderr(), ::testing::internal::RE("Attempted to remove unknown noun alias.*")));
 }
 
 // Verify behavior when attempting to remove word more than once
@@ -310,7 +314,9 @@ TEST_F(WordManagerTest, RemoveVerbTooManyTimesTest) {
     EXPECT_TRUE(parser::WordManager::hasVerb(word));
     parser::WordManager::removeVerb(word, in1);
     EXPECT_FALSE(parser::WordManager::hasVerb(word));
-    EXPECT_DEATH(parser::WordManager::removeVerb(word, in1), "");
+    ::testing::internal::CaptureStderr();
+    parser::WordManager::removeVerb(word, in1);
+    EXPECT_TRUE(::testing::internal::RE::FullMatch(::testing::internal::GetCapturedStderr(), ::testing::internal::RE("Attempted to remove unknown verb alias.*")));
 }
 
 // Verify behavior when attempting to remove word too many times
@@ -321,7 +327,9 @@ TEST_F(WordManagerTest, RemoveNounTooManyTimesTest) {
     EXPECT_TRUE(parser::WordManager::hasNoun(word));
     parser::WordManager::removeNoun(word, in1);
     EXPECT_FALSE(parser::WordManager::hasNoun(word));
-    EXPECT_DEATH(parser::WordManager::removeNoun(word, in1), "");
+    ::testing::internal::CaptureStderr();
+    parser::WordManager::removeNoun(word, in1);
+    EXPECT_TRUE(::testing::internal::RE::FullMatch(::testing::internal::GetCapturedStderr(), ::testing::internal::RE("Attempted to remove unknown noun alias.*")));
 }
 
 // Verify case insensitivity
