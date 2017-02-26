@@ -674,6 +674,9 @@ class Player: public Combatant {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
+        void addAllLexicalData(InteractiveNoun *anObject);
+        void removeAllLexicalData(InteractiveNoun *anObject);
+        
         std::atomic<int> experiencePoints;
         std::atomic<int> level;
         std::atomic<CharacterSize> size;

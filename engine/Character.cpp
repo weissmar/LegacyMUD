@@ -35,7 +35,7 @@ Character::Character(std::string name, std::string description, int money, Area 
 , location(aLocation)
 , maxInventoryWeight(maxInventoryWeight)
 {
-    addNounAlias(name);
+    InteractiveNoun::addNounAlias(name);
 }
 
 
@@ -88,7 +88,9 @@ std::vector<Item*> Character::getItemsInventory() const{
     std::vector<Item*> items;
 
     for (auto item : inventory){
-        items.push_back(item.second);
+        if (item.first == EquipmentSlot::NONE){
+            items.push_back(item.second);
+        }
     }
 
     return items;

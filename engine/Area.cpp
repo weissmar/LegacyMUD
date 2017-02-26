@@ -16,6 +16,7 @@
 #include "CommandEnum.hpp"
 #include "Action.hpp"
 #include "Container.hpp"
+#include <iostream>
 #include <algorithm>
 
 namespace legacymud { namespace engine {
@@ -266,6 +267,7 @@ void Area::addAllLexicalData(InteractiveNoun *anObject){
         verbAliases = anObject->getVerbAliases();
 
         for (auto noun : nounAliases){
+            std::cout << "noun alias to add to area: " << noun << "\n";
             contentsLexicalData.addNoun(noun, anObject);
         }
         for (auto verb : verbAliases){
@@ -285,6 +287,7 @@ void Area::removeAllLexicalData(InteractiveNoun *anObject){
         verbAliases = anObject->getVerbAliases();
 
         for (auto noun : nounAliases){
+            std::cout << "noun alias to remove from area: " << noun << "\n";
             contentsLexicalData.removeNoun(noun, anObject);
         }
         for (auto verb : verbAliases){
@@ -407,6 +410,7 @@ bool Area::registerAlias(bool isVerb, std::string alias, InteractiveNoun *anObje
         if (isVerb){
             contentsLexicalData.addVerb(alias, anObject);
         } else {
+            std::cout << "noun alias to add to area: " << alias << "\n";
             contentsLexicalData.addNoun(alias, anObject);
         }
         return true;
@@ -422,6 +426,7 @@ bool Area::unregisterAlias(bool isVerb, std::string alias, InteractiveNoun *anOb
         if (isVerb){
             contentsLexicalData.removeVerb(alias, anObject);
         } else {
+            std::cout << "noun alias to remove from area: " << alias << "\n";
             contentsLexicalData.removeNoun(alias, anObject);
         }
         return true;

@@ -27,7 +27,7 @@ Feature::Feature(std::string name, std::string placement, Area *location, bool i
 , placement(placement)
 , location(location)
 {
-    addNounAlias(name);
+    InteractiveNoun::addNounAlias(name);
 }
 
 

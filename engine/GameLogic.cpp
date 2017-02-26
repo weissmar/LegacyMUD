@@ -744,7 +744,7 @@ void GameLogic::printParseResult(parser::ParseResult result){
     }
     
     std::cout << "\ndirectAlias = " << result.directAlias;
-    std::cout << "indirect = ";
+    std::cout << "\nindirect = ";
     for (size_t i = 0; i < result.indirect.size(); i++){
         if (result.indirect[i] != nullptr){
             std::cout << result.indirect[i]->getName();
@@ -1503,7 +1503,65 @@ bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::inventoryCommand(Player *aPlayer){
-    return false;
+    std::string message;
+    std::vector<Item*> inventory = aPlayer->getItemsInventory();
+    std::vector<std::pair<EquipmentSlot, Item*>> equipment = aPlayer->getEquipped();
+
+    message = "Your Inventory:\015\012";
+    for (auto item : inventory){
+        message += item->getName() + "\015\012";
+    }
+    message += "Equipped Items:\015\012";
+    for (auto equip : equipment){
+        switch (equip.first){
+            case EquipmentSlot::HEAD:
+                message += "Head: ";
+                break;
+            case EquipmentSlot::SHOULDERS:
+                message += "Shoulders: ";
+                break;
+            case EquipmentSlot::NECK:
+                message += "Neck: ";
+                break;
+            case EquipmentSlot::TORSO:
+                message += "Torso: ";
+                break;
+            case EquipmentSlot::BELT:
+                message += "Belt: ";
+                break;
+            case EquipmentSlot::LEGS:
+                message += "Legs: ";
+                break;
+            case EquipmentSlot::ARMS:
+                message += "Arms: ";
+                break;
+            case EquipmentSlot::HANDS:
+                message += "Hands: ";
+                break;
+            case EquipmentSlot::RIGHT_HAND:
+                message += "Right hand: ";
+                break;
+            case EquipmentSlot::LEFT_HAND:
+                message += "Left hand: ";
+                break;
+            case EquipmentSlot::FEET:
+                message += "Feet: ";
+                break;
+            case EquipmentSlot::RIGHT_RING:
+                message += "Right ring: ";
+                break;
+            case EquipmentSlot::LEFT_RING:
+                message += "Left ring: ";
+                break;
+            default:
+                message += "";
+        }
+        message += equip.second->getName() + "\015\012";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 

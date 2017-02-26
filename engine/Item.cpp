@@ -36,7 +36,7 @@ Item::Item(InteractiveNoun* location, ItemPosition position, std::string name, I
 , name(name)
 , type(type)
 {
-    addNounAlias(name);
+    InteractiveNoun::addNounAlias(name);
 }
 
 
@@ -467,8 +467,8 @@ std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
         if ((location != nullptr) && (location->getID() == aPlayer->getID())){
             setLocation(anArea);
             setPosition(ItemPosition::GROUND);
-            anArea->addItem(this);
             aPlayer->removeFromInventory(this);
+            anArea->addItem(this);
 
             // get results of put for this object
             message = getTextAndEffect(CommandEnum::DROP, anEffect);

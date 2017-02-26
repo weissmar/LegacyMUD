@@ -29,8 +29,8 @@ Exit::Exit(ExitDirection direction, EffectType effect, Area *location, Area *con
 , location(location)
 , connectArea(connectArea)
 {
-    addNounAlias(description);
-    addNounAlias(altDescription);
+    InteractiveNoun::addNounAlias(description);
+    InteractiveNoun::addNounAlias(altDescription);
 }
 
 
