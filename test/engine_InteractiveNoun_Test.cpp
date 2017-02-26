@@ -126,10 +126,10 @@ TEST_F(InteractiveNounTest, AddRetrieveVerbAliasTest) {
 
 // Verify adding, retrieving, and removing a noun alias
 TEST_F(InteractiveNounTest, AddRetrieveRemoveNounAliasTest) {
-    in->addAlias("foo");
+    in->addNounAlias("foo");
     ASSERT_EQ(1, in->getNounAliases().size());
     EXPECT_STREQ("foo", in->getNounAliases()[0].c_str());
-    EXPECT_TRUE(in->removeAlias("foo"));
+    EXPECT_TRUE(in->removeNounAlias("foo"));
     EXPECT_EQ(0, in->getNounAliases().size());
 }
 
