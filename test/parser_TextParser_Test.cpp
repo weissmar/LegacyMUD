@@ -518,7 +518,9 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
         "n"
     };
 
-    engine::Exit north;
+    engine::Area area;
+    engine::Area destination;
+    engine::Exit north(engine::ExitDirection::NORTH, engine::EffectType::NONE, &area, &destination, false, nullptr, "an exit to the north", "");
     ASSERT_TRUE(north.addNounAlias("north"));
     ASSERT_TRUE(north.addNounAlias("n"));
     engine::Action *act = north.addAction(engine::CommandEnum::GO);
