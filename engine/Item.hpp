@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Item.hpp
  *
@@ -264,14 +264,12 @@ class Item: public InteractiveNoun {
         /*!
          * \brief   Gets the response of this object to the command more.
          * 
-         * \param[out] effects  Specifies the effects of the action.
-         * 
          * This function returns a string with details about this item.
          *
          * \return  Returns a std::string with the response to the command
          *          more.
          */
-        virtual std::string more(std::vector<EffectType> *effects); 
+        virtual std::string more(); 
 
         /*!
          * \brief   Executes the equip command on this item.

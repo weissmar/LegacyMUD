@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -486,7 +486,7 @@ std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
 }
 
 
-std::string Item::more(std::vector<EffectType> *effects){
+std::string Item::more(){
     return "";
 } 
 

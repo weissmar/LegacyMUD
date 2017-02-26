@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -223,12 +223,10 @@ class Container: public Item {
          * 
          * This function returns a string with details about this container.
          * 
-         * \param[out] effects  Specifies the effects of the action.
-         *
          * \return  Returns a std::string with the response to the command
          *          more.
          */
-        virtual std::string more(std::vector<EffectType> *effects); 
+        virtual std::string more(); 
 
         /*!
          * \brief   Executes the equip command on this container.

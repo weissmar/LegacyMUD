@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -299,7 +299,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string more(std::vector<EffectType>*) { return ""; } 
+        virtual std::string more() { return ""; } 
 
         /*!
          * \brief   Gets the object's response to the equip command.

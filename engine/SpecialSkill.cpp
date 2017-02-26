@@ -111,7 +111,7 @@ bool SpecialSkill::deserialize(std::string){
 }
 
 
-std::string SpecialSkill::more(std::vector<EffectType> *effects){
+std::string SpecialSkill::more(){
     return "";
 } 
 

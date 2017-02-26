@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.hpp
  *
@@ -147,13 +147,11 @@ class SpecialSkill: public InteractiveNoun {
          * \brief   Gets the response of this object to the command more.
          * 
          * This function returns a string with details about this skill.
-         * 
-         * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          more.
          */
-        virtual std::string more(std::vector<EffectType> *effects); 
+        virtual std::string more(); 
 
         /*!
          * \brief   Executes the attack command using this skill.

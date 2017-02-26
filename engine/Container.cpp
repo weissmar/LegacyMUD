@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -361,7 +361,7 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 }
 
 
-std::string Container::more(std::vector<EffectType> *effects){
+std::string Container::more(){
     return "";
 } 
 
