@@ -10,11 +10,14 @@
 
 #include "WordManager.hpp"
 
+#include <InteractiveNoun.hpp>
+
 #include <algorithm>
 #include <cctype>
 #include <mutex>
 
 #include <cassert>
+#include <iostream>
 
 namespace {
 
@@ -102,7 +105,9 @@ void WordManager::addNoun(std::string alias, engine::InteractiveNoun *pObj) {
     std::lock_guard<std::mutex> guard(localNounsLock);
 
     // Add pair to WordMap
-    _localNouns.addWord(alias, pObj);
+    if (!_localNouns.addWord(alias, pObj)) {
+        std::cerr << "Attempted to add duplicate noun alias '" << alias << "' to object ID " << pObj->getID() << std::endl;
+    }
 }
 
 // Adds an entry to the in-use verb alias lookup table.
@@ -116,7 +121,9 @@ void WordManager::addVerb(std::string alias, engine::InteractiveNoun *pObj) {
     std::lock_guard<std::mutex> guard(localVerbsLock);
 
     // Add pair to WordMap
-    _localVerbs.addWord(alias, pObj);
+    if (!_localVerbs.addWord(alias, pObj)) {
+        std::cerr << "Attempted to add duplicate verb alias '" << alias << "' to object ID " << pObj->getID() << std::endl;
+    }
 }
 
 // Adds a word to the ignore list
@@ -243,7 +250,9 @@ void WordManager::removeNoun(std::string alias, engine::InteractiveNoun *pObj) {
     // Block any other threads from accessing _nounAliases until operation is complete.
     std::lock_guard<std::mutex> guard(localNounsLock);
 
-    assert(_localNouns.removeWord(alias, pObj));
+    if (!_localNouns.removeWord(alias, pObj)) {
+        std::cerr << "Attempted to remove unknown noun alias '" << alias << "' from object ID " << pObj->getID() << std::endl;        
+    }
 }
 
 // Removes a verb alias-InteractiveNoun pair from the verb alias lookup table.
@@ -254,7 +263,10 @@ void WordManager::removeVerb(std::string alias, engine::InteractiveNoun *pObj) {
     // Block any other threads from accessing _verbAliases until operation is complete.
     std::lock_guard<std::mutex> guard(localVerbsLock);
 
-    assert(_localVerbs.removeWord(alias, pObj));
+    if (!_localVerbs.removeWord(alias, pObj)) {
+        std::cerr << "Attempted to remove unknown verb alias '" << alias << "' from object ID " << pObj->getID() << std::endl;
+    }
+
 }
 
 // Reset all member variables.
