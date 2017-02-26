@@ -33,18 +33,22 @@ void LexicalData::addVerb(std::string alias, engine::InteractiveNoun *pObject) {
 }
 
 bool LexicalData::hasNoun(std::string alias) const {
+    std::lock_guard<std::mutex> guard(_nounLock);
     return _nouns.hasWord(alias);
 }
 
 bool LexicalData::hasVerb(std::string alias) const {
+    std::lock_guard<std::mutex> guard(_verbLock);
     return _verbs.hasWord(alias);
 }
 
 std::vector<engine::InteractiveNoun *> LexicalData::getObjectsByNoun(std::string alias) const {
+    std::lock_guard<std::mutex> guard(_nounLock);
     return _nouns.getObjects(alias);
 }
 
 std::vector<engine::InteractiveNoun *> LexicalData::getObjectsByVerb(std::string alias) const {
+    std::lock_guard<std::mutex> guard(_verbLock);
     return _verbs.getObjects(alias);
 }
 
