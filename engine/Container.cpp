@@ -362,7 +362,11 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 
 
 std::string Container::more(){
-    return "";
+    std::string message = Item::more();
+
+    message += "Inside Capacity: " + std::to_string(getInsideCapacity()) + "\015\012";
+    
+    return message;
 } 
 
 

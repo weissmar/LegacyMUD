@@ -487,7 +487,164 @@ std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
 
 
 std::string Item::more(){
-    return "";
+    std::string message = "Item: " + getName() + "\015\012";
+    ItemType *aType = getType();
+    int armorBonus = aType->getArmorBonus();
+    int damage = aType->getDamage();
+    int critMult = aType->getCritMultiplier();
+    DamageType resistantTo = aType->getResistantTo();
+    DamageType damageType = aType->getDamageType();
+    AreaSize range = aType->getRange();
+
+    message += "Type: " + aType->getName() + "\015\012";
+    message += "Description: " + aType->getDescription() + "\015\012";
+    message += "Weight: " + std::to_string(aType->getWeight()) + "\015\012";
+    message += "Cost: " + std::to_string(aType->getCost()) + "\015\012";
+    message += "Rarity: ";
+    switch(aType->getRarity()){
+        case ItemRarity::COMMON:
+            message += "common \015\012";
+            break;
+        case ItemRarity::UNCOMMON:
+            message += "uncommon \015\012";
+            break;
+        case ItemRarity::RARE:
+            message += "rare \015\012";
+            break;
+        case ItemRarity::LEGENDARY:
+            message += "legendary \015\012";
+            break;
+        case ItemRarity::QUEST:
+            message += "quest \015\012";
+            break;
+    }
+    switch(aType->getSlotType()){
+        case EquipmentSlot::NONE:
+            message += "";
+            break;
+        case EquipmentSlot::HEAD:
+            message += "Equipment Slot Type: head \015\012";
+            break;
+        case EquipmentSlot::SHOULDERS:
+            message += "Equipment Slot Type: shoulder \015\012";
+            break;
+        case EquipmentSlot::NECK:
+            message += "Equipment Slot Type: neck \015\012";
+            break;
+        case EquipmentSlot::TORSO:
+            message += "Equipment Slot Type: torso \015\012";
+            break;
+        case EquipmentSlot::BELT:
+            message += "Equipment Slot Type: belt \015\012";
+            break;
+        case EquipmentSlot::LEGS:
+            message += "Equipment Slot Type: legs \015\012";
+            break;
+        case EquipmentSlot::ARMS:
+            message += "Equipment Slot Type: arms \015\012";
+            break;
+        case EquipmentSlot::HANDS:
+            message += "Equipment Slot Type: hands \015\012";
+            break;
+        case EquipmentSlot::RIGHT_HAND:
+            message += "Equipment Slot Type: right hand \015\012";
+            break;
+        case EquipmentSlot::LEFT_HAND:
+            message += "Equipment Slot Type: left hand \015\012";
+            break;
+        case EquipmentSlot::FEET:
+            message += "Equipment Slot Type: feet \015\012";
+            break;
+        case EquipmentSlot::RIGHT_RING:
+            message += "Equipment Slot Type: right ring \015\012";
+            break;
+        case EquipmentSlot::LEFT_RING:
+            message += "Equipment Slot Type: left ring \015\012";
+            break;
+    }
+    if (armorBonus != -1){
+        message += "Armor Bonus: " + std::to_string(armorBonus) + "\015\012";
+    }
+    if (damage != -1){
+        message += "Damage: " + std::to_string(damage) + "\015\012";
+    }
+    if (critMult != -1){
+        message += "Crit Multiplier: " + std::to_string(critMult) + "\015\012";
+    }
+    switch(resistantTo){
+        case DamageType::NONE:
+            message += "";
+            break;
+        case DamageType::CRUSHING:
+            message += "Resistant to crushing damage\015\012";
+            break;
+        case DamageType::PIERCING:
+            message += "Resistant to piercing damage\015\012";
+            break;
+        case DamageType::ELECTRIC:
+            message += "Resistant to electric damage\015\012";
+            break;
+        case DamageType::FIRE:
+            message += "Resistant to fire damage\015\012";
+            break;
+        case DamageType::WATER:
+            message += "Resistant to water damage\015\012";
+            break;
+        case DamageType::WIND:
+            message += "Resistant to wind damage\015\012";
+            break;
+        case DamageType::EARTH:
+            message += "Resistant to earth damage\015\012";
+            break;
+        case DamageType::HEAL:
+            message += "Resistant to healing\015\012";
+            break;
+    }
+    switch(damageType){
+        case DamageType::NONE:
+            message += "";
+            break;
+        case DamageType::CRUSHING:
+            message += "Damage Type: crushing damage\015\012";
+            break;
+        case DamageType::PIERCING:
+            message += "Damage Type: piercing damage\015\012";
+            break;
+        case DamageType::ELECTRIC:
+            message += "Damage Type: electric damage\015\012";
+            break;
+        case DamageType::FIRE:
+            message += "Damage Type: fire damage\015\012";
+            break;
+        case DamageType::WATER:
+            message += "Damage Type: water damage\015\012";
+            break;
+        case DamageType::WIND:
+            message += "Damage Type: wind damage\015\012";
+            break;
+        case DamageType::EARTH:
+            message += "Damage Type: earth damage\015\012";
+            break;
+        case DamageType::HEAL:
+            message += "Damage Type: healing\015\012";
+            break;
+    }
+    switch(range){
+        case AreaSize::NONE:
+            message += "";
+            break;
+        case AreaSize::SMALL:
+            message += "Short Range Weapon \015\012";
+            break;
+        case AreaSize::MEDIUM:
+            message += "Medium Range Weapon\015\012";
+            break;
+        case AreaSize::LARGE:
+            message += "Long Range Weapon\015\012";
+            break;
+    }
+
+    return message;
 } 
 
 

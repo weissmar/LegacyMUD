@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -1396,10 +1396,15 @@ bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
 bool GameLogic::listenCommand(Player *aPlayer){
     std::vector<EffectType> effects;
     std::string message = aPlayer->getLocation()->listen(&effects);
-    messagePlayer(aPlayer, message);
+
+    if (message.compare("") == 0){
+        message = "You don't hear anything.";
+    }
 
     message += " ";
     message += handleEffects(aPlayer, effects);
+
+    messagePlayer(aPlayer, message);
 
     return true;
 }
@@ -1567,6 +1572,14 @@ bool GameLogic::inventoryCommand(Player *aPlayer){
 
 
 bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *directObj){
+    std::string message = "";
+
+    if (directObj != nullptr){
+        message = directObj->more();
+        messagePlayer(aPlayer, message);
+        return true;
+    }
+
     return false;
 }
 
