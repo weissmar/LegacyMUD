@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -18,6 +18,7 @@
 #include <string>
 #include <mutex>
 #include <atomic>
+#include "parser.hpp"
 #include "Item.hpp"
 #include "ItemPosition.hpp"
 #include "DataType.hpp"
@@ -106,6 +107,14 @@ class Container: public Item {
         std::vector<Item*> getTopContents() const;
 
         /*!
+         * \brief   Gets all of the contents of this container.
+         *
+         * \return  Returns a std::vector<Item*> with all of the contents of
+         *          this container.
+         */
+        std::vector<Item*> getAllContents() const;
+
+        /*!
          * \brief   Gets the inside capacity of this container.
          *
          * \return  Returns an int with the inside capacity of this container.
@@ -160,25 +169,30 @@ class Container: public Item {
         /*!
          * \brief   Executes the take command on this container.
          * 
-         * This function takes this container and places it in the inventory of 
-         * either the specified character or, if no character is specified, the
-         * player. It then calls this function on the character or player with a
-         * pointer to this container in the anItem parameter.
+         * If aContainer matches this container, then this function removes the
+         * specified item from this container. Otherwise, this function takes this 
+         * container and places it in the inventory of either the specified character 
+         * or, if no character is specified, the player. It then calls this function 
+         * on the character or player with a pointer to this container in the anItem 
+         * parameter. It also calls this function on the container, if specified, also
+         * with a pointer to this container in the anItem parameter.
          *
-         * \param[in] aPlayer   Specifies the player that entered the command and,
-         *                      if character == nullptr, this is also the player that 
-         *                      is taking the object.
-         * \param[out] anItem   Specifies the item that is being taken.
-         * \param[in] character Optionally specifies the character that is taking the 
-         *                      item, or nullptr if the player is the one taking.
-         * \param[out] effects  Specifies the effects of the action.
+         * \param[in] aPlayer       Specifies the player that entered the command and,
+         *                          if character == nullptr, this is also the player that 
+         *                          is taking the object.
+         * \param[out] anItem       Specifies the item that is being taken.
+         * \param[in] aContainer    Optionally specifies the container that currently 
+         *                          holds the item ot be taken.
+         * \param[in] aCharacter    Optionally specifies the character that is taking the 
+         *                          item, or nullptr if the player is the one taking.
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \note    May cause an effect on the player/character.
          *
          * \return  Returns a std::string with the response to the command
          *          take.
          */
-        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
+        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the put command on this container.
@@ -203,22 +217,6 @@ class Container: public Item {
          *          put.
          */
         virtual std::string put(Player *aPlayer, Item *anItem, InteractiveNoun *containingNoun, ItemPosition position, std::vector<EffectType> *effects);
-
-        /*!
-         * \brief   Executes the drop command on this container.
-         * 
-         * This function removes this container from the player's inventory and places
-         * it in the area that the player is currently in.
-         *
-         * \param[in] aPlayer   Specifies the player that is dropping the object.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \note    May cause an effect on the player.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          drop.
-         */
-        virtual std::string drop(Player *aPlayer, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command more.

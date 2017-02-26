@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/22/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -388,12 +388,22 @@ class GameLogic {
         /*!
          * \brief   Executes the help command.
          * 
-         * \param[in] aPlayer       Specifies the player entering the command.
+         * \param[in] aPlayer   Specifies the player entering the command.
          *
          * \return  Returns a bool indicating whether or not executing the help command
          *          was successful.
          */
         bool helpCommand(Player *aPlayer);
+
+        /*!
+         * \brief   Executes the effects of an action.
+         * 
+         * \param[in] aPlayer   Specifies the player experiencing the effects.
+         * \param[in] effects   Specifies the effects to execute.
+         *
+         * \return  Returns a string with a description of the effects.
+         */
+        std::string handleEffects(Player *aPlayer, std::vector<EffectType> effects);
 
         /*!
          * \brief   Executes the look command.
@@ -409,7 +419,7 @@ class GameLogic {
         /*!
          * \brief   Executes the listen command.
          * 
-         * \param[in] aPlayer       Specifies the player entering the command.
+         * \param[in] aPlayer   Specifies the player entering the command.
          *
          * \return  Returns a bool indicating whether or not executing the listen command
          *          was successful.

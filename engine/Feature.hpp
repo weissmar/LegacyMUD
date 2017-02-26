@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Feature.hpp
  *
@@ -16,6 +16,7 @@
 #include <string>
 #include <mutex>
 #include <vector>
+#include "parser.hpp"
 #include "ConditionalElement.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -23,13 +24,15 @@
 
 namespace legacymud { namespace engine {
 
+class Area;
+
 /*!
  * \details     Features define in-game features of areas.
  */
 class Feature: public ConditionalElement {
     public:
         Feature();
-        Feature(std::string name, std::string placement, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
+        Feature(std::string name, std::string placement, Area *location, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
 
         /*!
          * \brief   Gets the name of this feature.
@@ -44,6 +47,13 @@ class Feature: public ConditionalElement {
          * \return  Returns a std::string with the placement of this feature.
          */
         std::string getPlacement() const;
+
+        /*!
+         * \brief   Gets the location of this feature.
+         *
+         * \return  Returns an Area* with the location of this feature.
+         */
+        Area* getLocation() const;
 
         /*!
          * \brief   Sets the name of this feature.
@@ -64,6 +74,70 @@ class Feature: public ConditionalElement {
          *          was successful.
          */
         bool setPlacement(std::string placement);
+
+        /*!
+         * \brief   Sets the location of this feature.
+         * 
+         * \param[in] anArea    Specifies the location of this feature.
+         *
+         * \return  Returns a bool indicating whether or not setting the location 
+         *          was successful.
+         */
+        bool setLocation(Area *anArea);
+
+        /*!
+         * \brief   Adds the specified noun alias to this interactive noun.
+         *
+         * \param[in] alias     Specifies the noun alias to add.
+         *
+         * \return  Returns a bool indicating whether or not the noun alias 
+         *          was added successfully.
+         */
+        virtual bool addNounAlias(std::string);
+
+        /*!
+         * \brief   Removes the specified noun alias from this interactive noun.
+         *
+         * \param[in] alias     Specifies the noun alias to remove
+         *
+         * \return  Returns a bool indicating whether or not the noun alias 
+         *          was found and removed successfully.
+         */
+        virtual bool removeNounAlias(std::string);
+
+        /*!
+         * \brief   Adds an alias of the specified command for this interactive noun.
+         *
+         * This function adds an alias-grammar pair to the map of aliases
+         * for the Action associated with the specified command for this interactive 
+         * noun.
+         * 
+         * \param[in] aCommand      Specifies the command the alias is aliasing.
+         * \param[in] alias         Specifies the verb alias to be added.
+         * \param[in] direct        Specifies support for direct objects.
+         * \param[in] indirect      Specifies support for indirect objects.
+         * \param[in] prepositions  Specifies supported prepositions.
+         *
+         * \return  Returns a bool indicating whether or not adding the
+         *          alias to the interactive noun succeeded.
+         */
+        virtual bool addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions);
+
+        /*!
+         * \brief   Removes the verb alias for the specified command from this 
+         * interactive noun.
+         *
+         * This function removes the alias-grammar pair indicated by the
+         * specified alias string from the Action associated with the specified 
+         * command for this interactive noun.
+         * 
+         * \param[in] aCommand  Specifies the command the alias is aliasing.
+         * \param[in] alias     Specifies the verb alias to remove.
+         *
+         * \return  Returns a bool indicating whether or not removing the
+         *          specified alias succeeded.
+         */
+        virtual bool removeVerbAlias(CommandEnum aCommand, std::string alias);
 
         /*!
          * \brief   Gets the object type.
@@ -269,6 +343,8 @@ class Feature: public ConditionalElement {
         mutable std::mutex nameMutex;
         std::string placement;
         mutable std::mutex placementMutex;
+        Area *location;
+        mutable std::mutex locationMutex;
 };
 
 }}

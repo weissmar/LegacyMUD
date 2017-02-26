@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -30,7 +30,9 @@ Quest::Quest(std::string name, std::string description, int rewardMoney, Item *r
 , description(description)
 , rewardMoney(rewardMoney)
 , rewardItem(rewardItem)
-{ }
+{
+    addNounAlias(name);
+}
 
 
 /*Quest::Quest(const Quest &otherQuest){

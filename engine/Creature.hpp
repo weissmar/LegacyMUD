@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    02/24/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -18,6 +18,7 @@
 #include <mutex>
 #include <atomic>
 #include <vector>
+#include "parser.hpp"
 #include "Combatant.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
@@ -80,6 +81,60 @@ class Creature: public Combatant {
         bool setAmbulatory(bool ambulatory);
 
         /*!
+         * \brief   Adds the specified noun alias to this interactive noun.
+         *
+         * \param[in] alias     Specifies the noun alias to add.
+         *
+         * \return  Returns a bool indicating whether or not the noun alias 
+         *          was added successfully.
+         */
+        virtual bool addNounAlias(std::string);
+
+        /*!
+         * \brief   Removes the specified noun alias from this interactive noun.
+         *
+         * \param[in] alias     Specifies the noun alias to remove
+         *
+         * \return  Returns a bool indicating whether or not the noun alias 
+         *          was found and removed successfully.
+         */
+        virtual bool removeNounAlias(std::string);
+
+        /*!
+         * \brief   Adds an alias of the specified command for this interactive noun.
+         *
+         * This function adds an alias-grammar pair to the map of aliases
+         * for the Action associated with the specified command for this interactive 
+         * noun.
+         * 
+         * \param[in] aCommand      Specifies the command the alias is aliasing.
+         * \param[in] alias         Specifies the verb alias to be added.
+         * \param[in] direct        Specifies support for direct objects.
+         * \param[in] indirect      Specifies support for indirect objects.
+         * \param[in] prepositions  Specifies supported prepositions.
+         *
+         * \return  Returns a bool indicating whether or not adding the
+         *          alias to the interactive noun succeeded.
+         */
+        virtual bool addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions);
+
+        /*!
+         * \brief   Removes the verb alias for the specified command from this 
+         * interactive noun.
+         *
+         * This function removes the alias-grammar pair indicated by the
+         * specified alias string from the Action associated with the specified 
+         * command for this interactive noun.
+         * 
+         * \param[in] aCommand  Specifies the command the alias is aliasing.
+         * \param[in] alias     Specifies the verb alias to remove.
+         *
+         * \return  Returns a bool indicating whether or not removing the
+         *          specified alias succeeded.
+         */
+        virtual bool removeVerbAlias(CommandEnum aCommand, std::string alias);
+
+        /*!
          * \brief   Gets the object type.
          *
          * \return  Returns an ObjectType indicating the actual class the object
@@ -120,17 +175,19 @@ class Creature: public Combatant {
          * This function takes the specified item and places it in the inventory of 
          * this creature.
          *
-         * \param[in] aPlayer   Specifies the player that entered the command.
-         * \param[in] anItem    Specifies the item that is being taken.
-         * \param[in] character Specifies the character that is taking the item.
-         * \param[out] effects  Specifies the effects of the action.
+         * \param[in] aPlayer       Specifies the player that entered the command.
+         * \param[in] anItem        Specifies the item that is being taken.
+         * \param[in] aContainer    Optionally specifies the container that held the
+         *                          item.
+         * \param[in] aCharacter    Specifies the character that is taking the item.
+         * \param[out] effects      Specifies the effects of the action.
          *
          * \note    May cause an effect on the character.
          *
          * \return  Returns a std::string with the response to the command
          *          take.
          */
-        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
+        virtual std::string take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the equip command on this character.

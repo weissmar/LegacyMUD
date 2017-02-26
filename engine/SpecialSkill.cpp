@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/23/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -29,7 +29,9 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 , damageType(type)
 , cost(cost)
 , cooldown(cooldown)
-{ }
+{
+    addNounAlias(name);
+}
 
 
 std::string SpecialSkill::getName() const{

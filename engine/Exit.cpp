@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/23/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -17,16 +17,21 @@ Exit::Exit()
 : ConditionalElement()
 , direction(ExitDirection::NORTH)
 , effect(EffectType::NONE)
+, location(nullptr)
 , connectArea(nullptr)
 { }
 
 
-Exit::Exit(ExitDirection direction, EffectType effect, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
+Exit::Exit(ExitDirection direction, EffectType effect, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
 : ConditionalElement(isConditional, anItemType, description, altDescription)
 , direction(direction)
 , effect(effect)
+, location(location)
 , connectArea(connectArea)
-{ }
+{
+    InteractiveNoun::addNounAlias(description);
+    InteractiveNoun::addNounAlias(altDescription);
+}
 
 
 /*Exit::Exit(const Exit &otherExit){
@@ -96,6 +101,12 @@ EffectType Exit::getEffect() const{
 }
 
 
+Area* Exit::getLocation() const{
+    std::lock_guard<std::mutex> locationLock(locationMutex);
+    return location;
+}
+
+
 Area* Exit::getConnectArea() const{
     std::lock_guard<std::mutex> connectAreaLock(connectAreaMutex);
     return connectArea;
@@ -116,9 +127,20 @@ bool Exit::setEffect(EffectType anEffect){
 }
 
 
-bool Exit::setConnectArea(Area *anArea){
-    std::lock_guard<std::mutex> connectAreaLock(connectAreaMutex);
+bool Exit::setLocation(Area *anArea){
     if (anArea != nullptr){
+        std::lock_guard<std::mutex> locationLock(locationMutex);
+        location = anArea;
+        return true;
+    }
+
+    return false;
+}
+
+
+bool Exit::setConnectArea(Area *anArea){
+    if (anArea != nullptr){
+        std::lock_guard<std::mutex> connectAreaLock(connectAreaMutex);
         connectArea = anArea;
         return true;
     }
@@ -129,6 +151,58 @@ bool Exit::setConnectArea(Area *anArea){
 
 std::string Exit::getName() const{
     return this->getDescription();
+}
+
+
+bool Exit::addNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(false, alias, this);
+        success = InteractiveNoun::addNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Exit::removeNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(false, alias, this);
+        success = InteractiveNoun::removeNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Exit::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(true, alias, this);
+        success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+    }
+
+    return success;
+}
+
+
+bool Exit::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(true, alias, this);
+        success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+    }
+
+    return success;
 }
 
 

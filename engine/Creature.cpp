@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/23/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -72,6 +72,58 @@ bool Creature::setAmbulatory(bool ambulatory){
 }
 
 
+bool Creature::addNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(false, alias, this);
+        success = InteractiveNoun::addNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Creature::removeNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(false, alias, this);
+        success = InteractiveNoun::removeNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Creature::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(true, alias, this);
+        success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+    }
+
+    return success;
+}
+
+
+bool Creature::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(true, alias, this);
+        success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+    }
+
+    return success;
+}
+
+
 ObjectType Creature::getObjectType() const{
     return ObjectType::CREATURE;
 }
@@ -92,8 +144,22 @@ std::string Creature::look(std::vector<EffectType> *effects){
 }  
 
 
-std::string Creature::take(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Creature::take(Player* aPlayer, Item* anItem, InteractiveNoun* aContainer, InteractiveNoun* aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    bool success;
+
+    success = addToInventory(anItem);
+    if (success){
+        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    } else {
+        message = "false";
+    }
+
+    return message;
 }
 
 
