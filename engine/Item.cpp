@@ -456,8 +456,33 @@ std::string Item::put(Player *aPlayer, Item *anItem, InteractiveNoun *containing
 }
 
 
-std::string Item::drop(Player*, std::vector<EffectType> *effects){
-    return "";
+std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect;
+    ItemPosition position = getPosition();
+    InteractiveNoun *location = getLocation();
+    Area *anArea = aPlayer->getLocation();
+
+    if ((position == ItemPosition::INVENTORY) || (position == ItemPosition::EQUIPPED)){
+        if ((location != nullptr) && (location->getID() == aPlayer->getID())){
+            setLocation(anArea);
+            setPosition(ItemPosition::GROUND);
+            anArea->addItem(this);
+            aPlayer->removeFromInventory(this);
+
+            // get results of put for this object
+            message = getTextAndEffect(CommandEnum::DROP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+        } else {
+            message = "false";
+        }
+    } else {
+        message = "false";
+    }
+
+    return message;
 }
 
 

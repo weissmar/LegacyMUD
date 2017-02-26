@@ -1475,7 +1475,30 @@ bool GameLogic::putCommand(Player *aPlayer, InteractiveNoun *directObj, Interact
 
 
 bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    bool success = false;
+    std::vector<EffectType> effects;
+    std::string message, resultMessage;
+
+    if (directObj != nullptr){
+        message = "You drop the " + directObj->getName() + " on the ground.";
+
+        resultMessage = directObj->drop(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You don't have access to the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

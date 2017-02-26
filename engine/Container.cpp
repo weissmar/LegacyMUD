@@ -361,11 +361,6 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 }
 
 
-std::string Container::drop(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-}
-
-
 std::string Container::more(std::vector<EffectType> *effects){
     return "";
 } 

@@ -148,8 +148,8 @@ std::string Area::getFullDescription(int excludeID) const{
                 message += ", a ";    
             }
         }
-        message += "\015\012";
     }
+    message += "\015\012";
     
 
     for (size_t i = 0; i < allCharacters.size(); i++){

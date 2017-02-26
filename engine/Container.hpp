@@ -219,22 +219,6 @@ class Container: public Item {
         virtual std::string put(Player *aPlayer, Item *anItem, InteractiveNoun *containingNoun, ItemPosition position, std::vector<EffectType> *effects);
 
         /*!
-         * \brief   Executes the drop command on this container.
-         * 
-         * This function removes this container from the player's inventory and places
-         * it in the area that the player is currently in.
-         *
-         * \param[in] aPlayer   Specifies the player that is dropping the object.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \note    May cause an effect on the player.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          drop.
-         */
-        virtual std::string drop(Player *aPlayer, std::vector<EffectType> *effects);
-
-        /*!
          * \brief   Gets the response of this object to the command more.
          * 
          * This function returns a string with details about this container.
