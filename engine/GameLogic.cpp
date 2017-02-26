@@ -27,6 +27,7 @@
 #include "Container.hpp"
 #include "Item.hpp"
 #include "ItemType.hpp"
+#include "Exit.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -1571,7 +1572,59 @@ bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::equipmentCommand(Player *aPlayer){
-    return false;
+    std::string message;
+    std::vector<std::pair<EquipmentSlot, Item*>> equipment = aPlayer->getEquipped();
+
+    message += "Equipped Items:\015\012";
+    for (auto equip : equipment){
+        switch (equip.first){
+            case EquipmentSlot::HEAD:
+                message += "Head: ";
+                break;
+            case EquipmentSlot::SHOULDERS:
+                message += "Shoulders: ";
+                break;
+            case EquipmentSlot::NECK:
+                message += "Neck: ";
+                break;
+            case EquipmentSlot::TORSO:
+                message += "Torso: ";
+                break;
+            case EquipmentSlot::BELT:
+                message += "Belt: ";
+                break;
+            case EquipmentSlot::LEGS:
+                message += "Legs: ";
+                break;
+            case EquipmentSlot::ARMS:
+                message += "Arms: ";
+                break;
+            case EquipmentSlot::HANDS:
+                message += "Hands: ";
+                break;
+            case EquipmentSlot::RIGHT_HAND:
+                message += "Right hand: ";
+                break;
+            case EquipmentSlot::LEFT_HAND:
+                message += "Left hand: ";
+                break;
+            case EquipmentSlot::FEET:
+                message += "Feet: ";
+                break;
+            case EquipmentSlot::RIGHT_RING:
+                message += "Right ring: ";
+                break;
+            case EquipmentSlot::LEFT_RING:
+                message += "Left ring: ";
+                break;
+            default:
+                message += "";
+        }
+        message += equip.second->getName() + "\015\012";
+    }
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 
@@ -1591,7 +1644,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
 
 
 bool GameLogic::speakCommand(Player *aPlayer, const std::string &stringParam){
-    std::string message = aPlayer->getName() + " says " + stringParam;
+    std::string message = aPlayer->getName() + " says \"" + stringParam + "\"";
 
     messageAreaPlayers(aPlayer, message, aPlayer->getLocation());
     return true;
@@ -1599,12 +1652,53 @@ bool GameLogic::speakCommand(Player *aPlayer, const std::string &stringParam){
 
 
 bool GameLogic::shoutCommand(Player *aPlayer, const std::string &stringParam){
-    return false;
+    std::vector<Area*> areas;
+    Area *anotherArea = nullptr;
+    bool found = false;
+    int i = 2;
+    std::string message = aPlayer->getName() + " shouts \"" + stringParam + "\"";
+
+    areas.push_back(aPlayer->getLocation());
+
+    while (i > 0){
+        for (auto anArea : areas){
+            for (auto exit : anArea->getExits()){
+                anotherArea = exit->getConnectArea();
+                if (anotherArea != nullptr){
+                    found = false;
+                    for (auto area : areas){
+                        if (area == anotherArea){
+                            found = true;
+                        }
+                    }
+                    if (!found){
+                        areas.push_back(anotherArea);
+                    }
+                }
+            }
+        }
+        i--;
+    }
+
+    for (auto area : areas){
+        messageAreaPlayers(aPlayer, message, area);
+    }
+
+    return true;
 }
 
 
 bool GameLogic::whisperCommand(Player *aPlayer, InteractiveNoun *indirectObj, const std::string &stringParam){
-    return false;
+    Player *otherPlayer = nullptr;
+    std::string message = aPlayer->getName() + " whispers \"" + stringParam + "\" to you."; 
+
+    if ((indirectObj != nullptr) && (indirectObj->getObjectType() == ObjectType::PLAYER)){
+        otherPlayer = dynamic_cast<Player*>(indirectObj);
+        if (otherPlayer != nullptr){
+            messagePlayer(otherPlayer, message);
+        }
+    }
+    return true;
 }
 
 
@@ -1630,7 +1724,21 @@ bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::statsCommand(Player *aPlayer){
-    return false;
+    std::string message = "";
+
+    message += "Level: " + std::to_string(aPlayer->getLevel()) + "\015\012";
+    message += "Experience Points: " + std::to_string(aPlayer->getExperiencePoints()) + "\015\012";
+    message += "Health: " + std::to_string(aPlayer->getCurrentHealth()) + "/" + std::to_string(aPlayer->getMaxHealth()) + "\015\012";
+    message += "Special Points: " + std::to_string(aPlayer->getCurrentSpecialPts()) + "/" + std::to_string(aPlayer->getMaxSpecialPts()) + "\015\012";
+    message += "Strength: " + std::to_string(aPlayer->getStrength()) + "\015\012";
+    message += "Dexterity: " + std::to_string(aPlayer->getDexterity()) + "\015\012";
+    message += "Intelligence: " + std::to_string(aPlayer->getIntelligence()) + "\015\012";
+    message += "Attack Bonus: " + std::to_string(aPlayer->getPlayerClass()->getAttackBonus()) + "\015\012";
+    message += "Armor Bonus: " + std::to_string(aPlayer->getPlayerClass()->getArmorBonus()) + "\015\012";
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 

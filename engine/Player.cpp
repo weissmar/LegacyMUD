@@ -299,7 +299,6 @@ void Player::addAllLexicalData(InteractiveNoun *anObject){
         verbAliases = anObject->getVerbAliases();
 
         for (auto noun : nounAliases){
-            std::cout << "noun alias to add to player: " << noun << "\n";
             inventoryLexicalData.addNoun(noun, anObject);
         }
         for (auto verb : verbAliases){
@@ -319,7 +318,6 @@ void Player::removeAllLexicalData(InteractiveNoun *anObject){
         verbAliases = anObject->getVerbAliases();
 
         for (auto noun : nounAliases){
-            std::cout << "noun alias to remove from player: " << noun << "\n";
             inventoryLexicalData.removeNoun(noun, anObject);
         }
         for (auto verb : verbAliases){
@@ -396,7 +394,6 @@ bool Player::registerAlias(bool isVerb, std::string alias, InteractiveNoun *anOb
         if (isVerb){
             inventoryLexicalData.addVerb(alias, anObject);
         } else {
-            std::cout << "noun alias to add to player: " << alias << "\n";
             inventoryLexicalData.addNoun(alias, anObject);
         }
         return true;
@@ -412,7 +409,6 @@ bool Player::unregisterAlias(bool isVerb, std::string alias, InteractiveNoun *an
         if (isVerb){
             inventoryLexicalData.removeVerb(alias, anObject);
         } else {
-            std::cout << "noun alias to remove from player: " << alias << "\n";
             inventoryLexicalData.removeNoun(alias, anObject);
         }
         return true;
@@ -445,8 +441,6 @@ std::string Player::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContai
     std::string message = "";
     EffectType anEffect = EffectType::NONE;
     bool success;
-
-std::cout << "inside Player::take\n";
 
     success = addToInventory(anItem);
     if (success){
