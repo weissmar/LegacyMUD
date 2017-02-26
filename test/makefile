@@ -29,12 +29,17 @@ EXT_LIB = $(foreach ext_lib_name, $(EXT_LIB_NAMES), -l$(ext_lib_name))
 # The name of the unit test executable
 PROG = unittest
 
-all: $(LIBS) $(OBJS)
+all: libdirs $(LIBS) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS) -Wl,--start-group $(LIBS) -Wl,--end-group $(EXT_BIN) $(EXT_LIB)
 
+# Rules to force the library makefiles to always run
+.PHONY: libdirs $(LIB_DIRS)
+
+libdirs: $(LIB_DIRS)
+
 # Run the makefile for each library
-%.a: $(dir $@)
-	$(MAKE) -C $(dir $@)
+$(LIB_DIRS):
+	$(MAKE) -C $@
 
 # Generic rule for compiling all .cpp files to .o files
 %.o: %.cpp
