@@ -1,13 +1,14 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
  * \details     Implementation file for Player class. 
  ************************************************************************/
 
+#include <iostream>
 #include "Player.hpp"
 #include "Area.hpp"
 #include "Quest.hpp"
@@ -15,6 +16,8 @@
 #include "PlayerClass.hpp"
 #include "InteractiveNoun.hpp"
 #include "SpecialSkill.hpp"
+#include "Item.hpp"
+#include "Container.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -242,11 +245,174 @@ bool Player::updateQuest(Quest *aQuest, int step){
 
 
 bool Player::addToInventory(Item *anItem){
-    return false;
+    bool success = false; 
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+
+    if (anItem != nullptr){
+        success = Character::addToInventory(anItem);
+        addAllLexicalData(anItem);
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            aContainer = dynamic_cast<Container*>(anItem);
+            if (aContainer != nullptr){
+                contents = aContainer->getAllContents();
+                for (auto content : contents){
+                    addAllLexicalData(content);
+                }
+            }
+        }
+    }
+    return success;
 }
 
 
 bool Player::removeFromInventory(Item *anItem){
+    bool success = false;  
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+
+    if (anItem != nullptr){
+        success = Character::removeFromInventory(anItem);
+        removeAllLexicalData(anItem);
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            aContainer = dynamic_cast<Container*>(anItem);
+            if (aContainer != nullptr){
+                contents = aContainer->getAllContents();
+                for (auto content : contents){
+                    removeAllLexicalData(content);
+                }
+            }
+        }
+    }
+    return success;
+}
+
+
+void Player::addAllLexicalData(InteractiveNoun *anObject){
+    std::vector<std::string> nounAliases, verbAliases;
+
+    if (anObject != nullptr){
+        std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+        nounAliases = anObject->getNounAliases();
+        verbAliases = anObject->getVerbAliases();
+
+        for (auto noun : nounAliases){
+            inventoryLexicalData.addNoun(noun, anObject);
+        }
+        for (auto verb : verbAliases){
+            inventoryLexicalData.addVerb(verb, anObject);
+        }
+    }
+    
+}
+
+
+void Player::removeAllLexicalData(InteractiveNoun *anObject){
+    std::vector<std::string> nounAliases, verbAliases;
+
+    if (anObject != nullptr){
+        std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+        nounAliases = anObject->getNounAliases();
+        verbAliases = anObject->getVerbAliases();
+
+        for (auto noun : nounAliases){
+            inventoryLexicalData.removeNoun(noun, anObject);
+        }
+        for (auto verb : verbAliases){
+            inventoryLexicalData.removeVerb(verb, anObject);
+        }
+    }
+}
+
+
+bool Player::addNounAlias(std::string alias){
+    bool success = false;
+    Area *location = getLocation();
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (location != nullptr){
+        location->registerAlias(false, alias, this);
+    }
+    success = InteractiveNoun::addNounAlias(alias);
+
+    return success;
+}
+
+
+bool Player::removeNounAlias(std::string alias){
+    bool success = false;
+    Area *location = getLocation();
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (location != nullptr){
+        location->unregisterAlias(false, alias, this);
+    }
+    success = InteractiveNoun::removeNounAlias(alias);
+
+    return success;
+}
+
+
+bool Player::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+    Area *location = getLocation();
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (location != nullptr){
+        location->registerAlias(true, alias, this);
+    }
+    success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+
+    return success;
+}
+
+
+bool Player::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+    Area *location = getLocation();
+
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (location != nullptr){
+        location->unregisterAlias(true, alias, this);
+    }
+    success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+
+    return success;
+}
+
+
+bool Player::registerAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            inventoryLexicalData.addVerb(alias, anObject);
+        } else {
+            inventoryLexicalData.addNoun(alias, anObject);
+        }
+        return true;
+    }
+    return false;
+}
+
+
+bool Player::unregisterAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            inventoryLexicalData.removeVerb(alias, anObject);
+        } else {
+            inventoryLexicalData.removeNoun(alias, anObject);
+        }
+        return true;
+    }
     return false;
 }
 

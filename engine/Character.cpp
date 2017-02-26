@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -34,7 +34,9 @@ Character::Character(std::string name, std::string description, int money, Area 
 , money(money)
 , location(aLocation)
 , maxInventoryWeight(maxInventoryWeight)
-{ }
+{
+    InteractiveNoun::addNounAlias(name);
+}
 
 
 /*Character::Character(const Character &otherCharacter){
@@ -86,7 +88,9 @@ std::vector<Item*> Character::getItemsInventory() const{
     std::vector<Item*> items;
 
     for (auto item : inventory){
-        items.push_back(item.second);
+        if (item.first == EquipmentSlot::NONE){
+            items.push_back(item.second);
+        }
     }
 
     return items;

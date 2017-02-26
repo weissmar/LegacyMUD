@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -15,6 +15,8 @@
 #include "Feature.hpp"
 #include "CommandEnum.hpp"
 #include "Action.hpp"
+#include "Container.hpp"
+#include <iostream>
 #include <algorithm>
 
 namespace legacymud { namespace engine {
@@ -115,29 +117,40 @@ std::string Area::getFullDescription(int excludeID) const{
     std::vector<Exit*> allExits = getExits();
 
     message += "\015\012";
-    if (allFeatures.size() != 0){
-        message += "You see ";
-        for (auto feature : allFeatures){
-            message += feature->getName();
-            message += ", ";
-        }
-        message += "\015\012";
-    }
     
+    for (auto feature : allFeatures){
+        message += "You see a ";
+        message += feature->getName();
+        message += " ";
+        message += feature->getPlacement();
+        message += ".\015\012";
+    }
+
     for (auto exit : allExits){
         message += exit->getDirectionString();
         message += " you see ";
         message += exit->getName();
         message += ".\015\012";
     }
-    if (allItems.size() != 0){
-        message += "Around you, you see ";
-        for (auto item : allItems){
-            message += item->getName();
-            message += ", ";
+
+    if (allItems.size() == 1){
+        message += "You see a ";
+        message += allItems[0]->getName();
+        message += " on the ground.";
+    } else if (allItems.size() > 1){
+        message += "Around you, you see a ";
+        for (size_t i = 0; i < allItems.size(); i++){
+            message += allItems[i]->getName();
+            if (i == (allItems.size() - 2)){
+                message += " and a ";
+            } else if (i == (allItems.size() - 1)){
+                message += ".";
+            } else {
+                message += ", a ";    
+            }
         }
-        message += "\015\012";
     }
+    message += "\015\012";
     
 
     for (size_t i = 0; i < allCharacters.size(); i++){
@@ -186,12 +199,26 @@ bool Area::setSize(AreaSize size){
     return true;
 }
 
-
+// would be best to remove dynamic_cast ********************************************************
 bool Area::addItem(Item *anItem){
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+
     if (anItem != nullptr){
         std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
         itemContents.push_back(anItem);
         addAllLexicalData(anItem);
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            aContainer = dynamic_cast<Container*>(anItem);
+            if (aContainer != nullptr){
+                contents = aContainer->getAllContents();
+                for (auto content : contents){
+                    addAllLexicalData(content);
+                }
+            }
+        }
+
         return true;
     }
     return false;
@@ -269,10 +296,24 @@ void Area::removeAllLexicalData(InteractiveNoun *anObject){
 
 
 bool Area::removeItem(Item *anItem){
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+
     if (anItem != nullptr){
         std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
         itemContents.erase(std::remove(itemContents.begin(), itemContents.end(), anItem), itemContents.end());
         removeAllLexicalData(anItem);
+
+        if (anItem->getObjectType() == ObjectType::CONTAINER){
+            aContainer = dynamic_cast<Container*>(anItem);
+            if (aContainer != nullptr){
+                contents = aContainer->getAllContents();
+                for (auto content : contents){
+                    removeAllLexicalData(content);
+                }
+            }
+        }
+        
         return true;
     }
     return false;
@@ -357,6 +398,36 @@ bool Area::removeVerbAlias(CommandEnum aCommand, std::string alias){
     success = InteractiveNoun::removeVerbAlias(aCommand, alias);
 
     return success;
+}
+
+
+bool Area::registerAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            contentsLexicalData.addVerb(alias, anObject);
+        } else {
+            contentsLexicalData.addNoun(alias, anObject);
+        }
+        return true;
+    }
+    return false;
+}
+
+
+bool Area::unregisterAlias(bool isVerb, std::string alias, InteractiveNoun *anObject){
+    std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
+
+    if (anObject != nullptr){
+        if (isVerb){
+            contentsLexicalData.removeVerb(alias, anObject);
+        } else {
+            contentsLexicalData.removeNoun(alias, anObject);
+        }
+        return true;
+    }
+    return false;
 }
 
 

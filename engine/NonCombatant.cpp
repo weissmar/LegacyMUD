@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -55,6 +55,58 @@ bool NonCombatant::setQuest(Quest *aQuest){
     }
 
     return false;
+}
+
+
+bool NonCombatant::addNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(false, alias, this);
+        success = InteractiveNoun::addNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool NonCombatant::removeNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(false, alias, this);
+        success = InteractiveNoun::removeNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool NonCombatant::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(true, alias, this);
+        success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+    }
+
+    return success;
+}
+
+
+bool NonCombatant::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(true, alias, this);
+        success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+    }
+
+    return success;
 }
 
 

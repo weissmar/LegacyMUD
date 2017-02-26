@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -69,6 +69,58 @@ bool Creature::setType(CreatureType *aType){
 bool Creature::setAmbulatory(bool ambulatory){
     this->ambulatory.store(ambulatory);
     return true;
+}
+
+
+bool Creature::addNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(false, alias, this);
+        success = InteractiveNoun::addNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Creature::removeNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(false, alias, this);
+        success = InteractiveNoun::removeNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Creature::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(true, alias, this);
+        success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+    }
+
+    return success;
+}
+
+
+bool Creature::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(true, alias, this);
+        success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+    }
+
+    return success;
 }
 
 

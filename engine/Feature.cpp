@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/23/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -9,6 +9,7 @@
  ************************************************************************/
 
 #include "Feature.hpp"
+#include "Area.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -16,14 +17,18 @@ Feature::Feature()
 : ConditionalElement()
 , name("")
 , placement("")
+, location(nullptr)
 { }
 
 
-Feature::Feature(std::string name, std::string placement, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
+Feature::Feature(std::string name, std::string placement, Area *location, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
 : ConditionalElement(isConditional, anItemType, description, altDescription)
-, name("")
-, placement("")
-{ }
+, name(name)
+, placement(placement)
+, location(location)
+{
+    InteractiveNoun::addNounAlias(name);
+}
 
 
 std::string Feature::getName() const{
@@ -35,6 +40,12 @@ std::string Feature::getName() const{
 std::string Feature::getPlacement() const{
     std::lock_guard<std::mutex> placementLock(placementMutex);
     return placement;
+}
+
+
+Area* Feature::getLocation() const{
+    std::lock_guard<std::mutex> locationLock(locationMutex);
+    return location;
 }
 
 
@@ -51,6 +62,69 @@ bool Feature::setPlacement(std::string placement){
     this->placement = placement;
 
     return true;
+}
+
+
+bool Feature::setLocation(Area *anArea){
+    if (anArea != nullptr){
+        std::lock_guard<std::mutex> locationLock(locationMutex);
+        location = anArea;
+        return true;
+    }
+
+    return false;
+}
+
+
+bool Feature::addNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(false, alias, this);
+        success = InteractiveNoun::addNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Feature::removeNounAlias(std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(false, alias, this);
+        success = InteractiveNoun::removeNounAlias(alias);
+    }
+
+    return success;
+}
+
+
+bool Feature::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->registerAlias(true, alias, this);
+        success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+    }
+
+    return success;
+}
+
+
+bool Feature::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+
+    Area *anArea = getLocation();
+    if (anArea != nullptr){
+        anArea->unregisterAlias(true, alias, this);
+        success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+    }
+
+    return success;
 }
 
 

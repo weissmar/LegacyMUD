@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -10,10 +10,13 @@
  *              in-game items.
  ************************************************************************/
 
+#include <iostream>
 #include "Item.hpp"
 #include "ItemType.hpp"
 #include "SpecialSkill.hpp"
 #include "Player.hpp"
+#include "Container.hpp"
+#include "Area.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -32,7 +35,9 @@ Item::Item(InteractiveNoun* location, ItemPosition position, std::string name, I
 , position(position)
 , name(name)
 , type(type)
-{ }
+{
+    InteractiveNoun::addNounAlias(name);
+}
 
 
 /*Item::Item(const Item &otherItem){
@@ -110,6 +115,222 @@ bool Item::setType(ItemType *type){
 }
 
 
+bool Item::addNounAlias(std::string alias){
+    bool success = false;
+    Container *aContainer = nullptr;
+
+    ItemPosition aPosition = getPosition();
+    InteractiveNoun *location = getLocation();
+
+    while (location != nullptr){
+        if (aPosition == ItemPosition::GROUND){
+            // location is an area
+            success = location->registerAlias(false, alias, this);
+            location = nullptr;
+        } else if ((aPosition == ItemPosition::IN) || (aPosition == ItemPosition::ON) || (aPosition == ItemPosition::UNDER)){
+            if (location->getObjectType() == ObjectType::CONTAINER){
+                // location is a container
+                aContainer = dynamic_cast<Container*>(location);
+                if (aContainer != nullptr){
+                    location = aContainer->getLocation();
+                    aPosition = aContainer->getPosition();
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
+            } else {
+                location = nullptr;
+                success = false;
+            }
+        } else if ((aPosition == ItemPosition::INVENTORY) || (aPosition == ItemPosition::EQUIPPED)){
+            // location is a character
+            if (location->getObjectType() == ObjectType::PLAYER){
+                // location is a player
+                success = location->registerAlias(false, alias, this);
+                location = nullptr;
+            } else {
+                // location is a creature or NPC
+                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
+                location = nullptr;
+                success = true;
+            }
+        } else {
+            // position is NONE, something has gone wrong
+            location = nullptr;
+            success = false;
+        }
+    }
+
+    if (success){
+        success = InteractiveNoun::addNounAlias(alias);
+    }
+    
+    return success;
+}
+
+
+bool Item::removeNounAlias(std::string alias){
+    bool success = false;
+    Container *aContainer = nullptr;
+
+    ItemPosition aPosition = getPosition();
+    InteractiveNoun *location = getLocation();
+
+    while (location != nullptr){
+        if (aPosition == ItemPosition::GROUND){
+            // location is an area
+            success = location->unregisterAlias(false, alias, this);
+            location = nullptr;
+        } else if ((aPosition == ItemPosition::IN) || (aPosition == ItemPosition::ON) || (aPosition == ItemPosition::UNDER)){
+            if (location->getObjectType() == ObjectType::CONTAINER){
+                // location is a container
+                aContainer = dynamic_cast<Container*>(location);
+                if (aContainer != nullptr){
+                    location = aContainer->getLocation();
+                    aPosition = aContainer->getPosition();
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
+            } else {
+                location = nullptr;
+                success = false;
+            }
+        } else if ((aPosition == ItemPosition::INVENTORY) || (aPosition == ItemPosition::EQUIPPED)){
+            // location is a character
+            if (location->getObjectType() == ObjectType::PLAYER){
+                // location is a player
+                success = location->unregisterAlias(false, alias, this);
+                location = nullptr;
+            } else {
+                // location is a creature or NPC
+                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
+                location = nullptr;
+                success = true;
+            }
+        } else {
+            // position is NONE, something has gone wrong
+            location = nullptr;
+            success = false;
+        }
+    }
+
+    if (success){
+        success = InteractiveNoun::removeNounAlias(alias);
+    }
+    
+    return success;
+}
+
+
+bool Item::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
+    bool success = false;
+    Container *aContainer = nullptr;
+
+    ItemPosition aPosition = getPosition();
+    InteractiveNoun *location = getLocation();
+
+    while (location != nullptr){
+        if (aPosition == ItemPosition::GROUND){
+            // location is an area
+            success = location->registerAlias(true, alias, this);
+            location = nullptr;
+        } else if ((aPosition == ItemPosition::IN) || (aPosition == ItemPosition::ON) || (aPosition == ItemPosition::UNDER)){
+            if (location->getObjectType() == ObjectType::CONTAINER){
+                // location is a container
+                aContainer = dynamic_cast<Container*>(location);
+                if (aContainer != nullptr){
+                    location = aContainer->getLocation();
+                    aPosition = aContainer->getPosition();
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
+            } else {
+                location = nullptr;
+                success = false;
+            }
+        } else if ((aPosition == ItemPosition::INVENTORY) || (aPosition == ItemPosition::EQUIPPED)){
+            // location is a character
+            if (location->getObjectType() == ObjectType::PLAYER){
+                // location is a player
+                success = location->registerAlias(true, alias, this);
+                location = nullptr;
+            } else {
+                // location is a creature or NPC
+                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
+                location = nullptr;
+                success = true;
+            }
+        } else {
+            // position is NONE, something has gone wrong
+            location = nullptr;
+            success = false;
+        }
+    }
+
+    if (success){
+        success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+    }
+    
+    return success;
+}
+
+
+bool Item::removeVerbAlias(CommandEnum aCommand, std::string alias){
+    bool success = false;
+    Container *aContainer = nullptr;
+
+    ItemPosition aPosition = getPosition();
+    InteractiveNoun *location = getLocation();
+
+    while (location != nullptr){
+        if (aPosition == ItemPosition::GROUND){
+            // location is an area
+            success = location->unregisterAlias(true, alias, this);
+            location = nullptr;
+        } else if ((aPosition == ItemPosition::IN) || (aPosition == ItemPosition::ON) || (aPosition == ItemPosition::UNDER)){
+            if (location->getObjectType() == ObjectType::CONTAINER){
+                // location is a container
+                aContainer = dynamic_cast<Container*>(location);
+                if (aContainer != nullptr){
+                    location = aContainer->getLocation();
+                    aPosition = aContainer->getPosition();
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
+            } else {
+                location = nullptr;
+                success = false;
+            }
+        } else if ((aPosition == ItemPosition::INVENTORY) || (aPosition == ItemPosition::EQUIPPED)){
+            // location is a character
+            if (location->getObjectType() == ObjectType::PLAYER){
+                // location is a player
+                success = location->unregisterAlias(true, alias, this);
+                location = nullptr;
+            } else {
+                // location is a creature or NPC
+                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
+                location = nullptr;
+                success = true;
+            }
+        } else {
+            // position is NONE, something has gone wrong
+            location = nullptr;
+            success = false;
+        }
+    }
+
+    if (success){
+        success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+    }
+    
+    return success;
+}
+
+
 ObjectType Item::getObjectType() const{
     return ObjectType::ITEM;
 }
@@ -126,13 +347,43 @@ bool Item::deserialize(std::string){
 
 
 std::string Item::look(std::vector<EffectType> *effects){
-    return "";
+    std::string message;
+    ItemType *aType = getType();
+
+    message = "The " + getName() + " is ";
+    message += aType->getDescription() + ".";
+
+    return message;
 }  
 
-
+// would be better if got rid of dynamic cast **************************************************************
 std::string Item::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message;
+    Area *anArea = nullptr;
     EffectType anEffect = EffectType::NONE;
+
+    // check if this item is contained within a container
+    ItemPosition position = getPosition();
+    InteractiveNoun *location = getLocation();
+
+    if ((position == ItemPosition::IN) || (position == ItemPosition::ON) || (position == ItemPosition::UNDER)){
+        if ((location == aContainer) && (aContainer != nullptr)){
+            aContainer->take(nullptr, this, aContainer, nullptr, nullptr);
+        } else {
+            return "false";
+        }
+    } else if (position == ItemPosition::GROUND) {
+        // location is an area
+        anArea = dynamic_cast<Area*>(location);
+        if (anArea != nullptr){
+            // remove item from area
+            anArea->removeItem(this);
+        } else {
+            return "false";
+        }
+    } else {
+        return "false";
+    }
 
     setPosition(ItemPosition::INVENTORY);
     // get results of take for this object
@@ -151,21 +402,87 @@ std::string Item::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContaine
         setLocation(aPlayer);
         message += aPlayer->take(aPlayer, this, nullptr, nullptr, effects);
     }
-    if (aContainer != nullptr){
-        aContainer->take(nullptr, this, aContainer, nullptr, nullptr);
+
+    return message;
+}
+
+// would be better if got rid of dynamic cast **************************************************************
+std::string Item::put(Player *aPlayer, Item *anItem, InteractiveNoun *containingNoun, ItemPosition position, std::vector<EffectType> *effects){
+    Area *anArea;
+    InteractiveNoun *location;
+    ItemPosition currPosition;
+    std::string message = "";
+    EffectType anEffect;
+
+    location = getLocation();
+    currPosition = getPosition();
+
+    // check if this item is contained within a container
+    if ((currPosition == ItemPosition::IN) || (currPosition == ItemPosition::ON) || (currPosition == ItemPosition::UNDER)){
+        return "false";
+    } else if (currPosition == ItemPosition::GROUND) {
+        // location is an area
+        anArea = dynamic_cast<Area*>(location);
+        if (anArea != nullptr){
+            // remove item from area
+            anArea->removeItem(this);
+        } else {
+            return "false";
+        }
+    } else if ((currPosition == ItemPosition::INVENTORY) || (currPosition == ItemPosition::EQUIPPED)){
+        // location is a character
+        if (location->getID() == aPlayer->getID()){
+            aPlayer->removeFromInventory(this);
+        } else {
+            return "false";
+        }
+    } else {
+        return "false";
     }
+
+    setPosition(position);
+    // get results of put for this object
+    message = getTextAndEffect(CommandEnum::PUT, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+    // call this function on containingNoun
+    if (containingNoun != nullptr){
+        setLocation(containingNoun);
+        message += containingNoun->put(aPlayer, this, nullptr, position, effects);
+    } 
 
     return message;
 }
 
 
-std::string Item::put(Player*, Item*, InteractiveNoun*, ItemPosition, std::vector<EffectType> *effects){
-    return "";
-}
+std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect;
+    ItemPosition position = getPosition();
+    InteractiveNoun *location = getLocation();
+    Area *anArea = aPlayer->getLocation();
 
+    if ((position == ItemPosition::INVENTORY) || (position == ItemPosition::EQUIPPED)){
+        if ((location != nullptr) && (location->getID() == aPlayer->getID())){
+            setLocation(anArea);
+            setPosition(ItemPosition::GROUND);
+            aPlayer->removeFromInventory(this);
+            anArea->addItem(this);
 
-std::string Item::drop(Player*, std::vector<EffectType> *effects){
-    return "";
+            // get results of put for this object
+            message = getTextAndEffect(CommandEnum::DROP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+        } else {
+            message = "false";
+        }
+    } else {
+        message = "false";
+    }
+
+    return message;
 }
 
 

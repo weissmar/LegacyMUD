@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/21/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -36,7 +36,9 @@ CombatantType::CombatantType(std::string name, SpecialSkill* skill, int attackBo
 , resistantTo(resistantTo)
 , weakTo(weakTo)
 , healPoints(healPoints)
-{ }
+{
+    addNounAlias(name);
+}
 
 
 /*CombatantType::CombatantType(const CombatantType &otherCombatantType){

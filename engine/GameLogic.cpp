@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -27,6 +27,7 @@
 #include "Container.hpp"
 #include "Item.hpp"
 #include "ItemType.hpp"
+#include "Exit.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -71,8 +72,9 @@ GameLogic::~GameLogic(){
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
     PlayerClass *aClass;
-    ItemType *anItemType;
+    ItemType *anItemType, *anotherItemType;
     Item *anItem;
+    Container *aContainer;
 
     accountManager = anAccount;
     theServer = aServer;
@@ -87,6 +89,13 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     anItem = new Item(&startArea, ItemPosition::GROUND, "red apple", anItemType);
     manager->addObject(anItem, -1);
     startArea.addItem(anItem);
+
+    // create a test item type and container
+    anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
+    manager->addObject(anItemType, -1);
+    aContainer = new Container(5, &startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
+    manager->addObject(aContainer, -1);
+    startArea.addItem(aContainer);
 
     return false;
 }
@@ -736,8 +745,8 @@ void GameLogic::printParseResult(parser::ParseResult result){
     }
     
     std::cout << "\ndirectAlias = " << result.directAlias;
-    std::cout << "indirect = ";
-    for (size_t i = 0; i < result.direct.size(); i++){
+    std::cout << "\nindirect = ";
+    for (size_t i = 0; i < result.indirect.size(); i++){
         if (result.indirect[i] != nullptr){
             std::cout << result.indirect[i]->getName();
         } else {
@@ -970,6 +979,7 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             success = listenCommand(aPlayer);
             break;
         case CommandEnum::TAKE:
+        std::cout << "inside case CommandEnum::TAKE in executeCommand\n";
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);
             // clarify indirect
@@ -1222,6 +1232,7 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
 
 InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *directObj = nullptr;
+std::cout << "inside clarifyDirect\n";
 
     if (result.direct.size() == 1){
         directObj = result.direct[0];
@@ -1235,6 +1246,7 @@ InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult r
 
 InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *indirectObj = nullptr;
+std::cout << "inside clarifyIndirect\n";
 
     if (result.indirect.size() == 1){
         indirectObj = result.indirect[0];
@@ -1396,22 +1408,26 @@ bool GameLogic::listenCommand(Player *aPlayer){
 bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
     bool success = false;
     std::vector<EffectType> effects;
-    std::string message;
+    std::string message, resultMessage;
 
     if (directObj != nullptr){
-        message += "You pick up the " + directObj->getName() + ". ";
+        message = "You pick up the " + directObj->getName() + ". ";
         if ((indirectObj != nullptr) && (indirectObj->getObjectType() == ObjectType::CONTAINER) && ((directObj->getObjectType() == ObjectType::ITEM) || (directObj->getObjectType() == ObjectType::CONTAINER))){
             // command is of the form: take ___ from ___
-            message += directObj->take(aPlayer, nullptr, indirectObj, nullptr, &effects);
+            resultMessage = directObj->take(aPlayer, nullptr, indirectObj, nullptr, &effects);
         } else {
-            message += directObj->take(aPlayer, nullptr, nullptr, nullptr, &effects);
+            resultMessage = directObj->take(aPlayer, nullptr, nullptr, nullptr, &effects);
         }
-        if (message.compare("false") != 0){
-            success = true;
-        }
+        success = true;
     }
 
-    if (success){
+    if (resultMessage.compare("false") == 0){
+        message = "You can't pick that up.";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
@@ -1422,17 +1438,131 @@ bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, Interac
 
 
 bool GameLogic::putCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, ItemPosition aPosition){
-    return false;
+    bool success = false;
+    std::vector<EffectType> effects;
+    std::string message, resultMessage;
+
+    if ((directObj != nullptr) && (indirectObj != nullptr)){
+        message = "You put the " + directObj->getName();
+        if (aPosition == ItemPosition::IN){
+            message += " in the ";
+        } else if (aPosition == ItemPosition::ON){
+            message += " on the ";
+        } else if (aPosition == ItemPosition::UNDER){
+            message += " under the ";
+        } else {
+            return false;
+        }
+        message += indirectObj->getName() + ".";
+
+        resultMessage = directObj->put(aPlayer, nullptr, indirectObj, aPosition, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You don't have access to the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    bool success = false;
+    std::vector<EffectType> effects;
+    std::string message, resultMessage;
+
+    if (directObj != nullptr){
+        message = "You drop the " + directObj->getName() + " on the ground.";
+
+        resultMessage = directObj->drop(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You don't have access to the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::inventoryCommand(Player *aPlayer){
-    return false;
+    std::string message;
+    std::vector<Item*> inventory = aPlayer->getItemsInventory();
+    std::vector<std::pair<EquipmentSlot, Item*>> equipment = aPlayer->getEquipped();
+
+    message = "Your Inventory:\015\012";
+    for (auto item : inventory){
+        message += item->getName() + "\015\012";
+    }
+    message += "Equipped Items:\015\012";
+    for (auto equip : equipment){
+        switch (equip.first){
+            case EquipmentSlot::HEAD:
+                message += "Head: ";
+                break;
+            case EquipmentSlot::SHOULDERS:
+                message += "Shoulders: ";
+                break;
+            case EquipmentSlot::NECK:
+                message += "Neck: ";
+                break;
+            case EquipmentSlot::TORSO:
+                message += "Torso: ";
+                break;
+            case EquipmentSlot::BELT:
+                message += "Belt: ";
+                break;
+            case EquipmentSlot::LEGS:
+                message += "Legs: ";
+                break;
+            case EquipmentSlot::ARMS:
+                message += "Arms: ";
+                break;
+            case EquipmentSlot::HANDS:
+                message += "Hands: ";
+                break;
+            case EquipmentSlot::RIGHT_HAND:
+                message += "Right hand: ";
+                break;
+            case EquipmentSlot::LEFT_HAND:
+                message += "Left hand: ";
+                break;
+            case EquipmentSlot::FEET:
+                message += "Feet: ";
+                break;
+            case EquipmentSlot::RIGHT_RING:
+                message += "Right ring: ";
+                break;
+            case EquipmentSlot::LEFT_RING:
+                message += "Left ring: ";
+                break;
+            default:
+                message += "";
+        }
+        message += equip.second->getName() + "\015\012";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 
@@ -1442,7 +1572,59 @@ bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::equipmentCommand(Player *aPlayer){
-    return false;
+    std::string message;
+    std::vector<std::pair<EquipmentSlot, Item*>> equipment = aPlayer->getEquipped();
+
+    message += "Equipped Items:\015\012";
+    for (auto equip : equipment){
+        switch (equip.first){
+            case EquipmentSlot::HEAD:
+                message += "Head: ";
+                break;
+            case EquipmentSlot::SHOULDERS:
+                message += "Shoulders: ";
+                break;
+            case EquipmentSlot::NECK:
+                message += "Neck: ";
+                break;
+            case EquipmentSlot::TORSO:
+                message += "Torso: ";
+                break;
+            case EquipmentSlot::BELT:
+                message += "Belt: ";
+                break;
+            case EquipmentSlot::LEGS:
+                message += "Legs: ";
+                break;
+            case EquipmentSlot::ARMS:
+                message += "Arms: ";
+                break;
+            case EquipmentSlot::HANDS:
+                message += "Hands: ";
+                break;
+            case EquipmentSlot::RIGHT_HAND:
+                message += "Right hand: ";
+                break;
+            case EquipmentSlot::LEFT_HAND:
+                message += "Left hand: ";
+                break;
+            case EquipmentSlot::FEET:
+                message += "Feet: ";
+                break;
+            case EquipmentSlot::RIGHT_RING:
+                message += "Right ring: ";
+                break;
+            case EquipmentSlot::LEFT_RING:
+                message += "Left ring: ";
+                break;
+            default:
+                message += "";
+        }
+        message += equip.second->getName() + "\015\012";
+    }
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 
@@ -1462,7 +1644,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
 
 
 bool GameLogic::speakCommand(Player *aPlayer, const std::string &stringParam){
-    std::string message = aPlayer->getName() + " says " + stringParam;
+    std::string message = aPlayer->getName() + " says \"" + stringParam + "\"";
 
     messageAreaPlayers(aPlayer, message, aPlayer->getLocation());
     return true;
@@ -1470,12 +1652,53 @@ bool GameLogic::speakCommand(Player *aPlayer, const std::string &stringParam){
 
 
 bool GameLogic::shoutCommand(Player *aPlayer, const std::string &stringParam){
-    return false;
+    std::vector<Area*> areas;
+    Area *anotherArea = nullptr;
+    bool found = false;
+    int i = 2;
+    std::string message = aPlayer->getName() + " shouts \"" + stringParam + "\"";
+
+    areas.push_back(aPlayer->getLocation());
+
+    while (i > 0){
+        for (auto anArea : areas){
+            for (auto exit : anArea->getExits()){
+                anotherArea = exit->getConnectArea();
+                if (anotherArea != nullptr){
+                    found = false;
+                    for (auto area : areas){
+                        if (area == anotherArea){
+                            found = true;
+                        }
+                    }
+                    if (!found){
+                        areas.push_back(anotherArea);
+                    }
+                }
+            }
+        }
+        i--;
+    }
+
+    for (auto area : areas){
+        messageAreaPlayers(aPlayer, message, area);
+    }
+
+    return true;
 }
 
 
 bool GameLogic::whisperCommand(Player *aPlayer, InteractiveNoun *indirectObj, const std::string &stringParam){
-    return false;
+    Player *otherPlayer = nullptr;
+    std::string message = aPlayer->getName() + " whispers \"" + stringParam + "\" to you."; 
+
+    if ((indirectObj != nullptr) && (indirectObj->getObjectType() == ObjectType::PLAYER)){
+        otherPlayer = dynamic_cast<Player*>(indirectObj);
+        if (otherPlayer != nullptr){
+            messagePlayer(otherPlayer, message);
+        }
+    }
+    return true;
 }
 
 
@@ -1501,7 +1724,21 @@ bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::statsCommand(Player *aPlayer){
-    return false;
+    std::string message = "";
+
+    message += "Level: " + std::to_string(aPlayer->getLevel()) + "\015\012";
+    message += "Experience Points: " + std::to_string(aPlayer->getExperiencePoints()) + "\015\012";
+    message += "Health: " + std::to_string(aPlayer->getCurrentHealth()) + "/" + std::to_string(aPlayer->getMaxHealth()) + "\015\012";
+    message += "Special Points: " + std::to_string(aPlayer->getCurrentSpecialPts()) + "/" + std::to_string(aPlayer->getMaxSpecialPts()) + "\015\012";
+    message += "Strength: " + std::to_string(aPlayer->getStrength()) + "\015\012";
+    message += "Dexterity: " + std::to_string(aPlayer->getDexterity()) + "\015\012";
+    message += "Intelligence: " + std::to_string(aPlayer->getIntelligence()) + "\015\012";
+    message += "Attack Bonus: " + std::to_string(aPlayer->getPlayerClass()->getAttackBonus()) + "\015\012";
+    message += "Armor Bonus: " + std::to_string(aPlayer->getPlayerClass()->getArmorBonus()) + "\015\012";
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 

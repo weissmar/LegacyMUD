@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Exit.hpp
  *
@@ -34,7 +34,7 @@ class Area;
 class Exit: public ConditionalElement {
     public:
         Exit();
-        Exit(ExitDirection direction, EffectType effect, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
+        Exit(ExitDirection direction, EffectType effect, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
         /*Exit(const Exit &otherExit);
         Exit & operator=(const Exit &otherExit);
         virtual ~Exit();*/
@@ -68,6 +68,13 @@ class Exit: public ConditionalElement {
         Area* getConnectArea() const;
 
         /*!
+         * \brief   Gets the location of this exit.
+         *
+         * \return  Returns an Area* with the location of this exit.
+         */
+        Area* getLocation() const;
+
+        /*!
          * \brief   Sets the direction of this exit.
          * 
          * \param[in] aDirection    Specifies the direction of this exit
@@ -96,6 +103,16 @@ class Exit: public ConditionalElement {
          *          area was successful.
          */
         bool setConnectArea(Area *anArea);
+
+        /*!
+         * \brief   Sets the location of this exit.
+         * 
+         * \param[in] anArea    Specifies the location of this exit
+         *
+         * \return  Returns a bool indicating whether or not setting the location 
+         *          was successful.
+         */
+        bool setLocation(Area *anArea);
 
         /*!
          * \brief   Gets the description.
@@ -373,6 +390,8 @@ class Exit: public ConditionalElement {
     private:
         std::atomic<ExitDirection> direction;
         std::atomic<EffectType> effect;
+        Area *location;
+        mutable std::mutex locationMutex;
         Area *connectArea;
         mutable std::mutex connectAreaMutex;
 };

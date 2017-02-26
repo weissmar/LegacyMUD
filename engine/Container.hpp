@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -107,6 +107,14 @@ class Container: public Item {
         std::vector<Item*> getTopContents() const;
 
         /*!
+         * \brief   Gets all of the contents of this container.
+         *
+         * \return  Returns a std::vector<Item*> with all of the contents of
+         *          this container.
+         */
+        std::vector<Item*> getAllContents() const;
+
+        /*!
          * \brief   Gets the inside capacity of this container.
          *
          * \return  Returns an int with the inside capacity of this container.
@@ -122,60 +130,6 @@ class Container: public Item {
          *          capacity was successful.
          */
         bool setInsideCapacity(int capacity);
-
-        /*!
-         * \brief   Adds the specified noun alias to this interactive noun.
-         *
-         * \param[in] alias     Specifies the noun alias to add.
-         *
-         * \return  Returns a bool indicating whether or not the noun alias 
-         *          was added successfully.
-         */
-        virtual bool addNounAlias(std::string);
-
-        /*!
-         * \brief   Removes the specified noun alias from this interactive noun.
-         *
-         * \param[in] alias     Specifies the noun alias to remove
-         *
-         * \return  Returns a bool indicating whether or not the noun alias 
-         *          was found and removed successfully.
-         */
-        virtual bool removeNounAlias(std::string);
-
-        /*!
-         * \brief   Adds an alias of the specified command for this interactive noun.
-         *
-         * This function adds an alias-grammar pair to the map of aliases
-         * for the Action associated with the specified command for this interactive 
-         * noun.
-         * 
-         * \param[in] aCommand      Specifies the command the alias is aliasing.
-         * \param[in] alias         Specifies the verb alias to be added.
-         * \param[in] direct        Specifies support for direct objects.
-         * \param[in] indirect      Specifies support for indirect objects.
-         * \param[in] prepositions  Specifies supported prepositions.
-         *
-         * \return  Returns a bool indicating whether or not adding the
-         *          alias to the interactive noun succeeded.
-         */
-        virtual bool addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions);
-
-        /*!
-         * \brief   Removes the verb alias for the specified command from this 
-         * interactive noun.
-         *
-         * This function removes the alias-grammar pair indicated by the
-         * specified alias string from the Action associated with the specified 
-         * command for this interactive noun.
-         * 
-         * \param[in] aCommand  Specifies the command the alias is aliasing.
-         * \param[in] alias     Specifies the verb alias to remove.
-         *
-         * \return  Returns a bool indicating whether or not removing the
-         *          specified alias succeeded.
-         */
-        virtual bool removeVerbAlias(CommandEnum aCommand, std::string alias);
 
         /*!
          * \brief   Gets the object type.
@@ -263,22 +217,6 @@ class Container: public Item {
          *          put.
          */
         virtual std::string put(Player *aPlayer, Item *anItem, InteractiveNoun *containingNoun, ItemPosition position, std::vector<EffectType> *effects);
-
-        /*!
-         * \brief   Executes the drop command on this container.
-         * 
-         * This function removes this container from the player's inventory and places
-         * it in the area that the player is currently in.
-         *
-         * \param[in] aPlayer   Specifies the player that is dropping the object.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \note    May cause an effect on the player.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          drop.
-         */
-        virtual std::string drop(Player *aPlayer, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command more.
