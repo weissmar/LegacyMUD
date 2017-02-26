@@ -115,26 +115,37 @@ std::string Area::getFullDescription(int excludeID) const{
     std::vector<Exit*> allExits = getExits();
 
     message += "\015\012";
-    if (allFeatures.size() != 0){
-        message += "You see ";
-        for (auto feature : allFeatures){
-            message += feature->getName();
-            message += ", ";
-        }
-        message += "\015\012";
-    }
     
+    for (auto feature : allFeatures){
+        message += "You see a "
+        message += feature->getName();
+        message += " ";
+        message += feature->getPlacement();
+        message += ".\015\012";
+    }
+
     for (auto exit : allExits){
         message += exit->getDirectionString();
         message += " you see ";
         message += exit->getName();
         message += ".\015\012";
     }
-    if (allItems.size() != 0){
-        message += "Around you, you see ";
-        for (auto item : allItems){
-            message += item->getName();
-            message += ", ";
+
+    if (allItems.size() == 1){
+        message += "You see a ";
+        message += allItems[0]->getName();
+        message += " on the ground."
+    } else if (allItems.size() > 1){
+        message += "Around you, you see a ";
+        for (size_t i = 0; i < allItems.size(); i++){
+            message += allItems[i]->getName();
+            if (i == (allItems.size() - 2)){
+                message += " and a ";
+            } else if (i == (allItems[i].size() - 1)){
+                message += ".";
+            } else {
+                message += ", a ";    
+            }
         }
         message += "\015\012";
     }
