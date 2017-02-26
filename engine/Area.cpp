@@ -15,6 +15,7 @@
 #include "Feature.hpp"
 #include "CommandEnum.hpp"
 #include "Action.hpp"
+#include "Container.hpp"
 #include <algorithm>
 
 namespace legacymud { namespace engine {
@@ -117,7 +118,7 @@ std::string Area::getFullDescription(int excludeID) const{
     message += "\015\012";
     
     for (auto feature : allFeatures){
-        message += "You see a "
+        message += "You see a ";
         message += feature->getName();
         message += " ";
         message += feature->getPlacement();
@@ -134,14 +135,14 @@ std::string Area::getFullDescription(int excludeID) const{
     if (allItems.size() == 1){
         message += "You see a ";
         message += allItems[0]->getName();
-        message += " on the ground."
+        message += " on the ground.";
     } else if (allItems.size() > 1){
         message += "Around you, you see a ";
         for (size_t i = 0; i < allItems.size(); i++){
             message += allItems[i]->getName();
             if (i == (allItems.size() - 2)){
                 message += " and a ";
-            } else if (i == (allItems[i].size() - 1)){
+            } else if (i == (allItems.size() - 1)){
                 message += ".";
             } else {
                 message += ", a ";    
@@ -197,15 +198,24 @@ bool Area::setSize(AreaSize size){
     return true;
 }
 
-
+// would be best to remove dynamic_cast ********************************************************
 bool Area::addItem(Item *anItem){
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+
     if (anItem != nullptr){
         std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
         itemContents.push_back(anItem);
         addAllLexicalData(anItem);
 
         if (anItem->getObjectType() == ObjectType::CONTAINER){
-            //***************************************************** figure out adding aliases of contained items
+            aContainer = dynamic_cast<Container*>(anItem);
+            if (aContainer != nullptr){
+                contents = aContainer->getAllContents();
+                for (auto content : contents){
+                    addAllLexicalData(content);
+                }
+            }
         }
 
         return true;
@@ -285,13 +295,22 @@ void Area::removeAllLexicalData(InteractiveNoun *anObject){
 
 
 bool Area::removeItem(Item *anItem){
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+
     if (anItem != nullptr){
         std::lock_guard<std::mutex> itemContentLock(itemContentMutex);
         itemContents.erase(std::remove(itemContents.begin(), itemContents.end(), anItem), itemContents.end());
         removeAllLexicalData(anItem);
 
         if (anItem->getObjectType() == ObjectType::CONTAINER){
-            //***************************************************** figure out adding aliases of contained items
+            aContainer = dynamic_cast<Container*>(anItem);
+            if (aContainer != nullptr){
+                contents = aContainer->getAllContents();
+                for (auto content : contents){
+                    removeAllLexicalData(content);
+                }
+            }
         }
         
         return true;

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/24/2017
+ * \modified    02/25/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -71,8 +71,9 @@ GameLogic::~GameLogic(){
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
     PlayerClass *aClass;
-    ItemType *anItemType;
+    ItemType *anItemType, *anotherItemType;
     Item *anItem;
+    Container *aContainer;
 
     accountManager = anAccount;
     theServer = aServer;
@@ -87,6 +88,13 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     anItem = new Item(&startArea, ItemPosition::GROUND, "red apple", anItemType);
     manager->addObject(anItem, -1);
     startArea.addItem(anItem);
+
+    // create a test item type and container
+    anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
+    manager->addObject(anItemType, -1);
+    aContainer = new Container(5, &startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
+    manager->addObject(aContainer, -1);
+    startArea.addItem(aContainer);
 
     return false;
 }
@@ -1399,22 +1407,23 @@ bool GameLogic::listenCommand(Player *aPlayer){
 bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
     bool success = false;
     std::vector<EffectType> effects;
-    std::string message;
-
-std::cout << "inside GameLogic::takeCommand\n";
+    std::string message, resultMessage;
 
     if (directObj != nullptr){
-        message += "You pick up the " + directObj->getName() + ". ";
+        message = "You pick up the " + directObj->getName() + ". ";
         if ((indirectObj != nullptr) && (indirectObj->getObjectType() == ObjectType::CONTAINER) && ((directObj->getObjectType() == ObjectType::ITEM) || (directObj->getObjectType() == ObjectType::CONTAINER))){
             // command is of the form: take ___ from ___
-            message += directObj->take(aPlayer, nullptr, indirectObj, nullptr, &effects);
+            resultMessage = directObj->take(aPlayer, nullptr, indirectObj, nullptr, &effects);
         } else {
-            message += directObj->take(aPlayer, nullptr, nullptr, nullptr, &effects);
-std::cout << "after item::take\n";
+            resultMessage = directObj->take(aPlayer, nullptr, nullptr, nullptr, &effects);
         }
-        if (message.compare("false") != 0){
-            success = true;
-        }
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't pick that up.";
+    } else {
+        message += resultMessage;
     }
 
     if (success){ 
@@ -1428,7 +1437,40 @@ std::cout << "after item::take\n";
 
 
 bool GameLogic::putCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj, ItemPosition aPosition){
-    return false;
+    bool success = false;
+    std::vector<EffectType> effects;
+    std::string message, resultMessage;
+
+    if ((directObj != nullptr) && (indirectObj != nullptr)){
+        message = "You put the " + directObj->getName();
+        if (aPosition == ItemPosition::IN){
+            message += " in the ";
+        } else if (aPosition == ItemPosition::ON){
+            message += " on the ";
+        } else if (aPosition == ItemPosition::UNDER){
+            message += " under the ";
+        } else {
+            return false;
+        }
+        message += indirectObj->getName() + ".";
+
+        resultMessage = directObj->put(aPlayer, nullptr, indirectObj, aPosition, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You don't have access to the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

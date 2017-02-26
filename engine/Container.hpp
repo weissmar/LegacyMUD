@@ -107,6 +107,14 @@ class Container: public Item {
         std::vector<Item*> getTopContents() const;
 
         /*!
+         * \brief   Gets all of the contents of this container.
+         *
+         * \return  Returns a std::vector<Item*> with all of the contents of
+         *          this container.
+         */
+        std::vector<Item*> getAllContents() const;
+
+        /*!
          * \brief   Gets the inside capacity of this container.
          *
          * \return  Returns an int with the inside capacity of this container.

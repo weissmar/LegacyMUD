@@ -347,10 +347,16 @@ bool Item::deserialize(std::string){
 
 
 std::string Item::look(std::vector<EffectType> *effects){
-    return "";
+    std::string message;
+    ItemType *aType = getType();
+
+    message = "The " + getName() + " is ";
+    message += aType->getDescription() + ".";
+
+    return message;
 }  
 
-
+// would be better if got rid of dynamic cast **************************************************************
 std::string Item::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message;
     Area *anArea = nullptr;
@@ -395,16 +401,58 @@ std::string Item::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContaine
         // aPlayer is doing the taking
         setLocation(aPlayer);
         message += aPlayer->take(aPlayer, this, nullptr, nullptr, effects);
-std::cout << "after Player::take\n";
     }
-    
 
     return message;
 }
 
+// would be better if got rid of dynamic cast **************************************************************
+std::string Item::put(Player *aPlayer, Item *anItem, InteractiveNoun *containingNoun, ItemPosition position, std::vector<EffectType> *effects){
+    Area *anArea;
+    InteractiveNoun *location;
+    ItemPosition currPosition;
+    std::string message = "";
+    EffectType anEffect;
 
-std::string Item::put(Player*, Item*, InteractiveNoun*, ItemPosition, std::vector<EffectType> *effects){
-    return "";
+    location = getLocation();
+    currPosition = getPosition();
+
+    // check if this item is contained within a container
+    if ((currPosition == ItemPosition::IN) || (currPosition == ItemPosition::ON) || (currPosition == ItemPosition::UNDER)){
+        return "false";
+    } else if (currPosition == ItemPosition::GROUND) {
+        // location is an area
+        anArea = dynamic_cast<Area*>(location);
+        if (anArea != nullptr){
+            // remove item from area
+            anArea->removeItem(this);
+        } else {
+            return "false";
+        }
+    } else if ((currPosition == ItemPosition::INVENTORY) || (currPosition == ItemPosition::EQUIPPED)){
+        // location is a character
+        if (location->getID() == aPlayer->getID()){
+            aPlayer->removeFromInventory(this);
+        } else {
+            return "false";
+        }
+    } else {
+        return "false";
+    }
+
+    setPosition(position);
+    // get results of put for this object
+    message = getTextAndEffect(CommandEnum::PUT, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+    // call this function on containingNoun
+    if (containingNoun != nullptr){
+        setLocation(containingNoun);
+        message += containingNoun->put(aPlayer, this, nullptr, position, effects);
+    } 
+
+    return message;
 }
 
 
