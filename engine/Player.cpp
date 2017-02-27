@@ -512,48 +512,85 @@ std::string Player::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCha
 }
 
 
-std::string Player::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Player::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = "";
+    bool success = false;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        if (aPlayer == this){
+            // item is being removed from this player
+            success = removeFromInventory(anItem);
+        } else if ((destination != nullptr) && (destination->getID() == this->getID())){
+            // item is being added to this player
+            success = addToInventory(anItem);
+        }
+    }
+
+    if (success){
+        message += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
 std::string Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Player::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Player::talk(Player *aPlayer, NonCombatant*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Player::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Player::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Player::search(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Player::warp(Player *aPlayer, Area*){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 

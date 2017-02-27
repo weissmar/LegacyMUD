@@ -1,7 +1,7 @@
  /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/26/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -118,6 +118,7 @@ bool Item::setType(ItemType *type){
 bool Item::addNounAlias(std::string alias){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -150,9 +151,14 @@ bool Item::addNounAlias(std::string alias){
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->registerAlias(false, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -172,6 +178,7 @@ bool Item::addNounAlias(std::string alias){
 bool Item::removeNounAlias(std::string alias){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -204,9 +211,14 @@ bool Item::removeNounAlias(std::string alias){
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->unregisterAlias(false, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -226,6 +238,7 @@ bool Item::removeNounAlias(std::string alias){
 bool Item::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -258,9 +271,14 @@ bool Item::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->registerAlias(true, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -280,6 +298,7 @@ bool Item::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar
 bool Item::removeVerbAlias(CommandEnum aCommand, std::string alias){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -312,9 +331,14 @@ bool Item::removeVerbAlias(CommandEnum aCommand, std::string alias){
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->unregisterAlias(true, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -747,68 +771,138 @@ std::string Item::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
 }
 
 
-std::string Item::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    InteractiveNoun *location = getLocation();
+
+    if (destination != nullptr){
+        if (aCharacter != nullptr){
+            // character is the one transferring the item
+            if ((location != nullptr) && (location->getID() == aCharacter->getID())){
+                // item is in character's inventory
+                setLocation(destination);
+                setPosition(ItemPosition::INVENTORY);
+
+                // get results of unequip for this object
+                message = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+
+                // call this function on character and destination
+                message += aCharacter->transfer(nullptr, this, aCharacter, nullptr, effects);
+                message += destination->transfer(nullptr, this, nullptr, destination, effects);
+            } else {
+                return "false";
+            }
+        } else {
+            // player is the one transferring the item
+            if ((location != nullptr) && (location->getID() == aPlayer->getID())){
+                // item is in player's inventory
+                setLocation(destination);
+                setPosition(ItemPosition::INVENTORY);
+
+                // get results of unequip for this object
+                message = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+
+                // call this function on player and destination
+                message += aPlayer->transfer(aPlayer, this, nullptr, nullptr, effects);
+                message += destination->transfer(nullptr, this, nullptr, destination, effects);
+            } else {
+                return "false";
+            }
+        }
+    }
+
+    return message;
 }
 
 
 std::string Item::move(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Item::buy(Player*, Item*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Item::sell(Player*, Item*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Item::read(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::climb(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::turn(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::push(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::pull(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::eat(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::drink(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
