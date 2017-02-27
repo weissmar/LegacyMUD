@@ -658,7 +658,7 @@ std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharact
         if ((location != nullptr) && (location->getID() != aCharacter->getID())){
             // item is not in the Character's inventory
             return "false";
-        } else if (location != nullptr){
+        } else if ((location != nullptr) && (getType()->getSlotType() != EquipmentSlot::NONE)){
             // item is in the Character's inventory
             setPosition(ItemPosition::EQUIPPED);
 
@@ -669,13 +669,15 @@ std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharact
             }
             // call this function on aCharacter
             message += aCharacter->equip(nullptr, this, aCharacter, effects);
+        } else {
+            return "false";
         }
     } else {
         // player is the one equipping the item
         if ((location != nullptr) && (location->getID() != aPlayer->getID())){
             // item is not in the player's inventory
             return "false";
-        } else if (location != nullptr){
+        } else if ((location != nullptr) && (getType()->getSlotType() != EquipmentSlot::NONE)){
             // item is in the player's inventory
             setPosition(ItemPosition::EQUIPPED);
 
@@ -686,6 +688,8 @@ std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharact
             }
             // call this function on aPlayer
             message += aPlayer->equip(aPlayer, this, nullptr, effects);
+        } else {
+            return "false";
         }
     }
 
@@ -693,8 +697,53 @@ std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharact
 }
 
 
-std::string Item::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Item::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message;
+    EffectType anEffect = EffectType::NONE;
+    ItemPosition position = getPosition();
+    InteractiveNoun *location = getLocation();
+
+    if (aCharacter != nullptr){
+        // character is the one unequipping the item 
+        if ((location != nullptr) && (location->getID() != aCharacter->getID())){
+            // item is not in the Character's inventory/equipment
+            return "false";
+        } else if ((location != nullptr) && (position == ItemPosition::EQUIPPED)){
+            // item is in the Character's equipment
+            setPosition(ItemPosition::INVENTORY);
+
+            // get results of unequip for this object
+            message = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aCharacter
+            message += aCharacter->unequip(nullptr, this, aCharacter, effects);
+        } else {
+            return "false";
+        }
+    } else {
+        // player is the one unequipping the item
+        if ((location != nullptr) && (location->getID() != aPlayer->getID())){
+            // item is not in the player's inventory/equipment
+            return "false";
+        } else if ((location != nullptr) && (position == ItemPosition::EQUIPPED)){
+            // item is in the player's equipment
+            setPosition(ItemPosition::INVENTORY);
+
+            // get results of unequip for this object
+            message = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aPlayer
+            message += aPlayer->unequip(aPlayer, this, nullptr, effects);
+        } else {
+            return "false";
+        }
+    }
+
+    return message;
 }
 
 

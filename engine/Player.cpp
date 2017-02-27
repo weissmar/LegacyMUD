@@ -492,8 +492,23 @@ std::string Player::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
 }
 
 
-std::string Player::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Player::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    bool success = false;
+
+    if (anItem != nullptr){
+        success = unequipItem(anItem);
+    }
+
+    if (success){
+        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 

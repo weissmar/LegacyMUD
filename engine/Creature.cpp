@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -193,8 +193,23 @@ std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCha
 }
 
 
-std::string Creature::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Creature::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    bool success = false;
+
+    if (anItem != nullptr){
+        success = unequipItem(anItem);
+    }
+
+    if (success){
+        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 

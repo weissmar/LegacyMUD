@@ -1677,7 +1677,29 @@ bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::unequipCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You unequip the " + directObj->getName() + ".";
+        resultMessage = directObj->unequip(aPlayer, nullptr, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't unequip the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

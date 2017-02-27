@@ -381,11 +381,6 @@ std::string Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCh
 }
 
 
-std::string Container::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
-}
-
-
 std::string Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
     return "";
 }
