@@ -31,7 +31,7 @@ Container::Container(int capacity, InteractiveNoun* location, ItemPosition posit
 { }
 
 
-/*Container::Container(const Container &otherContainer){
+/*Container::Container(const Container &otherContainer){ 
 
 }
 
@@ -370,8 +370,14 @@ std::string Container::more(){
 } 
 
 
-std::string Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = Item::equip(aPlayer, anItem, aCharacter, effects);
+
+    if (message.compare("false") != 0){
+        // remove contents? *********************************************************************
+    }
+
+    return message;
 }
 
 

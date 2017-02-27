@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -163,17 +163,6 @@ bool Character::setLocation(Area *aLocation){
 bool Character::addToInventory(Item *anItem){
     if (anItem != nullptr){
         std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
-        inventory.push_back(std::make_pair(EquipmentSlot::NONE, anItem));
-        return true;
-    }
-    return false;
-}
-
-
-bool Character::equipItem(Item *anItem){
-    if (anItem != nullptr){
-        std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
-        EquipmentSlot slot = anItem->getType()->getSlotType();
         size_t index = 100000000;
 
         for (size_t i = 0; i < inventory.size(); i++){
@@ -182,15 +171,46 @@ bool Character::equipItem(Item *anItem){
             }
         }
 
-        if ((index != 100000000) && (slot != EquipmentSlot::NONE)){
-            inventory[index].first = slot;
+        if (index == 100000000){
+            inventory.push_back(std::make_pair(EquipmentSlot::NONE, anItem));
             return true;
-        } else if (slot != EquipmentSlot::NONE) {
-            inventory.push_back(std::make_pair(slot, anItem));
-            return true;
-        }
+        } 
     }
     return false;
+}
+
+
+std::string Character::equipItem(Item *anItem){
+    std::string success = "false";
+
+    if (anItem != nullptr){
+        std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+        EquipmentSlot slot = anItem->getType()->getSlotType();
+        size_t index = 100000000;
+        size_t currItemInSlot = 100000000;
+
+        for (size_t i = 0; i < inventory.size(); i++){
+            if (inventory[i].second == anItem){
+                index = i;
+            }
+            if (inventory[i].first == slot){
+                currItemInSlot = i;
+            }
+        }
+
+        if ((index != 100000000) && (slot != EquipmentSlot::NONE)){
+            if (currItemInSlot != 100000000){
+                // unequip item that was in that slot
+                inventory[currItemInSlot].first = EquipmentSlot::NONE;
+                success = inventory[currItemInSlot].second->getName();
+            } else {
+                success = "true";
+            }
+            // equip item
+            inventory[index].first = slot;
+        } 
+    }
+    return success;
 }
 
 

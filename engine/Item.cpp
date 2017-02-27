@@ -1,4 +1,4 @@
-/*********************************************************************//**
+ /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
  * \modified    02/26/2017
@@ -22,7 +22,7 @@ namespace legacymud { namespace engine {
 
 Item::Item()
 : InteractiveNoun()
-, location(nullptr)
+, location(nullptr) 
 , position(ItemPosition::NONE)
 , name("")
 , type(nullptr)
@@ -648,8 +648,48 @@ std::string Item::more(){
 } 
 
 
-std::string Item::equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message;
+    EffectType anEffect = EffectType::NONE;
+    InteractiveNoun *location = getLocation();
+
+    if (aCharacter != nullptr){
+        // character is the one equipping the item 
+        if ((location != nullptr) && (location->getID() != aCharacter->getID())){
+            // item is not in the Character's inventory
+            return "false";
+        } else if (location != nullptr){
+            // item is in the Character's inventory
+            setPosition(ItemPosition::EQUIPPED);
+
+            // get results of equip for this object
+            message = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aCharacter
+            message += aCharacter->equip(nullptr, this, aCharacter, effects);
+        }
+    } else {
+        // player is the one equipping the item
+        if ((location != nullptr) && (location->getID() != aPlayer->getID())){
+            // item is not in the player's inventory
+            return "false";
+        } else if (location != nullptr){
+            // item is in the player's inventory
+            setPosition(ItemPosition::EQUIPPED);
+
+            // get results of equip for this object
+            message = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aPlayer
+            message += aPlayer->equip(aPlayer, this, nullptr, effects);
+        }
+    }
+
+    return message;
 }
 
 

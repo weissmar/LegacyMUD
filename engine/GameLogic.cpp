@@ -28,6 +28,7 @@
 #include "Item.hpp"
 #include "ItemType.hpp"
 #include "Exit.hpp"
+#include "WeaponType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -72,8 +73,8 @@ GameLogic::~GameLogic(){
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
     PlayerClass *aClass;
-    ItemType *anItemType, *anotherItemType;
-    Item *anItem;
+    ItemType *anItemType, *anotherItemType, *aWeaponType;
+    Item *anItem, *aWeapon;
     Container *aContainer;
 
     accountManager = anAccount;
@@ -96,6 +97,13 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     aContainer = new Container(5, &startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
     manager->addObject(aContainer, -1);
     startArea.addItem(aContainer);
+
+    // create a test weapon type and item
+    aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 1, EquipmentSlot::RIGHT_HAND); 
+    manager->addObject(aWeaponType, -1);
+    aWeapon = new Item(&startArea, ItemPosition::GROUND, "small knife", aWeaponType);
+    manager->addObject(aWeapon, -1);
+    startArea.addItem(aWeapon);
 
     return false;
 }
@@ -1642,7 +1650,29 @@ bool GameLogic::equipmentCommand(Player *aPlayer){
 
 
 bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You equip the " + directObj->getName() + ".";
+        resultMessage = directObj->equip(aPlayer, nullptr, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't equip the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
@@ -1735,7 +1765,7 @@ bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
     return false;
 }
 
-
+// add more Player class info?******************************************************************
 bool GameLogic::statsCommand(Player *aPlayer){
     std::string message = "";
 
