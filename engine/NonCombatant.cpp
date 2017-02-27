@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -11,6 +11,9 @@
 #include "NonCombatant.hpp"
 #include "Area.hpp"
 #include "Quest.hpp"
+#include "Item.hpp"
+#include "Container.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -55,6 +58,94 @@ bool NonCombatant::setQuest(Quest *aQuest){
     }
 
     return false;
+}
+
+
+bool NonCombatant::addToInventory(Item *anItem){
+    bool success = false; 
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+    Area *location = getLocation();
+    std::vector<std::string> nounAliases, verbAliases;
+
+    if (anItem != nullptr){
+        success = Character::addToInventory(anItem);
+
+        if (success){
+            nounAliases = anItem->getNounAliases();
+            verbAliases = anItem->getVerbAliases();
+
+            for (auto noun : nounAliases){
+                location->registerAlias(false, noun, anItem);
+            }
+            for (auto verb : verbAliases){
+                location->registerAlias(true, verb, anItem);
+            }
+
+            if (anItem->getObjectType() == ObjectType::CONTAINER){
+                aContainer = dynamic_cast<Container*>(anItem);
+                if (aContainer != nullptr){
+                    contents = aContainer->getAllContents();
+                    for (auto content : contents){
+                        nounAliases = content->getNounAliases();
+                        verbAliases = content->getVerbAliases();
+
+                        for (auto noun : nounAliases){
+                            location->registerAlias(false, noun, content);
+                        }
+                        for (auto verb : verbAliases){
+                            location->registerAlias(true, verb, content);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return success;
+}
+
+
+bool NonCombatant::removeFromInventory(Item *anItem){
+    bool success = false;  
+    Container *aContainer = nullptr;
+    std::vector<Item*> contents;
+    Area *location = getLocation();
+    std::vector<std::string> nounAliases, verbAliases;
+
+    if (anItem != nullptr){
+        success = Character::removeFromInventory(anItem);
+
+        if (success){
+            nounAliases = anItem->getNounAliases();
+            verbAliases = anItem->getVerbAliases();
+
+            for (auto noun : nounAliases){
+                location->unregisterAlias(false, noun, anItem);
+            }
+            for (auto verb : verbAliases){
+                location->unregisterAlias(true, verb, anItem);
+            }
+
+            if (anItem->getObjectType() == ObjectType::CONTAINER){
+                aContainer = dynamic_cast<Container*>(anItem);
+                if (aContainer != nullptr){
+                    contents = aContainer->getAllContents();
+                    for (auto content : contents){
+                        nounAliases = content->getNounAliases();
+                        verbAliases = content->getVerbAliases();
+
+                        for (auto noun : nounAliases){
+                            location->unregisterAlias(false, noun, content);
+                        }
+                        for (auto verb : verbAliases){
+                            location->unregisterAlias(true, verb, content);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return success;
 }
 
 
@@ -149,8 +240,29 @@ std::string NonCombatant::take(Player *aPlayer, Item *anItem, InteractiveNoun *a
 }
 
 
-std::string NonCombatant::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = "";
+    bool success = false;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        if ((aCharacter != nullptr) && (aCharacter->getID() == this->getID())){
+            // item is being removed from this character
+            success = removeFromInventory(anItem);
+        } else if ((destination != nullptr) && (destination->getID() == this->getID())){
+            // item is being added to this character
+            success = addToInventory(anItem);
+        }
+    }
+
+    if (success){
+        message += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 

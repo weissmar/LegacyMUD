@@ -1677,12 +1677,66 @@ bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::unequipCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You unequip the " + directObj->getName() + ".";
+        resultMessage = directObj->unequip(aPlayer, nullptr, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't unequip the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
+// would be better to get rid of dynamic casts *******************************************************************
 bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+    Player *otherPlayer = nullptr;
+
+    if ((directObj != nullptr) && (indirectObj != nullptr)){
+        message = "You give the " + directObj->getName() + " to " + indirectObj->getName() + ".";
+        resultMessage = directObj->transfer(aPlayer, nullptr, nullptr, indirectObj, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't give the " + directObj->getName() + " to " + indirectObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+
+        if (indirectObj->getObjectType() == ObjectType::PLAYER){
+            otherPlayer = dynamic_cast<Player*>(indirectObj);
+            if (otherPlayer != nullptr){
+                message = "You receive a " + directObj->getName() + " from " + aPlayer->getName() + ".";
+                messagePlayer(otherPlayer, message);
+            }
+        }  
+    }
+
+    return success;
 }
 
 
