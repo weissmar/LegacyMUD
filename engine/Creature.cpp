@@ -36,7 +36,7 @@ Creature::Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *sp
 
 Creature & Creature::operator=(const Creature &otherCreature){
 
-}
+} 
 
 
 Creature::~Creature(){
@@ -163,8 +163,33 @@ std::string Creature::take(Player* aPlayer, Item* anItem, InteractiveNoun* aCont
 }
 
 
-std::string Creature::equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string strSuccess;
+    EffectType anEffect = EffectType::NONE;
+    bool success = false;
+
+    if (anItem != nullptr){
+        strSuccess = equipItem(anItem);
+
+        if (strSuccess.compare("true") == 0){
+            success = true;
+        } else if (strSuccess.compare("false") == 0){
+            message = "false";
+        } else {
+            success = true;
+            message = "Unequipped the " + strSuccess + ". ";
+        }
+    }
+
+    if (success){
+        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -28,7 +28,7 @@ const int MAX_INVENTORY_WEIGHT = 30;
 
 Player::Player()
 : Combatant()
-, experiencePoints(0)
+, experiencePoints(0) 
 , level(1)
 , size(CharacterSize::MEDIUM)
 , playerClass(nullptr)
@@ -251,14 +251,17 @@ bool Player::addToInventory(Item *anItem){
 
     if (anItem != nullptr){
         success = Character::addToInventory(anItem);
-        addAllLexicalData(anItem);
 
-        if (anItem->getObjectType() == ObjectType::CONTAINER){
-            aContainer = dynamic_cast<Container*>(anItem);
-            if (aContainer != nullptr){
-                contents = aContainer->getAllContents();
-                for (auto content : contents){
-                    addAllLexicalData(content);
+        if (success){
+            addAllLexicalData(anItem);
+
+            if (anItem->getObjectType() == ObjectType::CONTAINER){
+                aContainer = dynamic_cast<Container*>(anItem);
+                if (aContainer != nullptr){
+                    contents = aContainer->getAllContents();
+                    for (auto content : contents){
+                        addAllLexicalData(content);
+                    }
                 }
             }
         }
@@ -274,14 +277,17 @@ bool Player::removeFromInventory(Item *anItem){
 
     if (anItem != nullptr){
         success = Character::removeFromInventory(anItem);
-        removeAllLexicalData(anItem);
 
-        if (anItem->getObjectType() == ObjectType::CONTAINER){
-            aContainer = dynamic_cast<Container*>(anItem);
-            if (aContainer != nullptr){
-                contents = aContainer->getAllContents();
-                for (auto content : contents){
-                    removeAllLexicalData(content);
+        if (success){
+            removeAllLexicalData(anItem);
+
+            if (anItem->getObjectType() == ObjectType::CONTAINER){
+                aContainer = dynamic_cast<Container*>(anItem);
+                if (aContainer != nullptr){
+                    contents = aContainer->getAllContents();
+                    for (auto content : contents){
+                        removeAllLexicalData(content);
+                    }
                 }
             }
         }
@@ -456,17 +462,42 @@ std::string Player::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContai
 }
 
 
-std::string Player::equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
+std::string Player::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string strSuccess;
+    EffectType anEffect = EffectType::NONE;
+    bool success = false;
+
+    if (anItem != nullptr){
+        strSuccess = equipItem(anItem);
+
+        if (strSuccess.compare("true") == 0){
+            success = true;
+        } else if (strSuccess.compare("false") == 0){
+            message = "false";
+        } else {
+            success = true;
+            message = "Unequipped the " + strSuccess + ". ";
+        }
+    }
+
+    if (success){
+        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
+}
+
+
+std::string Player::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
     return "";
 }
 
 
-std::string Player::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
-}
-
-
-std::string Player::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
+std::string Player::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
     return "";
 }
 
@@ -476,27 +507,27 @@ std::string Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character
 }
 
 
-std::string Player::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+std::string Player::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
     return "";
 }
 
 
-std::string Player::talk(Player*, NonCombatant*, std::vector<EffectType> *effects){
+std::string Player::talk(Player *aPlayer, NonCombatant*, std::vector<EffectType> *effects){
     return "";
 } 
 
 
-std::string Player::buy(Player*, Item*, std::vector<EffectType> *effects){
+std::string Player::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
     return "";
 }
 
 
-std::string Player::sell(Player*, Item*, std::vector<EffectType> *effects){
+std::string Player::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
     return "";
 }
 
 
-std::string Player::search(Player*, std::vector<EffectType> *effects){
+std::string Player::search(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 
@@ -506,7 +537,7 @@ std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveN
 } 
 
 
-std::string Player::warp(Player*, Area*){
+std::string Player::warp(Player *aPlayer, Area*){
     return "";
 } 
 
@@ -516,12 +547,12 @@ InteractiveNoun* Player::copy(){
 }
 
 
-bool Player::editAttribute(Player*, std::string){
+bool Player::editAttribute(Player *aPlayer, std::string){
     return false;
 }
 
 
-bool Player::editWizard(Player*){
+bool Player::editWizard(Player *aPlayer){
     return false;
 }
 

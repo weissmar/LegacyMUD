@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -31,7 +31,7 @@ Container::Container(int capacity, InteractiveNoun* location, ItemPosition posit
 { }
 
 
-/*Container::Container(const Container &otherContainer){
+/*Container::Container(const Container &otherContainer){ 
 
 }
 
@@ -361,13 +361,23 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 }
 
 
-std::string Container::more(std::vector<EffectType> *effects){
-    return "";
+std::string Container::more(){
+    std::string message = Item::more();
+
+    message += "Inside Capacity: " + std::to_string(getInsideCapacity()) + "\015\012";
+    
+    return message;
 } 
 
 
-std::string Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = Item::equip(aPlayer, anItem, aCharacter, effects);
+
+    if (message.compare("false") != 0){
+        // remove contents? *********************************************************************
+    }
+
+    return message;
 }
 
 
