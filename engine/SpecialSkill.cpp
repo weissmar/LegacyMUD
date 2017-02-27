@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -111,8 +111,42 @@ bool SpecialSkill::deserialize(std::string){
 }
 
 
-std::string SpecialSkill::more(std::vector<EffectType> *effects){
-    return "";
+std::string SpecialSkill::more(){
+    std::string message = "Special Skill: " + getName() + "\015\012";
+    message += "Effect: " + std::to_string(getDamage()) + " ";
+    switch(getDamageType()){
+        case DamageType::NONE:
+            message += "neutral damage\015\012";
+            break;
+        case DamageType::CRUSHING:
+            message += "crushing damage\015\012";
+            break;
+        case DamageType::PIERCING:
+            message += "piercing damage\015\012";
+            break;
+        case DamageType::ELECTRIC:
+            message += "electric damage\015\012";
+            break;
+        case DamageType::FIRE:
+            message += "fire damage\015\012";
+            break;
+        case DamageType::WATER:
+            message += "water damage\015\012";
+            break;
+        case DamageType::WIND:
+            message += "wind damage\015\012";
+            break;
+        case DamageType::EARTH:
+            message += "earth damage\015\012";
+            break;
+        case DamageType::HEAL:
+            message += "healing\015\012";
+            break;
+    }
+    message += "Cost: " + std::to_string(getCost()) + "\015\012";
+    message += "Cooldown: " + std::to_string(getCooldown()) + "\015\012";
+
+    return message;
 } 
 
 

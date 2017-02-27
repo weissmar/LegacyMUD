@@ -14,12 +14,17 @@ CXXFLAGS += $(foreach ext_inc_dir, $(EXT_INC_DIRS), -I$(ext_inc_dir))
 # Program executable name
 PROG = demo
 
-all: $(LIBS) $(OBJS)
+all: libdirs $(LIBS) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS) -Wl,--start-group $(LIBS) -Wl,--end-group
 
+# Rules to force the library makefiles to always run
+.PHONY: libdirs $(LIB_DIRS)
+
+libdirs: $(LIB_DIRS)
+
 # Run the makefile for each library
-%.a: $(dir $@)
-	$(MAKE) -C $(dir $@)
+$(LIB_DIRS):
+	$(MAKE) -C $@
 
 # Generic rule for compiling all .cpp files to .o files
 %.o: %.cpp

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -185,13 +185,14 @@ class Character: public InteractiveNoun {
          *
          * \param[in] anItem    Specifies the item to equip.
          *
-         * \note    If the item is not already in inventory, this function adds the 
-         *          item to inventory and equips it.
+         * \note    The item is must already be in inventory. If another item is 
+         *          already equipped in the slot that the specified item will take,
+         *          the first item is unequipped.
          *
-         * \return  Returns a bool indicating whether or not equipping the item was 
-         *          successful.
+         * \return  Returns the name of the item that was unequipped (if applicable),
+         *          or "true" if successful. Otherwise, "false".
          */
-        bool equipItem(Item *anItem);
+        std::string equipItem(Item *anItem);
 
         /*!
          * \brief   Removes the specified item from this character's inventory.
