@@ -32,6 +32,7 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
 {
     InteractiveNoun::addNounAlias(description);
     InteractiveNoun::addNounAlias(altDescription);
+    addDirectionalAliases(direction);
 }
 
 
@@ -48,6 +49,51 @@ Exit & Exit::operator=(const Exit &otherExit){
 Exit::~Exit(){
 
 }*/
+
+void Exit::addDirectionalAliases(ExitDirection direction){
+    switch (direction){
+        case ExitDirection::NORTH:
+            InteractiveNoun::addNounAlias("north");
+            InteractiveNoun::addNounAlias("n");
+            break;
+        case ExitDirection::SOUTH:
+            InteractiveNoun::addNounAlias("south");
+            InteractiveNoun::addNounAlias("s");
+            break;
+        case ExitDirection::EAST:
+            InteractiveNoun::addNounAlias("east");
+            InteractiveNoun::addNounAlias("e");
+            break;
+        case ExitDirection::WEST:
+            InteractiveNoun::addNounAlias("west");
+            InteractiveNoun::addNounAlias("w");
+            break;
+        case ExitDirection::NORTHEAST:
+            InteractiveNoun::addNounAlias("northeast");
+            InteractiveNoun::addNounAlias("ne");
+            break;
+        case ExitDirection::NORTHWEST:
+            InteractiveNoun::addNounAlias("northwest");
+            InteractiveNoun::addNounAlias("nw");
+            break;
+        case ExitDirection::SOUTHEAST:
+            InteractiveNoun::addNounAlias("southeast");
+            InteractiveNoun::addNounAlias("se");
+            break;
+        case ExitDirection::SOUTHWEST:
+            InteractiveNoun::addNounAlias("southwest");
+            InteractiveNoun::addNounAlias("sw");
+            break;
+        case ExitDirection::UP:
+            InteractiveNoun::addNounAlias("up");
+            InteractiveNoun::addNounAlias("u");
+            break;
+        case ExitDirection::DOWN:
+            InteractiveNoun::addNounAlias("down");
+            InteractiveNoun::addNounAlias("d");
+            break;
+    }
+}
 
 
 ExitDirection Exit::getDirection() const{
@@ -244,13 +290,13 @@ std::string Exit::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, 
         // check if the character has the conditional item
         if ((aCharacter != nullptr) && (aCharacter->hasItem(anItemType))){
             // character has the required item
-            message = "You go towards " + getAltDescription() + ". ";
+            message = "You go towards " + getAltDescription() + ".\015\012";
             hasAccess = true;
         } else {
             message = "false";
         }
     } else {
-        message = "You go towards " + getDescription() + ". ";
+        message = "You go towards " + getDescription() + ".\015\012";
     }
 
     if (hasAccess){

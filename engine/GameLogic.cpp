@@ -76,7 +76,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     ItemType *anItemType, *anotherItemType, *aWeaponType;
     Item *anItem, *aWeapon;
     Container *aContainer;
-    Exit *anExit;
+    Exit *anExit, *otherExit;
     Area *anArea;
 
     accountManager = anAccount;
@@ -107,12 +107,15 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     manager->addObject(aWeapon, -1);
     startArea.addItem(aWeapon);
 
-    // create a test exit and second area
+    // create a second area and two exits
     anArea = new Area("test area", "You are in a vast space.", "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.", AreaSize::LARGE);
     manager->addObject(anArea, -1);
     anExit = new Exit(ExitDirection::NORTH, &startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
     manager->addObject(anExit, -1);
     startArea.addExit(anExit);
+    otherExit = new Exit(ExitDirection::SOUTH, anArea, &startArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+    manager->addObject(otherExit, -1);
+    anArea->addExit(otherExit);
 
     return true;
 }

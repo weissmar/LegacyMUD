@@ -393,6 +393,8 @@ class Exit: public ConditionalElement {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
+        void addDirectionalAliases(ExitDirection direction);
+        
         std::atomic<ExitDirection> direction;
         Area *location;
         mutable std::mutex locationMutex;
