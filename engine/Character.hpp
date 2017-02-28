@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/26/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -20,6 +20,7 @@
 #include <atomic>
 #include "InteractiveNoun.hpp"
 #include "EquipmentSlot.hpp"
+#include "ItemType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -105,6 +106,17 @@ class Character: public InteractiveNoun {
          *          this character.
          */
         int getMaxInventoryWeight() const;
+
+        /*!
+         * \brief   Gets whether or not the character currently has an item in 
+         *          inventory (including equipment) of the specified type.
+         *
+         * \param[in] anItemType    Specifies the type of item.
+         *
+         * \return  Returns a bool indicating whether or not the character has an
+         *          item of the specified type.
+         */
+        bool hasItem(ItemType *anItemType) const;
 
         /*!
          * \brief   Sets the name of this character.

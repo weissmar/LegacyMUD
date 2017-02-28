@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/26/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -76,6 +76,8 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     ItemType *anItemType, *anotherItemType, *aWeaponType;
     Item *anItem, *aWeapon;
     Container *aContainer;
+    Exit *anExit;
+    Area *anArea;
 
     accountManager = anAccount;
     theServer = aServer;
@@ -105,7 +107,14 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     manager->addObject(aWeapon, -1);
     startArea.addItem(aWeapon);
 
-    return false;
+    // create a test exit and second area
+    anArea = new Area("test area", "You are in a vast space.", "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.", AreaSize::LARGE);
+    manager->addObject(anArea, -1);
+    anExit = new Exit(ExitDirection::NORTH, &startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+    manager->addObject(anExit, -1);
+    startArea.addExit(anExit);
+
+    return true;
 }
 
 
@@ -1811,7 +1820,32 @@ bool GameLogic::quitCommand(Player *aPlayer){
 
 
 bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
-    return false;
+    std:: string message;
+    std::vector<EffectType> effects;
+    bool success = false;
+    Area *newArea = nullptr;
+    Area *currLocation = aPlayer->getLocation();
+
+    if (param != nullptr){
+        message = param->go(aPlayer, nullptr, nullptr, &effects);
+        success = true;
+    }
+    
+    if (message.compare("false") == 0){
+        message = "You can't go that way.";
+    } else {
+        newArea = aPlayer->getLocation();
+        message += newArea->getFullDescription(aPlayer->getID());
+        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
+        messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+    return success;
 }
 
 

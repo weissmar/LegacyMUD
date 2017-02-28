@@ -36,7 +36,7 @@ Player::Player()
 , username("")
 , active(false)
 , fileDescriptor(-1)
-, editMode(false)
+, editMode(false) 
 { }
 
 
@@ -540,6 +540,16 @@ std::string Player::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCh
 
 std::string Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
     std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    if (anArea != nullptr){
+        setLocation(anArea);
+
+        message += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
 
     return message;
 }
