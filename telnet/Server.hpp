@@ -2,7 +2,7 @@
   \file     Server.hpp
   \author   Keith Adkins
   \created  1/31/2017
-  \modified 2/23/2017
+  \modified 2/26/2017
   \course   CS467, Winter 2017
  
   \details  Declaration file for the Server class.
@@ -54,7 +54,7 @@ namespace legacymud {
           \pre timeOut     should be greater than 0
           \post Returns true if the server is successfully initialized.  Otherwise it returns false.
         */        
-        bool initServer(int serverPort, int maxPlayers, int timeOut, legacymud::engine::GameLogic* gameLogicPt);
+        virtual bool initServer(int serverPort, int maxPlayers, int timeOut, legacymud::engine::GameLogic* gameLogicPt);
         
         /*!
           \brief Causes the server to start listening for connections.
@@ -65,7 +65,7 @@ namespace legacymud {
           \pre      The server should be first initiazed with initServer
           \post The server is in an infinite loop listening for new player connections.
         */
-        void startListening();
+        virtual void startListening();
         
         /*!
           \brief Disconnects a player from the server.
@@ -76,7 +76,7 @@ namespace legacymud {
           \pre none
           \post Returns true if a player is disconnected from the server.  Otherwise returns false.
         */        
-        bool disconnectPlayer(int playerFd);
+        virtual bool disconnectPlayer(int playerFd);
         
         /*!
           \brief Closes the server listen socket and sets member variables to default values.
@@ -85,7 +85,7 @@ namespace legacymud {
           \post True is returned if the server listen socket is closed and member variables are reset to default values.
                 Otherwise, false is returned.
         */        
-        bool shutDownServer();
+        virtual bool shutDownServer();
 
         
         /*!
@@ -100,7 +100,7 @@ namespace legacymud {
           \pre none
           \post Returns true if the question is successfully sent.  Otherwise it returns false.
         */        
-        bool sendQuestion(int playerFd, std::string outQuestion);        
+        virtual bool sendQuestion(int playerFd, std::string outQuestion);        
 
         
         /*!
@@ -113,7 +113,7 @@ namespace legacymud {
           \pre none
           \post Returns true if the message is successfully sent.  Otherwise it returns false.
         */        
-        bool sendMsg(int playerFd, std::string outMsg);
+        virtual bool sendMsg(int playerFd, std::string outMsg);
         
 
         /*!
@@ -123,7 +123,7 @@ namespace legacymud {
           \pre none
           \post Returns true if the newline was successfully sent.  Otherwise it returns false.
         */        
-        bool sendNewLine(int playerFd);        
+        virtual bool sendNewLine(int playerFd);        
         
         /*!
           \brief Receives a message from a player.  
@@ -137,7 +137,7 @@ namespace legacymud {
           \post Returns true if the message is successfully received.  Returns false if there an issue with
                 reading from the player's socket, or if the player disconnects or times-out.
         */         
-        bool receiveMsg(int playerFd, std::string &inMsg);
+        virtual bool receiveMsg(int playerFd, std::string &inMsg);
         
         /*!
           \brief Listens for received messages from a player.  
@@ -151,7 +151,7 @@ namespace legacymud {
           \post Returns false if a player disconnects, times-outs, or if this playerId is not in the player map. 
                 The Game Logic newPlayerHandler should call disconnectPlayer(playerFd) if a false is received.
         */ 
-        bool listenForMsgs(int playerFd);
+        virtual bool listenForMsgs(int playerFd);
         
         /*!
           \brief Sets the server into a pause state. 
@@ -164,7 +164,7 @@ namespace legacymud {
           \post If pause is set to true, the server will be in a paused state.  If pause is set to false, the server will not
                 be in a paused state.
         */
-        void pause(bool pause);
+        virtual void pause(bool pause);
         
         /*!
           \brief Sets the max number of players that can be concurrently on the server.  
@@ -173,7 +173,7 @@ namespace legacymud {
           \pre maxplayers must be an integer greater than 0.
           \post Returns false if maxPlayers is an invalid ammount.  Otherwise the player cap is set and true is returned.
         */        
-        bool setMaxPlayers(int maxPlayers);
+        virtual bool setMaxPlayers(int maxPlayers);
         
         /*!
           \brief Sets the time-out period in seconds that the server waits before disconnecting an inactive player.    
@@ -182,7 +182,7 @@ namespace legacymud {
           \pre timeOut must be an integer greater than 0.
           \post Returns false if timeOut is an invalid ammount.  Otherwise the time-out period is set and true is returned.
         */ 
-        bool setTimeOut(int timeOut);
+        virtual bool setTimeOut(int timeOut);
         
         
         /*!
@@ -196,7 +196,7 @@ namespace legacymud {
           \pre none
           \post Returns false if the player is not on the server.  Otherwise the echo mode is set and true is returned.
         */ 
-        bool setPlayerEcho(int playerFd, bool echo);
+        virtual bool setPlayerEcho(int playerFd, bool echo);
         
         /*!
           \brief Gets the server's pause state.
@@ -204,7 +204,7 @@ namespace legacymud {
           \pre none
           \post Returns the server's pause state.
         */ 
-        bool getServerPause() const;
+        virtual bool getServerPause() const;
         
         /*!
           \brief Gets the server's max player setting.
@@ -212,7 +212,7 @@ namespace legacymud {
           \pre none
           \post Returns the server's max player setting.
         */
-        int getMaxPlayers() const;
+        virtual int getMaxPlayers() const;
         
         /*!
           \brief Gets the server's current player count.
@@ -222,7 +222,7 @@ namespace legacymud {
           \pre none
           \post Returns the server's current player count.
         */
-        int getPlayerCount() const;
+        virtual int getPlayerCount() const;
         
         /*!
           \brief Gets the server's player time-out period in seconds.
@@ -230,7 +230,7 @@ namespace legacymud {
           \pre none
           \post Returns the server's time-out period in seconds.
         */        
-        int getTimeOut() const;
+        virtual int getTimeOut() const;
         
         /*!
           \brief Gets the server's port.
@@ -238,7 +238,7 @@ namespace legacymud {
           \pre none
           \post Returns the server's port.
         */ 
-        int getServerPort() const;
+        virtual int getServerPort() const;
         
         /*!
           \brief Gets the game logic pointer that the server is using.
@@ -248,7 +248,7 @@ namespace legacymud {
           \pre none
           \post Returns the game logic pointer that the server is using.
         */ 
-        legacymud::engine::GameLogic* getGameLogicPt() const;      
+        virtual legacymud::engine::GameLogic* getGameLogicPt() const;      
         
     private:
         bool _setServerPort(int serverPort);        // function that sets and validates the server port

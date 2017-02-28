@@ -1,7 +1,7 @@
-/*********************************************************************//**
+ /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -22,7 +22,7 @@ namespace legacymud { namespace engine {
 
 Item::Item()
 : InteractiveNoun()
-, location(nullptr)
+, location(nullptr) 
 , position(ItemPosition::NONE)
 , name("")
 , type(nullptr)
@@ -118,6 +118,7 @@ bool Item::setType(ItemType *type){
 bool Item::addNounAlias(std::string alias){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -150,9 +151,14 @@ bool Item::addNounAlias(std::string alias){
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->registerAlias(false, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -172,6 +178,7 @@ bool Item::addNounAlias(std::string alias){
 bool Item::removeNounAlias(std::string alias){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -204,9 +211,14 @@ bool Item::removeNounAlias(std::string alias){
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->unregisterAlias(false, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -226,6 +238,7 @@ bool Item::removeNounAlias(std::string alias){
 bool Item::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar::Support direct, parser::Grammar::Support indirect, std::map<std::string, parser::PrepositionType> prepositions){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -258,9 +271,14 @@ bool Item::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->registerAlias(true, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -280,6 +298,7 @@ bool Item::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar
 bool Item::removeVerbAlias(CommandEnum aCommand, std::string alias){
     bool success = false;
     Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
 
     ItemPosition aPosition = getPosition();
     InteractiveNoun *location = getLocation();
@@ -312,9 +331,14 @@ bool Item::removeVerbAlias(CommandEnum aCommand, std::string alias){
                 location = nullptr;
             } else {
                 // location is a creature or NPC
-                // don't add alias to area, since any items in a creature or NPC inventory is unavailable
-                location = nullptr;
-                success = true;
+                aCharacter = dynamic_cast<Character*>(location);
+                if (aCharacter != nullptr){
+                    success = aCharacter->getLocation()->unregisterAlias(true, alias, this);
+                    location = nullptr;
+                } else {
+                    location = nullptr;
+                    success = false;
+                }
             }
         } else {
             // position is NONE, something has gone wrong
@@ -486,83 +510,399 @@ std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
 }
 
 
-std::string Item::more(std::vector<EffectType> *effects){
-    return "";
+std::string Item::more(){
+    std::string message = "Item: " + getName() + "\015\012";
+    ItemType *aType = getType();
+    int armorBonus = aType->getArmorBonus();
+    int damage = aType->getDamage();
+    int critMult = aType->getCritMultiplier();
+    DamageType resistantTo = aType->getResistantTo();
+    DamageType damageType = aType->getDamageType();
+    AreaSize range = aType->getRange();
+
+    message += "Type: " + aType->getName() + "\015\012";
+    message += "Description: " + aType->getDescription() + "\015\012";
+    message += "Weight: " + std::to_string(aType->getWeight()) + "\015\012";
+    message += "Cost: " + std::to_string(aType->getCost()) + "\015\012";
+    message += "Rarity: ";
+    switch(aType->getRarity()){
+        case ItemRarity::COMMON:
+            message += "common \015\012";
+            break;
+        case ItemRarity::UNCOMMON:
+            message += "uncommon \015\012";
+            break;
+        case ItemRarity::RARE:
+            message += "rare \015\012";
+            break;
+        case ItemRarity::LEGENDARY:
+            message += "legendary \015\012";
+            break;
+        case ItemRarity::QUEST:
+            message += "quest \015\012";
+            break;
+    }
+    switch(aType->getSlotType()){
+        case EquipmentSlot::NONE:
+            message += "";
+            break;
+        case EquipmentSlot::HEAD:
+            message += "Equipment Slot Type: head \015\012";
+            break;
+        case EquipmentSlot::SHOULDERS:
+            message += "Equipment Slot Type: shoulder \015\012";
+            break;
+        case EquipmentSlot::NECK:
+            message += "Equipment Slot Type: neck \015\012";
+            break;
+        case EquipmentSlot::TORSO:
+            message += "Equipment Slot Type: torso \015\012";
+            break;
+        case EquipmentSlot::BELT:
+            message += "Equipment Slot Type: belt \015\012";
+            break;
+        case EquipmentSlot::LEGS:
+            message += "Equipment Slot Type: legs \015\012";
+            break;
+        case EquipmentSlot::ARMS:
+            message += "Equipment Slot Type: arms \015\012";
+            break;
+        case EquipmentSlot::HANDS:
+            message += "Equipment Slot Type: hands \015\012";
+            break;
+        case EquipmentSlot::RIGHT_HAND:
+            message += "Equipment Slot Type: right hand \015\012";
+            break;
+        case EquipmentSlot::LEFT_HAND:
+            message += "Equipment Slot Type: left hand \015\012";
+            break;
+        case EquipmentSlot::FEET:
+            message += "Equipment Slot Type: feet \015\012";
+            break;
+        case EquipmentSlot::RIGHT_RING:
+            message += "Equipment Slot Type: right ring \015\012";
+            break;
+        case EquipmentSlot::LEFT_RING:
+            message += "Equipment Slot Type: left ring \015\012";
+            break;
+    }
+    if (armorBonus != -1){
+        message += "Armor Bonus: " + std::to_string(armorBonus) + "\015\012";
+    }
+    if (damage != -1){
+        message += "Damage: " + std::to_string(damage) + "\015\012";
+    }
+    if (critMult != -1){
+        message += "Crit Multiplier: " + std::to_string(critMult) + "\015\012";
+    }
+    switch(resistantTo){
+        case DamageType::NONE:
+            message += "";
+            break;
+        case DamageType::CRUSHING:
+            message += "Resistant to crushing damage\015\012";
+            break;
+        case DamageType::PIERCING:
+            message += "Resistant to piercing damage\015\012";
+            break;
+        case DamageType::ELECTRIC:
+            message += "Resistant to electric damage\015\012";
+            break;
+        case DamageType::FIRE:
+            message += "Resistant to fire damage\015\012";
+            break;
+        case DamageType::WATER:
+            message += "Resistant to water damage\015\012";
+            break;
+        case DamageType::WIND:
+            message += "Resistant to wind damage\015\012";
+            break;
+        case DamageType::EARTH:
+            message += "Resistant to earth damage\015\012";
+            break;
+        case DamageType::HEAL:
+            message += "Resistant to healing\015\012";
+            break;
+    }
+    switch(damageType){
+        case DamageType::NONE:
+            message += "";
+            break;
+        case DamageType::CRUSHING:
+            message += "Damage Type: crushing damage\015\012";
+            break;
+        case DamageType::PIERCING:
+            message += "Damage Type: piercing damage\015\012";
+            break;
+        case DamageType::ELECTRIC:
+            message += "Damage Type: electric damage\015\012";
+            break;
+        case DamageType::FIRE:
+            message += "Damage Type: fire damage\015\012";
+            break;
+        case DamageType::WATER:
+            message += "Damage Type: water damage\015\012";
+            break;
+        case DamageType::WIND:
+            message += "Damage Type: wind damage\015\012";
+            break;
+        case DamageType::EARTH:
+            message += "Damage Type: earth damage\015\012";
+            break;
+        case DamageType::HEAL:
+            message += "Damage Type: healing\015\012";
+            break;
+    }
+    switch(range){
+        case AreaSize::NONE:
+            message += "";
+            break;
+        case AreaSize::SMALL:
+            message += "Short Range Weapon \015\012";
+            break;
+        case AreaSize::MEDIUM:
+            message += "Medium Range Weapon\015\012";
+            break;
+        case AreaSize::LARGE:
+            message += "Long Range Weapon\015\012";
+            break;
+    }
+
+    return message;
 } 
 
 
-std::string Item::equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message;
+    EffectType anEffect = EffectType::NONE;
+    InteractiveNoun *location = getLocation();
+
+    if (aCharacter != nullptr){
+        // character is the one equipping the item 
+        if ((location != nullptr) && (location->getID() != aCharacter->getID())){
+            // item is not in the Character's inventory
+            return "false";
+        } else if ((location != nullptr) && (getType()->getSlotType() != EquipmentSlot::NONE)){
+            // item is in the Character's inventory
+            setPosition(ItemPosition::EQUIPPED);
+
+            // get results of equip for this object
+            message = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aCharacter
+            message += aCharacter->equip(nullptr, this, aCharacter, effects);
+        } else {
+            return "false";
+        }
+    } else {
+        // player is the one equipping the item
+        if ((location != nullptr) && (location->getID() != aPlayer->getID())){
+            // item is not in the player's inventory
+            return "false";
+        } else if ((location != nullptr) && (getType()->getSlotType() != EquipmentSlot::NONE)){
+            // item is in the player's inventory
+            setPosition(ItemPosition::EQUIPPED);
+
+            // get results of equip for this object
+            message = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aPlayer
+            message += aPlayer->equip(aPlayer, this, nullptr, effects);
+        } else {
+            return "false";
+        }
+    }
+
+    return message;
 }
 
 
-std::string Item::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Item::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message;
+    EffectType anEffect = EffectType::NONE;
+    ItemPosition position = getPosition();
+    InteractiveNoun *location = getLocation();
+
+    if (aCharacter != nullptr){
+        // character is the one unequipping the item 
+        if ((location != nullptr) && (location->getID() != aCharacter->getID())){
+            // item is not in the Character's inventory/equipment
+            return "false";
+        } else if ((location != nullptr) && (position == ItemPosition::EQUIPPED)){
+            // item is in the Character's equipment
+            setPosition(ItemPosition::INVENTORY);
+
+            // get results of unequip for this object
+            message = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aCharacter
+            message += aCharacter->unequip(nullptr, this, aCharacter, effects);
+        } else {
+            return "false";
+        }
+    } else {
+        // player is the one unequipping the item
+        if ((location != nullptr) && (location->getID() != aPlayer->getID())){
+            // item is not in the player's inventory/equipment
+            return "false";
+        } else if ((location != nullptr) && (position == ItemPosition::EQUIPPED)){
+            // item is in the player's equipment
+            setPosition(ItemPosition::INVENTORY);
+
+            // get results of unequip for this object
+            message = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+            // call this function on aPlayer
+            message += aPlayer->unequip(aPlayer, this, nullptr, effects);
+        } else {
+            return "false";
+        }
+    }
+
+    return message;
 }
 
 
-std::string Item::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    InteractiveNoun *location = getLocation();
+
+    if (destination != nullptr){
+        if (aCharacter != nullptr){
+            // character is the one transferring the item
+            if ((location != nullptr) && (location->getID() == aCharacter->getID())){
+                // item is in character's inventory
+                setLocation(destination);
+                setPosition(ItemPosition::INVENTORY);
+
+                // get results of unequip for this object
+                message = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+
+                // call this function on character and destination
+                message += aCharacter->transfer(nullptr, this, aCharacter, nullptr, effects);
+                message += destination->transfer(nullptr, this, nullptr, destination, effects);
+            } else {
+                return "false";
+            }
+        } else {
+            // player is the one transferring the item
+            if ((location != nullptr) && (location->getID() == aPlayer->getID())){
+                // item is in player's inventory
+                setLocation(destination);
+                setPosition(ItemPosition::INVENTORY);
+
+                // get results of unequip for this object
+                message = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+
+                // call this function on player and destination
+                message += aPlayer->transfer(aPlayer, this, nullptr, nullptr, effects);
+                message += destination->transfer(nullptr, this, nullptr, destination, effects);
+            } else {
+                return "false";
+            }
+        }
+    }
+
+    return message;
 }
 
 
 std::string Item::move(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Item::buy(Player*, Item*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Item::sell(Player*, Item*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
 std::string Item::read(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::climb(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::turn(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::push(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::pull(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::eat(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 
 std::string Item::drink(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 } 
 
 

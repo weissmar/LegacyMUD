@@ -14,6 +14,9 @@
 #include <Quest.hpp>
 #include <QuestStep.hpp>
 #include <Item.hpp>
+#include <ItemType.hpp>
+#include <Container.hpp>
+#include <Area.hpp>
 
 #include <gtest/gtest.h>
 
@@ -156,6 +159,23 @@ TEST(PlayerTest, AddRemoveItemInventoryTest) {
     EXPECT_TRUE(player.addToInventory(&item));
     EXPECT_TRUE(player.removeFromInventory(&item));
     EXPECT_FALSE(player.removeFromInventory(&item));
+}
+
+// Verify that all items inside a container are added to player lexical data
+TEST(PlayerTest, AddRemoveContainerInventoryTest) {
+    engine::Area area("room", "a room", "a long room", engine::AreaSize::SMALL);
+    engine::Player player;
+    engine::ItemType bagType(1, engine::ItemRarity::COMMON, "a bag", "bag", 1, engine::EquipmentSlot::NONE);
+    engine::ItemType keyType(1, engine::ItemRarity::COMMON, "a key", "key", 1, engine::EquipmentSlot::NONE);
+    engine::Container bag(10, &area, engine::ItemPosition::GROUND, "bag", &bagType);
+    engine::Item key(&area, engine::ItemPosition::GROUND, "key", &keyType);
+    EXPECT_TRUE(bag.place(&key, engine::ItemPosition::IN));
+    EXPECT_TRUE(player.addToInventory(&bag));
+    EXPECT_TRUE(player.getLexicalData().hasNoun("bag"));
+    EXPECT_TRUE(player.getLexicalData().hasNoun("key"));
+    EXPECT_TRUE(player.removeFromInventory(&bag));
+    EXPECT_FALSE(player.getLexicalData().hasNoun("bag"));
+    EXPECT_FALSE(player.getLexicalData().hasNoun("key"));
 }
 
 }

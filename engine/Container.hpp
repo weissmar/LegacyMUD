@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    02/26/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -223,12 +223,10 @@ class Container: public Item {
          * 
          * This function returns a string with details about this container.
          * 
-         * \param[out] effects  Specifies the effects of the action.
-         *
          * \return  Returns a std::string with the response to the command
          *          more.
          */
-        virtual std::string more(std::vector<EffectType> *effects); 
+        virtual std::string more(); 
 
         /*!
          * \brief   Executes the equip command on this container.
@@ -252,31 +250,6 @@ class Container: public Item {
          *          equip.
          */
         virtual std::string equip(Player *aPlayer, Item *anItem, InteractiveNoun *character, std::vector<EffectType> *effects);
-
-        /*!
-         * \brief   Executes the unequip command on this container.
-         * 
-         * This function unequips this container from the specified character or, if 
-         * the character parameter == nullptr, player. It then calls this function 
-         * on the character or player with a pointer to this container in the anItem 
-         * parameter.
-         *
-         * \param[in] aPlayer   Specifies the player that entered the command and,
-         *                      if character == nullptr, this is also the player that 
-         *                      is unequipping the container.
-         * \param[out] anItem   Specifies the item being unequipped.
-         * \param[in] character Optionally specifies the character that is unequipping  
-         *                      the item, or nullptr if the player is the one unequipping.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \note    May cause an effect on the player.
-         * 
-         * \pre The item must be equipped on the specified character or player.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          unequip.
-         */
-        virtual std::string unequip(Player *aPlayer, Item *anItem, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Executes the transfer command on this container.

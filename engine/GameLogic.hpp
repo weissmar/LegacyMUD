@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -34,6 +34,10 @@ namespace legacymud { namespace account {
     class Account;
 }}
 
+namespace legacymud { namespace test {
+    class GameLogicShim;
+}}
+
 namespace legacymud { namespace engine {
 
 class GameObjectManager;
@@ -48,6 +52,7 @@ class GameLogic {
         GameLogic(const GameLogic &otherGameLogic);
         GameLogic & operator=(const GameLogic &otherGameLogic);
         ~GameLogic();
+        friend class GameLogicShim;
 
         /*!
          * \brief   Starts a game.
