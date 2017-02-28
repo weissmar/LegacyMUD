@@ -832,6 +832,12 @@ class GameLogicShim {
          */
         int validateStringNumber(std::string number, int min, int max);
 
+        account::Account *getAccountSystem();
+
+        telnet::Server *getTelnetServer();
+
+        engine::GameObjectManager *getGameObjectManager();
+
     private:
         engine::GameLogic *_logic;
 };

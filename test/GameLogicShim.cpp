@@ -304,4 +304,17 @@ bool GameLogicShim::deleteCommand(engine::Player *aPlayer, engine::InteractiveNo
     return _logic->deleteCommand(aPlayer, directObj);
 }
 
+account::Account *GameLogicShim::getAccountSystem() {
+    return _logic->accountManager;
+}
+
+telnet::Server *GameLogicShim::getTelnetServer() {
+    return _logic->theServer;
+}
+
+engine::GameObjectManager *GameLogicShim::getGameObjectManager() {
+    return _logic->manager;
+}
+
+
 }}
