@@ -92,6 +92,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     anItem = new Item(&startArea, ItemPosition::GROUND, "red apple", anItemType);
     manager->addObject(anItem, -1);
     startArea.addItem(anItem);
+    anItem->addAction(CommandEnum::EAT, true, "The apple tastes sweet and refreshing.", EffectType::HEAL);
 
     // create a test item type and container
     anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
@@ -242,7 +243,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             // move player to start area
             startArea.addCharacter(newPlayer);
             newPlayer->setLocation(&startArea);
-            messagePlayer(newPlayer, startArea.getFullDescription(newPlayer->getID()));
+            messagePlayer(newPlayer, startArea.getFullDescription(newPlayer));
             message = "You see a player named " + playerName + " enter the area.";
             messageAreaPlayers(newPlayer, message, &startArea);
 
@@ -269,7 +270,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                     // move player to current location
                     anArea = aPlayer->getLocation();
                     anArea->addCharacter(aPlayer);
-                    messagePlayer(aPlayer, anArea->getFullDescription(aPlayer->getID()));
+                    messagePlayer(aPlayer, anArea->getFullDescription(aPlayer));
                     message = "You see a player named " + aPlayer->getName() + " enter the area.";
                     messageAreaPlayers(aPlayer, message, anArea);
 
@@ -1398,10 +1399,10 @@ bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
 
     // if command is look
     if (param == nullptr){
-        message = aPlayer->getLocation()->getFullDescription(aPlayer->getID());
+        message = aPlayer->getLocation()->getFullDescription(aPlayer);
     } else {
         // command is look at
-        message = param->look(&effects);
+        message = param->look(aPlayer, &effects);
     }
     
     message += " ";
@@ -1838,7 +1839,7 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
         message = "You can't go that way.";
     } else {
         newArea = aPlayer->getLocation();
-        message += newArea->getFullDescription(aPlayer->getID());
+        message += newArea->getFullDescription(aPlayer);
         messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
         messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
     }
@@ -1853,7 +1854,29 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
 
 
 bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You move the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->move(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't move the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 // add more Player class info?******************************************************************
@@ -1922,42 +1945,218 @@ bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, Int
 
 
 bool GameLogic::readCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You read the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->read(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't read the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::breakCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You break the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->breakIt(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't break the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::climbCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You climb the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->climb(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't climb the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::turnCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You turn the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->turn(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't turn the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::pushCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You push the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->push(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't push the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::pullCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You pull the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->pull(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't pull the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You eat the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->eat(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't eat the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You drink the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->drink(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't drink the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

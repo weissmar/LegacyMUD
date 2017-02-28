@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/26/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -139,19 +139,23 @@ bool Creature::deserialize(std::string){
 }
 
 
-std::string Creature::look(std::vector<EffectType> *effects){
+std::string Creature::look(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 }  
 
 
 std::string Creature::take(Player* aPlayer, Item* anItem, InteractiveNoun* aContainer, InteractiveNoun* aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     bool success;
 
     success = addToInventory(anItem);
     if (success){
-        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -165,6 +169,7 @@ std::string Creature::take(Player* aPlayer, Item* anItem, InteractiveNoun* aCont
 
 std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     std::string strSuccess;
     EffectType anEffect = EffectType::NONE;
     bool success = false;
@@ -183,7 +188,10 @@ std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCha
     }
 
     if (success){
-        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        resultMsg += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -195,6 +203,7 @@ std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCha
 
 std::string Creature::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     bool success = false;
 
@@ -203,7 +212,10 @@ std::string Creature::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aC
     }
 
     if (success){
-        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        resultMsg += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -215,12 +227,16 @@ std::string Creature::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aC
 
 std::string Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
 
     if (anArea != nullptr){
         setLocation(anArea);
 
-        message += getTextAndEffect(CommandEnum::GO, anEffect);
+        resultMsg += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -230,8 +246,33 @@ std::string Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *charact
 }
 
 
-std::string Creature::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Creature::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        if ((aCharacter != nullptr) && (aCharacter->getID() == this->getID())){
+            // item is being removed from this character
+            success = removeFromInventory(anItem);
+        } else if ((destination != nullptr) && (destination->getID() == this->getID())){
+            // item is being added to this character
+            success = addToInventory(anItem);
+        }
+    }
+
+    if (success){
+        resultMsg += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 

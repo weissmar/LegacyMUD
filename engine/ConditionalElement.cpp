@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/22/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.cpp
  *
@@ -10,6 +10,7 @@
 
 #include "ConditionalElement.hpp"
 #include "ItemType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -97,6 +98,132 @@ bool ConditionalElement::setAltDescription(std::string altDescription){
     this->altDescription = altDescription;
     return true;
 }
+
+
+std::string ConditionalElement::move(Player*, std::vector<EffectType> *effects){ 
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of move for this object
+    message = getTextAndEffect(CommandEnum::MOVE, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::read(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of read for this object
+    message = getTextAndEffect(CommandEnum::READ, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::breakIt(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of break for this object
+    message = getTextAndEffect(CommandEnum::BREAK, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::climb(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of climb for this object
+    message = getTextAndEffect(CommandEnum::CLIMB, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::turn(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of turn for this object
+    message = getTextAndEffect(CommandEnum::TURN, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::push(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of push for this object
+    message = getTextAndEffect(CommandEnum::PUSH, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::pull(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of pull for this object
+    message = getTextAndEffect(CommandEnum::PULL, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::eat(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of eat for this object
+    message = getTextAndEffect(CommandEnum::EAT, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
+
+
+std::string ConditionalElement::drink(Player*, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of drink for this object
+    message = getTextAndEffect(CommandEnum::DRINK, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
+} 
 
 
 std::string ConditionalElement::serialize(){

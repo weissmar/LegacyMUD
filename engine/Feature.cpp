@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -143,57 +143,12 @@ bool Feature::deserialize(std::string){
 }
 
 
-std::string Feature::look(std::vector<EffectType> *effects){
+std::string Feature::look(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 }  
 
 
 std::string Feature::listen(std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::move(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::read(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::climb(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::turn(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::push(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::pull(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::eat(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::drink(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/23/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        ArmorType.cpp
  *
@@ -61,51 +61,6 @@ std::string ArmorType::serialize(){
 bool ArmorType::deserialize(std::string){
     return false;
 }
-
-
-std::string ArmorType::move(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::read(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::breakIt(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::climb(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::turn(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::push(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::pull(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::eat(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string ArmorType::drink(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
 
 
 InteractiveNoun* ArmorType::copy(){

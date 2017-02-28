@@ -256,7 +256,7 @@ bool Exit::deserialize(std::string){
 }
 
 
-std::string Exit::look(std::vector<EffectType> *effects){
+std::string Exit::look(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 }  
 
@@ -267,7 +267,7 @@ std::string Exit::listen(std::vector<EffectType> *effects){
 
 
 std::string Exit::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
     EffectType anEffect = EffectType::NONE;
     bool conditional = isConditional();
     Area *location = getLocation();
@@ -304,7 +304,10 @@ std::string Exit::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, 
         connectingArea->addCharacter(aCharacter);
 
         // get message and effects of GO on this object
-        message += getTextAndEffect(CommandEnum::GO, anEffect);
+        resultMsg += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -314,51 +317,6 @@ std::string Exit::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, 
     }
     return message;
 }
-
-
-std::string Exit::move(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::read(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::climb(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::turn(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::push(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::pull(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::eat(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::drink(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
 
 
 InteractiveNoun* Exit::copy(){

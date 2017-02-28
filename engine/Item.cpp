@@ -17,6 +17,7 @@
 #include "Player.hpp"
 #include "Container.hpp"
 #include "Area.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -370,7 +371,7 @@ bool Item::deserialize(std::string){
 }
 
 
-std::string Item::look(std::vector<EffectType> *effects){
+std::string Item::look(Player *aPlayer, std::vector<EffectType> *effects){
     std::string message;
     ItemType *aType = getType();
 
@@ -382,7 +383,7 @@ std::string Item::look(std::vector<EffectType> *effects){
 
 // would be better if got rid of dynamic cast **************************************************************
 std::string Item::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
     Area *anArea = nullptr;
     EffectType anEffect = EffectType::NONE;
 
@@ -411,7 +412,10 @@ std::string Item::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContaine
 
     setPosition(ItemPosition::INVENTORY);
     // get results of take for this object
-    message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+    resultMsg = getTextAndEffect(CommandEnum::TAKE, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
     message += " ";
     if (anEffect != EffectType::NONE){
         effects->push_back(anEffect);
@@ -436,6 +440,7 @@ std::string Item::put(Player *aPlayer, Item *anItem, InteractiveNoun *containing
     InteractiveNoun *location;
     ItemPosition currPosition;
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect;
 
     location = getLocation();
@@ -466,7 +471,10 @@ std::string Item::put(Player *aPlayer, Item *anItem, InteractiveNoun *containing
 
     setPosition(position);
     // get results of put for this object
-    message = getTextAndEffect(CommandEnum::PUT, anEffect);
+    resultMsg = getTextAndEffect(CommandEnum::PUT, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
     if (anEffect != EffectType::NONE){
         effects->push_back(anEffect);
     }
@@ -482,6 +490,7 @@ std::string Item::put(Player *aPlayer, Item *anItem, InteractiveNoun *containing
 
 std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect;
     ItemPosition position = getPosition();
     InteractiveNoun *location = getLocation();
@@ -495,7 +504,10 @@ std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
             anArea->addItem(this);
 
             // get results of put for this object
-            message = getTextAndEffect(CommandEnum::DROP, anEffect);
+            resultMsg = getTextAndEffect(CommandEnum::DROP, anEffect);
+            if (resultMsg.compare("false") != 0){
+                message += resultMsg;
+            }
             if (anEffect != EffectType::NONE){
                 effects->push_back(anEffect);
             }
@@ -673,7 +685,7 @@ std::string Item::more(){
 
 
 std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
     EffectType anEffect = EffectType::NONE;
     InteractiveNoun *location = getLocation();
 
@@ -687,7 +699,10 @@ std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharact
             setPosition(ItemPosition::EQUIPPED);
 
             // get results of equip for this object
-            message = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            resultMsg = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            if (resultMsg.compare("false") != 0){
+                message += resultMsg;
+            }
             if (anEffect != EffectType::NONE){
                 effects->push_back(anEffect);
             }
@@ -706,7 +721,10 @@ std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharact
             setPosition(ItemPosition::EQUIPPED);
 
             // get results of equip for this object
-            message = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            resultMsg = getTextAndEffect(CommandEnum::EQUIP, anEffect);
+            if (resultMsg.compare("false") != 0){
+                message += resultMsg;
+            }
             if (anEffect != EffectType::NONE){
                 effects->push_back(anEffect);
             }
@@ -722,7 +740,7 @@ std::string Item::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharact
 
 
 std::string Item::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
     EffectType anEffect = EffectType::NONE;
     ItemPosition position = getPosition();
     InteractiveNoun *location = getLocation();
@@ -737,7 +755,10 @@ std::string Item::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
             setPosition(ItemPosition::INVENTORY);
 
             // get results of unequip for this object
-            message = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            resultMsg = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            if (resultMsg.compare("false") != 0){
+                message += resultMsg;
+            }
             if (anEffect != EffectType::NONE){
                 effects->push_back(anEffect);
             }
@@ -756,7 +777,10 @@ std::string Item::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
             setPosition(ItemPosition::INVENTORY);
 
             // get results of unequip for this object
-            message = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            resultMsg = getTextAndEffect(CommandEnum::UNEQUIP, anEffect);
+            if (resultMsg.compare("false") != 0){
+                message += resultMsg;
+            }
             if (anEffect != EffectType::NONE){
                 effects->push_back(anEffect);
             }
@@ -773,6 +797,7 @@ std::string Item::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
 
 std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     InteractiveNoun *location = getLocation();
 
@@ -784,8 +809,11 @@ std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aChar
                 setLocation(destination);
                 setPosition(ItemPosition::INVENTORY);
 
-                // get results of unequip for this object
-                message = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                // get results of transfer for this object
+                resultMsg = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                if (resultMsg.compare("false") != 0){
+                    message += resultMsg;
+                }
                 if (anEffect != EffectType::NONE){
                     effects->push_back(anEffect);
                 }
@@ -803,8 +831,11 @@ std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aChar
                 setLocation(destination);
                 setPosition(ItemPosition::INVENTORY);
 
-                // get results of unequip for this object
-                message = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                // get results of transfer for this object
+                resultMsg = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                if (resultMsg.compare("false") != 0){
+                    message += resultMsg;
+                }
                 if (anEffect != EffectType::NONE){
                     effects->push_back(anEffect);
                 }
@@ -822,85 +853,211 @@ std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aChar
 }
 
 
-std::string Item::move(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::move(Player *aPlayer, std::vector<EffectType> *effects){ 
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of move for this object
+    message = getTextAndEffect(CommandEnum::MOVE, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->move(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+std::string Item::attack(Player *aPlayer, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
     std::string message = "";
 
     return message;
 }
 
 
-std::string Item::buy(Player*, Item*, std::vector<EffectType> *effects){
+std::string Item::buy(Player *aPlayer, Item*, std::vector<EffectType> *effects){
     std::string message = "";
 
     return message;
 }
 
 
-std::string Item::sell(Player*, Item*, std::vector<EffectType> *effects){
+std::string Item::sell(Player *aPlayer, Item*, std::vector<EffectType> *effects){
     std::string message = "";
 
     return message;
 }
 
 
-std::string Item::read(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::read(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of read for this object
+    message = getTextAndEffect(CommandEnum::READ, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->read(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::breakIt(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::breakIt(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of breakIt for this object
+    message = getTextAndEffect(CommandEnum::BREAK, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->breakIt(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::climb(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::climb(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of climb for this object
+    message = getTextAndEffect(CommandEnum::CLIMB, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->climb(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::turn(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::turn(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of turn for this object
+    message = getTextAndEffect(CommandEnum::TURN, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->turn(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::push(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::push(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of push for this object
+    message = getTextAndEffect(CommandEnum::PUSH, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->push(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::pull(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::pull(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of pull for this object
+    message = getTextAndEffect(CommandEnum::PULL, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->pull(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::eat(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::eat(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of eat for this object
+    message = getTextAndEffect(CommandEnum::EAT, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->eat(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
 
 
-std::string Item::drink(Player*, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Item::drink(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of drink for this object
+    message = getTextAndEffect(CommandEnum::DRINK, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    // call this function on ItemType
+    resultMessage = getType()->drink(aPlayer, effects);
+
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
 
     return message;
 } 
@@ -911,12 +1068,12 @@ InteractiveNoun* Item::copy(){
 }
 
 
-bool Item::editAttribute(Player*, std::string){
+bool Item::editAttribute(Player *aPlayer, std::string){
     return false;
 }
 
 
-bool Item::editWizard(Player*){
+bool Item::editWizard(Player *aPlayer){
     return false;
 }
 

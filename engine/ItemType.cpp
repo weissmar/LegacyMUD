@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -9,6 +9,7 @@
  ************************************************************************/
 
 #include "ItemType.hpp"
+#include "EffectType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -187,48 +188,129 @@ bool ItemType::deserialize(std::string){
 }
 
 
-std::string ItemType::move(Player*, std::vector<EffectType> *effects){
-    return "";
+std::string ItemType::move(Player*, std::vector<EffectType> *effects){ 
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of move for this object
+    message = getTextAndEffect(CommandEnum::MOVE, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::read(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of read for this object
+    message = getTextAndEffect(CommandEnum::READ, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of break for this object
+    message = getTextAndEffect(CommandEnum::BREAK, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::climb(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of climb for this object
+    message = getTextAndEffect(CommandEnum::CLIMB, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::turn(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of turn for this object
+    message = getTextAndEffect(CommandEnum::TURN, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::push(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of push for this object
+    message = getTextAndEffect(CommandEnum::PUSH, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::pull(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of pull for this object
+    message = getTextAndEffect(CommandEnum::PULL, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::eat(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of eat for this object
+    message = getTextAndEffect(CommandEnum::EAT, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
 std::string ItemType::drink(Player*, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of drink for this object
+    message = getTextAndEffect(CommandEnum::DRINK, anEffect);
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 

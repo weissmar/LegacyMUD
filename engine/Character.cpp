@@ -11,7 +11,6 @@
 #include "Character.hpp"
 #include "Area.hpp"
 #include "Item.hpp"
-#include "ItemType.hpp"
 
 namespace legacymud { namespace engine {
 

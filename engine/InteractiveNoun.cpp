@@ -144,6 +144,18 @@ Action* InteractiveNoun::addAction(CommandEnum aCommand){
 }
 
 
+Action* InteractiveNoun::addAction(CommandEnum aCommand, bool valid, std::string flavorText, EffectType effect){
+    if (!checkAction(aCommand)){
+        std::lock_guard<std::mutex> actionsLock(actionsMutex);
+        Action *anAction = new Action(aCommand, valid, flavorText, effect);
+        actions.push_back(anAction);
+        return anAction;
+    } else {
+        return getAction(aCommand);
+    }
+}
+
+
 bool InteractiveNoun::removeAction(CommandEnum aCommand){
     std::lock_guard<std::mutex> actionsLock(actionsMutex);
     int index = -1;
@@ -231,7 +243,7 @@ bool InteractiveNoun::removeVerbAlias(CommandEnum aCommand, std::string alias){
 
 
 std::string InteractiveNoun::getTextAndEffect(CommandEnum aCommand, EffectType &anEffect) const{
-    std::string message = "";
+    std::string message = "false";
     Action *anAction = nullptr;
 
     anAction = this->getAction(aCommand);
@@ -239,7 +251,7 @@ std::string InteractiveNoun::getTextAndEffect(CommandEnum aCommand, EffectType &
         if (anAction->getValid()){
             message = anAction->getFlavorText();
             anEffect = anAction->getEffect();
-        }
+        } 
     }
 
     return message;

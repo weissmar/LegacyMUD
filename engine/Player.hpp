@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -406,12 +406,13 @@ class Player: public Combatant {
         /*!
          * \brief   Gets the response of this object to the command look.
          * 
+         * \param[in] aPlayer   Specifies the player that entered the command
          * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(std::vector<EffectType> *effects);  
+        virtual std::string look(Player *aPlayer, std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Executes the take command on this player.

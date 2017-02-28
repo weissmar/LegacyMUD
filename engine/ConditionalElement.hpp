@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.hpp
  *
@@ -104,6 +104,114 @@ class ConditionalElement: public InteractiveNoun {
          *          description was set successfully.
          */
         bool setAltDescription(std::string altDescription);
+
+        /*!
+         * \brief   Gets the response of this object to the command move.
+         *
+         * \param[in] aPlayer   Specifies the player that is moving the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          move.
+         */
+        virtual std::string move(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command read.
+         *
+         * \param[in] aPlayer   Specifies the player that is reading the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          read.
+         */
+        virtual std::string read(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command break.
+         *
+         * \param[in] aPlayer   Specifies the player that is breaking the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          break.
+         */
+        virtual std::string breakIt(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command climb.
+         *
+         * \param[in] aPlayer   Specifies the player that is climbing the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          climb.
+         */
+        virtual std::string climb(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command turn.
+         *
+         * \param[in] aPlayer   Specifies the player that is turning the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          turn.
+         */
+        virtual std::string turn(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command push.
+         *
+         * \param[in] aPlayer   Specifies the player that is pushing the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          push.
+         */
+        virtual std::string push(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command pull.
+         *
+         * \param[in] aPlayer   Specifies the player that is pulling the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          pull.
+         */
+        virtual std::string pull(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command eat.
+         *
+         * \param[in] aPlayer   Specifies the player that is eating the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          eat.
+         */
+        virtual std::string eat(Player *aPlayer, std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Gets the response of this object to the command drink.
+         *
+         * \param[in] aPlayer   Specifies the player that is drinking the object.
+         *
+         * \note    May cause an effect on the player.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          drink.
+         */
+        virtual std::string drink(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Serializes this object for writing to file.

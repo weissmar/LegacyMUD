@@ -216,19 +216,23 @@ bool NonCombatant::deserialize(std::string){
 }
 
 
-std::string NonCombatant::look(std::vector<EffectType> *effects){
+std::string NonCombatant::look(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 }  
 
 
 std::string NonCombatant::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     bool success;
 
     success = addToInventory(anItem);
     if (success){
-        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -242,6 +246,7 @@ std::string NonCombatant::take(Player *aPlayer, Item *anItem, InteractiveNoun *a
 
 std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     bool success = false;
     EffectType anEffect = EffectType::NONE;
 
@@ -256,7 +261,10 @@ std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNou
     }
 
     if (success){
-        message += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+        resultMsg += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -267,7 +275,23 @@ std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNou
 
 
 std::string NonCombatant::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anArea != nullptr){
+        setLocation(anArea);
+
+        resultMsg += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 

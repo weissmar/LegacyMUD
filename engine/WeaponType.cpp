@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.cpp
  *
@@ -91,51 +91,6 @@ std::string WeaponType::serialize(){
 bool WeaponType::deserialize(std::string){
     return false;
 }
-
-
-std::string WeaponType::move(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::read(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::climb(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::turn(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::push(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::pull(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::eat(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::drink(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
 
 
 InteractiveNoun* WeaponType::copy(){

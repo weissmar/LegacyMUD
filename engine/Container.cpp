@@ -237,7 +237,7 @@ bool Container::deserialize(std::string){
 }
 
 
-std::string Container::look(std::vector<EffectType> *effects){
+std::string Container::look(Player *aPlayer, std::vector<EffectType> *effects){
     std::string message;
     ItemType *aType = getType();
 
@@ -251,6 +251,7 @@ std::string Container::look(std::vector<EffectType> *effects){
 // would be best to remove dynamic casts ***********************************************************
 std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     Area *anArea = nullptr;
     ItemPosition position = getPosition();
@@ -286,10 +287,14 @@ std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCon
 
         setPosition(ItemPosition::INVENTORY);
         // get results of take for this object
-        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
+
         // call this function on player or character, and container
         if (aCharacter != nullptr){
             // aCharacter is doing the taking
@@ -311,6 +316,7 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
     InteractiveNoun *location;
     ItemPosition currPosition;
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect;
 
     if (anItem != nullptr){
@@ -346,7 +352,10 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 
         setPosition(position);
         // get results of put for this object
-        message = getTextAndEffect(CommandEnum::PUT, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::PUT, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -392,11 +401,6 @@ std::string Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *
 }
 
 
-std::string Container::move(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
 std::string Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool playerAttacker, std::vector<EffectType> *effects){
     return "";
 }
@@ -413,46 +417,6 @@ std::string Container::sell(Player *aPlayer, Item *anItem, std::vector<EffectTyp
 
 
 std::string Container::search(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::read(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::breakIt(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::climb(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::turn(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::push(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::pull(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::eat(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::drink(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 } 
 

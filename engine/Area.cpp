@@ -16,6 +16,7 @@
 #include "CommandEnum.hpp"
 #include "Action.hpp"
 #include "Container.hpp"
+#include "Player.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -109,12 +110,14 @@ const parser::LexicalData& Area::getLexicalData() const{
 }
 
 
-std::string Area::getFullDescription(int excludeID) const{
+std::string Area::getFullDescription(Player *aPlayer) const{
     std::string message = getLongDesc();
     std::vector<Item*> allItems = getItems();
     std::vector<Character*> allCharacters = getCharacters();
     std::vector<Feature*> allFeatures = getFeatures();
     std::vector<Exit*> allExits = getExits();
+    int excludeID = aPlayer->getID();
+    ItemType *condItemType = nullptr;
 
     message += "\015\012";
     
@@ -130,9 +133,15 @@ std::string Area::getFullDescription(int excludeID) const{
         message += exit->getDirectionString();
         message += " you see ";
         if (exit->isConditional()){
-            //**********************************************************************************
+            condItemType = exit->getConditionItem();
+            if ((condItemType != nullptr) && (aPlayer->hasItem(condItemType))){
+                message += exit->getAltDescription();
+            } else {
+                message += exit->getDescription();
+            }
+        } else {
+            message += exit->getName();
         }
-        message += exit->getName();
         message += ".\015\012";
     }
 
@@ -469,13 +478,17 @@ bool Area::deserialize(std::string){
 }
 
 
-std::string Area::look(std::vector<EffectType> *effects){
-    std::string message = getFullDescription(-1);
+std::string Area::look(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message = getFullDescription(aPlayer);
+    std::string resultMsg = "";
     EffectType anEffect = EffectType::NONE;
 
     message += " ";
 
-    message += getTextAndEffect(CommandEnum::LOOK, anEffect);
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
 
     if ((anEffect != EffectType::NONE) && (effects != nullptr)){
         effects->push_back(anEffect);
@@ -486,10 +499,13 @@ std::string Area::look(std::vector<EffectType> *effects){
 
 
 std::string Area::listen(std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
     EffectType anEffect;
 
-    message = getTextAndEffect(CommandEnum::LISTEN, anEffect);
+    resultMsg = getTextAndEffect(CommandEnum::LISTEN, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
 
     if ((anEffect != EffectType::NONE) && (effects != nullptr)){
         effects->push_back(anEffect);

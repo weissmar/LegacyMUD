@@ -162,12 +162,13 @@ class NonCombatant: public Character {
         /*!
          * \brief   Gets the response of this object to the command look.
          * 
+         * \param[in] aPlayer   Specifies the player that entered the command
          * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(std::vector<EffectType> *effects); 
+        virtual std::string look(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Executes the take command on this non-combatant.

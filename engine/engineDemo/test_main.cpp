@@ -295,6 +295,69 @@ void setGlobalVerbs() {
     vi.description = "use on";
     parser::WordManager::addGlobalVerb("use", vi);
 
+    // MOVE command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::MOVE;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "move";
+    parser::WordManager::addGlobalVerb("move", vi);
+
+    // READ command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::READ;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "read";
+    parser::WordManager::addGlobalVerb("read", vi);
+
+    // BREAK command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::BREAK;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "BREAK";
+    parser::WordManager::addGlobalVerb("BREAK", vi);
+
+    // CLIMB command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::CLIMB;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "climb";
+    parser::WordManager::addGlobalVerb("climb", vi);
+
+    // TURN command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::TURN;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "turn";
+    parser::WordManager::addGlobalVerb("turn", vi);
+
+    // PUSH command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::PUSH;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "push";
+    parser::WordManager::addGlobalVerb("push", vi);
+
+    // PULL command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::PULL;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "pull";
+    parser::WordManager::addGlobalVerb("pull", vi);
+
+    // EAT command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::EAT;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "eat";
+    parser::WordManager::addGlobalVerb("eat", vi);
+
+    // DRINK command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::DRINK;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "drink";
+    parser::WordManager::addGlobalVerb("drink", vi);
+
 }
 
 void setBuilderVerbs() {

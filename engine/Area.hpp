@@ -34,6 +34,7 @@ class Character;
 class Exit;
 class Item;
 class Feature;
+class Player;
 
 /*!
  * \details     This class defines in-game areas (rooms, fields, etc) and keeps
@@ -123,12 +124,12 @@ class Area: public InteractiveNoun {
          * \brief   Gets the full description of an area for first time
          *          entry.
          *          
-         * \param[in] excludeID     Optionally specifies the ID of a
-         *                          player to exclude from the description.
+         * \param[in] aPlayer   Specifies the player that is going to see
+         *                      the description. 
          * 
          * \return  Returns a std::string with the full description.
          */
-        std::string getFullDescription(int excludeID) const;
+        std::string getFullDescription(Player *aPlayer) const;
 
         /*!
          * \brief   Sets the name of this area.
@@ -361,12 +362,13 @@ class Area: public InteractiveNoun {
         /*!
          * \brief   Gets the response of this object to the command look.
          * 
+         * \param[in] aPlayer   Specifies the player that is doing the looking.
          * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(std::vector<EffectType> *effects);  
+        virtual std::string look(Player *aPlayer, std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Gets the response of this object to the command listen.
