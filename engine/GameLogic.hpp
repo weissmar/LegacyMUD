@@ -52,7 +52,7 @@ class GameLogic {
         GameLogic(const GameLogic &otherGameLogic);
         GameLogic & operator=(const GameLogic &otherGameLogic);
         ~GameLogic();
-        friend class GameLogicShim;
+        friend class test::GameLogicShim;
 
         /*!
          * \brief   Starts a game.
