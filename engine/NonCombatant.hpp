@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.hpp
  *
@@ -26,6 +26,7 @@ namespace legacymud { namespace engine {
 
 class Area;
 class Quest;
+class Item;
 
 /*!
  * \details     This class defines in-game NPCs that sell and buy items and 
@@ -109,6 +110,29 @@ class NonCombatant: public Character {
          *          specified alias succeeded.
          */
         virtual bool removeVerbAlias(CommandEnum aCommand, std::string alias);
+
+        /*!
+         * \brief   Adds the specified item to this NPC's inventory.
+         *
+         * \param[in] anItem    Specifies the item to add.
+         *
+         * \return  Returns a bool indicating whether or not adding the item was 
+         *          successful.
+         */
+        virtual bool addToInventory(Item *anItem);
+
+        /*!
+         * \brief   Removes the specified item from this NPC's inventory.
+         *
+         * \param[in] anItem    Specifies the item to remove.
+         *
+         * \note    If the item is equipped, this function unequips the item and
+         *          removes it from inventory.
+         *
+         * \return  Returns a bool indicating whether or not removing the item was 
+         *          successful.
+         */
+        virtual bool removeFromInventory(Item *anItem);
 
         /*!
          * \brief   Gets the object type.

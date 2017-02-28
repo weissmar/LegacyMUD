@@ -379,27 +379,6 @@ class Area: public InteractiveNoun {
         virtual std::string listen(std::vector<EffectType> *effects); 
 
         /*!
-         * \brief   Moves the specified player or character to this area.
-         *
-         * This function moves the specified player or character to this area. 
-         * After adding the player/character to this area, it calls go() on  
-         * the player/character, passing a pointer of this area in the anArea 
-         * parameter, so the player/character can respond to the go command.
-         *
-         * \param[in] aPlayer   Specifes the player that entered the command and,
-         *                      if character == nullptr, the player to be added 
-         *                      to this area.
-         * \param[out] anArea   Specifies the area to add the player/character to.  
-         * \param[in] character Optionally specifies the character to move to this
-         *                      area, or nullptr if the player is the one moving.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          search.
-         */
-        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects);
-
-        /*!
          * \brief   Gets the response of this object to the command search.
          *
          * \param[in] aPlayer   Specifies the player that is searching the object.

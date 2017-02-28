@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Exit.hpp
  *
@@ -34,7 +34,7 @@ class Area;
 class Exit: public ConditionalElement {
     public:
         Exit();
-        Exit(ExitDirection direction, EffectType effect, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
+        Exit(ExitDirection direction, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
         /*Exit(const Exit &otherExit);
         Exit & operator=(const Exit &otherExit);
         virtual ~Exit();*/
@@ -52,13 +52,6 @@ class Exit: public ConditionalElement {
          * \return  Returns a std::string with the direction of this exit.
          */
         std::string getDirectionString() const;
-
-        /*!
-         * \brief   Gets the effect of this exit.
-         *
-         * \return  Returns an EffectType with the effect of this exit.
-         */
-        EffectType getEffect() const;
 
         /*!
          * \brief   Gets the area that this exit connects to.
@@ -83,16 +76,6 @@ class Exit: public ConditionalElement {
          *          was successful.
          */
         bool setDirection(ExitDirection aDirection);
-
-        /*!
-         * \brief   Sets the effect of this exit.
-         * 
-         * \param[in] anEffect  Specifies the effect of this exit
-         *
-         * \return  Returns a bool indicating whether or not setting the effect
-         *          was successful.
-         */
-        bool setEffect(EffectType anEffect);
 
         /*!
          * \brief   Sets the connecting area of this exit.
@@ -219,6 +202,28 @@ class Exit: public ConditionalElement {
          *          listen.
          */
         virtual std::string listen(std::vector<EffectType> *effects); 
+
+        /*!
+         * \brief   Moves the specified player or character through this exit 
+         *          to the connectArea.
+         *
+         * This function moves the specified player or character through this 
+         * exit. After adding the player/character to the area, it calls go() 
+         * on the player/character, passing a pointer of the area in the anArea 
+         * parameter, so the player/character can respond to the go command.
+         *
+         * \param[in] aPlayer   Specifes the player that entered the command and,
+         *                      if character == nullptr, the player to be added 
+         *                      to this area.
+         * \param[out] anArea   Specifies the area to add the player/character to.  
+         * \param[in] character Optionally specifies the character to move to this
+         *                      area, or nullptr if the player is the one moving.
+         * \param[out] effects  Specifies the effects of the action.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          go.
+         */
+        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Gets the response of this object to the command move.
@@ -388,8 +393,9 @@ class Exit: public ConditionalElement {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
+        void addDirectionalAliases(ExitDirection direction);
+        
         std::atomic<ExitDirection> direction;
-        std::atomic<EffectType> effect;
         Area *location;
         mutable std::mutex locationMutex;
         Area *connectArea;

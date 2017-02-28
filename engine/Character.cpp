@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/26/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -113,6 +113,17 @@ std::vector<std::pair<EquipmentSlot, Item*>> Character::getEquipped() const{
 
 int Character::getMaxInventoryWeight() const{
     return maxInventoryWeight.load();
+}
+
+
+bool Character::hasItem(ItemType *anItemType) const{
+    std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+    for (auto item : inventory){
+        if (item.second->getType() == anItemType){
+            return true;
+        }
+    }
+    return false;
 }
 
 

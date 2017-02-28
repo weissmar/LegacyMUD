@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/25/2017
+ * \modified    02/27/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -129,6 +129,9 @@ std::string Area::getFullDescription(int excludeID) const{
     for (auto exit : allExits){
         message += exit->getDirectionString();
         message += " you see ";
+        if (exit->isConditional()){
+            //**********************************************************************************
+        }
         message += exit->getName();
         message += ".\015\012";
     }
@@ -226,10 +229,20 @@ bool Area::addItem(Item *anItem){
 
 
 bool Area::addCharacter(Character *aCharacter){
+    std::vector<std::pair<EquipmentSlot, Item*>> inventory;
+
     if (aCharacter != nullptr){
         std::lock_guard<std::mutex> charContentLock(charContentMutex);
         characterContents.push_back(aCharacter);
         addAllLexicalData(aCharacter);
+
+        if (aCharacter->getObjectType() != ObjectType::PLAYER){
+            inventory = aCharacter->getInventory();
+            for (auto item : inventory){
+                addAllLexicalData(item.second);
+            }
+        }
+
         return true;
     }
     return false;
@@ -321,10 +334,20 @@ bool Area::removeItem(Item *anItem){
 
 
 bool Area::removeCharacter(Character *aCharacter){
+    std::vector<std::pair<EquipmentSlot, Item*>> inventory;
+
     if (aCharacter != nullptr){
         std::lock_guard<std::mutex> charContentLock(charContentMutex);
         characterContents.erase(std::remove(characterContents.begin(), characterContents.end(), aCharacter), characterContents.end());
         removeAllLexicalData(aCharacter);
+
+        if (aCharacter->getObjectType() != ObjectType::PLAYER){
+            inventory = aCharacter->getInventory();
+            for (auto item : inventory){
+                removeAllLexicalData(item.second);
+            }
+        }
+
         return true;
     }
     return false;
@@ -487,11 +510,6 @@ std::string Area::listen(std::vector<EffectType> *effects){
 
     return message;
 } 
-
-
-std::string Area::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
-    return "";
-}
 
 
 std::string Area::search(Player *aPlayer, std::vector<EffectType> *effects){

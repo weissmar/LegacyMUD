@@ -214,7 +214,19 @@ std::string Creature::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aC
 
 
 std::string Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+
+    if (anArea != nullptr){
+        setLocation(anArea);
+
+        message += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
