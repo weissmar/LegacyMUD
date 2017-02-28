@@ -40,6 +40,8 @@ namespace legacymud {
         */     
         Server();
         
+        virtual ~Server() { }
+
         /*!
           \brief Initializes the server.
           
