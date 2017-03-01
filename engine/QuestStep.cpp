@@ -180,6 +180,25 @@ InteractiveNoun* QuestStep::deserialize(std::string){
 }
 
 
+std::string QuestStep::more(Player *aPlayer){
+    std::string fetchItemName, receiverName;
+    std::string message;
+
+    if (getFetchItem() != nullptr){
+        fetchItemName = getFetchItem()->getName();
+    }
+    if (getReceiver() != nullptr){
+        receiverName = getReceiver()->getName();
+    }
+
+    message = "Step " + std::to_string(getOrdinalNumber()) + ":\015\012";
+    message += getDescription() + "\015\012";
+    message += "Give the " + fetchItemName + " to " + receiverName + ".\015\012";
+
+    return message;
+}
+
+
 InteractiveNoun* QuestStep::copy(){
     return nullptr;
 }

@@ -1624,6 +1624,9 @@ bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *directObj){
 
     if (directObj != nullptr){
         message = directObj->more(aPlayer);
+        if (message.compare("false") == 0){
+            message = "There isn't any more information available about that.";
+        }
         messagePlayer(aPlayer, message);
         return true;
     }

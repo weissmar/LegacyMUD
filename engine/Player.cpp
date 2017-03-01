@@ -12,6 +12,7 @@
 #include "Player.hpp"
 #include "Area.hpp"
 #include "Quest.hpp"
+#include "QuestStep.hpp"
 #include "NonCombatant.hpp"
 #include "PlayerClass.hpp"
 #include "InteractiveNoun.hpp"
@@ -51,7 +52,10 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , active(true)
 , fileDescriptor(FD)
 , editMode(false)
-{ }
+{
+    addAllLexicalData(aClass); 
+    addAllLexicalData(aClass->getSpecialSkill());
+}
 
 
 Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight)
@@ -65,7 +69,10 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , active(true)
 , fileDescriptor(FD)
 , editMode(false)
-{ }
+{ 
+    addAllLexicalData(aClass); 
+    addAllLexicalData(aClass->getSpecialSkill());
+}
 
 
 Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
@@ -79,7 +86,10 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , active(true)
 , fileDescriptor(FD)
 , editMode(false)
-{ }
+{ 
+    addAllLexicalData(aClass); 
+    addAllLexicalData(aClass->getSpecialSkill());
+}
 
 
 /*Player::Player(const Player &otherPlayer){
@@ -198,7 +208,9 @@ bool Player::setSize(CharacterSize size){
 
 bool Player::setPlayerClass(PlayerClass *aClass){
     std::lock_guard<std::mutex> playerClassLock(playerClassMutex);
+    removeAllLexicalData(playerClass);
     playerClass = aClass;
+    addAllLexicalData(playerClass);
 
     return true;
 }
@@ -270,6 +282,8 @@ bool Player::addQuest(Quest *aQuest, int step){
 
         if (found != 1){
             questList[aQuest] = step;
+            addAllLexicalData(aQuest);
+            addAllLexicalData(aQuest->getStep(step));
             return true;
         }
     }   
@@ -285,7 +299,10 @@ bool Player::updateQuest(Quest *aQuest, int step){
         found = questList.count(aQuest);
 
         if (found == 1){
+            removeAllLexicalData(aQuest->getStep(questList.at(aQuest)));
             questList.at(aQuest) = step;
+            addAllLexicalData(aQuest->getStep(step));
+            return true;
         }
     }
     return false;

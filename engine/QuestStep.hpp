@@ -173,6 +173,18 @@ class QuestStep: public InteractiveNoun {
         static InteractiveNoun* deserialize(std::string);
 
         /*!
+         * \brief   Gets the response of this object to the command more.
+         * 
+         * This function returns a string with details about this skill.
+         * 
+         * \param[in] aPlayer   Specifies the player that entered the command.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          more.
+         */
+        virtual std::string more(Player *aPlayer); 
+
+        /*!
          * \brief   Creates a copy of this object.
          *
          * This function creates a new object with the same attributes as this
