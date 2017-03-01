@@ -84,12 +84,17 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     Quest *aQuest;
     QuestStep *aStep;
     Player *aPlayer;
+    SpecialSkill *aSkill;
 
     accountManager = anAccount;
     theServer = aServer;
 
+    // create a SpecialSkill
+    aSkill = new SpecialSkill("Totally Rad Skill", 3, DamageType::FIRE, 1, 3);
+    manager->addObject(aSkill, -1);
+
     // create a default player class
-    aClass = new PlayerClass(0, "default class", nullptr, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
+    aClass = new PlayerClass(0, "default class", aSkill, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
     manager->addObject(aClass, -1);
 
     // create a test item type and item
@@ -1953,11 +1958,45 @@ bool GameLogic::skillsCommand(Player *aPlayer){
     SpecialSkill *aSkill = aPlayer->getPlayerClass()->getSpecialSkill();
 
     if (aSkill != nullptr){
-        message = "Class Special Skill: ";
+        message = "Class Special Skill: \015\012";
         message += aSkill->getName() + "\015\012";
-        message += "Damage";//******************************************************************************
+        message += "Damage: " + std::to_string(aSkill->getDamage());
+        switch(aSkill->getDamageType()){
+            case DamageType::NONE:
+                message += " neutral damage\015\012";
+                break;
+            case DamageType::CRUSHING:
+                message += " crushing damage\015\012";
+                break;
+            case DamageType::PIERCING:
+                message += " piercing damage\015\012";
+                break;
+            case DamageType::ELECTRIC:
+                message += " electric damage\015\012";
+                break;
+            case DamageType::FIRE:
+                message += " fire damage\015\012";
+                break;
+            case DamageType::WATER:
+                message += " water damage\015\012";
+                break;
+            case DamageType::WIND:
+                message += " wind damage\015\012";
+                break;
+            case DamageType::EARTH:
+                message += " earth damage\015\012";
+                break;
+            case DamageType::HEAL:
+                message += " healing\015\012";
+                break;
+        }
+        message += "Cost: " + std::to_string(aSkill->getCost()) + "\015\012";
+        message += "Cooldown " + std::to_string(aSkill->getCooldown()) + "\015\012";
+    } else {
+        message = "You don't have any skills.\015\012";
     }
-    return false;
+    messagePlayer(aPlayer, message);
+    return true;
 }
 
 
