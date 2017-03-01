@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -233,16 +233,6 @@ class Combatant: public Character {
          * \return  Returns a std::string with the serialized data.
          */
         virtual std::string serialize();
-
-        /*!
-         * \brief   Deserializes this object after reading from file.
-         * 
-         * \param[in] string    Holds the data to be deserialized.
-         *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
-         */
-        virtual bool deserialize(std::string);
     protected:
         /*!
          * \brief   Adds to the current dexterity of this combatant.

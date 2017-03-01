@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -11,6 +11,7 @@
 #include "Quest.hpp"
 #include "Item.hpp"
 #include "QuestStep.hpp"
+#include "Player.hpp"
 #include <algorithm>
 
 namespace legacymud { namespace engine {
@@ -73,9 +74,21 @@ Item* Quest::getRewardItem() const{
 }
 
 
-std::vector<std::pair<int, QuestStep*>> Quest::getSteps() const{
+std::map<int, QuestStep*> Quest::getAllSteps() const{
     std::lock_guard<std::mutex> stepsLock(stepsMutex);
     return steps;
+}
+
+
+QuestStep* Quest::getStep(int step) const{
+    std::lock_guard<std::mutex> stepsLock(stepsMutex);
+    int found = steps.count(step);
+
+    if (found == 1){
+        return steps.at(step);
+    } else {
+        return nullptr;
+    }
 }
 
 
@@ -110,26 +123,35 @@ bool Quest::setRewardItem(Item *rewardItem){
 }
 
 
-bool Quest::addStep(int order, QuestStep *aStep){
+bool Quest::addStep(QuestStep *aStep){
+    int stepNum, found;
+
     if(aStep != nullptr){
         std::lock_guard<std::mutex> stepsLock(stepsMutex);
-        steps.push_back(std::make_pair(order, aStep));
-        return true;
-    } else {
-        return false;
+        stepNum = aStep->getOrdinalNumber();
+        found = steps.count(stepNum);
+
+        if (found != 1){
+            steps[stepNum] = aStep;
+            return true;
+        }
     }
+    return false;
 }
 
 
 bool Quest::removeStep(QuestStep *aStep){
-    std::lock_guard<std::mutex> stepsLock(stepsMutex);
-    int size = steps.size();
-    steps.erase(std::remove(steps.begin(), steps.end(), std::make_pair(aStep->getOrdinalNumber(), aStep)), steps.end());
-    if ((steps.size() - size) == 1){
-        return true;
-    } else {
-        return false;
+    if (aStep != nullptr){
+        std::lock_guard<std::mutex> stepsLock(stepsMutex);
+        int stepNum = aStep->getOrdinalNumber();
+        int found = steps.count(stepNum);
+
+        if (found == 1){
+            steps.erase(stepNum);
+            return true;
+        }
     }
+    return false;
 }
 
 
@@ -143,8 +165,39 @@ std::string Quest::serialize(){
 }
 
 
-bool Quest::deserialize(std::string){
-    return false;
+InteractiveNoun* Quest::deserialize(std::string){
+    return nullptr; 
+}
+
+
+std::string Quest::more(Player *aPlayer){
+    std::string message;
+    int step = aPlayer->getQuestCurrStep(this);
+    int found;
+    int money = getRewardMoney();
+    Item *anItem = getRewardItem();
+
+    if (step != -1){
+        std::lock_guard<std::mutex> stepsLock(stepsMutex);
+        found = steps.count(step);
+
+        if (found == 1){
+            message = "Quest: " + getName() + "\015\012";
+            message += getDescription() + "\015\012";
+            message += "Reward: ";
+            if (anItem != nullptr){
+                message += anItem->getName();
+            }
+            if ((anItem != nullptr) && (money > 0)){
+                message += " and ";
+            }
+            if (money > 0){
+                message += std::to_string(money) + " money\015\012";
+            }
+        }
+    }
+
+    return message;
 }
 
 

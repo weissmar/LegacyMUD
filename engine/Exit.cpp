@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -251,8 +251,8 @@ std::string Exit::serialize(){
 }
 
 
-bool Exit::deserialize(std::string){
-    return false;
+InteractiveNoun* Exit::deserialize(std::string){
+    return nullptr; 
 }
 
 

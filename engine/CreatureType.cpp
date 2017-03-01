@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/20/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        CreatureType.cpp
  *
@@ -60,8 +60,8 @@ std::string CreatureType::serialize(){
 }
 
 
-bool CreatureType::deserialize(std::string){
-    return false;
+InteractiveNoun* CreatureType::deserialize(std::string){
+    return nullptr; 
 }
 
 

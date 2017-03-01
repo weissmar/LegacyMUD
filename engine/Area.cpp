@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -473,8 +473,8 @@ std::string Area::serialize(){
 }
 
 
-bool Area::deserialize(std::string){
-    return false;
+InteractiveNoun* Area::deserialize(std::string){
+    return nullptr; 
 }
 
 

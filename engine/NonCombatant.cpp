@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -211,8 +211,8 @@ std::string NonCombatant::serialize(){
 }
 
 
-bool NonCombatant::deserialize(std::string){
-    return false;
+InteractiveNoun* NonCombatant::deserialize(std::string){
+    return nullptr; 
 }
 
 

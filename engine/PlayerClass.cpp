@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        PlayerClass.cpp
  *
@@ -49,8 +49,8 @@ std::string PlayerClass::serialize(){
 }
 
 
-bool PlayerClass::deserialize(std::string){
-    return false;
+InteractiveNoun* PlayerClass::deserialize(std::string){
+    return nullptr; 
 }
 
 

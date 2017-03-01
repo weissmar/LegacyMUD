@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -41,7 +41,7 @@ Player::Player()
 
 
 Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description, Area *startArea)
-: Combatant(START_HEALTH, nullptr, START_SPECIAL_PTS, name, description, START_MONEY, nullptr, MAX_INVENTORY_WEIGHT)
+: Combatant(START_HEALTH, startArea, START_SPECIAL_PTS, name, description, START_MONEY, startArea, MAX_INVENTORY_WEIGHT)
 , experiencePoints(0)
 , level(1)
 , size(size)
@@ -137,9 +137,22 @@ bool Player::isEditMode() const{
 }
 
 
-std::vector<std::pair<Quest*, int>> Player::getQuestList() const{
+std::map<Quest*, int> Player::getQuestList() const{
     std::lock_guard<std::mutex> questListLock(questListMutex);
     return questList;
+}
+
+
+int Player::getQuestCurrStep(Quest *aQuest) const{
+    if (aQuest != nullptr){
+        std::lock_guard<std::mutex> questListLock(questListMutex);
+        int found = questList.count(aQuest);
+
+        if (found == 1){
+            return questList.at(aQuest);
+        }
+    }
+    return -1;
 }
 
 
@@ -235,11 +248,32 @@ bool Player::setEditMode(bool editing){
 
 
 bool Player::addQuest(Quest *aQuest, int step){
+    int found;
+
+    if (aQuest != nullptr){
+        std::lock_guard<std::mutex> questListLock(questListMutex);
+        found = questList.count(aQuest);
+
+        if (found != 1){
+            questList[aQuest] = step;
+            return true;
+        }
+    }   
     return false;
 }
 
 
 bool Player::updateQuest(Quest *aQuest, int step){
+    int found;
+
+    if (aQuest != nullptr){
+        std::lock_guard<std::mutex> questListLock(questListMutex);
+        found = questList.count(aQuest);
+
+        if (found == 1){
+            questList.at(aQuest) = step;
+        }
+    }
     return false;
 } 
 
@@ -433,8 +467,8 @@ std::string Player::serialize(){
 }
 
 
-bool Player::deserialize(std::string){
-    return false;
+InteractiveNoun* Player::deserialize(std::string){
+    return nullptr; 
 }
 
 

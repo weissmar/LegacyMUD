@@ -61,6 +61,15 @@ class GameObjectManager {
         bool removeObject(InteractiveNoun *anObject, int FD);
 
         /*!
+         * \brief   Gets a map of ID to InteractiveNoun* with all of the objects in the
+         *          game.
+         *
+         * \return  Returns a std::map<int, InteractiveNoun*> with all of the objects in
+         *          the game.
+         */
+        std::map<int, InteractiveNoun*> getAllObjects() const;
+
+        /*!
          * \brief   Gets a pointer to the object indicated by the specified
          *          ID.
          *

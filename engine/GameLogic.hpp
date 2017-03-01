@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -126,6 +126,7 @@ class GameLogic {
          *          was successful.
          */
         bool updatePlayersInCombat();
+        
     private:
 
         /*!

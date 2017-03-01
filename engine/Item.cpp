@@ -1,7 +1,7 @@
  /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -366,8 +366,8 @@ std::string Item::serialize(){
 }
 
 
-bool Item::deserialize(std::string){
-    return false;
+InteractiveNoun* Item::deserialize(std::string){
+    return nullptr; 
 }
 
 
@@ -522,7 +522,7 @@ std::string Item::drop(Player *aPlayer, std::vector<EffectType> *effects){
 }
 
 
-std::string Item::more(){
+std::string Item::more(Player *aPlayer){
     std::string message = "Item: " + getName() + "\015\012";
     ItemType *aType = getType();
     int armorBonus = aType->getArmorBonus();

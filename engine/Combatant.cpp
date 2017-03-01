@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/22/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -212,11 +212,6 @@ bool Combatant::respawn(){
 
 std::string Combatant::serialize(){
     return "";
-}
-
-
-bool Combatant::deserialize(std::string){
-    return false;
 }
 
 

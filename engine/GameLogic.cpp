@@ -29,6 +29,8 @@
 #include "ItemType.hpp"
 #include "Exit.hpp"
 #include "WeaponType.hpp"
+#include "Quest.hpp"
+#include "QuestStep.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -78,6 +80,9 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     Container *aContainer;
     Exit *anExit, *otherExit;
     Area *anArea;
+    Quest *aQuest;
+    QuestStep *aStep;
+    Player *aPlayer;
 
     accountManager = anAccount;
     theServer = aServer;
@@ -118,11 +123,23 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     manager->addObject(otherExit, -1);
     anArea->addExit(otherExit);
 
+    // create test player, quest, quest step
+    aQuest = new Quest("Super Cool Quest", "The quest for the totally cool stuff", 30, nullptr);
+    manager->addObject(aQuest, -1);
+    aStep = new QuestStep(3, "Go to the place and get the thing", nullptr, nullptr, nullptr, "You did the thing! Congrats!");
+    manager->addObject(aStep, -1);
+    aQuest->addStep(aStep);
+    aPlayer = new Player(CharacterSize::SMALL, aClass, "test", -1, "Tester1", "a super awesome person", &startArea);
+    aPlayer->addQuest(aQuest, 3);
+    manager->addObject(aPlayer, -1);
+    accountManager->createAccount("test", "test", true, aPlayer->getID());
+
     return true;
 }
 
 
 bool GameLogic::newPlayerHandler(int fileDescriptor){
+    std::cout << "inside new player handler\n";
     bool success = false;
     bool validUsername = false;
     bool validPassword = false;
@@ -262,14 +279,19 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                 // check if user is already logged in
                 aPlayer = manager->getPlayerByUsername(username);
                 if (aPlayer != nullptr){
+                    std::cout << "before loading player into game\n";
                     // load player into game
                     manager->loadPlayer(username, fileDescriptor);
+                    std::cout << "after loading player\n";
                     aPlayer = manager->getPlayerByFD(fileDescriptor);
                     aPlayer->activate(fileDescriptor);
+                    std::cout << "after activate\n";
 
                     // move player to current location
                     anArea = aPlayer->getLocation();
+                    std::cout << "after get location\n";
                     anArea->addCharacter(aPlayer);
+                    std::cout << "after addCharacter\n";
                     messagePlayer(aPlayer, anArea->getFullDescription(aPlayer));
                     message = "You see a player named " + aPlayer->getName() + " enter the area.";
                     messageAreaPlayers(aPlayer, message, anArea);
@@ -315,9 +337,13 @@ int GameLogic::validateStringNumber(std::string number, int min, int max){
 
 
 bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string &response){
+    std::cout << "inside getValueFromUser\n";
+    std::cout << "file descriptor = " + std::to_string(FD) + "\n";
+    std::cout << "message = " + outMessage + "\n";
     bool success;
 
     theServer->sendMsg(FD, outMessage);
+    std::cout << "after send message\n";
     success = theServer->receiveMsg(FD, response);
     if (!success){
         theServer->disconnectPlayer(FD);
@@ -1596,7 +1622,7 @@ bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *directObj){
     std::string message = "";
 
     if (directObj != nullptr){
-        message = directObj->more();
+        message = directObj->more(aPlayer);
         messagePlayer(aPlayer, message);
         return true;
     }
@@ -1900,7 +1926,21 @@ bool GameLogic::statsCommand(Player *aPlayer){
 
 
 bool GameLogic::questsCommand(Player *aPlayer){
-    return false;
+    std::string message;
+    std::map<Quest*, int> qList = aPlayer->getQuestList();
+
+    if (qList.size() == 0){
+        message = "You don't have any quests.";
+    } else {
+        message = "Quests:\015\012";
+        for (auto quest : qList){
+            message += quest.first->getName() + ": step ";
+            message += std::to_string(quest.second) + "\015\012";
+        }
+    }
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 

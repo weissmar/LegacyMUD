@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/26/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -106,12 +106,12 @@ std::string SpecialSkill::serialize(){
 }
 
 
-bool SpecialSkill::deserialize(std::string){
-    return false;
+InteractiveNoun* SpecialSkill::deserialize(std::string){
+    return nullptr; 
 }
 
 
-std::string SpecialSkill::more(){
+std::string SpecialSkill::more(Player *aPlayer){
     std::string message = "Special Skill: " + getName() + "\015\012";
     message += "Effect: " + std::to_string(getDamage()) + " ";
     switch(getDamageType()){

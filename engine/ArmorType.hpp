@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        ArmorType.hpp
  *
@@ -89,14 +89,14 @@ class ArmorType: public ItemType {
         virtual std::string serialize();
 
         /*!
-         * \brief   Deserializes this object after reading from file.
+         * \brief   Deserializes and creates an object of this type from the
+         *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
          *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
+         * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        virtual bool deserialize(std::string);
+        static InteractiveNoun* deserialize(std::string);
 
         /*!
          * \brief   Creates a copy of this object.

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -20,6 +20,17 @@
 namespace legacymud { namespace engine {
 
 std::atomic<int> InteractiveNoun::nextID {1};
+
+
+int InteractiveNoun::getStaticID(){
+    return nextID;
+}
+
+
+void InteractiveNoun::setStaticID(int num){
+    nextID = num;
+}
+
 
 InteractiveNoun::InteractiveNoun() : ID(nextID++){
 

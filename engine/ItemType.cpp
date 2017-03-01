@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -183,8 +183,8 @@ std::string ItemType::serialize(){
 }
 
 
-bool ItemType::deserialize(std::string){
-    return false;
+InteractiveNoun* ItemType::deserialize(std::string){
+    return nullptr; 
 }
 
 

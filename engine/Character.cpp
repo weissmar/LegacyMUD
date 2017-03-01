@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/27/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -268,11 +268,6 @@ bool Character::unequipItem(Item *anItem){
 
 std::string Character::serialize(){
     return "";
-}
-
-
-bool Character::deserialize(std::string){
-    return false;
 }
 
 

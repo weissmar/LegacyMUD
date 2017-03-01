@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/26/2017
+ * \modified    02/28/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -232,8 +232,8 @@ std::string Container::serialize(){
 }
 
 
-bool Container::deserialize(std::string){
-    return false;
+InteractiveNoun* Container::deserialize(std::string){
+    return nullptr; 
 }
 
 
@@ -370,8 +370,8 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 }
 
 
-std::string Container::more(){
-    std::string message = Item::more();
+std::string Container::more(Player *aPlayer){
+    std::string message = Item::more(aPlayer);
 
     message += "Inside Capacity: " + std::to_string(getInsideCapacity()) + "\015\012";
     
