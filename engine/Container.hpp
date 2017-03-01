@@ -155,7 +155,7 @@ class Container: public Item {
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static InteractiveNoun* deserialize(std::string);
+        static Container* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.

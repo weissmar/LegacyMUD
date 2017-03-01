@@ -141,7 +141,7 @@ std::string Creature::serialize(){
 }
 
 
-InteractiveNoun* Creature::deserialize(std::string){
+Creature* Creature::deserialize(std::string){
     return nullptr; 
 }
 

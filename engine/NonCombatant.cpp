@@ -217,7 +217,7 @@ std::string NonCombatant::serialize(){
 }
 
 
-InteractiveNoun* NonCombatant::deserialize(std::string){
+NonCombatant* NonCombatant::deserialize(std::string){
     return nullptr; 
 }
 

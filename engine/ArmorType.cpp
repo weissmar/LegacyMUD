@@ -65,7 +65,7 @@ std::string ArmorType::serialize(){
 }
 
 
-InteractiveNoun* ArmorType::deserialize(std::string){
+ArmorType* ArmorType::deserialize(std::string){
     return nullptr; 
 }
 

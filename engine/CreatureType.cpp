@@ -67,7 +67,7 @@ std::string CreatureType::serialize(){
 }
 
 
-InteractiveNoun* CreatureType::deserialize(std::string){
+CreatureType* CreatureType::deserialize(std::string){
     return nullptr; 
 }
 

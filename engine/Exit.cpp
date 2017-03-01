@@ -263,7 +263,7 @@ std::string Exit::serialize(){
 }
 
 
-InteractiveNoun* Exit::deserialize(std::string){
+Exit* Exit::deserialize(std::string){
     return nullptr; 
 }
 

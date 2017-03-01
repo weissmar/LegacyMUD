@@ -158,7 +158,7 @@ class Creature: public Combatant {
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static InteractiveNoun* deserialize(std::string);
+        static Creature* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.

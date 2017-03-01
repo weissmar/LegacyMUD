@@ -118,7 +118,7 @@ std::string SpecialSkill::serialize(){
 }
 
 
-InteractiveNoun* SpecialSkill::deserialize(std::string){
+SpecialSkill* SpecialSkill::deserialize(std::string){
     return nullptr; 
 }
 

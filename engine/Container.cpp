@@ -238,7 +238,7 @@ std::string Container::serialize(){
 }
 
 
-InteractiveNoun* Container::deserialize(std::string){
+Container* Container::deserialize(std::string){
     return nullptr; 
 }
 

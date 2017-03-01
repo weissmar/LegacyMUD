@@ -158,7 +158,7 @@ class NonCombatant: public Character {
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static InteractiveNoun* deserialize(std::string);
+        static NonCombatant* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.

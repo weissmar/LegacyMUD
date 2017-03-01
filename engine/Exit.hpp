@@ -182,7 +182,7 @@ class Exit: public ConditionalElement {
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static InteractiveNoun* deserialize(std::string);
+        static Exit* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.

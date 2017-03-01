@@ -81,7 +81,7 @@ class PlayerClass: public CombatantType {
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static InteractiveNoun* deserialize(std::string);
+        static PlayerClass* deserialize(std::string);
 
         /*!
          * \brief   Creates a copy of this object.

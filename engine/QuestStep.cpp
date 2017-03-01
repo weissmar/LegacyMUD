@@ -175,7 +175,7 @@ std::string QuestStep::serialize(){
 }
 
 
-InteractiveNoun* QuestStep::deserialize(std::string){
+QuestStep* QuestStep::deserialize(std::string){
     return nullptr; 
 }
 

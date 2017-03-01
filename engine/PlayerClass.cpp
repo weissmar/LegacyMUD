@@ -55,7 +55,7 @@ std::string PlayerClass::serialize(){
 }
 
 
-InteractiveNoun* PlayerClass::deserialize(std::string){
+PlayerClass* PlayerClass::deserialize(std::string){
     return nullptr; 
 }
 

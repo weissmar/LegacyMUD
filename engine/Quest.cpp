@@ -176,7 +176,7 @@ std::string Quest::serialize(){
 }
 
 
-InteractiveNoun* Quest::deserialize(std::string){
+Quest* Quest::deserialize(std::string){
     return nullptr; 
 }
 

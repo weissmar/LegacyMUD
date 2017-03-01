@@ -97,7 +97,7 @@ std::string WeaponType::serialize(){
 }
 
 
-InteractiveNoun* WeaponType::deserialize(std::string){
+WeaponType* WeaponType::deserialize(std::string){
     return nullptr; 
 }
 

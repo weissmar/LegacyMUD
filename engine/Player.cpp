@@ -498,7 +498,7 @@ std::string Player::serialize(){
 }
 
 
-InteractiveNoun* Player::deserialize(std::string){
+Player* Player::deserialize(std::string){
     return nullptr; 
 }
 

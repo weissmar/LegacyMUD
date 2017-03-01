@@ -484,7 +484,7 @@ std::string Area::serialize(){
 }
 
 
-InteractiveNoun* Area::deserialize(std::string){
+Area* Area::deserialize(std::string){
     return nullptr; 
 }
 

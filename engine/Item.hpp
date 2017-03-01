@@ -186,7 +186,7 @@ class Item: public InteractiveNoun {
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static InteractiveNoun* deserialize(std::string);
+        static Item* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.

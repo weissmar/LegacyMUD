@@ -196,7 +196,7 @@ std::string ItemType::serialize(){
 }
 
 
-InteractiveNoun* ItemType::deserialize(std::string){
+ItemType* ItemType::deserialize(std::string){
     return nullptr; 
 }
 

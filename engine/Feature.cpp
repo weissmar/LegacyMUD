@@ -148,7 +148,7 @@ std::string Feature::serialize(){
 }
 
 
-InteractiveNoun* Feature::deserialize(std::string){
+Feature* Feature::deserialize(std::string){
     return nullptr; 
 }
 
