@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.hpp
  *
@@ -36,6 +36,7 @@ class NonCombatant: public Character {
     public:
         NonCombatant();
         NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*NonCombatant(const NonCombatant &otherNPC);
         NonCombatant & operator=(const NonCombatant &otherNPC);
         virtual ~NonCombatant();*/

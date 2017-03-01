@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -31,6 +31,7 @@ class Combatant: public Character {
     public:
         Combatant();
         Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*Combatant(const Combatant &otherCombatant);
         Combatant & operator=(const Combatant &otherCombatant);
         virtual ~Combatant();*/

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -45,6 +45,7 @@ class Area: public InteractiveNoun {
     public:
         Area();
         Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size);
+        Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size, int anID);
         /*Area(const Area &otherArea);
         Area & operator=(const Area &otherArea);
         virtual ~Area();*/

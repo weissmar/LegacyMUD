@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.cpp
  *
@@ -23,6 +23,15 @@ WeaponType::WeaponType()
 
 WeaponType::WeaponType(int damage, DamageType type, AreaSize range, int critMultiplier, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType)
 : ItemType(weight, rarity, description, name, cost, slotType)
+, damage(damage)
+, damageType(type)
+, range(range)
+, critMultiplier(critMultiplier)
+{ }
+
+
+WeaponType::WeaponType(int damage, DamageType type, AreaSize range, int critMultiplier, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType, int anID)
+: ItemType(weight, rarity, description, name, cost, slotType, anID)
 , damage(damage)
 , damageType(type)
 , range(range)

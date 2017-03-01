@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -35,6 +35,7 @@ class Character: public InteractiveNoun {
     public:
         Character();
         Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*Character(const Character &otherCharacter);
         Character & operator=(const Character &otherCharacter);
         virtual ~Character();*/

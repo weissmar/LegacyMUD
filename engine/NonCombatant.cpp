@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -20,13 +20,19 @@ namespace legacymud { namespace engine {
 NonCombatant::NonCombatant()
 : Character()
 , quest(nullptr)
-{}
+{ }
 
 
 NonCombatant::NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight)
 : Character(name, description, money, aLocation, maxInventoryWeight)
 , quest(aQuest)
-{}
+{ }
+
+
+NonCombatant::NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+: Character(name, description, money, aLocation, maxInventoryWeight, anID)
+, quest(aQuest)
+{ }
 
 
 /*NonCombatant::NonCombatant(const NonCombatant &otherNPC){

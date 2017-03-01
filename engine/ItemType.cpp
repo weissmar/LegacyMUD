@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -26,6 +26,19 @@ ItemType::ItemType()
 
 ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType)
 : InteractiveNoun()
+, weight(weight)
+, rarity(rarity)
+, description(description)
+, name(name)
+, cost(cost)
+, slotType(slotType)
+{
+    addNounAlias(name);
+}
+
+
+ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType, int anID)
+: InteractiveNoun(anID)
 , weight(weight)
 , rarity(rarity)
 , description(description)

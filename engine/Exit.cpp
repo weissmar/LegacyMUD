@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -26,6 +26,18 @@ Exit::Exit()
 
 Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
 : ConditionalElement(isConditional, anItemType, description, altDescription)
+, direction(direction)
+, location(location)
+, connectArea(connectArea)
+{
+    InteractiveNoun::addNounAlias(description);
+    InteractiveNoun::addNounAlias(altDescription);
+    addDirectionalAliases(direction);
+}
+
+
+Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription, int anID)
+: ConditionalElement(isConditional, anItemType, description, altDescription, anID)
 , direction(direction)
 , location(location)
 , connectArea(connectArea)

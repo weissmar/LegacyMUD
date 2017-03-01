@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        ArmorType.cpp
  *
@@ -21,6 +21,13 @@ ArmorType::ArmorType()
 
 ArmorType::ArmorType(int bonus, DamageType resistantTo, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType)
 : ItemType(weight, rarity, description, name, cost, slotType)
+, armorBonus(bonus)
+, resistantTo(resistantTo)
+{ }
+
+
+ArmorType::ArmorType(int bonus, DamageType resistantTo, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType, int anID)
+: ItemType(weight, rarity, description, name, cost, slotType, anID)
 , armorBonus(bonus)
 , resistantTo(resistantTo)
 { }

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -37,6 +37,7 @@ class Container: public Item {
     public:
         Container();
         Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type);
+        Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type, int anID);
         /*Container(const Container &otherContainer);
         Container & operator=(const Container &otherContainer);
         virtual ~Container();*/

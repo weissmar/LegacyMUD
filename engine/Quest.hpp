@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Quest.hpp
  *
@@ -35,6 +35,7 @@ class Quest: public InteractiveNoun {
     public:
         Quest();
         Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem);
+        Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem, int anID);
         /*Quest(const Quest &otherQuest);
         Quest & operator=(const Quest &otherQuest);
         virtual ~Quest();*/

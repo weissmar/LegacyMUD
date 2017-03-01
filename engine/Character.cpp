@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -28,6 +28,18 @@ Character::Character()
 
 Character::Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight)
 : InteractiveNoun()
+, name(name)
+, description(description)
+, money(money)
+, location(aLocation)
+, maxInventoryWeight(maxInventoryWeight)
+{
+    InteractiveNoun::addNounAlias(name);
+}
+
+
+Character::Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+: InteractiveNoun(anID)
 , name(name)
 , description(description)
 , money(money)

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.hpp
  *
@@ -32,6 +32,7 @@ class QuestStep: public InteractiveNoun {
     public:
         QuestStep();
         QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText);
+        QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText, int anID);
         /*QuestStep(const QuestStep &otherQuestStep);
         QuestStep & operator=(const QuestStep &otherQuestStep);
         virtual ~QuestStep();*/

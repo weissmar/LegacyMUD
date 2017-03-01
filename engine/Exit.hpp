@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Exit.hpp
  *
@@ -35,6 +35,7 @@ class Exit: public ConditionalElement {
     public:
         Exit();
         Exit(ExitDirection direction, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription);
+        Exit(ExitDirection direction, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription, int anID);
         /*Exit(const Exit &otherExit);
         Exit & operator=(const Exit &otherExit);
         virtual ~Exit();*/

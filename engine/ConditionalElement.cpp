@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.cpp
  *
@@ -25,6 +25,15 @@ ConditionalElement::ConditionalElement()
 
 ConditionalElement::ConditionalElement(bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
 : InteractiveNoun()
+, conditionSet(isConditional)
+, conditionItem(anItemType)
+, description(description)
+, altDescription(altDescription)
+{ }
+
+
+ConditionalElement::ConditionalElement(bool isConditional, ItemType *anItemType, std::string description, std::string altDescription, int anID)
+: InteractiveNoun(anID)
 , conditionSet(isConditional)
 , conditionItem(anItemType)
 , description(description)

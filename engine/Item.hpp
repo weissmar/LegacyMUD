@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Item.hpp
  *
@@ -36,6 +36,7 @@ class Item: public InteractiveNoun {
     public:
         Item();
         Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type);
+        Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type, int anID);
         /*Item(const Item &otherItem);
         Item & operator=(const Item &otherItem);
         virtual ~Item();*/

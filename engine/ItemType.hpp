@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.hpp
  *
@@ -39,6 +39,7 @@ class ItemType: public InteractiveNoun {
     public:
         ItemType();
         ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType);
+        ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType, int anID);
 
         /*!
          * \brief   Gets the weight of this item type.

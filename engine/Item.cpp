@@ -1,7 +1,7 @@
  /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -32,6 +32,17 @@ Item::Item()
 
 Item::Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type)
 : InteractiveNoun()
+, location(location)
+, position(position)
+, name(name)
+, type(type)
+{
+    InteractiveNoun::addNounAlias(name);
+}
+
+
+Item::Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type, int anID)
+: InteractiveNoun(anID)
 , location(location)
 , position(position)
 , name(name)

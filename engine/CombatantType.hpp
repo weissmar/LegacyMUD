@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.hpp
  *
@@ -31,6 +31,7 @@ class CombatantType: public InteractiveNoun {
     public:
         CombatantType();
         CombatantType(std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints);
+        CombatantType(std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints, int anID);
         /*CombatantType(const CombatantType &otherCombatantType);
         CombatantType & operator=(const CombatantType &otherCombatantType);
         virtual ~CombatantType();*/

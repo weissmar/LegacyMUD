@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -56,6 +56,20 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 
 Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight)
 : Combatant(maxHealth, spawnLocation, maxSpecialPts, name, description, money, aLocation, maxInventoryWeight)
+, experiencePoints(0)
+, level(1)
+, size(size)
+, playerClass(aClass)
+, inConversation(nullptr)
+, username(username)
+, active(true)
+, fileDescriptor(FD)
+, editMode(false)
+{ }
+
+
+Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+: Combatant(maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID)
 , experiencePoints(0)
 , level(1)
 , size(size)

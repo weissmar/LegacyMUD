@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -49,7 +49,7 @@ class Combatant;
  */
 class InteractiveNoun {
     public:
-        InteractiveNoun();
+        InteractiveNoun(int anID = nextID++);
         InteractiveNoun(const InteractiveNoun &otherNoun);
         InteractiveNoun & operator=(const InteractiveNoun &otherNoun);
         virtual ~InteractiveNoun();
@@ -82,6 +82,14 @@ class InteractiveNoun {
          *          the specified alias.
          */
         std::vector<Action*> getActions(std::string alias) const;
+
+        /*!
+         * \brief   Gets all actions for this InteractiveNoun.
+         *
+         * \return  Returns a std::vector<Action*> with the actions that include
+         *          the specified alias.
+         */
+        std::vector<Action*> getAllActions() const;
 
         /*!
          * \brief   Gets all of the noun aliases for this interactive noun.

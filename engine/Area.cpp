@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -33,6 +33,17 @@ Area::Area()
 
 Area::Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size)
 : InteractiveNoun()
+, name(name)
+, shortDescription(shortDescription)
+, longDescription(longDescription)
+, size(size)
+{ 
+    addNounAlias(name);
+}
+
+
+Area::Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size, int anID)
+: InteractiveNoun(anID)
 , name(name)
 , shortDescription(shortDescription)
 , longDescription(longDescription)

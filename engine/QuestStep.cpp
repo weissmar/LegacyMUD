@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.cpp
  *
@@ -27,6 +27,20 @@ QuestStep::QuestStep()
 
 QuestStep::QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText)
 : InteractiveNoun()
+, ordinalNumber(ordinalNumber)
+, description(description)
+, fetchItem(anItemType)
+, giver(giver)
+, receiver(receiver)
+, completionText(completionText)
+{
+    std::string alias = "step " + std::to_string(ordinalNumber);
+    addNounAlias(alias);
+}
+
+
+QuestStep::QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText, int anID)
+: InteractiveNoun(anID)
 , ordinalNumber(ordinalNumber)
 , description(description)
 , fetchItem(anItemType)

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -38,6 +38,19 @@ Combatant::Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, std:
     rollStats();
 }
 
+
+Combatant::Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+: Character(name, description, money, aLocation, maxInventoryWeight, anID)
+, cooldownClock(0)
+, health(std::make_pair(maxHealth, maxHealth))
+, spawnLocation(spawnLocation)
+, specialPoints(std::make_pair(maxSpecialPts, maxSpecialPts))
+, dexterity(dexterity)
+, strength(strength)
+, intelligence(intelligence)
+, inCombat(nullptr) {
+    rollStats();
+}
 
 /*Combatant::Combatant(const Combatant &otherCombatant){
 

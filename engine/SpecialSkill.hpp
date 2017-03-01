@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.hpp
  *
@@ -32,6 +32,7 @@ class SpecialSkill: public InteractiveNoun {
     public:
         SpecialSkill();
         SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown);
+        SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown, int anID);
 
         /*!
          * \brief   Gets the name of the special skill.

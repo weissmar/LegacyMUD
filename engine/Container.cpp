@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -27,6 +27,12 @@ Container::Container()
 
 Container::Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type)
 : Item(location, position, name, type)
+, insideCapacity(capacity)
+{ }
+
+
+Container::Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type, int anID)
+: Item(location, position, name, type, anID)
 , insideCapacity(capacity)
 { }
 

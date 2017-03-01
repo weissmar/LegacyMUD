@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -32,7 +32,7 @@ void InteractiveNoun::setStaticID(int num){
 }
 
 
-InteractiveNoun::InteractiveNoun() : ID(nextID++){
+InteractiveNoun::InteractiveNoun(int anID) : ID(anID){
 
 }
 
@@ -110,6 +110,14 @@ std::vector<Action*> InteractiveNoun::getActions(std::string alias) const{
 
     return aliasActions;
 }
+
+
+std::vector<Action*> InteractiveNoun::getAllActions() const{
+    std::lock_guard<std::mutex> actionsLock(actionsMutex);
+
+    return actions;
+}
+
 
 
 std::vector<std::string> InteractiveNoun::getNounAliases() const{

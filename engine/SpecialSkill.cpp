@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -24,6 +24,18 @@ SpecialSkill::SpecialSkill()
 
 SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown)
 : InteractiveNoun()
+, name(name)
+, damage(damage)
+, damageType(type)
+, cost(cost)
+, cooldown(cooldown)
+{
+    addNounAlias(name);
+}
+
+
+SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown, int anID)
+: InteractiveNoun(anID)
 , name(name)
 , damage(damage)
 , damageType(type)

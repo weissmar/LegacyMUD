@@ -31,6 +31,7 @@
 #include "WeaponType.hpp"
 #include "Quest.hpp"
 #include "QuestStep.hpp"
+#include "SpecialSkill.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -1945,6 +1946,14 @@ bool GameLogic::questsCommand(Player *aPlayer){
 
 
 bool GameLogic::skillsCommand(Player *aPlayer){
+    std::string message;
+    SpecialSkill *aSkill = aPlayer->getPlayerClass()->getSpecialSkill();
+
+    if (aSkill != nullptr){
+        message = "Class Special Skill: ";
+        message += aSkill->getName() + "\015\012";
+        message += "Damage";//******************************************************************************
+    }
     return false;
 }
 

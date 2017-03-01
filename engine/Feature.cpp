@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/28/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -23,6 +23,16 @@ Feature::Feature()
 
 Feature::Feature(std::string name, std::string placement, Area *location, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
 : ConditionalElement(isConditional, anItemType, description, altDescription)
+, name(name)
+, placement(placement)
+, location(location)
+{
+    InteractiveNoun::addNounAlias(name);
+}
+
+
+Feature::Feature(std::string name, std::string placement, Area *location, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription, int anID)
+: ConditionalElement(isConditional, anItemType, description, altDescription, anID)
 , name(name)
 , placement(placement)
 , location(location)
