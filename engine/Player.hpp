@@ -137,9 +137,10 @@ class Player: public Combatant {
         /*!
          * \brief   Gets the quest list of this player.
          *
-         * \return  Returns a std::map<Quest*, int> with the quest list.
+         * \return  Returns a std::map<Quest*, std::pair<int, bool>> with the 
+         *          quest list.
          */
-        std::map<Quest*, int> getQuestList() const;
+        std::map<Quest*, std::pair<int, bool>> getQuestList() const;
 
         /*!
          * \brief   Gets the step of the specified quest that this player
@@ -147,9 +148,10 @@ class Player: public Combatant {
          *          
          * \param[in] aQuest    Specifies the quest to look up.
          *
-         * \return  Returns an int with the step number.
+         * \return  Returns a pair of int, bool with the step number and 
+         *          whether or not the step has been completed.
          */
-        int getQuestCurrStep(Quest *aQuest) const;
+        std::pair<int, bool> getQuestCurrStep(Quest *aQuest) const;
 
         /*!
          * \brief   Gets the lexical data for this player's inventory.
@@ -265,26 +267,17 @@ class Player: public Combatant {
         bool setEditMode(bool editing);
 
         /*!
-         * \brief   Adds a quest to the player's quest list.
+         * \brief   Adds a quest to the player's quest list or updates it if it already 
+         *          exists.
          * 
-         * \param[in] aQuest    Specifies the quest to add.
+         * \param[in] aQuest    Specifies the quest to add or update.
          * \param[in] step      Specifies the step of the quest the player is currently on.
+         * \param[in] complete  Specifies whether or not the specified step has been completed.
          *
          * \return  Returns a bool indicating whether or not the quest was successfully 
-         *          added.
+         *          added or updated.
          */
-        bool addQuest(Quest *aQuest, int step);
-
-        /*!
-         * \brief   Updates a quest in the player's quest list.
-         * 
-         * \param[in] aQuest    Specifies the quest to update.
-         * \param[in] step      Specifies the step of the quest the player is currently on.
-         *
-         * \return  Returns a bool indicating whether or not the quest was successfully 
-         *          updated.
-         */
-        bool updateQuest(Quest *aQuest, int step); 
+        bool addOrUpdateQuest(Quest *aQuest, int step, bool complete);
         
         /*!
          * \brief   Adds the specified item to this player's inventory.
@@ -531,13 +524,13 @@ class Player: public Combatant {
          * \param[in] aSkill            Optionally specifies the skill being used in the attack.
          * \param[in] character         Specifies the character that is being attacked.
          * \param[in] playerAttacker    Specifies whether or not the player is the attacker. This
-         *                              parameter should be false when this function is called on
+         *                              parameter should be true when this function is called on
          *                              a player.
          * \param[out] effects          Specifies the effects of the action.
          * 
          * \pre The item, if specified, must be in the inventory of this player.
          * \pre The skill, if specified, must be the skill of this player's player class.
-         * \pre The playerAttacker parameter should be false when this function is called on a player.
+         * \pre The playerAttacker parameter should be true when this function is called on a player.
          *
          * \return  Returns a std::string with the response to the command
          *          attack.
@@ -702,7 +695,7 @@ class Player: public Combatant {
         std::queue<Command*> combatQueue;
         mutable std::mutex combatQueueMutex;
         std::atomic<bool> editMode;
-        std::map<Quest*, int> questList;
+        std::map<Quest*, std::pair<int, bool>> questList;
         mutable std::mutex questListMutex;
         parser::LexicalData inventoryLexicalData;
         mutable std::mutex lexicalMutex;

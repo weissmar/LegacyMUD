@@ -161,13 +161,13 @@ bool Player::isEditMode() const{
 }
 
 
-std::map<Quest*, int> Player::getQuestList() const{
+std::map<Quest*, std::pair<int, bool>> Player::getQuestList() const{
     std::lock_guard<std::mutex> questListLock(questListMutex);
     return questList;
 }
 
 
-int Player::getQuestCurrStep(Quest *aQuest) const{
+std::pair<int, bool> Player::getQuestCurrStep(Quest *aQuest) const{
     if (aQuest != nullptr){
         std::lock_guard<std::mutex> questListLock(questListMutex);
         int found = questList.count(aQuest);
@@ -176,7 +176,7 @@ int Player::getQuestCurrStep(Quest *aQuest) const{
             return questList.at(aQuest);
         }
     }
-    return -1;
+    return std::make_pair(-1, false);
 }
 
 
@@ -273,7 +273,7 @@ bool Player::setEditMode(bool editing){
 }
 
 
-bool Player::addQuest(Quest *aQuest, int step){
+bool Player::addOrUpdateQuest(Quest *aQuest, int step, bool complete){
     int found;
 
     if (aQuest != nullptr){
@@ -281,32 +281,20 @@ bool Player::addQuest(Quest *aQuest, int step){
         found = questList.count(aQuest);
 
         if (found != 1){
-            questList[aQuest] = step;
+            // add quest
+            questList[aQuest] = std::make_pair(step, complete);
             addAllLexicalData(aQuest);
             addAllLexicalData(aQuest->getStep(step));
-            return true;
+        } else {
+            // update quest
+            removeAllLexicalData(aQuest->getStep(questList.at(aQuest).first));
+            questList.at(aQuest) = std::make_pair(step, complete);
+            addAllLexicalData(aQuest->getStep(step));
         }
+        return true;
     }   
     return false;
 }
-
-
-bool Player::updateQuest(Quest *aQuest, int step){
-    int found;
-
-    if (aQuest != nullptr){
-        std::lock_guard<std::mutex> questListLock(questListMutex);
-        found = questList.count(aQuest);
-
-        if (found == 1){
-            removeAllLexicalData(aQuest->getStep(questList.at(aQuest)));
-            questList.at(aQuest) = step;
-            addAllLexicalData(aQuest->getStep(step));
-            return true;
-        }
-    }
-    return false;
-} 
 
 
 bool Player::addToInventory(Item *anItem){
@@ -626,6 +614,11 @@ std::string Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character
     if (anArea != nullptr){
         setLocation(anArea);
 
+        // if the player is in conversation, end the conversation
+        if (getInConversation() != nullptr){
+            setInConversation(nullptr);
+        }
+
         resultMsg += getTextAndEffect(CommandEnum::GO, anEffect);
         if (resultMsg.compare("false") != 0){
             message += resultMsg;
@@ -646,8 +639,22 @@ std::string Player::attack(Player *aPlayer, Item *anItem, SpecialSkill*, Interac
 }
 
 
-std::string Player::talk(Player *aPlayer, NonCombatant*, std::vector<EffectType> *effects){
+std::string Player::talk(Player *aPlayer, NonCombatant *aNPC, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    if (aNPC != nullptr){
+        setInConversation(aNPC);
+
+        resultMsg += getTextAndEffect(CommandEnum::TALK, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
 
     return message;
 } 

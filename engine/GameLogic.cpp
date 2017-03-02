@@ -82,9 +82,10 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     Exit *anExit, *otherExit;
     Area *anArea;
     Quest *aQuest;
-    QuestStep *aStep;
+    QuestStep *aStep, *anotherStep;
     Player *aPlayer;
     SpecialSkill *aSkill;
+    NonCombatant *aNPC, *anotherNPC;
 
     accountManager = anAccount;
     theServer = aServer;
@@ -129,14 +130,27 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     manager->addObject(otherExit, -1);
     anArea->addExit(otherExit);
 
+    // create test NPCs
+    aNPC = new NonCombatant(nullptr, "Sophia", "a truly radical person", 50, &startArea, 100);
+    manager->addObject(aNPC, -1);
+    startArea.addCharacter(aNPC);
+    anotherNPC = new NonCombatant(nullptr, "Mark", "a kinda awesome person", 50, &startArea, 100);
+    manager->addObject(anotherNPC, -1);
+    startArea.addCharacter(anotherNPC);
+
     // create test player, quest, quest step
     aQuest = new Quest("Super Cool Quest", "The quest for the totally cool stuff", 30, nullptr);
     manager->addObject(aQuest, -1);
-    aStep = new QuestStep(3, "Go to the place and get the thing", nullptr, nullptr, nullptr, "You did the thing! Congrats!");
+    aNPC->setQuest(aQuest);
+    anotherNPC->setQuest(aQuest);
+    aStep = new QuestStep(3, "Go to the next place and get the next thing", aWeaponType, aNPC, anotherNPC, "You did the next thing! Congrats!");
     manager->addObject(aStep, -1);
     aQuest->addStep(aStep);
+    anotherStep = new QuestStep(2, "Go to the first place and get the first thing", anItemType, nullptr, nullptr, "You did the first thing! Congrats!");
+    manager->addObject(anotherStep, -1);
+    aQuest->addStep(anotherStep);
     aPlayer = new Player(CharacterSize::SMALL, aClass, "test", -1, "Tester1", "a super awesome person", &startArea);
-    aPlayer->addQuest(aQuest, 3);
+    aPlayer->addOrUpdateQuest(aQuest, 2, true);
     manager->addObject(aPlayer, -1);
     accountManager->createAccount("test", "test", true, aPlayer->getID());
 
@@ -1936,7 +1950,7 @@ bool GameLogic::statsCommand(Player *aPlayer){
 
 bool GameLogic::questsCommand(Player *aPlayer){
     std::string message;
-    std::map<Quest*, int> qList = aPlayer->getQuestList();
+    std::map<Quest*, std::pair<int, bool>> qList = aPlayer->getQuestList();
 
     if (qList.size() == 0){
         message = "You don't have any quests.";
@@ -1944,7 +1958,11 @@ bool GameLogic::questsCommand(Player *aPlayer){
         message = "Quests:\015\012";
         for (auto quest : qList){
             message += quest.first->getName() + ": step ";
-            message += std::to_string(quest.second) + "\015\012";
+            message += std::to_string(quest.second.first);
+            if (quest.second.second){
+                message += " complete";
+            }
+            message += "\015\012";
         }
     }
     messagePlayer(aPlayer, message);
@@ -2001,12 +2019,91 @@ bool GameLogic::skillsCommand(Player *aPlayer){
 
 
 bool GameLogic::attackCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
+    // if player is in combat
+        // if player is in combat with specified character and player cooldown == 0 and combat queue is empty
+            // if indirectObj is not null
+                // if indirectObj is a skill
+                    // get damage from skill
+                    // get damage type from skill
+                    // get cost from skill
+                    // get cooldown from skill
+
+                    // check if player has enough special points to execute the skill
+
+                    // check attack bonus of player
+
+                    // check armor bonus, resistance, weakness, etc of character
+                    // roll for attack success
+                    // roll for attack damage + crit if relevant
+
+                    // subtract damage from creature health
+                    // subtract cost from player special points
+                    // add skill cooldown to cooldown
+                    // send message to player
+                // if indirectObj is a weapon
+                    // get damage from weapon
+                    // get damage type from weapon
+
+                    // check if weapon range is <= area size
+
+                    // check attack bonus of player
+
+                    // check armor bonus, resistance, weakness, etc of character
+                    // roll for attack success
+                    // roll for attack damage + crit if relevant
+
+                    // subtract damage from creature health
+                    // add weapon cooldown to cooldown
+                    // send message to player
+            // else
+                // get default attack damage
+
+                // check attack bonus of player
+
+                // check armor bonus, resistance, weakness, etc of character
+                // roll for attack success
+                // roll for attack damage + crit if relevant
+
+                // subtract damage from creature health
+                // add default cooldown to cooldown
+                // send message to player
+        // if player is in combat with specified character, but player cooldown > 0 or combat queue is not empty
+            // add command to combat queue  
+        // else player is in combat with another character
+            // send message to player (can't attack someone else while in combat)
+    // else player is not yet in combat
+        // start combat with specified attack
+
+    // check if combat is over
+
     return false;
 }
 
 
 bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *param){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (param != nullptr){
+        message = "You greet " + param->getName() + ".\015\012";
+        resultMessage = param->talk(aPlayer, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message += param->getName() + " looks at you blankly and says nothing.";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

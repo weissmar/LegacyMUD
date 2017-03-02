@@ -12,6 +12,7 @@
 #include "Item.hpp"
 #include "QuestStep.hpp"
 #include "Player.hpp"
+#include "NonCombatant.hpp"
 #include <algorithm>
 
 namespace legacymud { namespace engine {
@@ -103,6 +104,44 @@ QuestStep* Quest::getStep(int step) const{
 }
 
 
+QuestStep* Quest::getNextStep(int step) const{
+    std::lock_guard<std::mutex> stepsLock(stepsMutex);
+    std::map<int, QuestStep*>::const_iterator it;
+    int found = steps.count(step);
+
+    if (found == 1){
+        it = steps.find(step);
+        ++it;
+        if (it != steps.end()){
+            return it->second;
+        }
+    }
+    return nullptr;
+}
+
+
+bool Quest::isFirstStep(int step) const{
+    std::lock_guard<std::mutex> stepsLock(stepsMutex);
+    std::map<int, QuestStep*>::const_iterator it = steps.find(step);
+    if (it == steps.begin()){
+        return true;
+    }
+    return false;
+}
+
+
+QuestStep* Quest::isGiverOrReceiver(NonCombatant *aNPC) const{
+    std::lock_guard<std::mutex> stepsLock(stepsMutex);
+
+    for (auto step : steps){
+        if ((step.second->getGiver() == aNPC) || (step.second->getReceiver() == aNPC)){
+            return step.second;
+        }
+    }
+    return nullptr;
+}
+
+
 bool Quest::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
@@ -183,7 +222,7 @@ Quest* Quest::deserialize(std::string){
 
 std::string Quest::more(Player *aPlayer){
     std::string message;
-    int step = aPlayer->getQuestCurrStep(this);
+    int step = aPlayer->getQuestCurrStep(this).first;
     int found;
     int money = getRewardMoney();
     Item *anItem = getRewardItem();

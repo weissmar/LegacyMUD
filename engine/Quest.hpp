@@ -26,6 +26,7 @@ namespace legacymud { namespace engine {
 
 class Item;
 class QuestStep;
+class NonCombatant;
 
 /*!
  * \details     Quests define in-game quests with steps that players may 
@@ -84,6 +85,37 @@ class Quest: public InteractiveNoun {
          * \return  Returns a QuestStep* with the specified step.
          */
         QuestStep* getStep(int step) const;
+
+        /*!
+         * \brief   Gets the step after the specified step of this quest.
+         * 
+         * \param[in] step  Specifies the step before the step to get.
+         *
+         * \return  Returns a QuestStep* with the next step.
+         */
+        QuestStep* getNextStep(int step) const;
+
+        /*!
+         * \brief   Gets whether or not the specified step is the first
+         *          step of this quest.
+         * 
+         * \param[in] step  Specifies the step to look up.
+         *
+         * \return  Returns true if the specified step is the first step of
+         *          this quest; false otherwise.
+         */
+        bool isFirstStep(int step) const;
+
+        /*!
+         * \brief   Gets the step that the specified NPC is involved in
+         *          if applicable.
+         * 
+         * \param[in] aNPC  Specified the NPC to look up.
+         *
+         * \return  Returns a QuestStep* with the specified step or nullptr
+         *          if the NPC is not involved in the quest.
+         */
+        QuestStep* isGiverOrReceiver(NonCombatant *aNPC) const;
 
         /*!
          * \brief   Sets the name of this quest.

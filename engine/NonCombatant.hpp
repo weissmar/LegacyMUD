@@ -240,7 +240,7 @@ class NonCombatant: public Character {
          * \param[out] aNPC     Specifies the non-combatant the player is talking to.
          * \param[out] effects  Specifies the effects of the action.
          *
-         * \return  Returns a std::string with the response to the command
+         * \return  Returns a std::string with the response to the command 
          *          talk.
          */
         virtual std::string talk(Player *aPlayer, NonCombatant *aNPC, std::vector<EffectType> *effects); 
