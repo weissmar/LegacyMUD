@@ -2,7 +2,7 @@
   \file     Grammar.hpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/20/2017
+  \modified 03/01/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the Grammar class and
@@ -81,6 +81,13 @@ public:
       \post The specified preposition and position pair is added to the preposition list.
     */
     void addPreposition(std::string prep, PrepositionType type);
+
+    /*!
+      \brief Gets a map of all preposition aliases and their respective meaning.
+
+      \return Returns a map of all prepositions and their meanings.
+    */
+    PrepositionMap getAllPrepositions() const;
 
     /*!
       \brief Gets the meaning of the specified preposition.

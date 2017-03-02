@@ -2,7 +2,7 @@
   \file     Grammar.cpp
   \author   David Rigert
   \created  02/02/2017
-  \modified 02/16/2017
+  \modified 03/01/2017
   \course   CS467, Winter 2017
  
   \details This file contains the implementation code for the Grammar class.
@@ -27,6 +27,10 @@ void Grammar::addPreposition(std::string prep, PrepositionType type) {
     std::transform(prep.begin(), prep.end(), prep.begin(), ::tolower);
 
     _prepositions[prep] = type;
+}
+
+PrepositionMap getAllPrepositions() const {
+    return _prepositions;
 }
 
 PrepositionType Grammar::getPrepositionType(std::string prep) const {
