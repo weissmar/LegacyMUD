@@ -64,10 +64,27 @@ class Quest: public InteractiveNoun {
 
         /*!
          * \brief   Gets the reward item for this quest.
+         * 
+         * \note    Use this function only for accessing and modifying
+         *          the "prototype" reward item. The item returned by
+         *          this function cannot be given to a player.
          *
          * \return  Returns an Item* with the reward item.
          */
         Item* getRewardItem() const;
+
+        /*!
+         * \brief   Gets a unique copy of reward item for this quest.
+         * 
+         * \note    Use this function when you need a unique copy of
+         *          the reward item. The item returned by this funciton 
+         *          can be given to a player. Each time this function
+         *          is called, a new copy of the reward item is created 
+         *          and returned.
+         *
+         * \return  Returns an Item* with the reward item.
+         */
+        Item* getUniqueRewardItem() const;
 
         /*!
          * \brief   Gets the steps of this quest.
@@ -105,6 +122,17 @@ class Quest: public InteractiveNoun {
          *          this quest; false otherwise.
          */
         bool isFirstStep(int step) const;
+
+        /*!
+         * \brief   Gets whether or not the specified step is the last
+         *          step of this quest.
+         * 
+         * \param[in] step  Specifies the step to look up.
+         *
+         * \return  Returns true if the specified step is the last step of
+         *          this quest; false otherwise.
+         */
+        bool isLastStep(int step) const;
 
         /*!
          * \brief   Gets the step that the specified NPC is involved in

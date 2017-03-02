@@ -830,8 +830,8 @@ std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aChar
                 }
 
                 // call this function on character and destination
-                message += aCharacter->transfer(nullptr, this, aCharacter, nullptr, effects);
-                message += destination->transfer(nullptr, this, nullptr, destination, effects);
+                message += aCharacter->transfer(aPlayer, this, aCharacter, nullptr, effects);
+                message += destination->transfer(aPlayer, this, nullptr, destination, effects);
             } else {
                 return "false";
             }
@@ -853,7 +853,7 @@ std::string Item::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aChar
 
                 // call this function on player and destination
                 message += aPlayer->transfer(aPlayer, this, nullptr, nullptr, effects);
-                message += destination->transfer(nullptr, this, nullptr, destination, effects);
+                message += destination->transfer(aPlayer, this, nullptr, destination, effects);
             } else {
                 return "false";
             }

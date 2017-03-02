@@ -86,6 +86,15 @@ Item* Quest::getRewardItem() const{
 }
 
 
+// how to add object to manager from here or pass back to logic*********************************************************************
+Item* Quest::getUniqueRewardItem() const{
+    std::lock_guard<std::mutex> rewardItemLock(rewardItemMutex);
+    //Item *anItem = new Item(rewardItem);
+
+    return nullptr;
+}
+
+
 std::map<int, QuestStep*> Quest::getAllSteps() const{
     std::lock_guard<std::mutex> stepsLock(stepsMutex);
     return steps;
@@ -123,8 +132,23 @@ QuestStep* Quest::getNextStep(int step) const{
 bool Quest::isFirstStep(int step) const{
     std::lock_guard<std::mutex> stepsLock(stepsMutex);
     std::map<int, QuestStep*>::const_iterator it = steps.find(step);
+
     if (it == steps.begin()){
         return true;
+    }
+    return false;
+}
+
+
+bool Quest::isLastStep(int step) const{
+    std::lock_guard<std::mutex> stepsLock(stepsMutex);
+    std::map<int, QuestStep*>::const_iterator it = steps.find(step);
+
+    if (it != steps.end()){
+        ++it;
+        if (it == steps.end()){
+            return true;
+        }
     }
     return false;
 }

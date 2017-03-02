@@ -258,6 +258,13 @@ std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNou
     std::string resultMsg;
     bool success = false;
     EffectType anEffect = EffectType::NONE;
+    Quest *aQuest = getQuest();
+    QuestStep *aStep, *nextStep;
+    ItemType *questItemType;
+    std::pair<int, bool> playerStepProgress;
+    int rewardMoney;
+    Item *rewardItem = nullptr;
+    NonCombatant *aNPC = nullptr;
 
     if (anItem != nullptr){
         if ((aCharacter != nullptr) && (aCharacter->getID() == this->getID())){
@@ -265,18 +272,64 @@ std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNou
             success = removeFromInventory(anItem);
         } else if ((destination != nullptr) && (destination->getID() == this->getID())){
             // item is being added to this character
-            // check for quest status ******************************************************************************************************
             success = addToInventory(anItem);
-        }
-    }
 
-    if (success){
-        resultMsg += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
-        if (resultMsg.compare("false") != 0){
-            message += resultMsg;
-        }
-        if (anEffect != EffectType::NONE){
-            effects->push_back(anEffect);
+            if (success){
+                // check if this is a quest item 
+                if (aQuest != nullptr){
+                    aStep = aQuest->isGiverOrReceiver(this);
+                    if (aStep != nullptr){
+                        questItemType = aStep->getFetchItem();
+                        if ((questItemType != nullptr) && (anItem->getType() == questItemType)){
+                            // this is a quest item
+                            playerStepProgress = aPlayer->getQuestCurrStep(aQuest);
+                            if ((playerStepProgress.first != -1) && (!playerStepProgress.second) && (aQuest->getStep(playerStepProgress.first) == aStep)){
+                                // player is on this step and hasn't completed it yet
+                                message = getName() + " says\"";
+                                message += "Thanks for the " + questItemType->getName() + ". I really needed that.";
+
+                                // update the quest for the player
+                                aPlayer->addOrUpdateQuest(aQuest, aStep->getOrdinalNumber(), true);
+
+                                // if this is the last step in the quest
+                                if (aQuest->isLastStep(aStep->getOrdinalNumber())){
+                                    // give congrats, reward, completion message
+                                    message += " Hey - that means you completed the quest! Here is your reward!\"\015\012";
+                                    rewardMoney = aQuest->getRewardMoney();
+                                    rewardItem = aQuest->getUniqueRewardItem();
+                                    aPlayer->addMoney(rewardMoney);
+                                    message += "You received " + std::to_string(rewardMoney) + " money.\015\012";
+                                    if (rewardItem != nullptr){
+                                        aPlayer->addToInventory(rewardItem);
+                                        rewardItem->setPosition(ItemPosition::INVENTORY);
+                                        rewardItem->setLocation(aPlayer);
+                                        message += "You received the " + rewardItem->getName() + ".\015\012";
+                                    }
+                                    message += aStep->getCompletionText();
+                                } else {
+                                    message += aStep->getCompletionText();
+                                    nextStep = aQuest->getNextStep(aStep->getOrdinalNumber());
+                                    if (nextStep != nullptr){
+                                        aNPC = nextStep->getGiver();
+                                        if (aNPC != nullptr){
+                                            message += "To get the next part of the quest, go talk to " + aNPC->getName();
+                                            message += " in the " + aNPC->getLocation()->getName() + ".\015\012";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                resultMsg = getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+                if (resultMsg.compare("false") != 0){
+                    message += resultMsg;
+                }
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+            }
         }
     }
 

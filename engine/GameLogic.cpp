@@ -1584,6 +1584,7 @@ bool GameLogic::inventoryCommand(Player *aPlayer){
     for (auto item : inventory){
         message += item->getName() + "\015\012";
     }
+    message += std::to_string(aPlayer->getMoney()) + " money\015\012";
     message += "Equipped Items:\015\012";
     for (auto equip : equipment){
         switch (equip.first){
@@ -1781,7 +1782,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
     if (resultMessage.compare("false") == 0){
         message = "You can't give the " + directObj->getName() + " to " + indirectObj->getName() + ".";
     } else {
-        message += resultMessage;
+        message += "\015\012" + resultMessage;
     }
 
     if (success){ 
