@@ -68,7 +68,7 @@ Combatant::~Combatant(){
 
 
 bool Combatant::cooldownIsZero() const{
-    return cooldownClock.load() == 0;
+    return cooldownClock.load() <= std::time(nullptr);
 }
 
 
@@ -123,16 +123,16 @@ Combatant* Combatant::getInCombat() const{
 }
 
 
-bool Combatant::setCooldown(int cooldown){
-    cooldownClock.store(cooldown);
+bool Combatant::setCooldown(time_t cooldown){
+    cooldownClock.store(std::time(nullptr) + cooldown);
     return true;
 }
 
-
+/*
 bool Combatant::decrementCooldown(){
     cooldownClock--;
     return true;
-}
+}*/
 
 
 bool Combatant::setInCombat(Combatant *aCombatant){

@@ -13,6 +13,7 @@
 #ifndef COMBATANT_HPP
 #define COMBATANT_HPP
 
+#include <ctime>
 #include <utility>
 #include <string>
 #include <atomic>
@@ -120,7 +121,7 @@ class Combatant: public Character {
          * \return  Returns a bool indicating whether or not the cooldown was set
          *          successfully.
          */
-        bool setCooldown(int cooldown);
+        bool setCooldown(time_t cooldown);
 
         /*!
          * \brief   Decrements the cooldown clock by one for this combatant.
@@ -128,7 +129,7 @@ class Combatant: public Character {
          * \return  Returns a bool indicating whether or not the cooldown was 
          *          decremented successfully.
          */
-        bool decrementCooldown();
+        //bool decrementCooldown();
 
         /*!
          * \brief   Sets whether or not this combatant is currently in combat.
@@ -262,7 +263,7 @@ class Combatant: public Character {
          */
         int increaseIntelligence(int intPoints);
     private:
-        std::atomic<int> cooldownClock;
+        std::atomic<time_t> cooldownClock;
         std::pair<int, int> health;
         mutable std::mutex healthMutex;
         Area* spawnLocation;
