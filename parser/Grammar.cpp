@@ -29,7 +29,7 @@ void Grammar::addPreposition(std::string prep, PrepositionType type) {
     _prepositions[prep] = type;
 }
 
-PrepositionMap getAllPrepositions() const {
+PrepositionMap Grammar::getAllPrepositions() const {
     return _prepositions;
 }
 
