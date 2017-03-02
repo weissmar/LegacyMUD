@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -38,11 +38,9 @@ class Combatant: public Character {
         virtual ~Combatant();*/
 
         /*!
-         * \brief   Gets whether or not the cooldown for this combatant is 
-         *          currently zero.
+         * \brief   Gets whether the cooldown period for this combatant is over.
          *
-         * \return  Returns a bool indicating if the cooldown is currently
-         *          zero.
+         * \return  Returns a bool indicating if the cooldown period is over.
          */
         bool cooldownIsZero() const;
 
@@ -114,9 +112,10 @@ class Combatant: public Character {
         Combatant* getInCombat() const;
 
         /*!
-         * \brief   Sets the cooldown clock for this combatant.
+         * \brief   Sets the cooldown in seconds for this combatant.
          *
-         * \param[in] cooldown  Specifies the current cooldown for this combatant.
+         * \param[in] cooldown  Specifies the number of seconds until this 
+         *                      combatant can perform another action.
          *
          * \return  Returns a bool indicating whether or not the cooldown was set
          *          successfully.
