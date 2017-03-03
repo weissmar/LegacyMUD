@@ -578,41 +578,28 @@ class Player: public Combatant {
          *          sell.
          */
         virtual std::string sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects);
-        
-        /*!
-         * \brief   Gets the response of this object to the command search.
-         *
-         * \param[in] aPlayer   Specifies the player that is searching the object.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \note    May cause an effect on the player.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          search.
-         */
-        /*virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); */
 
         /*!
-         * \brief   Executes the specified skill on the specified recipient from the player.
+         * \brief   Executes the specified skill on the specified recipient (either this player
+         *          or another player depending on the value of aRecipient and aPlayer) from 
+         *          aPlayer.
          *
-         * This function executes the specified skill from this player on the specified 
-         * recipient.  
+         * This function executes the specified skill from this player if this == aPlayer and
+         * aRecipient is not null. Otherwise, it calls this function on aPlayer with a pointer 
+         * to this player as aRecipient.  
          *
          * \param[in] aPlayer       Specifies the player that is using the skill.
          * \param[in] aSkill        Specifies the skill to use.
-         * \param[in] character     This parameter is ignored in this case.
+         * \param[in] character     Ignored in this case.
          * \param[in] aRecipient    Specifies the recipient of the skill.
-         * \param[in] playerSkill   Specifies whether or not the player is using the skill.
-         *                          This should be true when this function is called on a
-         *                          player.
          * \param[out] effects      Specifies the effects of the action.
          *
          * \return  Returns a std::string with the results of the skill.
          */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects); 
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects); 
 
         /*!
-         * \brief   Moves the specified player to this area.
+         * \brief   Moves the specified player to this area. 
          *
          * This function moves the specified player to this area. After adding
          * the player to this area, it calls go() on the player, passing a 

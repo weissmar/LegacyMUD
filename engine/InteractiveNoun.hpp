@@ -447,7 +447,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string useSkill(Player*, SpecialSkill*, InteractiveNoun*, Combatant*, bool, std::vector<EffectType>*) { return "false"; } 
+        virtual std::string useSkill(Player*, SpecialSkill*, InteractiveNoun*, Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the read command.

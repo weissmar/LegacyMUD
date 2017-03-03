@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -292,27 +292,6 @@ class Creature: public Combatant {
         virtual std::string attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker, std::vector<EffectType> *effects);
 
         /*!
-         * \brief   Executes the specified skill on either this creature or the player,
-         *          based on the value of playerSkill.
-         *
-         * This function executes the specified skill from this creature if playerSkill 
-         * is false. Otherwise, it calls this function on the player with a pointer to
-         * this creature as the aRecipient parameter.
-         *
-         * \param[in] aPlayer       Specifies the player that entered the command and, if 
-         *                          playerSkill is true, the player that is using the skill.
-         * \param[in] aSkill        Specifies the skill to use.
-         * \param[in] character     Specifies the character to use the skill on, if playerSkill
-         *                          is true, or the character that is using the skill otherwise.
-         * \param[out] aRecipient   Specifies the recipient of the skill, if playerSkill is true.  
-         * \param[in] playerSkill   Specifies whether or not the player is using the skill.  
-         * \param[out] effects      Specifies the effects of the action.
-         *
-         * \return  Returns a std::string with the results of the skill.
-         */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects); 
-
-        /*!
          * \brief   Creates a copy of this object.
          *
          * This function creates a new object with the same attributes as this
@@ -322,7 +301,7 @@ class Creature: public Combatant {
          *          the copy was unsuccessful.
          */
         virtual InteractiveNoun* copy();
-
+ 
         /*!
          * \brief   Edits an attribute of this object.
          *

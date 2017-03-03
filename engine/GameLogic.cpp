@@ -91,7 +91,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     theServer = aServer;
 
     // create a SpecialSkill
-    aSkill = new SpecialSkill("Totally Rad Skill", 3, DamageType::FIRE, 1, 3);
+    aSkill = new SpecialSkill("Totally Rad Healing", 3, DamageType::HEAL, 1, 3);
     manager->addObject(aSkill, -1);
 
     // create a default player class
@@ -2228,7 +2228,32 @@ bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        if (indirectObj != nullptr){
+            resultMessage = directObj->useSkill(aPlayer, nullptr, indirectObj, nullptr, &effects);
+        } else {
+            resultMessage = directObj->useSkill(aPlayer, nullptr, aPlayer, nullptr, &effects);
+        }
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't use the " + directObj->getName() + " skill.";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

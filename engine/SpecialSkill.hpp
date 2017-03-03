@@ -189,15 +189,13 @@ class SpecialSkill: public InteractiveNoun {
          *
          * \param[in] aPlayer       Specifies the player that is using the skill.
          * \param[out] aSkill       Specifies the skill to use.
-         * \param[in] character     Specifies the character using the skill, if playerSkill
-         *                          is false, or the character receiving the skill.
+         * \param[in] character     Specifies the character receiving the skill.
          * \param[in] aRecipient    Specifies the recipient of the skill.
-         * \param[in] playerSkill   Specifies whether or not the player is using the skill.
          * \param[out] effects      Specifies the effects of the action.
          *
          * \return  Returns a std::string with the results of the skill.
          */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects);
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects);
 
         /*!
          * \brief   Creates a copy of this object.

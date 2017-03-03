@@ -752,15 +752,47 @@ std::string Player::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> 
 }
 
 
-/*std::string Player::search(Player *aPlayer, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects){
+    std::string message, resultMsg;
+    EffectType anEffect = EffectType::NONE;
+    int healAmount = aSkill->getDamage();
+    int skillCost = aSkill->getCost();
 
-    return message;
-} */
+    if ((this == aPlayer) && (aRecipient != nullptr)){
+        // this is the player using the skill
+        if (getPlayerClass()->getSpecialSkill() == aSkill){
+            // the specified skill can be used 
+            if (getCurrentSpecialPts() >= skillCost){
+                // the player has enough points to use the skill
+                subtractFromCurrSpecialPts(skillCost);
+                aRecipient->addToCurrentHealth(healAmount);
+                message = "You used the " + aSkill->getName() + " skill on ";
+                if (aPlayer == aRecipient){
+                    message += "yourself.\015\012You gained ";
+                } else {
+                    message += aRecipient->getName() + ". They gained ";
+                }
+                message += std::to_string(healAmount) + " health.";
 
-
-std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
-    std::string message = "";
+                // get the effects of useSkill
+                resultMsg = getTextAndEffect(CommandEnum::USE_SKILL, anEffect);
+                if (resultMsg.compare("false") != 0){
+                    message += resultMsg;
+                }
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+            } else {
+                message = "fYou don't have enough special points to use the " + aSkill->getName() + " skill.";
+            }
+        } else {
+            // the specified skill isn't available for this player to use
+            message = "fYou can't use the " + aSkill->getName() + " skill.";
+        }
+    } else {
+        // this is the recipient of the skill
+        message = aPlayer->useSkill(aPlayer, aSkill, nullptr, this, effects);
+    }
 
     return message;
 } 
