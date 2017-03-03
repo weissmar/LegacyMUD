@@ -154,7 +154,11 @@ bool Combatant::setMaxHealth(int maxHealth){
 
 int Combatant::addToCurrentHealth(int healing){
     std::lock_guard<std::mutex> healthLock(healthMutex);
+
     health.first += healing;
+    if (health.first > health.second){
+        health.first = health.second;
+    }
     return health.first;
 }
 
@@ -188,7 +192,11 @@ bool Combatant::setMaxSpecialPts(int maxSpecialPts){
 
 int Combatant::addToCurrentSpecialPts(int gainedPoints){
     std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
+
     specialPoints.first += gainedPoints;
+    if (specialPoints.first > specialPoints.second){
+        specialPoints.first = specialPoints.second;
+    }
     return specialPoints.first;
 }
 

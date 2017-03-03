@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/27/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -114,7 +114,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     startArea.addItem(aContainer);
 
     // create a test weapon type and item
-    aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 1, EquipmentSlot::RIGHT_HAND); 
+    aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 9, EquipmentSlot::RIGHT_HAND); 
     manager->addObject(aWeaponType, -1);
     aWeapon = new Item(&startArea, ItemPosition::GROUND, "small knife", aWeaponType);
     manager->addObject(aWeapon, -1);
@@ -1299,7 +1299,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
 
 InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *directObj = nullptr;
-std::cout << "inside clarifyDirect\n";
 
     if (result.direct.size() == 1){
         directObj = result.direct[0];
@@ -1313,7 +1312,6 @@ std::cout << "inside clarifyDirect\n";
 
 InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *indirectObj = nullptr;
-std::cout << "inside clarifyIndirect\n";
 
     if (result.indirect.size() == 1){
         indirectObj = result.indirect[0];
@@ -1327,8 +1325,6 @@ std::cout << "inside clarifyIndirect\n";
 
 bool GameLogic::helpCommand(Player *aPlayer){
     std::string message;
-
-    std::cout << "inside help command\n";
 
     if (aPlayer != nullptr){
         if (aPlayer->isEditMode()){
@@ -2109,22 +2105,125 @@ bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *param){
 
 
 bool GameLogic::shopCommand(Player *aPlayer){
-    return false;
+    std::string message = "";
+    NonCombatant *aNPC = aPlayer->getInConversation();
+    std::vector<Item*> inventory;
+    ItemType *anItemType;
+
+    if (aNPC != nullptr){
+        inventory = aNPC->getItemsInventory();
+        message = aNPC->getName() + "\'s Available Items:\015\012";
+        if (inventory.size() == 0){
+            message += "Nothing available for purchase right now.";
+        }
+        for (auto item : inventory){
+            // should some items not be available for sale? ***********************************************************
+            anItemType = item->getType();
+            message += item->getName() + ", ";
+            switch (anItemType->getRarity()){
+                case ItemRarity::COMMON:
+                    message += "common, ";
+                    break;
+                case ItemRarity::UNCOMMON:
+                    message += "uncommon, ";
+                    break;
+                case ItemRarity::RARE:
+                    message += "rare, ";
+                    break;
+                case ItemRarity::LEGENDARY:
+                    message += "legendary, ";
+                    break;
+                case ItemRarity::QUEST:
+                    message += "quest, ";
+                    break;
+            }
+            message += std::to_string(anItemType->getCost()) + " money\015\012";
+        }
+    } else {
+        message = "You need to talk to someone before you can shop.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 
 bool GameLogic::buyCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        resultMessage = directObj->buy(aPlayer, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't buy the " + directObj->getName() + ".";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::sellCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        resultMessage = directObj->sell(aPlayer, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't sell the " + directObj->getName() + ".";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        resultMessage = directObj->search(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't search the " + directObj->getName() + ".";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

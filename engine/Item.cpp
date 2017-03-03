@@ -1,7 +1,7 @@
  /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -18,6 +18,7 @@
 #include "Container.hpp"
 #include "Area.hpp"
 #include "EffectType.hpp"
+#include "NonCombatant.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -892,8 +893,36 @@ std::string Item::attack(Player *aPlayer, Item*, SpecialSkill*, InteractiveNoun*
 }
 
 
-std::string Item::buy(Player *aPlayer, Item*, std::vector<EffectType> *effects){
+std::string Item::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    if ((aPlayer->getInConversation() != nullptr) && (getLocation()->getID() == aPlayer->getInConversation()->getID())){
+        // this item is in the inventory of the NPC the player is talking to
+        resultMessage = aPlayer->buy(aPlayer, this, effects);
+        if (resultMessage.front() == 'f'){
+            // item can't be purchased
+            resultMessage.erase(resultMessage.begin());
+            return resultMessage;
+        } else {
+            message += resultMessage;
+
+            // change location, position
+            setLocation(aPlayer);
+            setPosition(ItemPosition::INVENTORY);
+        }
+    } else {
+        return "false";
+    }
+
+    resultMessage = getTextAndEffect(CommandEnum::BUY, anEffect);
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
 
     return message;
 }
@@ -901,6 +930,34 @@ std::string Item::buy(Player *aPlayer, Item*, std::vector<EffectType> *effects){
 
 std::string Item::sell(Player *aPlayer, Item*, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    if ((aPlayer->getInConversation() != nullptr) && (getLocation()->getID() == aPlayer->getID())){
+        // this item is in the inventory of the player and the player is in conversation with a NPC
+        resultMessage = aPlayer->sell(aPlayer, this, effects);
+        if (resultMessage.front() == 'f'){
+            // item can't be sold
+            resultMessage.erase(resultMessage.begin());
+            return resultMessage;
+        } else {
+            message += resultMessage;
+
+            // change location, position
+            setLocation(aPlayer->getInConversation());
+            setPosition(ItemPosition::INVENTORY);
+        }
+    } else {
+        return "false";
+    }
+
+    resultMessage = getTextAndEffect(CommandEnum::SELL, anEffect);
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
 
     return message;
 }

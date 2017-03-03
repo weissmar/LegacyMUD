@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -278,7 +278,7 @@ std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNou
                 // check if this is a quest item 
                 if (aQuest != nullptr){
                     aStep = aQuest->isGiverOrReceiver(this);
-                    if (aStep != nullptr){
+                    if ((aStep != nullptr) && (aStep->getReceiver() == this)){
                         questItemType = aStep->getFetchItem();
                         if ((questItemType != nullptr) && (anItem->getType() == questItemType)){
                             // this is a quest item

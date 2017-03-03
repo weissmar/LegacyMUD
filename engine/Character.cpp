@@ -166,7 +166,7 @@ int Character::addMoney(int money){
 
 
 int Character::subtractMoney(int money){
-    this->money += money;
+    this->money -= money;
 
     return money;
 }

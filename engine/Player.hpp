@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -590,7 +590,7 @@ class Player: public Combatant {
          * \return  Returns a std::string with the response to the command
          *          search.
          */
-        virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); 
+        /*virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); */
 
         /*!
          * \brief   Executes the specified skill on the specified recipient from the player.

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -492,7 +492,19 @@ Player* Player::deserialize(std::string){
 
 
 std::string Player::look(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+    std::string message = getName() + " is " + getDescription() + ".";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 }  
 
 
@@ -659,26 +671,92 @@ std::string Player::talk(Player *aPlayer, NonCombatant *aNPC, std::vector<Effect
     return message;
 } 
 
-
+// would be better to have NonCombatant do their own selling **************************************************
 std::string Player::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    int price;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        // check price  
+        price = anItem->getType()->getCost();
+        if (price > getMoney()){
+            // can't afford the item
+            message = "fYou don't have enough money to buy the " + anItem->getName() + ".";
+            return message;
+        } else {
+            // buy the item
+            aPlayer->subtractMoney(price);
+            aPlayer->getInConversation()->addMoney(price);
+            aPlayer->getInConversation()->removeFromInventory(anItem);
+            aPlayer->addToInventory(anItem);
+            success = true;
+            message = "You bought the " + anItem->getName() + " for " + std::to_string(price) + " money.";
+        }
+    }
+
+    if (success){
+        resultMsg = getTextAndEffect(CommandEnum::BUY, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
 
     return message;
 }
 
 
+// would be better to have NonCombatant do their own buying **************************************************
 std::string Player::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    int price;
+    EffectType anEffect = EffectType::NONE;
+    NonCombatant *aNPC = getInConversation();
+
+    if (anItem != nullptr){
+        // check price  
+        price = anItem->getType()->getCost();
+        if (price > aNPC->getMoney()){
+            // NPC can't afford the item
+            message = "f" + aNPC->getName() + " doesn't have enough money to buy the " + anItem->getName() + ".";
+            return message;
+        } else {
+            // buy the item
+            aNPC->subtractMoney(price);
+            aPlayer->addMoney(price);
+            aPlayer->removeFromInventory(anItem);
+            aNPC->addToInventory(anItem);
+            success = true;
+            message = "You sold the " + anItem->getName() + " to " + aNPC->getName() + " for " + std::to_string(price) + " money.";
+        }
+    }
+
+    if (success){
+        resultMsg = getTextAndEffect(CommandEnum::BUY, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
 
     return message;
 }
 
 
-std::string Player::search(Player *aPlayer, std::vector<EffectType> *effects){
+/*std::string Player::search(Player *aPlayer, std::vector<EffectType> *effects){
     std::string message = "";
 
     return message;
-} 
+} */
 
 
 std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -413,17 +413,53 @@ std::string Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, Inte
 
 
 std::string Container::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = Item::buy(aPlayer, anItem, effects);
+
+    if (message.compare("false") != 0){
+        // remove contents? *********************************************************************
+    }
+
+    return message;
 }
 
 
 std::string Container::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = Item::sell(aPlayer, anItem, effects);
+
+    if (message.compare("false") != 0){
+        // remove contents? *********************************************************************
+    }
+
+    return message;
 }
 
 
 std::string Container::search(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMessage;
+    EffectType anEffect = EffectType::NONE;
+    std::vector<Item*> in, on, under;
+
+    if (!isEmpty()){
+        in = getInsideContents();
+        on = getTopContents();
+        under = getUnderContents();
+
+        message = "You look on top of the " + getName() + " and see a ";
+        for (size_t i = 0; i < on.size(); i++){
+            //**********************************************************************
+        }
+    }
+
+    resultMessage = getTextAndEffect(CommandEnum::SEARCH, anEffect);
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 
