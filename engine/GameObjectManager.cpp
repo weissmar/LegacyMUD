@@ -165,7 +165,7 @@ bool GameObjectManager::removeObject(InteractiveNoun *anObject, int FD){
 }
 
 
-std::map<int, InteractiveNoun*> getAllObjects() const{
+std::map<int, InteractiveNoun*> GameObjectManager::getAllObjects() const{
     std::lock_guard<std::mutex> gameObjectsLock(gameObjectsMutex);
 
     return gameObjects;
