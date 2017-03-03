@@ -2,7 +2,7 @@
   \file     WordMap.hpp
   \author   David Rigert
   \created  02/11/2017
-  \modified 02/12/2017
+  \modified 03/01/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declarations for the WordMap class.
@@ -14,7 +14,6 @@
 
 #include <string>
 #include <map>
-#include <set>
 #include <vector>
 
 namespace legacymud { namespace engine {
@@ -68,14 +67,14 @@ public:
 
       \return Returns an iterator to the beginning of the map.
     */
-    std::map<std::string, std::set<engine::InteractiveNoun *>>::iterator begin();
+    std::map<std::string, std::map<engine::InteractiveNoun *, int>>::iterator begin();
 
     /*!
       \brief Gets an iterator to the end of the internal map.
 
       \return Returns an iterator to the end of the map.
     */
-    std::map<std::string, std::set<engine::InteractiveNoun *>>::iterator end();
+    std::map<std::string, std::map<engine::InteractiveNoun *, int>>::iterator end();
 
     /*!
       \brief Gets a vector of all objects mapped to the specified word.
@@ -123,7 +122,7 @@ public:
     void clear();
 
 private:
-    std::map<std::string, std::set<engine::InteractiveNoun *>> _wordMap;
+    std::map<std::string, std::map<engine::InteractiveNoun *, int>> _wordMap;
     size_t _count;
 };
 

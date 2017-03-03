@@ -2,15 +2,17 @@
   \file     engine_GameObjectManager_Test.cpp
   \author   David Rigert
   \created  02/20/2017
-  \modified 02/20/2017
+  \modified 03/02/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the unit tests for the GameObjectManager class.
 */
 
 #include <GameObjectManager.hpp>
+#include <Area.hpp>
 #include <Creature.hpp>
 #include <Player.hpp>
+#include <PlayerClass.hpp>
 #include <Item.hpp>
 
 #include <gtest/gtest.h>
@@ -71,7 +73,9 @@ TEST_F(GameObjectManagerTest, AddGetActivePlayerTest) {
 
 // Verify adding an inactive Player object and getting it back
 TEST_F(GameObjectManagerTest, AddGetInactivePlayerTest) {
-    engine::Player *obj = new engine::Player(engine::CharacterSize::SMALL, nullptr, "username", 0, "Fred", "description", nullptr);
+    engine::Area area;
+    engine::PlayerClass playerClass;
+    engine::Player *obj = new engine::Player(engine::CharacterSize::SMALL, &playerClass, "username", 0, "Fred", "description", &area);
     gom->addObject(obj, -1);
     auto objs = gom->getPlayersPtrs();
     EXPECT_EQ(0, objs.size());
@@ -80,7 +84,9 @@ TEST_F(GameObjectManagerTest, AddGetInactivePlayerTest) {
 
 // Verify loading an inactive Player object
 TEST_F(GameObjectManagerTest, LoadInactivePlayerTest) {
-    engine::Player *obj = new engine::Player(engine::CharacterSize::SMALL, nullptr, "username", 0, "Fred", "description", nullptr);
+    engine::Area area;
+    engine::PlayerClass playerClass;
+    engine::Player *obj = new engine::Player(engine::CharacterSize::SMALL, &playerClass, "username", 0, "Fred", "description", &area);
     gom->addObject(obj, -1);
     auto objs = gom->getPlayersPtrs();
     EXPECT_EQ(0, objs.size());
@@ -128,7 +134,9 @@ TEST_F(GameObjectManagerTest, GetPlayerByFdTest) {
 
 // Verify adding an active Player object and hibernating it
 TEST_F(GameObjectManagerTest, HibernateActivePlayerTest) {
-    engine::Player *obj = new engine::Player(engine::CharacterSize::SMALL, nullptr, "username", 0, "Fred", "description", nullptr);
+    engine::Area area;
+    engine::PlayerClass playerClass;
+    engine::Player *obj = new engine::Player(engine::CharacterSize::SMALL, &playerClass, "username", 0, "Fred", "description", &area);
     gom->addObject(obj, 1);
     auto objs = gom->getPlayersPtrs();
     EXPECT_EQ(1, objs.size());
