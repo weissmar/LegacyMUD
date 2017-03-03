@@ -249,7 +249,9 @@ std::string Container::look(Player *aPlayer, std::vector<EffectType> *effects){
 
     message = "The " + getName() + " is ";
     message += aType->getDescription() + ".";
-    message += " It looks like it might contain something.";
+    if (!isEmpty()){
+        message += " It looks like it might contain something.";
+    }
 
     return message;
 }  
@@ -445,10 +447,64 @@ std::string Container::search(Player *aPlayer, std::vector<EffectType> *effects)
         on = getTopContents();
         under = getUnderContents();
 
-        message = "You look on top of the " + getName() + " and see a ";
-        for (size_t i = 0; i < on.size(); i++){
-            //**********************************************************************
+        // list items on top of this container
+        if (on.size() > 0){
+            message += "You look on top of the " + getName() + " and see a ";
+            if (on.size() == 1){
+                message += on[0]->getName() + ".\015\012";
+            } else {
+                for (size_t i = 0; i < on.size(); i++){
+                    message += on[i]->getName();
+                    if (i == (on.size() - 2)){
+                        message += " and a ";
+                    } else if (i == (on.size() - 1)){
+                        message += ".\015\012";
+                    } else {
+                        message += ", a ";
+                    }
+                }
+            }
         }
+
+        // list items under this container
+        if (under.size() > 0){
+            message += "You look under the " + getName() + " and see a ";
+            if (under.size() == 1){
+                message += under[0]->getName() + ".\015\012";
+            } else {
+                for (size_t i = 0; i < under.size(); i++){
+                    message += under[i]->getName();
+                    if (i == (under.size() - 2)){
+                        message += " and a ";
+                    } else if (i == (under.size() - 1)){
+                        message += ".\015\012";
+                    } else {
+                        message += ", a ";
+                    }
+                }
+            }
+        }
+
+        // list items inside this container
+        if (in.size() > 0){
+            message += "You look inside the " + getName() + " and see a ";
+            if (in.size() == 1){
+                message += in[0]->getName() + ".\015\012";
+            } else {
+                for (size_t i = 0; i < in.size(); i++){
+                    message += in[i]->getName();
+                    if (i == (in.size() - 2)){
+                        message += " and a ";
+                    } else if (i == (in.size() - 1)){
+                        message += ".\015\012";
+                    } else {
+                        message += ", a ";
+                    }
+                }
+            }
+        }
+    } else {
+        message = "You search the " + getName() + " thoroughly, but find nothing.\015\012";
     }
 
     resultMessage = getTextAndEffect(CommandEnum::SEARCH, anEffect);
