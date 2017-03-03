@@ -31,6 +31,12 @@ int main(int argc, char *argv[]) {
     setGlobalVerbs();
     setBuilderVerbs();
     setEditModeVerbs();
+    
+    // Add ignore words
+    parser::WordManager::addIgnoreWord("the");
+    parser::WordManager::addIgnoreWord("a");
+    parser::WordManager::addIgnoreWord("an");
+
 
     // initialize server
     bool i = ts.initServer(serverPort, 10, 90000, &logic);

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -68,7 +68,7 @@ Combatant::~Combatant(){
 
 
 bool Combatant::cooldownIsZero() const{
-    return cooldownClock.load() == 0;
+    return cooldownClock.load() <= std::time(nullptr);
 }
 
 
@@ -123,16 +123,16 @@ Combatant* Combatant::getInCombat() const{
 }
 
 
-bool Combatant::setCooldown(int cooldown){
-    cooldownClock.store(cooldown);
+bool Combatant::setCooldown(time_t cooldown){
+    cooldownClock.store(std::time(nullptr) + cooldown);
     return true;
 }
 
-
+/*
 bool Combatant::decrementCooldown(){
     cooldownClock--;
     return true;
-}
+}*/
 
 
 bool Combatant::setInCombat(Combatant *aCombatant){
@@ -154,7 +154,11 @@ bool Combatant::setMaxHealth(int maxHealth){
 
 int Combatant::addToCurrentHealth(int healing){
     std::lock_guard<std::mutex> healthLock(healthMutex);
+
     health.first += healing;
+    if (health.first > health.second){
+        health.first = health.second;
+    }
     return health.first;
 }
 
@@ -188,7 +192,11 @@ bool Combatant::setMaxSpecialPts(int maxSpecialPts){
 
 int Combatant::addToCurrentSpecialPts(int gainedPoints){
     std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
+
     specialPoints.first += gainedPoints;
+    if (specialPoints.first > specialPoints.second){
+        specialPoints.first = specialPoints.second;
+    }
     return specialPoints.first;
 }
 

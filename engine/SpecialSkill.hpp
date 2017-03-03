@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.hpp
  *
@@ -17,6 +17,7 @@
 #include <mutex>
 #include <atomic>
 #include <vector>
+#include <ctime>
 #include "InteractiveNoun.hpp"
 #include "DamageType.hpp"
 #include "DataType.hpp"
@@ -31,8 +32,8 @@ namespace legacymud { namespace engine {
 class SpecialSkill: public InteractiveNoun {
     public:
         SpecialSkill();
-        SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown);
-        SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown, int anID);
+        SpecialSkill(std::string name, int damage, DamageType type, int cost, time_t cooldown);
+        SpecialSkill(std::string name, int damage, DamageType type, int cost, time_t cooldown, int anID);
 
         /*!
          * \brief   Gets the name of the special skill.
@@ -63,11 +64,11 @@ class SpecialSkill: public InteractiveNoun {
         int getCost() const;
 
         /*!
-         * \brief   Gets the cooldown of the special skill.
+         * \brief   Gets the cooldown of the special skill in seconds.
          *
-         * \return  Returns an int with the cooldown of the special skill.
+         * \return  Returns the cooldown of the special skill in seconds as a \c time_t type.
          */
-        int getCooldown() const;
+        time_t getCooldown() const;
 
         /*!
          * \brief   Sets the name of the special skill.
@@ -110,14 +111,14 @@ class SpecialSkill: public InteractiveNoun {
         bool setCost(int cost);
 
         /*!
-         * \brief   Sets the cooldown of the special skill.
+         * \brief   Sets the cooldown of the special skill in seconds.
          * 
-         * \param[in] cooldown  Specifies the cooldown of the skill.
+         * \param[in] cooldown  Specifies the cooldown of the skill in seconds.
          *
          * \return  Returns a bool indicating whether or not setting the
          *          cooldown was successful.
          */
-        bool setCooldown(int cooldown);
+        bool setCooldown(time_t cooldown);
 
         /*!
          * \brief   Gets the object type.
@@ -254,7 +255,7 @@ class SpecialSkill: public InteractiveNoun {
         std::atomic<int> damage;
         std::atomic<DamageType> damageType;
         std::atomic<int> cost;
-        std::atomic<int> cooldown;
+        std::atomic<time_t> cooldown;
 };
 
 }}

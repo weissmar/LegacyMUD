@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -22,7 +22,7 @@ SpecialSkill::SpecialSkill()
 { }
 
 
-SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown)
+SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int cost, time_t cooldown)
 : InteractiveNoun()
 , name(name)
 , damage(damage)
@@ -34,7 +34,7 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 }
 
 
-SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int cost, int cooldown, int anID)
+SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int cost, time_t cooldown, int anID)
 : InteractiveNoun(anID)
 , name(name)
 , damage(damage)
@@ -67,7 +67,7 @@ int SpecialSkill::getCost() const{
 }
 
 
-int SpecialSkill::getCooldown() const{
+time_t SpecialSkill::getCooldown() const{
     return cooldown.load();
 }
 
@@ -101,7 +101,7 @@ bool SpecialSkill::setCost(int cost){
 }
 
 
-bool SpecialSkill::setCooldown(int cooldown){
+bool SpecialSkill::setCooldown(time_t cooldown){
     this->cooldown.store(cooldown);
 
     return true;

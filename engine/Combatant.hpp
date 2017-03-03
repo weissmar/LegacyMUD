@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -13,6 +13,7 @@
 #ifndef COMBATANT_HPP
 #define COMBATANT_HPP
 
+#include <ctime>
 #include <utility>
 #include <string>
 #include <atomic>
@@ -37,11 +38,9 @@ class Combatant: public Character {
         virtual ~Combatant();*/
 
         /*!
-         * \brief   Gets whether or not the cooldown for this combatant is 
-         *          currently zero.
+         * \brief   Gets whether the cooldown period for this combatant is over.
          *
-         * \return  Returns a bool indicating if the cooldown is currently
-         *          zero.
+         * \return  Returns a bool indicating if the cooldown period is over.
          */
         bool cooldownIsZero() const;
 
@@ -113,14 +112,15 @@ class Combatant: public Character {
         Combatant* getInCombat() const;
 
         /*!
-         * \brief   Sets the cooldown clock for this combatant.
+         * \brief   Sets the cooldown in seconds for this combatant.
          *
-         * \param[in] cooldown  Specifies the current cooldown for this combatant.
+         * \param[in] cooldown  Specifies the number of seconds until this 
+         *                      combatant can perform another action.
          *
          * \return  Returns a bool indicating whether or not the cooldown was set
          *          successfully.
          */
-        bool setCooldown(int cooldown);
+        bool setCooldown(time_t cooldown);
 
         /*!
          * \brief   Decrements the cooldown clock by one for this combatant.
@@ -128,7 +128,7 @@ class Combatant: public Character {
          * \return  Returns a bool indicating whether or not the cooldown was 
          *          decremented successfully.
          */
-        bool decrementCooldown();
+        //bool decrementCooldown();
 
         /*!
          * \brief   Sets whether or not this combatant is currently in combat.
@@ -262,7 +262,7 @@ class Combatant: public Character {
          */
         int increaseIntelligence(int intPoints);
     private:
-        std::atomic<int> cooldownClock;
+        std::atomic<time_t> cooldownClock;
         std::pair<int, int> health;
         mutable std::mutex healthMutex;
         Area* spawnLocation;
