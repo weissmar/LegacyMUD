@@ -183,6 +183,50 @@ class GameLogic {
          *          was successful.
          */
         bool createObject(Player *aPlayer, ObjectType type);
+        
+        int getIntParameter(Player *aPlayer, std::string paramName);
+
+        bool getBoolParameter(Player *aPlayer, std::string paramName);
+
+        float getFloatParameter(Player *aPlayer, std::string paramName);
+
+        std::string getStringParameter(Player *aPlayer, std::string paramName);
+
+        EffectType getEffectTypeParameter(Player *aPlayer, std::string paramName);
+
+        AreaSize getAreaSizeParameter(Player *aPlayer, std::string paramName);
+
+        DamageType getDamageTypeParameter(Player *aPlayer, std::string paramName);
+
+        ItemRarity getItemRarityParameter(Player *aPlayer, std::string paramName);
+
+        EquipmentSlot getEquimentSlotParameter(Player *aPlayer, std::string paramName);
+
+        ItemPosition getItemPositionParameter(Player *aPlayer, std::string paramName);
+
+        CharacterSize getCharacterSizeParameter(Player *aPlayer, std::string paramName);
+
+        ExitDirection getExitDirectionParameter(Player *aPlayer, std::string paramName);
+
+        XPTier getXPTierParameter(Player *aPlayer, std::string paramName);
+
+        Area* getAreaParameter(Player *aPlayer, std::string paramName);
+
+        SpecialSkill* getSpecialSkillParameter(Player *aPlayer, std::string paramName);
+
+        ItemType* getItemTypeParameter(Player *aPlayer, std::string paramName);
+
+        InteractiveNoun* getInteractiveNounParameter(Player *aPlayer, std::string paramName);
+
+        CreatureType* getCreatureTypeParameter(Player *aPlayer, std::string paramName);
+
+        Quest* getQuestParameter(Player *aPlayer, std::string paramName);
+
+        PlayerClass* getPlayerClassParameter(Player *aPlayer, std::string paramName);
+
+        Item* getItemParameter(Player *aPlayer, std::string paramName);
+
+        NonCombatant* getNonCombatantParameter(Player *aPlayer, std::string paramName);
 
         /*!
          * \brief   Gets the object type based on the input string.
