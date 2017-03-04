@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/02/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -798,8 +798,17 @@ std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveN
 } 
 
 
-std::string Player::warp(Player *aPlayer, Area*){
+std::string Player::warp(Player *aPlayer, Area *anArea){
     std::string message = "";
+
+    if (anArea != nullptr){
+        setLocation(anArea);
+
+        // if the player is in conversation, end the conversation
+        if (getInConversation() != nullptr){
+            setInConversation(nullptr);
+        }
+    }
 
     return message;
 } 

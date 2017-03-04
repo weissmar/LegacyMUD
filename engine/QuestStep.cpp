@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.cpp
  *
@@ -34,6 +34,8 @@ QuestStep::QuestStep(int ordinalNumber, std::string description, ItemType *anIte
 , receiver(receiver)
 , completionText(completionText)
 {
+    std::string idAlias = "quest step " + std::to_string(getID());
+    addNounAlias(idAlias);
     std::string alias = "step " + std::to_string(ordinalNumber);
     addNounAlias(alias);
 }
@@ -48,6 +50,8 @@ QuestStep::QuestStep(int ordinalNumber, std::string description, ItemType *anIte
 , receiver(receiver)
 , completionText(completionText)
 {
+    std::string idAlias = "quest step " + std::to_string(getID());
+    addNounAlias(idAlias);
     std::string alias = "step " + std::to_string(ordinalNumber);
     addNounAlias(alias);
 }

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/02/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -2227,6 +2227,7 @@ bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
 }
 
 
+// send message to affected other player? *********************************************************************
 bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
     std::string message, resultMessage;
     std::vector<EffectType> effects;
@@ -2448,7 +2449,7 @@ bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
     std::vector<EffectType> effects;
-    std:: string message, resultMessage;
+    std::string message, resultMessage;
     bool success = false;
 
     if (directObj != nullptr){
@@ -2474,12 +2475,16 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::editModeCommand(Player *aPlayer){
-    if (aPlayer->isEditMode()){
-        aPlayer->setEditMode(false);
-        messagePlayer(aPlayer, "Leaving edit mode...");
+    if (accountManager->verifyAdmin(aPlayer->getUser())){
+        if (aPlayer->isEditMode()){
+            aPlayer->setEditMode(false);
+            messagePlayer(aPlayer, "Leaving edit mode...");
+        } else {
+            aPlayer->setEditMode(true);
+            messagePlayer(aPlayer, "Entering edit mode...");
+        }
     } else {
-        aPlayer->setEditMode(true);
-        messagePlayer(aPlayer, "Entering edit mode...");
+        messagePlayer(aPlayer, "You need to be an administrator to enter edit mode.");
     }
 
     return true;
@@ -2487,7 +2492,25 @@ bool GameLogic::editModeCommand(Player *aPlayer){
 
 
 bool GameLogic::warpCommand(Player *aPlayer, InteractiveNoun *param){
-    return false;
+    std::string message = "";
+    Area *newArea = nullptr;
+    Area *currLocation = aPlayer->getLocation();
+
+    if (param != nullptr){
+        message = param->warp(aPlayer, nullptr);
+    }
+    if (message.compare("false") == 0){
+        message = "You can't warp there.";
+    } else {
+        newArea = aPlayer->getLocation();
+        message += newArea->getFullDescription(aPlayer);
+        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
+        messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 

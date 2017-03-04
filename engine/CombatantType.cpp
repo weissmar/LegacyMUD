@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -37,6 +37,8 @@ CombatantType::CombatantType(std::string name, SpecialSkill* skill, int attackBo
 , weakTo(weakTo)
 , healPoints(healPoints)
 {
+    std::string idAlias = "combatant type " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -51,6 +53,8 @@ CombatantType::CombatantType(std::string name, SpecialSkill* skill, int attackBo
 , weakTo(weakTo)
 , healPoints(healPoints)
 {
+    std::string idAlias = "combatant type " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 

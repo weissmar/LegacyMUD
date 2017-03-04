@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -33,6 +33,8 @@ Quest::Quest(std::string name, std::string description, int rewardMoney, Item *r
 , rewardMoney(rewardMoney)
 , rewardItem(rewardItem)
 {
+    std::string idAlias = "quest " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -44,6 +46,8 @@ Quest::Quest(std::string name, std::string description, int rewardMoney, Item *r
 , rewardMoney(rewardMoney)
 , rewardItem(rewardItem)
 {
+    std::string idAlias = "quest " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 

@@ -32,6 +32,8 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 , cost(cost)
 , cooldown(cooldown)
 {
+    std::string idAlias = "skill " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -44,6 +46,8 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 , cost(cost)
 , cooldown(cooldown)
 {
+    std::string idAlias = "skill " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
