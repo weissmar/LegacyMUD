@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/03/2017
+ * \modified    03/05/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -12,6 +12,7 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <limits>
 #include "parser.hpp"
 #include <Account.hpp>
 #include <Server.hpp>
@@ -32,6 +33,10 @@
 #include "Quest.hpp"
 #include "QuestStep.hpp"
 #include "SpecialSkill.hpp"
+#include "ItemType.hpp"
+#include "CreatureType.hpp"
+#include "ArmorType.hpp"
+#include "Feature.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -554,7 +559,6 @@ bool GameLogic::createObject(Player *aPlayer, ObjectType type){
 
 bool GameLogic::createObjectFromSignature(Player *aPlayer, std::map<std::string, DataType> signature){
     bool success = false;
-    
 
     int intParam;
     bool boolParam;
@@ -579,7 +583,7 @@ bool GameLogic::createObjectFromSignature(Player *aPlayer, std::map<std::string,
     Item *itemParam;
     NonCombatant *nonCombatantParam;
 
-    if (signature.size == 0){
+    if (signature.size() == 0){
         success = false;
     } else {
         addPlayerMessageQueue(aPlayer);
@@ -587,50 +591,74 @@ bool GameLogic::createObjectFromSignature(Player *aPlayer, std::map<std::string,
             switch(element.second){
                 case DataType::INT_TYPE:
                     intParam = getIntParameter(aPlayer, element.first);
+                    //************************************************************** add to some struct? ***********************
+                    break;
                 case DataType::BOOL_TYPE:
                     boolParam = getBoolParameter(aPlayer, element.first);
+                    break;
                 case DataType::FLOAT_TYPE:
                     floatParam = getFloatParameter(aPlayer, element.first);
+                    break;
                 case DataType::STRING_TYPE:
                     stringParam = getStringParameter(aPlayer, element.first);
+                    break;
                 case DataType::EFFECT_TYPE:
                     effectTypeParam = getEffectTypeParameter(aPlayer, element.first);
+                    break;
                 case DataType::AREA_SIZE:
                     areaSizeParam = getAreaSizeParameter(aPlayer, element.first);
+                    break;
                 case DataType::DAMAGE_TYPE:
                     damageTypeParam = getDamageTypeParameter(aPlayer, element.first);
+                    break;
                 case DataType::ITEM_RARITY:
                     itemRarityParam = getItemRarityParameter(aPlayer, element.first);
+                    break;
                 case DataType::EQUIPMENT_SLOT:
                     equipmentSlotParam = getEquimentSlotParameter(aPlayer, element.first);
+                    break;
                 case DataType::ITEM_POSITION:
                     itemPositionParam = getItemPositionParameter(aPlayer, element.first);
+                    break;
                 case DataType::CHARACTER_SIZE:
                     characterSizeParam = getCharacterSizeParameter(aPlayer, element.first);
+                    break;
                 case DataType::EXIT_DIRECTION:
                     exitDirectionParam = getExitDirectionParameter(aPlayer, element.first);
+                    break;
                 case DataType::X_P_TIER:
                     xpTierParam = getXPTierParameter(aPlayer, element.first);
+                    break;
                 case DataType::AREA_PTR:
                     areaParam = getAreaParameter(aPlayer, element.first);
+                    break;
                 case DataType::SPECIAL_SKILL_PTR:
                     specialSkillParam = getSpecialSkillParameter(aPlayer, element.first);
+                    break;
                 case DataType::ITEM_TYPE_PTR:
                     itemTypeParam = getItemTypeParameter(aPlayer, element.first);
+                    break;
                 case DataType::INTERACTIVE_NOUN_PTR: 
                     interactiveNounParam = getInteractiveNounParameter(aPlayer, element.first);
+                    break;
                 case DataType::CREATURE_TYPE_PTR:
                     creatureTypeParam = getCreatureTypeParameter(aPlayer, element.first);
+                    break;
                 case DataType::QUEST_PTR:
                     questParam = getQuestParameter(aPlayer, element.first);
+                    break;
                 case DataType::PLAYER_CLASS_PTR:
                     playerClassParam = getPlayerClassParameter(aPlayer, element.first);
+                    break;
                 case DataType::ITEM_PTR:
                     itemParam = getItemParameter(aPlayer, element.first);
+                    break;
                 case DataType::NON_COMBATANT_PTR:
                     nonCombatantParam = getNonCombatantParameter(aPlayer, element.first);
+                    break;
                 default:
                     // this shouldn't be executed
+                    break;
             }
         }
         removePlayerMessageQueue(aPlayer);
@@ -641,170 +669,595 @@ bool GameLogic::createObjectFromSignature(Player *aPlayer, std::map<std::string,
 
 
 int GameLogic::getIntParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int intParam = -1;
     std::string message = "What would you like the " + paramName + " to be?";
-    message += " Please enter an integer value.";
+    message += " Please enter a positive integer value.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    intParam = validateStringNumber(response, 0, std::numeric_limits<int>::max());
+    while (intParam == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter a positive integer value less than " + std::to_string(std::numeric_limits<int>::max()) + ".");
+        response = blockingGetMsg(aPlayer);
+        intParam = validateStringNumber(response, 0, std::numeric_limits<int>::max());
+    }
+
+    return intParam;
 }
 
 
 bool GameLogic::getBoolParameter(Player *aPlayer, std::string paramName){
+    bool boolParam = false;
+    std::string response = "";
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Please enter TRUE or FALSE.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    while ((response.compare("TRUE") != 0) && (response.compare("FALSE") != 0)){
+        messagePlayer(aPlayer, "Invalid input. Please enter TRUE or FALSE.");
+        response = blockingGetMsg(aPlayer);
+    }
+
+    if (response.compare("TRUE") == 0){
+        boolParam = true;
+    } else if (response.compare("FALSE") == 0){
+        boolParam = false;
+    }
+
+    return boolParam;
 }
 
 
 float GameLogic::getFloatParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    float floatParam = -1.0;
     std::string message = "What would you like the " + paramName + " to be?";
-    message += " Please enter a floating point value.";
+    message += " Please enter a floating point value greater than zero.";
 
-    return ;
+    messagePlayer(aPlayer, message);
+    response = blockingGetMsg(aPlayer);
+    floatParam = std::atof(response.c_str());
+    if (floatParam <= 0.0){
+        messagePlayer(aPlayer, "Invalid input. Please enter a floating point value greater than zero.");
+        response = blockingGetMsg(aPlayer);
+        floatParam = std::atof(response.c_str());
+    }
+
+    return floatParam;
 }
 
 
 std::string GameLogic::getStringParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Please enter a string.";
 
-    return ;
+    messagePlayer(aPlayer, message);
+    response = blockingGetMsg(aPlayer);
+
+    return response;
 }
 
 
 EffectType GameLogic::getEffectTypeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    EffectType effectTypeParam;
     std::string message = "What would you like the " + paramName + " to be?";
-    message += " Your choices are: [1] NONE, [2] DAMAGE, [3] FALL, [4] LONG FALL, [5] LOST ITEM, [6] DROP ALL ITEMS, [7] GAIN MONEY, [8] LOSE MONEY, [9] HEAL, or [10] HEAL. Please enter the number that corresponds to your choice.";
+    message += " Your choices are: [1] NONE, [2] DAMAGE, [3] FALL, [4] LONG FALL, [5] LOST ITEM, [6] DROP ALL ITEMS, [7] GAIN MONEY, [8] LOSE MONEY, [9] HEAL, or [10] GET SPECIAL POINTS. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 10);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 10);
+    }
+
+    switch (choice){
+        case 1:
+            effectTypeParam = EffectType::NONE;
+            break;
+        case 2:
+            effectTypeParam = EffectType::DAMAGE;
+            break;
+        case 3:
+            effectTypeParam = EffectType::FALL;
+            break;
+        case 4:
+            effectTypeParam = EffectType::LONG_FALL;
+            break;
+        case 5:
+            effectTypeParam = EffectType::LOST_ITEM;
+            break;
+        case 6:
+            effectTypeParam = EffectType::DROP_ALL_ITEMS;
+            break;
+        case 7:
+            effectTypeParam = EffectType::GAIN_MONEY;
+            break;
+        case 8:
+            effectTypeParam = EffectType::LOSE_MONEY;
+            break;
+        case 9:
+            effectTypeParam = EffectType::HEAL;
+            break;
+        case 10:
+            effectTypeParam = EffectType::GET_SPECIAL_POINTS;
+            break;
+        default:
+            effectTypeParam = EffectType::NONE;
+            break;
+    }
+
+    return effectTypeParam;
 }
 
 
 AreaSize GameLogic::getAreaSizeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    AreaSize areaSizeParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] SMALL, [2] MEDIUM, or [3] LARGE. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 3);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 3);
+    }
+
+    switch (choice){
+        case 1:
+            areaSizeParam = AreaSize::SMALL;
+            break;
+        case 2:
+            areaSizeParam = AreaSize::MEDIUM;
+            break;
+        case 3:
+            areaSizeParam = AreaSize::LARGE;
+            break;
+        default:
+            areaSizeParam = AreaSize::SMALL;
+            break;
+    }
+
+    return areaSizeParam;
 }
 
 
-DamaGameLogic::geType GameLogic::getDamageTypeParameter(Player *aPlayer, std::string paramName){
+DamageType GameLogic::getDamageTypeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    DamageType damageTypeParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] NONE, [2] CRUSHING, [3] PIERCING, [4] ELECTRIC, [5] FIRE, [6] WATER, [7] WIND, [8] EARTH, or [9] HEAL. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 9);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 9);
+    }
+
+    switch (choice){
+        case 1:
+            damageTypeParam = DamageType::NONE;
+            break;
+        case 2:
+            damageTypeParam = DamageType::CRUSHING;
+            break;
+        case 3:
+            damageTypeParam = DamageType::PIERCING;
+            break;
+        case 4:
+            damageTypeParam = DamageType::ELECTRIC;
+            break;
+        case 5:
+            damageTypeParam = DamageType::FIRE;
+            break;
+        case 6:
+            damageTypeParam = DamageType::WATER;
+            break;
+        case 7:
+            damageTypeParam = DamageType::WIND;
+            break;
+        case 8:
+            damageTypeParam = DamageType::EARTH;
+            break;
+        case 9:
+            damageTypeParam = DamageType::HEAL;
+            break;
+        default:
+            damageTypeParam = DamageType::NONE;
+            break;
+    }
+
+    return damageTypeParam;
 }
 
 
 ItemRarity GameLogic::getItemRarityParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    ItemRarity itemRarityParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] COMMON, [2] UNCOMMON, [3] RARE, [4] LEGENDARY, or [5] QUEST. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 5);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 5);
+    }
+
+    switch (choice){
+        case 1:
+            itemRarityParam = ItemRarity::COMMON;
+            break;
+        case 2:
+            itemRarityParam = ItemRarity::UNCOMMON;
+            break;
+        case 3:
+            itemRarityParam = ItemRarity::RARE;
+            break;
+        case 4:
+            itemRarityParam = ItemRarity::LEGENDARY;
+            break;
+        case 5:
+            itemRarityParam = ItemRarity::QUEST;
+            break;
+        default:
+            itemRarityParam = ItemRarity::COMMON;
+            break;
+    }
+
+    return itemRarityParam;
 }
 
 
 EquipmentSlot GameLogic::getEquimentSlotParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    EquipmentSlot equipmentSlotParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] NONE, [2] HEAD, [3] SHOULDERS, [4] NECK, [5] TORSO, [6] BELT, [7] LEGS, [8] ARMS, [9] HANDS, [10] RIGHT HAND, [11] LEFT HAND, [12] FEET, [13] RIGHT RING, or [14] LEFT RING. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 14);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 14);
+    }
+
+    switch (choice){
+        case 1:
+            equipmentSlotParam = EquipmentSlot::NONE;
+            break;
+        case 2:
+            equipmentSlotParam = EquipmentSlot::HEAD;
+            break;
+        case 3:
+            equipmentSlotParam = EquipmentSlot::SHOULDERS;
+            break;
+        case 4:
+            equipmentSlotParam = EquipmentSlot::NECK;
+            break;
+        case 5:
+            equipmentSlotParam = EquipmentSlot::TORSO;
+            break;
+        case 6:
+            equipmentSlotParam = EquipmentSlot::BELT;
+            break;
+        case 7:
+            equipmentSlotParam = EquipmentSlot::LEGS;
+            break;
+        case 8:
+            equipmentSlotParam = EquipmentSlot::ARMS;
+            break;
+        case 9:
+            equipmentSlotParam = EquipmentSlot::HANDS;
+            break;
+        case 10:
+            equipmentSlotParam = EquipmentSlot::RIGHT_HAND;
+            break;
+        case 11:
+            equipmentSlotParam = EquipmentSlot::LEFT_HAND;
+            break;
+        case 12:
+            equipmentSlotParam = EquipmentSlot::FEET;
+            break;
+        case 13:
+            equipmentSlotParam = EquipmentSlot::RIGHT_RING;
+            break;
+        case 14:
+            equipmentSlotParam = EquipmentSlot::LEFT_RING;
+            break;
+        default:
+            equipmentSlotParam = EquipmentSlot::NONE;
+            break;
+    }
+
+    return equipmentSlotParam;
 }
 
 
 ItemPosition GameLogic::getItemPositionParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    ItemPosition itemPositionParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] NONE, [2] GROUND, [3] INVENTORY, [4] EQUIPPED, [5] IN, [6] ON, or [7] UNDER. Please enter the number that corresponds to your choice."; 
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 7);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 7);
+    }
+
+    switch (choice){
+        case 1:
+            itemPositionParam = ItemPosition::NONE;
+            break;
+        case 2:
+            itemPositionParam = ItemPosition::GROUND;
+            break;
+        case 3:
+            itemPositionParam = ItemPosition::INVENTORY;
+            break;
+        case 4:
+            itemPositionParam = ItemPosition::EQUIPPED;
+            break;
+        case 5:
+            itemPositionParam = ItemPosition::IN;
+            break;
+        case 6:
+            itemPositionParam = ItemPosition::ON;
+            break;
+        case 7:
+            itemPositionParam = ItemPosition::UNDER;
+            break;
+        default:
+            itemPositionParam = ItemPosition::NONE;
+            break;
+    }
+
+    return itemPositionParam;
 }
 
 
 CharacterSize GameLogic::getCharacterSizeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    CharacterSize characterSizeParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] TINY, [2] SMALL, [3] MEDIUM, [4] LARGE, or [5] HUGE. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 5);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 5);
+    }
+
+    switch (choice){
+        case 1:
+            characterSizeParam = CharacterSize::TINY;
+            break;
+        case 2:
+            characterSizeParam = CharacterSize::SMALL;
+            break;
+        case 3:
+            characterSizeParam = CharacterSize::MEDIUM;
+            break;
+        case 4:
+            characterSizeParam = CharacterSize::LARGE;
+            break;
+        case 5:
+            characterSizeParam = CharacterSize::HUGE;
+            break;
+        default:
+            characterSizeParam = CharacterSize::TINY;
+            break;
+    }
+
+    return characterSizeParam;
 }
 
 
 ExitDirection GameLogic::getExitDirectionParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    ExitDirection exitDirectionParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] NORTH, [2] SOUTH, [3] EAST, [4] WEST, [5] NORTHEAST, [6] NORTHWEST, [7] SOUTHEAST, [8] SOUTHWEST, [9] UP, or [10] DOWN. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 10);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 10);
+    }
+
+    switch (choice){
+        case 1:
+            exitDirectionParam = ExitDirection::NORTH;
+            break;
+        case 2:
+            exitDirectionParam = ExitDirection::SOUTH;
+            break;
+        case 3:
+            exitDirectionParam = ExitDirection::EAST;
+            break;
+        case 4:
+            exitDirectionParam = ExitDirection::WEST;
+            break;
+        case 5:
+            exitDirectionParam = ExitDirection::NORTHEAST;
+            break;
+        case 6:
+            exitDirectionParam = ExitDirection::NORTHWEST;
+            break;
+        case 7:
+            exitDirectionParam = ExitDirection::SOUTHEAST;
+            break;
+        case 8:
+            exitDirectionParam = ExitDirection::SOUTHWEST;
+            break;
+        case 9:
+            exitDirectionParam = ExitDirection::UP;
+            break;
+        case 10:
+            exitDirectionParam = ExitDirection::DOWN;
+            break;
+        default:
+            exitDirectionParam = ExitDirection::NORTH;
+            break;
+    }
+
+    return exitDirectionParam;
 }
 
 
 XPTier GameLogic::getXPTierParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    XPTier xpTierParam;
     std::string message = "What would you like the " + paramName + " to be?";
     message += " Your choices are: [1] TRIVIAL, [2] EASY, [3] NORMAL, [4] HARD, or [5] LEGENDARY. Please enter the number that corresponds to your choice.";
 
-    return ;
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 5);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 5);
+    }
+
+    switch (choice){
+        case 1:
+            xpTierParam = XPTier::TRIVIAL;
+            break;
+        case 2:
+            xpTierParam = XPTier::EASY;
+            break;
+        case 3:
+            xpTierParam = XPTier::NORMAL;
+            break;
+        case 4:
+            xpTierParam = XPTier::HARD;
+            break;
+        case 5:
+            xpTierParam = XPTier::LEGENDARY;
+            break;
+        default:
+            xpTierParam = XPTier::TRIVIAL;
+            break;
+    }
+
+    return xpTierParam;
+}
+
+
+template <class aType>
+int GameLogic::getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals){
+    std::string response = "";
+    int choice = -1;
+    std::string message = "What would you like the " + paramName + " to be?";
+    
+    message += " Your choices are: ";
+    for (size_t i = 0; i < possibleVals.size(); i++){
+        message += "[" + std::to_string(i + 1) + "] " + possibleVals[i]->getName();
+        if (i == (possibleVals.size() - 1)){
+            message += ". Please enter the number that corresponds to your choice.";
+        } else {
+            message += ", ";
+        }
+    }
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, possibleVals.size());
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, possibleVals.size());
+    }
+
+    return choice;
 }
 
 
 Area* GameLogic::getAreaParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
+    Area *areaParam = nullptr;
+    std::vector<Area*> allAreas;
+    int choice;
+    
     allAreas = manager->getGameAreas();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allAreas.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allAreas[i]->getName(0);
-        if (i == (allAreas.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    choice = getPointerParameter<Area*>(aPlayer, paramName, allAreas);
+    areaParam = allAreas[choice - 1];
 
-    return ;
+    return areaParam;
 }
 
 
 SpecialSkill* GameLogic::getSpecialSkillParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
-    allSkills = manager->getGameSkills();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allSkills.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allSkills[i]->getName(0);
-        if (i == (allSkills.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    SpecialSkill *specialSkillParam = nullptr;
+    std::vector<SpecialSkill*> allSpecialSkills;
+    int choice;
+    
+    allSpecialSkills = manager->getGameSkills();
+    choice = getPointerParameter<SpecialSkill*>(aPlayer, paramName, allSpecialSkills);
+    specialSkillParam = allSpecialSkills[choice - 1];
 
-    return ;
+    return specialSkillParam;
 }
 
 
 ItemType* GameLogic::getItemTypeParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
+    ItemType *itemTypeParam = nullptr;
+    std::vector<ItemType*> allItemTypes;
+    int choice;
+    
     allItemTypes = manager->getGameItemTypes();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allItemTypes.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allItemTypes[i]->getName(0);
-        if (i == (allItemTypes.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    choice = getPointerParameter<ItemType*>(aPlayer, paramName, allItemTypes);
+    itemTypeParam = allItemTypes[choice - 1];
 
-    return ;
+    return itemTypeParam;
 }
 
 
 InteractiveNoun* GameLogic::getInteractiveNounParameter(Player *aPlayer, std::string paramName){
     std::string response = "";
-    Creature *allCreatures = nullptr;
-    Player *allPlayers = nullptr;
-    Area *allAreas = nullptr;
-    NonCombatant *allNPCs = nullptr;
-    Container *allContainers = nullptr;
-    size_t totalSize, index;
+    std::vector<Creature*> allCreatures;
+    std::vector<Player*> allPlayers;
+    std::vector<Area*> allAreas;
+    std::vector<NonCombatant*> allNPCs;
+    std::vector<Container*> allContainers;
+    size_t totalSize, index, playerOffset, creatureOffset, npcOffset, containerOffset;
     std::string message = "What would you like the " + paramName + " to be?";
     InteractiveNoun *param = nullptr;
+    int choice;
 
     allAreas = manager->getGameAreas();
     allPlayers = manager->getGamePlayers();
@@ -812,53 +1265,80 @@ InteractiveNoun* GameLogic::getInteractiveNounParameter(Player *aPlayer, std::st
     allNPCs = manager->getGameNPCs();
     allContainers = manager->getGameContainers();
     totalSize = allAreas.size() + allPlayers.size() + allCreatures.size() + allNPCs.size() + allContainers.size();
+    playerOffset = allAreas.size();
+    creatureOffset = playerOffset + allPlayers.size();
+    npcOffset = creatureOffset + allCreatures.size();
+    containerOffset = npcOffset + allNPCs.size();
     index = 0;
 
     message += " Your choices are: ";
     for (size_t i = 0; i < allAreas.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allAreas[i]->getName(0);
+        message += "[" + std::to_string(index + 1) + "] " + allAreas[i]->getName();
         if (i == (totalSize - 1)){
-            message += ". Please enter the number that corresponds to your choice."
+            message += ". Please enter the number that corresponds to your choice.";
         } else {
             message += ", ";
         }
         index++;
     }
     for (size_t i = 0; i < allPlayers.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allPlayers[i]->getName(0);
+        message += "[" + std::to_string(index + 1) + "] " + allPlayers[i]->getName();
         if (i == (totalSize - 1)){
-            message += ". Please enter the number that corresponds to your choice."
+            message += ". Please enter the number that corresponds to your choice.";
         } else {
             message += ", ";
         }
         index++;
     }
     for (size_t i = 0; i < allCreatures.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allCreatures[i]->getName(0);
+        message += "[" + std::to_string(index + 1) + "] " + allCreatures[i]->getName();
         if (i == (totalSize - 1)){
-            message += ". Please enter the number that corresponds to your choice."
+            message += ". Please enter the number that corresponds to your choice.";
         } else {
             message += ", ";
         }
         index++;
     }
     for (size_t i = 0; i < allNPCs.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allNPCs[i]->getName(0);
+        message += "[" + std::to_string(index + 1) + "] " + allNPCs[i]->getName();
         if (i == (totalSize - 1)){
-            message += ". Please enter the number that corresponds to your choice."
+            message += ". Please enter the number that corresponds to your choice.";
         } else {
             message += ", ";
         }
         index++;
     }
     for (size_t i = 0; i < allContainers.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allContainers[i]->getName(0);
+        message += "[" + std::to_string(index + 1) + "] " + allContainers[i]->getName();
         if (i == (totalSize - 1)){
-            message += ". Please enter the number that corresponds to your choice."
+            message += ". Please enter the number that corresponds to your choice.";
         } else {
             message += ", ";
         }
         index++;
+    }
+    
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, index);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, index);
+    }
+
+    if (choice <= allAreas.size()){
+        param = allAreas[choice - 1];
+    } else if (choice <= (playerOffset + allPlayers.size())){
+        param = allPlayers[choice - playerOffset - 1];
+    } else if (choice <= (creatureOffset + allCreatures.size())){
+        param = allPlayers[choice - creatureOffset - 1];
+    } else if (choice <= (npcOffset + allNPCs.size())){
+        param = allNPCs[choice -  npcOffset - 1];
+    } else if (choice <= (containerOffset + allContainers.size())){
+        param = allContainers[choice - containerOffset - 1];
+    } else {
+        param = nullptr;
     }
 
     return param;
@@ -866,87 +1346,67 @@ InteractiveNoun* GameLogic::getInteractiveNounParameter(Player *aPlayer, std::st
 
 
 CreatureType* GameLogic::getCreatureTypeParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
+    CreatureType *creatureTypeParam = nullptr;
+    std::vector<CreatureType*> allCreatureTypes;
+    int choice;
+    
     allCreatureTypes = manager->getGameCreatureTypes();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allCreatureTypes.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allCreatureTypes[i]->getName(0);
-        if (i == (allCreatureTypes.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    choice = getPointerParameter<CreatureType*>(aPlayer, paramName, allCreatureTypes);
+    creatureTypeParam = allCreatureTypes[choice - 1];
 
-    return ;
+    return creatureTypeParam;
 }
 
 
 Quest* GameLogic::getQuestParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
+    Quest *questParam = nullptr;
+    std::vector<Quest*> allQuests;
+    int choice;
+    
     allQuests = manager->getGameQuests();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allQuests.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allQuests[i]->getName(0);
-        if (i == (allQuests.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    choice = getPointerParameter<Quest*>(aPlayer, paramName, allQuests);
+    questParam = allQuests[choice - 1];
 
-    return ;
+    return questParam;
 }
 
 
 PlayerClass* GameLogic::getPlayerClassParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
+    PlayerClass *playerClassParam = nullptr;
+    std::vector<PlayerClass*> allPlayerClasses;
+    int choice;
+    
     allPlayerClasses = manager->getPlayerClasses();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allPlayerClasses.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allPlayerClasses[i]->getName(0);
-        if (i == (allPlayerClasses.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    choice = getPointerParameter<PlayerClass*>(aPlayer, paramName, allPlayerClasses);
+    playerClassParam = allPlayerClasses[choice - 1];
 
-    return ;
+    return playerClassParam;
 }
 
 
 Item* GameLogic::getItemParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
+    Item *itemParam = nullptr;
+    std::vector<Item*> allItems;
+    int choice;
+    
     allItems = manager->getGameItems();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allItems.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allItems[i]->getName(0);
-        if (i == (allItems.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    choice = getPointerParameter<Item*>(aPlayer, paramName, allItems);
+    itemParam = allItems[choice - 1];
 
-    return ;
+    return itemParam;
 }
 
 
 NonCombatant* GameLogic::getNonCombatantParameter(Player *aPlayer, std::string paramName){
-    std::string message = "What would you like the " + paramName + " to be?";
-    allNPCs = manager->getGameNPCs();
-    message += " Your choices are: ";
-    for (size_t i = 0; i < allNPCs.size(); i++){
-        message += "[" + std::to_string(i + 1) + "] " + allNPCs[i]->getName(0);
-        if (i == (allNPCs.size() - 1)){
-            message += ". Please enter the number that corresponds to your choice."
-        } else {
-            message += ", ";
-        }
-    }
+    NonCombatant *nonCombatantParam = nullptr;
+    std::vector<NonCombatant*> allNonCombatants;
+    int choice;
+    
+    allNonCombatants = manager->getGameNPCs();
+    choice = getPointerParameter<NonCombatant*>(aPlayer, paramName, allNonCombatants);
+    nonCombatantParam = allNonCombatants[choice - 1];
 
-    return ;
+    return nonCombatantParam;
 }
 
 

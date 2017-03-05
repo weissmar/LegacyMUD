@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/03/2017
+ * \modified    03/05/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.cpp
  *
@@ -13,6 +13,14 @@
 #include "Creature.hpp"
 #include "Player.hpp"
 #include "PlayerClass.hpp"
+#include "Area.hpp"
+#include "SpecialSkill.hpp"
+#include "ItemType.hpp"
+#include "NonCombatant.hpp"
+#include "Container.hpp"
+#include "CreatureType.hpp"
+#include "Quest.hpp"
+#include "Item.hpp"
 #include <algorithm>
 
 namespace legacymud { namespace engine {
@@ -113,7 +121,7 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (anArea != nullptr){
                     std::unique_lock<std::mutex> gameAreasLock(gameAreasMutex);
                     gameAreas.push_back(anArea);
-                    gameAreasLock.unlock()
+                    gameAreasLock.unlock();
                     success = true;
                 }
             } else if (aType == ObjectType::SPECIAL_SKILL){
@@ -121,15 +129,15 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (aSkill != nullptr){
                     std::unique_lock<std::mutex> gameSkillsLock(gameSkillsMutex);
                     gameSkills.push_back(aSkill);
-                    gameSkillsLock.unlock()
+                    gameSkillsLock.unlock();
                     success = true;
                 }
             } else if ((aType == ObjectType::ITEM_TYPE) || (aType == ObjectType::ARMOR_TYPE) || (aType == ObjectType::WEAPON_TYPE)){
                 anItemType = dynamic_cast<ItemType*>(anObject);
                 if (anItemType != nullptr){
                     std::unique_lock<std::mutex> gameItemTypesLock(gameItemTypesMutex);
-                    gameItemTypes.push_back(a);
-                    gameItemTypesLock.unlock()
+                    gameItemTypes.push_back(anItemType);
+                    gameItemTypesLock.unlock();
                     success = true;
                 }
             } else if (aType == ObjectType::NON_COMBATANT){
@@ -137,7 +145,7 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (aNPC != nullptr){
                     std::unique_lock<std::mutex> gameNPCsLock(gameNPCsMutex);
                     gameNPCs.push_back(aNPC);
-                    gameNPCsLock.unlock()
+                    gameNPCsLock.unlock();
                     success = true;
                 }
             } else if (aType == ObjectType::CONTAINER){
@@ -145,7 +153,7 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (aContainer != nullptr){
                     std::unique_lock<std::mutex> gameContainersLock(gameContainersMutex);
                     gameContainers.push_back(aContainer);
-                    gameContainersLock.unlock()
+                    gameContainersLock.unlock();
                     success = true;
                 }
             } else if (aType == ObjectType::CREATURE_TYPE){
@@ -153,7 +161,7 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (aCreatureType != nullptr){
                     std::unique_lock<std::mutex> gameCreatureTypesLock(gameCreatureTypesMutex);
                     gameCreatureTypes.push_back(aCreatureType);
-                    gameCreatureTypesLock.unlock()
+                    gameCreatureTypesLock.unlock();
                     success = true;
                 }
             } else if (aType == ObjectType::QUEST){
@@ -161,7 +169,7 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (aQuest != nullptr){
                     std::unique_lock<std::mutex> gameQuestsLock(gameQuestsMutex);
                     gameQuests.push_back(aQuest);
-                    gameQuestsLock.unlock()
+                    gameQuestsLock.unlock();
                     success = true;
                 }
             } else if (aType == ObjectType::ITEM){
@@ -169,7 +177,7 @@ bool GameObjectManager::addObject(InteractiveNoun *anObject, int FD){
                 if (anItem != nullptr){
                     std::unique_lock<std::mutex> gameItemsLock(gameItemsMutex);
                     gameItems.push_back(anItem);
-                    gameItemsLock.unlock()
+                    gameItemsLock.unlock();
                     success = true;
                 }
             } else {
@@ -491,8 +499,8 @@ std::vector<Item*> GameObjectManager::getGameItems() const{
 
 std::vector<Player*> GameObjectManager::getGamePlayers() const{
     std::vector<Player*> allPlayers;
-    std::unique_lock<std::mutex> activeGamePlayersLock(activeGamePlayersMutex, defer_lock);
-    std::unique_lock<std::mutex> inactivePlayersLock(inactivePlayersMutex, defer_lock);
+    std::unique_lock<std::mutex> activeGamePlayersLock(activeGamePlayersMutex, std::defer_lock);
+    std::unique_lock<std::mutex> inactivePlayersLock(inactivePlayersMutex, std::defer_lock);
     std::lock(activeGamePlayersLock, inactivePlayersLock);
 
     for (auto player : activeGamePlayers){

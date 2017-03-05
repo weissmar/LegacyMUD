@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/03/2017
+ * \modified    03/05/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.hpp
  *
@@ -24,6 +24,14 @@ class InteractiveNoun;
 class Creature;
 class Player;
 class PlayerClass;
+class Area;
+class SpecialSkill;
+class ItemType;
+class NonCombatant;
+class Container;
+class CreatureType;
+class Quest;
+class Item;
 
 /*!
  * \details     This class tracks all game objects. It should only be 

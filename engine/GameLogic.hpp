@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/05/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -21,6 +21,12 @@
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
 #include "Area.hpp"
+#include "ExitDirection.hpp"
+#include "XPTier.hpp"
+#include "DamageType.hpp"
+#include "ItemRarity.hpp"
+#include "EquipmentSlot.hpp"
+#include "CharacterSize.hpp"
 
 namespace legacymud { namespace parser {
     struct ParseResult;
@@ -45,6 +51,11 @@ class InteractiveNoun;
 class Player;
 class Creature;
 class NonCombatant;
+class ItemType;
+class CreatureType;
+class Quest;
+class PlayerClass;
+class Container;
 
 class GameLogic {
     public:
@@ -183,6 +194,11 @@ class GameLogic {
          *          was successful.
          */
         bool createObject(Player *aPlayer, ObjectType type);
+
+        bool createObjectFromSignature(Player *aPlayer, std::map<std::string, DataType> signature);
+
+        template <class aType>
+        int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals);
         
         int getIntParameter(Player *aPlayer, std::string paramName);
 
