@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    03/03/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -57,16 +57,44 @@ Area::Area(std::string name, std::string shortDescription, std::string longDescr
 }
 
 
-/*Area::Area(const Area &otherArea){
-
+Area::Area(const Area &otherArea) : InteractiveNoun(otherArea) {
+    otherArea.nameMutex.lock();
+    name = otherArea.name;
+    otherArea.nameMutex.unlock();
+    otherArea.shortDescMutex.lock();
+    shortDescription = otherArea.shortDescription;
+    otherArea.shortDescMutex.unlock();
+    otherArea.longDescMutex.lock();
+    longDescription = otherArea.longDescription;
+    otherArea.longDescMutex.unlock();
+    std::string idAlias = "area " + std::to_string(getID());
+    addNounAlias(idAlias);
+    addNounAlias(name);
 }
 
 
 Area & Area::operator=(const Area &otherArea){
+    if (&otherArea == this)
+        return *this;
 
+    InteractiveNoun::operator=(otherArea);
+    otherArea.nameMutex.lock();
+    name = otherArea.name;
+    otherArea.nameMutex.unlock();
+    otherArea.shortDescMutex.lock();
+    shortDescription = otherArea.shortDescription;
+    otherArea.shortDescMutex.unlock();
+    otherArea.longDescMutex.lock();
+    longDescription = otherArea.longDescription;
+    otherArea.longDescMutex.unlock();
+    std::string idAlias = "area " + std::to_string(getID());
+    addNounAlias(idAlias);
+    addNounAlias(name);
+
+    return *this;
 }
 
-
+/*
 Area::~Area(){
 
 }*/

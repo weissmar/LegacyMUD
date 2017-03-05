@@ -52,16 +52,45 @@ Combatant::Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, int 
     rollStats();
 }
 
-/*Combatant::Combatant(const Combatant &otherCombatant){
-
+Combatant::Combatant(const Combatant &otherCombatant) : Character(otherCombatant) {
+    cooldownClock.store(0);
+    otherCombatant.healthMutex.lock();
+    health = otherCombatant.health;
+    otherCombatant.healthMutex.unlock();
+    otherCombatant.spawnLocationMutex.lock();
+    spawnLocation = otherCombatant.spawnLocation;
+    otherCombatant.spawnLocationMutex.unlock();
+    otherCombatant.specialPointsMutex.lock();
+    specialPoints = otherCombatant.specialPoints;
+    otherCombatant.specialPointsMutex.unlock();
+    dexterity.store(otherCombatant.dexterity.load());
+    strength.store(otherCombatant.strength.load());
+    intelligence.store(otherCombatant.intelligence.load());
 }
 
 
 Combatant & Combatant::operator=(const Combatant &otherCombatant){
+    if (this == &otherCombatant)
+        return *this;
+    
+    cooldownClock.store(0);
+    otherCombatant.healthMutex.lock();
+    health = otherCombatant.health;
+    otherCombatant.healthMutex.unlock();
+    otherCombatant.spawnLocationMutex.lock();
+    spawnLocation = otherCombatant.spawnLocation;
+    otherCombatant.spawnLocationMutex.unlock();
+    otherCombatant.specialPointsMutex.lock();
+    specialPoints = otherCombatant.specialPoints;
+    otherCombatant.specialPointsMutex.unlock();
+    dexterity.store(otherCombatant.dexterity.load());
+    strength.store(otherCombatant.strength.load());
+    intelligence.store(otherCombatant.intelligence.load());
 
+    return *this;
 }
 
-
+/*
 Combatant::~Combatant(){
 
 }*/
