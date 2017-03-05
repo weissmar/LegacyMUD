@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/02/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -9,6 +9,8 @@
  ************************************************************************/
 
 #include "SpecialSkill.hpp"
+#include "EffectType.hpp"
+#include "CommandEnum.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -30,6 +32,8 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 , cost(cost)
 , cooldown(cooldown)
 {
+    std::string idAlias = "skill " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -42,6 +46,8 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 , cost(cost)
 , cooldown(cooldown)
 {
+    std::string idAlias = "skill " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -167,8 +173,38 @@ std::string SpecialSkill::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*
 }
 
 
-std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
-    return "";
+std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects){
+    std::string message, resultMessage;
+    EffectType anEffect = EffectType::NONE;
+
+    if (getDamageType() == DamageType::HEAL){
+        // call this function on character
+        resultMessage = character->useSkill(aPlayer, this, nullptr, nullptr, effects);
+        if (resultMessage.compare("false") != 0){
+            if (resultMessage.front() == 'f'){
+                // skill can't be used
+                resultMessage.erase(resultMessage.begin());
+                message = resultMessage;
+            } else {
+                message += resultMessage;
+
+                // get results of useSkill for this skill
+                resultMessage = getTextAndEffect(CommandEnum::USE_SKILL, anEffect);
+                if (resultMessage.compare("false") != 0){
+                    message += resultMessage;
+                }
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+            }
+        } else {
+            message = "You can't use the " + getName() + " skill on " + character->getName() + ".";
+        }
+    } else {
+        message = getName() + " is an attacking skill. You can't \"use\" it, but rather need to \"attack with\" it.";
+    }
+
+    return message;
 } 
 
 

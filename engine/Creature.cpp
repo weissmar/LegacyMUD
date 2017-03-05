@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/01/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -286,11 +286,6 @@ std::string Creature::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *a
 std::string Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
     return "";
 }
-
-
-std::string Creature::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
-    return "";
-} 
 
 
 InteractiveNoun* Creature::copy(){

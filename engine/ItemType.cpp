@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -33,6 +33,8 @@ ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::
 , cost(cost)
 , slotType(slotType)
 {
+    std::string idAlias = "item type " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -46,6 +48,8 @@ ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::
 , cost(cost)
 , slotType(slotType)
 {
+    std::string idAlias = "item type " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 

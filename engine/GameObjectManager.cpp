@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.cpp
  *
@@ -162,6 +162,13 @@ bool GameObjectManager::removeObject(InteractiveNoun *anObject, int FD){
     }
 
     return success;
+}
+
+
+std::map<int, InteractiveNoun*> GameObjectManager::getAllObjects() const{
+    std::lock_guard<std::mutex> gameObjectsLock(gameObjectsMutex);
+
+    return gameObjects;
 }
 
 

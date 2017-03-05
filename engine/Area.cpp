@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -38,6 +38,8 @@ Area::Area(std::string name, std::string shortDescription, std::string longDescr
 , longDescription(longDescription)
 , size(size)
 { 
+    std::string idAlias = "area " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -49,6 +51,8 @@ Area::Area(std::string name, std::string shortDescription, std::string longDescr
 , longDescription(longDescription)
 , size(size)
 { 
+    std::string idAlias = "area " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -122,6 +126,7 @@ const parser::LexicalData& Area::getLexicalData() const{
 
 
 std::string Area::getFullDescription(Player *aPlayer) const{
+    bool editMode = aPlayer->isEditMode();
     std::string message = getLongDesc();
     std::vector<Item*> allItems = getItems();
     std::vector<Character*> allCharacters = getCharacters();
@@ -130,6 +135,10 @@ std::string Area::getFullDescription(Player *aPlayer) const{
     int excludeID = aPlayer->getID();
     ItemType *condItemType = nullptr;
 
+    if (editMode){
+        message += " [area " + std::to_string(getID()) + "]";
+    }
+
     message += "\015\012";
     
     for (auto feature : allFeatures){
@@ -137,6 +146,9 @@ std::string Area::getFullDescription(Player *aPlayer) const{
         message += feature->getName();
         message += " ";
         message += feature->getPlacement();
+        if (editMode){
+            message += " [feature " + std::to_string(feature->getID()) + "]";
+        }
         message += ".\015\012";
     }
 
@@ -153,6 +165,9 @@ std::string Area::getFullDescription(Player *aPlayer) const{
         } else {
             message += exit->getName();
         }
+        if (editMode){
+            message += " [exit " + std::to_string(exit->getID()) + "]";
+        }
         message += ".\015\012";
     }
 
@@ -160,10 +175,16 @@ std::string Area::getFullDescription(Player *aPlayer) const{
         message += "You see a ";
         message += allItems[0]->getName();
         message += " on the ground.";
+        if (editMode){
+            message += " [item " + std::to_string(allItems[0]->getID()) + "]";
+        }
     } else if (allItems.size() > 1){
         message += "Around you, you see a ";
         for (size_t i = 0; i < allItems.size(); i++){
             message += allItems[i]->getName();
+            if (editMode){
+                message += " [item " + std::to_string(allItems[i]->getID()) + "]";
+            }
             if (i == (allItems.size() - 2)){
                 message += " and a ";
             } else if (i == (allItems.size() - 1)){
@@ -186,6 +207,9 @@ std::string Area::getFullDescription(Player *aPlayer) const{
                 message += "You see a player named ";
             }
             message += allCharacters[i]->getName();
+            if (editMode){
+                message += " [character " + std::to_string(allCharacters[i]->getID()) + "]";
+            }
             message += ".\015\012";
         }
     }
@@ -539,13 +563,22 @@ std::string Area::listen(std::vector<EffectType> *effects){
 } 
 
 
-std::string Area::search(Player *aPlayer, std::vector<EffectType> *effects){
+/*std::string Area::search(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
-} 
+} */
 
 
 std::string Area::warp(Player *aPlayer, Area *anArea){
-    return "";
+    std::string message = "";
+
+    // remove player from current area and add to this area
+    aPlayer->getLocation()->removeCharacter(aPlayer);
+    addCharacter(aPlayer);
+
+    // call this function on player
+    message += aPlayer->warp(aPlayer, this);
+    
+    return message;
 } 
 
 

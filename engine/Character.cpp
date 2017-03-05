@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -34,6 +34,8 @@ Character::Character(std::string name, std::string description, int money, Area 
 , location(aLocation)
 , maxInventoryWeight(maxInventoryWeight)
 {
+    std::string idAlias = "character " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(name);
 }
 
@@ -46,6 +48,8 @@ Character::Character(std::string name, std::string description, int money, Area 
 , location(aLocation)
 , maxInventoryWeight(maxInventoryWeight)
 {
+    std::string idAlias = "character " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(name);
 }
 
@@ -166,7 +170,7 @@ int Character::addMoney(int money){
 
 
 int Character::subtractMoney(int money){
-    this->money += money;
+    this->money -= money;
 
     return money;
 }

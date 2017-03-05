@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -492,7 +492,19 @@ Player* Player::deserialize(std::string){
 
 
 std::string Player::look(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+    std::string message = getName() + " is " + getDescription() + ".";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 }  
 
 
@@ -659,37 +671,144 @@ std::string Player::talk(Player *aPlayer, NonCombatant *aNPC, std::vector<Effect
     return message;
 } 
 
-
+// would be better to have NonCombatant do their own selling **************************************************
 std::string Player::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    int price;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        // check price  
+        price = anItem->getType()->getCost();
+        if (price > getMoney()){
+            // can't afford the item
+            message = "fYou don't have enough money to buy the " + anItem->getName() + ".";
+            return message;
+        } else {
+            // buy the item
+            aPlayer->subtractMoney(price);
+            aPlayer->getInConversation()->addMoney(price);
+            aPlayer->getInConversation()->removeFromInventory(anItem);
+            aPlayer->addToInventory(anItem);
+            success = true;
+            message = "You bought the " + anItem->getName() + " for " + std::to_string(price) + " money.";
+        }
+    }
+
+    if (success){
+        resultMsg = getTextAndEffect(CommandEnum::BUY, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
 
     return message;
 }
 
 
+// would be better to have NonCombatant do their own buying **************************************************
 std::string Player::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    int price;
+    EffectType anEffect = EffectType::NONE;
+    NonCombatant *aNPC = getInConversation();
+
+    if (anItem != nullptr){
+        // check price  
+        price = anItem->getType()->getCost();
+        if (price > aNPC->getMoney()){
+            // NPC can't afford the item
+            message = "f" + aNPC->getName() + " doesn't have enough money to buy the " + anItem->getName() + ".";
+            return message;
+        } else {
+            // buy the item
+            aNPC->subtractMoney(price);
+            aPlayer->addMoney(price);
+            aPlayer->removeFromInventory(anItem);
+            aNPC->addToInventory(anItem);
+            success = true;
+            message = "You sold the " + anItem->getName() + " to " + aNPC->getName() + " for " + std::to_string(price) + " money.";
+        }
+    }
+
+    if (success){
+        resultMsg = getTextAndEffect(CommandEnum::BUY, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
 
     return message;
 }
 
 
-std::string Player::search(Player *aPlayer, std::vector<EffectType> *effects){
-    std::string message = "";
+std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects){
+    std::string message, resultMsg;
+    EffectType anEffect = EffectType::NONE;
+    int healAmount = aSkill->getDamage();
+    int skillCost = aSkill->getCost();
+
+    if ((this == aPlayer) && (aRecipient != nullptr)){
+        // this is the player using the skill
+        if (getPlayerClass()->getSpecialSkill() == aSkill){
+            // the specified skill can be used 
+            if (getCurrentSpecialPts() >= skillCost){
+                // the player has enough points to use the skill
+                subtractFromCurrSpecialPts(skillCost);
+                aRecipient->addToCurrentHealth(healAmount);
+                message = "You used the " + aSkill->getName() + " skill on ";
+                if (aPlayer == aRecipient){
+                    message += "yourself.\015\012You gained ";
+                } else {
+                    message += aRecipient->getName() + ". They gained ";
+                }
+                message += std::to_string(healAmount) + " health.";
+
+                // get the effects of useSkill
+                resultMsg = getTextAndEffect(CommandEnum::USE_SKILL, anEffect);
+                if (resultMsg.compare("false") != 0){
+                    message += resultMsg;
+                }
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+            } else {
+                message = "fYou don't have enough special points to use the " + aSkill->getName() + " skill.";
+            }
+        } else {
+            // the specified skill isn't available for this player to use
+            message = "fYou can't use the " + aSkill->getName() + " skill.";
+        }
+    } else {
+        // this is the recipient of the skill
+        message = aPlayer->useSkill(aPlayer, aSkill, nullptr, this, effects);
+    }
 
     return message;
 } 
 
 
-std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
+std::string Player::warp(Player *aPlayer, Area *anArea){
     std::string message = "";
 
-    return message;
-} 
+    if (anArea != nullptr){
+        setLocation(anArea);
 
-
-std::string Player::warp(Player *aPlayer, Area*){
-    std::string message = "";
+        // if the player is in conversation, end the conversation
+        if (getInConversation() != nullptr){
+            setInConversation(nullptr);
+        }
+    }
 
     return message;
 } 

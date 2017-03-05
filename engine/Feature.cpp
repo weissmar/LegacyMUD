@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/01/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -27,6 +27,8 @@ Feature::Feature(std::string name, std::string placement, Area *location, bool i
 , placement(placement)
 , location(location)
 {
+    std::string idAlias = "feature " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(name);
 }
 
@@ -37,6 +39,8 @@ Feature::Feature(std::string name, std::string placement, Area *location, bool i
 , placement(placement)
 , location(location)
 {
+    std::string idAlias = "feature " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(name);
 }
 

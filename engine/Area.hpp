@@ -392,7 +392,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::string with the response to the command
          *          search.
          */
-        virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); 
+        /*virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); */
 
         /*!
          * \brief   Moves the specified player to this area.
