@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -46,9 +46,23 @@ class Area: public InteractiveNoun {
         Area();
         Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size);
         Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size, int anID);
-        /*Area(const Area &otherArea);
+
+        /*!
+         * \brief   Creates a new area based on the name and description of an existing area.
+         *
+         * The copy constructor only copies the area name and descriptions.
+         * All objects contained within the area must be copied separately.
+         */
+        Area(const Area &otherArea);
+
+        /*!
+         * \brief   Assigns a new copy of an area to a variable.
+         *
+         * The assignment operator only copies the room name and descriptions.
+         * All objects contained within the area must be copied separately.
+         */
         Area & operator=(const Area &otherArea);
-        virtual ~Area();*/
+        //virtual ~Area();
 
         /*!
          * \brief   Gets the name of this area.

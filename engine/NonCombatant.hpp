@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.hpp
  *
@@ -37,9 +37,21 @@ class NonCombatant: public Character {
         NonCombatant();
         NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
         NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
-        /*NonCombatant(const NonCombatant &otherNPC);
+
+        /*!
+         * \brief   Creates a copy of the NPC.
+         *
+         * This copies the NPC, but does not include any inventory or quests.
+         */
+        NonCombatant(const NonCombatant &otherNPC);
+
+        /*!
+         * \brief   Assigns a copy of the right-hand NPC to a variable.
+         *
+         * This copies the NPC, but does not include any inventory or quests.
+         */
         NonCombatant & operator=(const NonCombatant &otherNPC);
-        virtual ~NonCombatant();*/
+        //virtual ~NonCombatant();
 
         /*!
          * \brief   Gets the quest.
