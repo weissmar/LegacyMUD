@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -36,9 +36,21 @@ class Character: public InteractiveNoun {
         Character();
         Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
         Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
-        /*Character(const Character &otherCharacter);
+
+        /*!
+         * \brief   Creates a new character based on an existing one.
+         *
+         * The copy constructor copies everything on the character, except the inventory.
+         */
+        Character(const Character &otherCharacter);
+
+        /*!
+         * \brief   Assigns a new copy of a character to a variable.
+         *
+         * The assignment operator copies everything on the character, except the inventory.
+         */
         Character & operator=(const Character &otherCharacter);
-        virtual ~Character();*/
+        //virtual ~Character();
 
         /*!
          * \brief   Gets the name of this character.

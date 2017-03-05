@@ -1,7 +1,7 @@
  /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/03/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -57,16 +57,44 @@ Item::Item(InteractiveNoun* location, ItemPosition position, std::string name, I
 }
 
 
-/*Item::Item(const Item &otherItem){
-
+Item::Item(const Item &otherItem) : InteractiveNoun(otherItem) {
+    otherItem.locationMutex.lock();
+    location = otherItem.location;
+    otherItem.locationMutex.unlock();
+    otherItem.nameMutex.lock();
+    name = otherItem.name;
+    otherItem.nameMutex.unlock();
+    otherItem.typeMutex.lock();
+    type = otherItem.type;
+    otherItem.typeMutex.unlock();
+    std::string idAlias = "item " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
+    InteractiveNoun::addNounAlias(name);
 }
 
 
 Item & Item::operator=(const Item &otherItem){
+    if (this == &otherItem)
+        return *this;
 
+    InteractiveNoun::operator=(otherItem);
+    otherItem.locationMutex.lock();
+    location = otherItem.location;
+    otherItem.locationMutex.unlock();
+    otherItem.nameMutex.lock();
+    name = otherItem.name;
+    otherItem.nameMutex.unlock();
+    otherItem.typeMutex.lock();
+    type = otherItem.type;
+    otherItem.typeMutex.unlock();
+    std::string idAlias = "item " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
+    InteractiveNoun::addNounAlias(name);
+    
+    return *this;
 }
 
-
+/*
 Item::~Item(){
 
 }*/
