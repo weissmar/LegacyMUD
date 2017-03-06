@@ -83,7 +83,7 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , playerClass(aClass)
 , inConversation(nullptr)
 , username(username)
-, active(true)
+, active(false)
 , fileDescriptor(FD)
 , editMode(false)
 { 
