@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/26/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -49,7 +49,7 @@ class Combatant;
  */
 class InteractiveNoun {
     public:
-        InteractiveNoun();
+        InteractiveNoun(int anID = nextID++);
         InteractiveNoun(const InteractiveNoun &otherNoun);
         InteractiveNoun & operator=(const InteractiveNoun &otherNoun);
         virtual ~InteractiveNoun();
@@ -82,6 +82,14 @@ class InteractiveNoun {
          *          the specified alias.
          */
         std::vector<Action*> getActions(std::string alias) const;
+
+        /*!
+         * \brief   Gets all actions for this InteractiveNoun.
+         *
+         * \return  Returns a std::vector<Action*> with the actions that include
+         *          the specified alias.
+         */
+        std::vector<Action*> getAllActions() const;
 
         /*!
          * \brief   Gets all of the noun aliases for this interactive noun.
@@ -120,6 +128,22 @@ class InteractiveNoun {
          *          this noun, the preexisting action.
          */
         Action* addAction(CommandEnum command);
+
+        /*!
+         * \brief   Adds an action containing the specified command, if one 
+         *          isn't already associated with this noun.
+         *
+         * \param[in] command       Specifies the command to add.
+         * \param[in] valid         Specifies the validity of the action.
+         * \param[in] flavorText    Specifies the text to display when the action
+         *                          is performed on this object.
+         * \param[in] effect        Specifies the effect of the action.
+         *
+         * \return  Returns a Action* with either the newly created action,
+         *          or, if the command alread had an associated action for
+         *          this noun, the preexisting action.
+         */
+        Action* addAction(CommandEnum command, bool valid, std::string flavorText, EffectType effect);
 
         /*!
          * \brief   Removes the action associated with the specified command,
@@ -230,6 +254,20 @@ class InteractiveNoun {
         std::string getTextAndEffect(CommandEnum aCommand, EffectType &anEffect) const;
 
         /*!
+         * \brief   Sets the static variable nextID to the specified value.
+         *
+         * \param[in] num   Specifies the desired value.
+         */
+        static void setStaticID(int num);
+
+        /*!
+         * \brief   Gets the value of the static variable nextID.
+         *
+         * \return  Returns the current value of nextID.
+         */
+        static int getStaticID();
+
+        /*!
          * \brief   Gets the name. This is a pure virtual function for
          *          interactive noun.
          */
@@ -249,7 +287,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string look(std::vector<EffectType>*) { return ""; }  
+        virtual std::string look(Player*, std::vector<EffectType>*) { return "false"; }  
 
         /*!
          * \brief   Gets the object's response to the listen command.
@@ -259,7 +297,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string listen(std::vector<EffectType>*) { return ""; } 
+        virtual std::string listen(std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the take command.
@@ -269,7 +307,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string take(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType>*) { return ""; }
+        virtual std::string take(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the put command.
@@ -279,7 +317,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string put(Player*, Item*, InteractiveNoun*, ItemPosition, std::vector<EffectType>*) { return ""; }
+        virtual std::string put(Player*, Item*, InteractiveNoun*, ItemPosition, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the drop command.
@@ -289,7 +327,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string drop(Player*, std::vector<EffectType>*) { return ""; }
+        virtual std::string drop(Player*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the more command.
@@ -299,7 +337,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string more() { return ""; } 
+        virtual std::string more(Player*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the equip command.
@@ -309,7 +347,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType>*) { return ""; }
+        virtual std::string equip(Player*, Item*, InteractiveNoun*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the unequip command.
@@ -319,7 +357,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType>*) { return ""; }
+        virtual std::string unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the transfer command.
@@ -329,7 +367,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType>*) { return ""; }
+        virtual std::string transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the go command.
@@ -339,7 +377,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType>*) { return ""; }
+        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the move command.
@@ -349,7 +387,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string move(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string move(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the attack command.
@@ -359,7 +397,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType>*) { return ""; }
+        virtual std::string attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the talk command.
@@ -369,7 +407,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string talk(Player*, NonCombatant*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string talk(Player*, NonCombatant*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the buy command.
@@ -379,7 +417,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string buy(Player*, Item*, std::vector<EffectType>*) { return ""; }
+        virtual std::string buy(Player*, Item*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the sell command.
@@ -389,7 +427,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string sell(Player*, Item*, std::vector<EffectType>*) { return ""; }
+        virtual std::string sell(Player*, Item*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the search command.
@@ -399,7 +437,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string search(Player*, std::vector<EffectType>*) { return ""; }
+        virtual std::string search(Player*, std::vector<EffectType>*) { return "false"; }
 
         /*!
          * \brief   Gets the object's response to the useSkill command.
@@ -409,7 +447,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string useSkill(Player*, SpecialSkill*, InteractiveNoun*, Combatant*, bool, std::vector<EffectType>*) { return ""; } 
+        virtual std::string useSkill(Player*, SpecialSkill*, InteractiveNoun*, Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the read command.
@@ -419,7 +457,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string read(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string read(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the break command.
@@ -429,7 +467,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string breakIt(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string breakIt(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the climb command.
@@ -439,7 +477,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string climb(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string climb(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the turn command.
@@ -449,7 +487,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string turn(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string turn(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the push command.
@@ -459,7 +497,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string push(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string push(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the pull command.
@@ -469,7 +507,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string pull(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string pull(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the eat command.
@@ -479,7 +517,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string eat(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string eat(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the drink command.
@@ -489,7 +527,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string drink(Player*, std::vector<EffectType>*) { return ""; } 
+        virtual std::string drink(Player*, std::vector<EffectType>*) { return "false"; } 
 
         /*!
          * \brief   Gets the object's response to the warp command.
@@ -499,7 +537,7 @@ class InteractiveNoun {
          *
          * \return  Returns an empty string.
          */
-        virtual std::string warp(Player*, Area*) { return ""; } 
+        virtual std::string warp(Player*, Area*) { return "false"; } 
 
         /*!
          * \brief   Makes a copy of the object. This is a pure virtual function
@@ -525,16 +563,6 @@ class InteractiveNoun {
          * \return  Returns a std::string with the serialized data.
          */
         virtual std::string serialize() = 0;
-
-        /*!
-         * \brief   Deserializes this object after reading from file.
-         * 
-         * \param[in] string    Holds the data to be deserialized.
-         *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
-         */
-        virtual bool deserialize(std::string) = 0;
     private:
         std::vector<Action*> actions;
         mutable std::mutex actionsMutex;

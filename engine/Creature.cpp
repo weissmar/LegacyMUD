@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/25/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -24,6 +24,13 @@ Creature::Creature()
 
 Creature::Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight)
 : Combatant(maxHealth, spawnLocation, maxSpecialPts, name, description, money, aLocation, maxInventoryWeight)
+, type(aType)
+, ambulatory (ambulatory)
+{ }
+
+
+Creature::Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+: Combatant(maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID)
 , type(aType)
 , ambulatory (ambulatory)
 { }
@@ -134,24 +141,28 @@ std::string Creature::serialize(){
 }
 
 
-bool Creature::deserialize(std::string){
-    return false;
+Creature* Creature::deserialize(std::string){
+    return nullptr; 
 }
 
 
-std::string Creature::look(std::vector<EffectType> *effects){
+std::string Creature::look(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 }  
 
 
 std::string Creature::take(Player* aPlayer, Item* anItem, InteractiveNoun* aContainer, InteractiveNoun* aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     bool success;
 
     success = addToInventory(anItem);
     if (success){
-        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -165,6 +176,7 @@ std::string Creature::take(Player* aPlayer, Item* anItem, InteractiveNoun* aCont
 
 std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     std::string strSuccess;
     EffectType anEffect = EffectType::NONE;
     bool success = false;
@@ -183,7 +195,10 @@ std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCha
     }
 
     if (success){
-        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        resultMsg += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -193,29 +208,84 @@ std::string Creature::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCha
 }
 
 
-std::string Creature::unequip(Player*, Item*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Creature::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+    bool success = false;
+
+    if (anItem != nullptr){
+        success = unequipItem(anItem);
+    }
+
+    if (success){
+        resultMsg += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
 std::string Creature::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anArea != nullptr){
+        setLocation(anArea);
+
+        resultMsg += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
-std::string Creature::transfer(Player*, Item*, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Creature::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        if ((aCharacter != nullptr) && (aCharacter->getID() == this->getID())){
+            // item is being removed from this character
+            success = removeFromInventory(anItem);
+        } else if ((destination != nullptr) && (destination->getID() == this->getID())){
+            // item is being added to this character
+            success = addToInventory(anItem);
+        }
+    }
+
+    if (success){
+        resultMsg += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
 std::string Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
     return "";
 }
-
-
-std::string Creature::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
-    return "";
-} 
 
 
 InteractiveNoun* Creature::copy(){

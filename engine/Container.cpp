@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/26/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -27,6 +27,12 @@ Container::Container()
 
 Container::Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type)
 : Item(location, position, name, type)
+, insideCapacity(capacity)
+{ }
+
+
+Container::Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type, int anID)
+: Item(location, position, name, type, anID)
 , insideCapacity(capacity)
 { }
 
@@ -232,18 +238,20 @@ std::string Container::serialize(){
 }
 
 
-bool Container::deserialize(std::string){
-    return false;
+Container* Container::deserialize(std::string){
+    return nullptr; 
 }
 
 
-std::string Container::look(std::vector<EffectType> *effects){
+std::string Container::look(Player *aPlayer, std::vector<EffectType> *effects){
     std::string message;
     ItemType *aType = getType();
 
     message = "The " + getName() + " is ";
     message += aType->getDescription() + ".";
-    message += " It looks like it might contain something.";
+    if (!isEmpty()){
+        message += " It looks like it might contain something.";
+    }
 
     return message;
 }  
@@ -251,6 +259,7 @@ std::string Container::look(std::vector<EffectType> *effects){
 // would be best to remove dynamic casts ***********************************************************
 std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     Area *anArea = nullptr;
     ItemPosition position = getPosition();
@@ -286,10 +295,14 @@ std::string Container::take(Player *aPlayer, Item *anItem, InteractiveNoun *aCon
 
         setPosition(ItemPosition::INVENTORY);
         // get results of take for this object
-        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
+
         // call this function on player or character, and container
         if (aCharacter != nullptr){
             // aCharacter is doing the taking
@@ -311,6 +324,7 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
     InteractiveNoun *location;
     ItemPosition currPosition;
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect;
 
     if (anItem != nullptr){
@@ -346,7 +360,10 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 
         setPosition(position);
         // get results of put for this object
-        message = getTextAndEffect(CommandEnum::PUT, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::PUT, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -361,8 +378,8 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
 }
 
 
-std::string Container::more(){
-    std::string message = Item::more();
+std::string Container::more(Player *aPlayer){
+    std::string message = Item::more(aPlayer);
 
     message += "Inside Capacity: " + std::to_string(getInsideCapacity()) + "\015\012";
     
@@ -381,19 +398,15 @@ std::string Container::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCh
 }
 
 
-std::string Container::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = Item::transfer(aPlayer, anItem, aCharacter, destination, effects);
+
+    if (message.compare("false") != 0){
+        // remove contents? *********************************************************************
+    }
+
+    return message;
 }
-
-
-std::string Container::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
-}
-
-
-std::string Container::move(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
 
 
 std::string Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool playerAttacker, std::vector<EffectType> *effects){
@@ -402,57 +415,107 @@ std::string Container::attack(Player *aPlayer, Item *anItem, SpecialSkill*, Inte
 
 
 std::string Container::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = Item::buy(aPlayer, anItem, effects);
+
+    if (message.compare("false") != 0){
+        // remove contents? *********************************************************************
+    }
+
+    return message;
 }
 
 
 std::string Container::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = Item::sell(aPlayer, anItem, effects);
+
+    if (message.compare("false") != 0){
+        // remove contents? *********************************************************************
+    }
+
+    return message;
 }
 
 
 std::string Container::search(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
+    std::string message = "";
+    std::string resultMessage;
+    EffectType anEffect = EffectType::NONE;
+    std::vector<Item*> in, on, under;
 
+    if (!isEmpty()){
+        in = getInsideContents();
+        on = getTopContents();
+        under = getUnderContents();
 
-std::string Container::read(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
+        // list items on top of this container
+        if (on.size() > 0){
+            message += "You look on top of the " + getName() + " and see a ";
+            if (on.size() == 1){
+                message += on[0]->getName() + ".\015\012";
+            } else {
+                for (size_t i = 0; i < on.size(); i++){
+                    message += on[i]->getName();
+                    if (i == (on.size() - 2)){
+                        message += " and a ";
+                    } else if (i == (on.size() - 1)){
+                        message += ".\015\012";
+                    } else {
+                        message += ", a ";
+                    }
+                }
+            }
+        }
 
+        // list items under this container
+        if (under.size() > 0){
+            message += "You look under the " + getName() + " and see a ";
+            if (under.size() == 1){
+                message += under[0]->getName() + ".\015\012";
+            } else {
+                for (size_t i = 0; i < under.size(); i++){
+                    message += under[i]->getName();
+                    if (i == (under.size() - 2)){
+                        message += " and a ";
+                    } else if (i == (under.size() - 1)){
+                        message += ".\015\012";
+                    } else {
+                        message += ", a ";
+                    }
+                }
+            }
+        }
 
-std::string Container::breakIt(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
+        // list items inside this container
+        if (in.size() > 0){
+            message += "You look inside the " + getName() + " and see a ";
+            if (in.size() == 1){
+                message += in[0]->getName() + ".\015\012";
+            } else {
+                for (size_t i = 0; i < in.size(); i++){
+                    message += in[i]->getName();
+                    if (i == (in.size() - 2)){
+                        message += " and a ";
+                    } else if (i == (in.size() - 1)){
+                        message += ".\015\012";
+                    } else {
+                        message += ", a ";
+                    }
+                }
+            }
+        }
+    } else {
+        message = "You search the " + getName() + " thoroughly, but find nothing.\015\012";
+    }
 
+    resultMessage = getTextAndEffect(CommandEnum::SEARCH, anEffect);
+    if (resultMessage.compare("false") != 0){
+        message += resultMessage;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
 
-std::string Container::climb(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::turn(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::push(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::pull(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::eat(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Container::drink(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+    return message;
 } 
 
 

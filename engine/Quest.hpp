@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Quest.hpp
  *
@@ -14,7 +14,7 @@
 #define QUEST_HPP
 
 #include <string>
-#include <vector>
+#include <map>
 #include <utility>
 #include <mutex>
 #include <atomic>
@@ -26,6 +26,7 @@ namespace legacymud { namespace engine {
 
 class Item;
 class QuestStep;
+class NonCombatant;
 
 /*!
  * \details     Quests define in-game quests with steps that players may 
@@ -35,6 +36,7 @@ class Quest: public InteractiveNoun {
     public:
         Quest();
         Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem);
+        Quest(std::string name, std::string description, int rewardMoney, Item *rewardItem, int anID);
         /*Quest(const Quest &otherQuest);
         Quest & operator=(const Quest &otherQuest);
         virtual ~Quest();*/
@@ -62,10 +64,27 @@ class Quest: public InteractiveNoun {
 
         /*!
          * \brief   Gets the reward item for this quest.
+         * 
+         * \note    Use this function only for accessing and modifying
+         *          the "prototype" reward item. The item returned by
+         *          this function cannot be given to a player.
          *
          * \return  Returns an Item* with the reward item.
          */
         Item* getRewardItem() const;
+
+        /*!
+         * \brief   Gets a unique copy of reward item for this quest.
+         * 
+         * \note    Use this function when you need a unique copy of
+         *          the reward item. The item returned by this funciton 
+         *          can be given to a player. Each time this function
+         *          is called, a new copy of the reward item is created 
+         *          and returned.
+         *
+         * \return  Returns an Item* with the reward item.
+         */
+        Item* getUniqueRewardItem() const;
 
         /*!
          * \brief   Gets the steps of this quest.
@@ -73,7 +92,58 @@ class Quest: public InteractiveNoun {
          * \return  Returns a std::vector<std::pair<int, QuestStep*>> 
          *          with the steps.
          */
-        std::vector<std::pair<int, QuestStep*>> getSteps() const;
+        std::map<int, QuestStep*> getAllSteps() const;
+
+        /*!
+         * \brief   Gets the specified step of this quest.
+         * 
+         * \param[in] step  Specifies the step to get.
+         *
+         * \return  Returns a QuestStep* with the specified step.
+         */
+        QuestStep* getStep(int step) const;
+
+        /*!
+         * \brief   Gets the step after the specified step of this quest.
+         * 
+         * \param[in] step  Specifies the step before the step to get.
+         *
+         * \return  Returns a QuestStep* with the next step.
+         */
+        QuestStep* getNextStep(int step) const;
+
+        /*!
+         * \brief   Gets whether or not the specified step is the first
+         *          step of this quest.
+         * 
+         * \param[in] step  Specifies the step to look up.
+         *
+         * \return  Returns true if the specified step is the first step of
+         *          this quest; false otherwise.
+         */
+        bool isFirstStep(int step) const;
+
+        /*!
+         * \brief   Gets whether or not the specified step is the last
+         *          step of this quest.
+         * 
+         * \param[in] step  Specifies the step to look up.
+         *
+         * \return  Returns true if the specified step is the last step of
+         *          this quest; false otherwise.
+         */
+        bool isLastStep(int step) const;
+
+        /*!
+         * \brief   Gets the step that the specified NPC is involved in
+         *          if applicable.
+         * 
+         * \param[in] aNPC  Specified the NPC to look up.
+         *
+         * \return  Returns a QuestStep* with the specified step or nullptr
+         *          if the NPC is not involved in the quest.
+         */
+        QuestStep* isGiverOrReceiver(NonCombatant *aNPC) const;
 
         /*!
          * \brief   Sets the name of this quest.
@@ -118,14 +188,12 @@ class Quest: public InteractiveNoun {
         /*!
          * \brief   Adds the specified step to this quest.
          * 
-         * \param[in] number    Specifies ordinal number for the step to be
-         *                      added.
          * \param[in] aStep     Specifies the step to add.
          *
          * \return  Returns a bool indicating whether or not adding the
          *          step succeeded.
          */
-        bool addStep(int number, QuestStep *aStep);
+        bool addStep(QuestStep *aStep);
 
         /*!
          * \brief   Removes the specified step from this quest.
@@ -153,14 +221,26 @@ class Quest: public InteractiveNoun {
         virtual std::string serialize();
 
         /*!
-         * \brief   Deserializes this object after reading from file.
+         * \brief   Deserializes and creates an object of this type from the
+         *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
          *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
+         * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        virtual bool deserialize(std::string);
+        static Quest* deserialize(std::string);
+
+        /*!
+         * \brief   Gets the response of this object to the command more.
+         * 
+         * This function returns a string with details about this skill.
+         * 
+         * \param[in] aPlayer   Specifies the player that entered the command.
+         *
+         * \return  Returns a std::string with the response to the command
+         *          more.
+         */
+        virtual std::string more(Player *aPlayer); 
 
         /*!
          * \brief   Creates a copy of this object.
@@ -220,7 +300,7 @@ class Quest: public InteractiveNoun {
         std::atomic<int> rewardMoney;
         Item *rewardItem;
         mutable std::mutex rewardItemMutex;
-        std::vector<std::pair<int, QuestStep*>> steps;
+        std::map<int, QuestStep*> steps;
         mutable std::mutex stepsMutex;
 };
 

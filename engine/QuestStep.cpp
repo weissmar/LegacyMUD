@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.cpp
  *
@@ -34,6 +34,24 @@ QuestStep::QuestStep(int ordinalNumber, std::string description, ItemType *anIte
 , receiver(receiver)
 , completionText(completionText)
 {
+    std::string idAlias = "quest step " + std::to_string(getID());
+    addNounAlias(idAlias);
+    std::string alias = "step " + std::to_string(ordinalNumber);
+    addNounAlias(alias);
+}
+
+
+QuestStep::QuestStep(int ordinalNumber, std::string description, ItemType *anItemType, NonCombatant *giver, NonCombatant *receiver, std::string completionText, int anID)
+: InteractiveNoun(anID)
+, ordinalNumber(ordinalNumber)
+, description(description)
+, fetchItem(anItemType)
+, giver(giver)
+, receiver(receiver)
+, completionText(completionText)
+{
+    std::string idAlias = "quest step " + std::to_string(getID());
+    addNounAlias(idAlias);
     std::string alias = "step " + std::to_string(ordinalNumber);
     addNounAlias(alias);
 }
@@ -161,8 +179,27 @@ std::string QuestStep::serialize(){
 }
 
 
-bool QuestStep::deserialize(std::string){
-    return false;
+QuestStep* QuestStep::deserialize(std::string){
+    return nullptr; 
+}
+
+
+std::string QuestStep::more(Player *aPlayer){
+    std::string fetchItemName, receiverName;
+    std::string message;
+
+    if (getFetchItem() != nullptr){
+        fetchItemName = getFetchItem()->getName();
+    }
+    if (getReceiver() != nullptr){
+        receiverName = getReceiver()->getName();
+    }
+
+    message = "Step " + std::to_string(getOrdinalNumber()) + ":\015\012";
+    message += getDescription() + "\015\012";
+    message += "Give the " + fetchItemName + " to " + receiverName + ".\015\012";
+
+    return message;
 }
 
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.hpp
  *
@@ -59,6 +59,15 @@ class GameObjectManager {
          *          successful.
          */
         bool removeObject(InteractiveNoun *anObject, int FD);
+
+        /*!
+         * \brief   Gets a map of ID to InteractiveNoun* with all of the objects in the
+         *          game.
+         *
+         * \return  Returns a std::map<int, InteractiveNoun*> with all of the objects in
+         *          the game.
+         */
+        std::map<int, InteractiveNoun*> getAllObjects() const;
 
         /*!
          * \brief   Gets a pointer to the object indicated by the specified

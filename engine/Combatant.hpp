@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -13,6 +13,7 @@
 #ifndef COMBATANT_HPP
 #define COMBATANT_HPP
 
+#include <ctime>
 #include <utility>
 #include <string>
 #include <atomic>
@@ -31,16 +32,15 @@ class Combatant: public Character {
     public:
         Combatant();
         Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*Combatant(const Combatant &otherCombatant);
         Combatant & operator=(const Combatant &otherCombatant);
         virtual ~Combatant();*/
 
         /*!
-         * \brief   Gets whether or not the cooldown for this combatant is 
-         *          currently zero.
+         * \brief   Gets whether the cooldown period for this combatant is over.
          *
-         * \return  Returns a bool indicating if the cooldown is currently
-         *          zero.
+         * \return  Returns a bool indicating if the cooldown period is over.
          */
         bool cooldownIsZero() const;
 
@@ -112,14 +112,15 @@ class Combatant: public Character {
         Combatant* getInCombat() const;
 
         /*!
-         * \brief   Sets the cooldown clock for this combatant.
+         * \brief   Sets the cooldown in seconds for this combatant.
          *
-         * \param[in] cooldown  Specifies the current cooldown for this combatant.
+         * \param[in] cooldown  Specifies the number of seconds until this 
+         *                      combatant can perform another action.
          *
          * \return  Returns a bool indicating whether or not the cooldown was set
          *          successfully.
          */
-        bool setCooldown(int cooldown);
+        bool setCooldown(time_t cooldown);
 
         /*!
          * \brief   Decrements the cooldown clock by one for this combatant.
@@ -127,7 +128,7 @@ class Combatant: public Character {
          * \return  Returns a bool indicating whether or not the cooldown was 
          *          decremented successfully.
          */
-        bool decrementCooldown();
+        //bool decrementCooldown();
 
         /*!
          * \brief   Sets whether or not this combatant is currently in combat.
@@ -233,16 +234,6 @@ class Combatant: public Character {
          * \return  Returns a std::string with the serialized data.
          */
         virtual std::string serialize();
-
-        /*!
-         * \brief   Deserializes this object after reading from file.
-         * 
-         * \param[in] string    Holds the data to be deserialized.
-         *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
-         */
-        virtual bool deserialize(std::string);
     protected:
         /*!
          * \brief   Adds to the current dexterity of this combatant.
@@ -271,7 +262,7 @@ class Combatant: public Character {
          */
         int increaseIntelligence(int intPoints);
     private:
-        std::atomic<int> cooldownClock;
+        std::atomic<time_t> cooldownClock;
         std::pair<int, int> health;
         mutable std::mutex healthMutex;
         Area* spawnLocation;

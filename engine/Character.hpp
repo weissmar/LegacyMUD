@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/26/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -20,6 +20,7 @@
 #include <atomic>
 #include "InteractiveNoun.hpp"
 #include "EquipmentSlot.hpp"
+#include "ItemType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -34,6 +35,7 @@ class Character: public InteractiveNoun {
     public:
         Character();
         Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*Character(const Character &otherCharacter);
         Character & operator=(const Character &otherCharacter);
         virtual ~Character();*/
@@ -105,6 +107,17 @@ class Character: public InteractiveNoun {
          *          this character.
          */
         int getMaxInventoryWeight() const;
+
+        /*!
+         * \brief   Gets whether or not the character currently has an item in 
+         *          inventory (including equipment) of the specified type.
+         *
+         * \param[in] anItemType    Specifies the type of item.
+         *
+         * \return  Returns a bool indicating whether or not the character has an
+         *          item of the specified type.
+         */
+        bool hasItem(ItemType *anItemType) const;
 
         /*!
          * \brief   Sets the name of this character.
@@ -223,16 +236,6 @@ class Character: public InteractiveNoun {
          * \return  Returns a std::string with the serialized data.
          */
         virtual std::string serialize();
-
-        /*!
-         * \brief   Deserializes this object after reading from file.
-         * 
-         * \param[in] string    Holds the data to be deserialized.
-         *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
-         */
-        virtual bool deserialize(std::string);
 
         /*!
          * \brief   Removes all items from this character's inventory.

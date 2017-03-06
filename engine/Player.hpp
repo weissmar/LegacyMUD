@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -17,7 +17,7 @@
 
 #include <string>
 #include <queue>
-#include <vector>
+#include <map>
 #include <utility>
 #include <atomic>
 #include <mutex>
@@ -56,6 +56,7 @@ class Player: public Combatant {
         Player();
         Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description, Area *startArea);
         Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*Player(const Player &otherPlayer);
         Player & operator=(const Player &otherPlayer);
         virtual ~Player();*/
@@ -136,10 +137,21 @@ class Player: public Combatant {
         /*!
          * \brief   Gets the quest list of this player.
          *
-         * \return  Returns a std::vector<std::pair<Quest*, int>> with the 
+         * \return  Returns a std::map<Quest*, std::pair<int, bool>> with the 
          *          quest list.
          */
-        std::vector<std::pair<Quest*, int>> getQuestList() const;
+        std::map<Quest*, std::pair<int, bool>> getQuestList() const;
+
+        /*!
+         * \brief   Gets the step of the specified quest that this player
+         *          is currently on.
+         *          
+         * \param[in] aQuest    Specifies the quest to look up.
+         *
+         * \return  Returns a pair of int, bool with the step number and 
+         *          whether or not the step has been completed.
+         */
+        std::pair<int, bool> getQuestCurrStep(Quest *aQuest) const;
 
         /*!
          * \brief   Gets the lexical data for this player's inventory.
@@ -255,26 +267,17 @@ class Player: public Combatant {
         bool setEditMode(bool editing);
 
         /*!
-         * \brief   Adds a quest to the player's quest list.
+         * \brief   Adds a quest to the player's quest list or updates it if it already 
+         *          exists.
          * 
-         * \param[in] aQuest    Specifies the quest to add.
+         * \param[in] aQuest    Specifies the quest to add or update.
          * \param[in] step      Specifies the step of the quest the player is currently on.
+         * \param[in] complete  Specifies whether or not the specified step has been completed.
          *
          * \return  Returns a bool indicating whether or not the quest was successfully 
-         *          added.
+         *          added or updated.
          */
-        bool addQuest(Quest *aQuest, int step);
-
-        /*!
-         * \brief   Updates a quest in the player's quest list.
-         * 
-         * \param[in] aQuest    Specifies the quest to update.
-         * \param[in] step      Specifies the step of the quest the player is currently on.
-         *
-         * \return  Returns a bool indicating whether or not the quest was successfully 
-         *          updated.
-         */
-        bool updateQuest(Quest *aQuest, int step); 
+        bool addOrUpdateQuest(Quest *aQuest, int step, bool complete);
         
         /*!
          * \brief   Adds the specified item to this player's inventory.
@@ -394,24 +397,25 @@ class Player: public Combatant {
         virtual std::string serialize();
 
         /*!
-         * \brief   Deserializes this object after reading from file.
+         * \brief   Deserializes and creates an object of this type from the
+         *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
          *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
+         * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        virtual bool deserialize(std::string);
+        static Player* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.
          * 
+         * \param[in] aPlayer   Specifies the player that entered the command
          * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(std::vector<EffectType> *effects);  
+        virtual std::string look(Player *aPlayer, std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Executes the take command on this player.
@@ -520,13 +524,13 @@ class Player: public Combatant {
          * \param[in] aSkill            Optionally specifies the skill being used in the attack.
          * \param[in] character         Specifies the character that is being attacked.
          * \param[in] playerAttacker    Specifies whether or not the player is the attacker. This
-         *                              parameter should be false when this function is called on
+         *                              parameter should be true when this function is called on
          *                              a player.
          * \param[out] effects          Specifies the effects of the action.
          * 
          * \pre The item, if specified, must be in the inventory of this player.
          * \pre The skill, if specified, must be the skill of this player's player class.
-         * \pre The playerAttacker parameter should be false when this function is called on a player.
+         * \pre The playerAttacker parameter should be true when this function is called on a player.
          *
          * \return  Returns a std::string with the response to the command
          *          attack.
@@ -574,41 +578,28 @@ class Player: public Combatant {
          *          sell.
          */
         virtual std::string sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects);
-        
-        /*!
-         * \brief   Gets the response of this object to the command search.
-         *
-         * \param[in] aPlayer   Specifies the player that is searching the object.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \note    May cause an effect on the player.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          search.
-         */
-        virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
-         * \brief   Executes the specified skill on the specified recipient from the player.
+         * \brief   Executes the specified skill on the specified recipient (either this player
+         *          or another player depending on the value of aRecipient and aPlayer) from 
+         *          aPlayer.
          *
-         * This function executes the specified skill from this player on the specified 
-         * recipient.  
+         * This function executes the specified skill from this player if this == aPlayer and
+         * aRecipient is not null. Otherwise, it calls this function on aPlayer with a pointer 
+         * to this player as aRecipient.  
          *
          * \param[in] aPlayer       Specifies the player that is using the skill.
          * \param[in] aSkill        Specifies the skill to use.
-         * \param[in] character     This parameter is ignored in this case.
+         * \param[in] character     Ignored in this case.
          * \param[in] aRecipient    Specifies the recipient of the skill.
-         * \param[in] playerSkill   Specifies whether or not the player is using the skill.
-         *                          This should be true when this function is called on a
-         *                          player.
          * \param[out] effects      Specifies the effects of the action.
          *
          * \return  Returns a std::string with the results of the skill.
          */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects); 
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects); 
 
         /*!
-         * \brief   Moves the specified player to this area.
+         * \brief   Moves the specified player to this area. 
          *
          * This function moves the specified player to this area. After adding
          * the player to this area, it calls go() on the player, passing a 
@@ -691,7 +682,7 @@ class Player: public Combatant {
         std::queue<Command*> combatQueue;
         mutable std::mutex combatQueueMutex;
         std::atomic<bool> editMode;
-        std::vector<std::pair<Quest*, int>> questList;
+        std::map<Quest*, std::pair<int, bool>> questList;
         mutable std::mutex questListMutex;
         parser::LexicalData inventoryLexicalData;
         mutable std::mutex lexicalMutex;

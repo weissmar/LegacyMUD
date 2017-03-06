@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/25/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -37,6 +37,24 @@ CombatantType::CombatantType(std::string name, SpecialSkill* skill, int attackBo
 , weakTo(weakTo)
 , healPoints(healPoints)
 {
+    std::string idAlias = "combatant type " + std::to_string(getID());
+    addNounAlias(idAlias);
+    addNounAlias(name);
+}
+
+
+CombatantType::CombatantType(std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints, int anID)
+: InteractiveNoun(anID)
+, name(name)
+, specialSkill(skill)
+, attackBonus(attackBonus)
+, armorBonus(armorBonus)
+, resistantTo(resistantTo)
+, weakTo(weakTo)
+, healPoints(healPoints)
+{
+    std::string idAlias = "combatant type " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -144,9 +162,5 @@ std::string CombatantType::serialize(){
     return "";
 }
 
-
-bool CombatantType::deserialize(std::string){
-    return false;
-}
 
 }}

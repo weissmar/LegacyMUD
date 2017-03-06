@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/25/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -16,6 +16,7 @@
 #include "CommandEnum.hpp"
 #include "Action.hpp"
 #include "Container.hpp"
+#include "Player.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -37,6 +38,21 @@ Area::Area(std::string name, std::string shortDescription, std::string longDescr
 , longDescription(longDescription)
 , size(size)
 { 
+    std::string idAlias = "area " + std::to_string(getID());
+    addNounAlias(idAlias);
+    addNounAlias(name);
+}
+
+
+Area::Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size, int anID)
+: InteractiveNoun(anID)
+, name(name)
+, shortDescription(shortDescription)
+, longDescription(longDescription)
+, size(size)
+{ 
+    std::string idAlias = "area " + std::to_string(getID());
+    addNounAlias(idAlias);
     addNounAlias(name);
 }
 
@@ -109,12 +125,19 @@ const parser::LexicalData& Area::getLexicalData() const{
 }
 
 
-std::string Area::getFullDescription(int excludeID) const{
+std::string Area::getFullDescription(Player *aPlayer) const{
+    bool editMode = aPlayer->isEditMode();
     std::string message = getLongDesc();
     std::vector<Item*> allItems = getItems();
     std::vector<Character*> allCharacters = getCharacters();
     std::vector<Feature*> allFeatures = getFeatures();
     std::vector<Exit*> allExits = getExits();
+    int excludeID = aPlayer->getID();
+    ItemType *condItemType = nullptr;
+
+    if (editMode){
+        message += " [area " + std::to_string(getID()) + "]";
+    }
 
     message += "\015\012";
     
@@ -123,13 +146,28 @@ std::string Area::getFullDescription(int excludeID) const{
         message += feature->getName();
         message += " ";
         message += feature->getPlacement();
+        if (editMode){
+            message += " [feature " + std::to_string(feature->getID()) + "]";
+        }
         message += ".\015\012";
     }
 
     for (auto exit : allExits){
         message += exit->getDirectionString();
         message += " you see ";
-        message += exit->getName();
+        if (exit->isConditional()){
+            condItemType = exit->getConditionItem();
+            if ((condItemType != nullptr) && (aPlayer->hasItem(condItemType))){
+                message += exit->getAltDescription();
+            } else {
+                message += exit->getDescription();
+            }
+        } else {
+            message += exit->getName();
+        }
+        if (editMode){
+            message += " [exit " + std::to_string(exit->getID()) + "]";
+        }
         message += ".\015\012";
     }
 
@@ -137,10 +175,16 @@ std::string Area::getFullDescription(int excludeID) const{
         message += "You see a ";
         message += allItems[0]->getName();
         message += " on the ground.";
+        if (editMode){
+            message += " [item " + std::to_string(allItems[0]->getID()) + "]";
+        }
     } else if (allItems.size() > 1){
         message += "Around you, you see a ";
         for (size_t i = 0; i < allItems.size(); i++){
             message += allItems[i]->getName();
+            if (editMode){
+                message += " [item " + std::to_string(allItems[i]->getID()) + "]";
+            }
             if (i == (allItems.size() - 2)){
                 message += " and a ";
             } else if (i == (allItems.size() - 1)){
@@ -163,6 +207,9 @@ std::string Area::getFullDescription(int excludeID) const{
                 message += "You see a player named ";
             }
             message += allCharacters[i]->getName();
+            if (editMode){
+                message += " [character " + std::to_string(allCharacters[i]->getID()) + "]";
+            }
             message += ".\015\012";
         }
     }
@@ -226,10 +273,20 @@ bool Area::addItem(Item *anItem){
 
 
 bool Area::addCharacter(Character *aCharacter){
+    std::vector<std::pair<EquipmentSlot, Item*>> inventory;
+
     if (aCharacter != nullptr){
         std::lock_guard<std::mutex> charContentLock(charContentMutex);
         characterContents.push_back(aCharacter);
         addAllLexicalData(aCharacter);
+
+        if (aCharacter->getObjectType() != ObjectType::PLAYER){
+            inventory = aCharacter->getInventory();
+            for (auto item : inventory){
+                addAllLexicalData(item.second);
+            }
+        }
+
         return true;
     }
     return false;
@@ -321,10 +378,20 @@ bool Area::removeItem(Item *anItem){
 
 
 bool Area::removeCharacter(Character *aCharacter){
+    std::vector<std::pair<EquipmentSlot, Item*>> inventory;
+
     if (aCharacter != nullptr){
         std::lock_guard<std::mutex> charContentLock(charContentMutex);
         characterContents.erase(std::remove(characterContents.begin(), characterContents.end(), aCharacter), characterContents.end());
         removeAllLexicalData(aCharacter);
+
+        if (aCharacter->getObjectType() != ObjectType::PLAYER){
+            inventory = aCharacter->getInventory();
+            for (auto item : inventory){
+                removeAllLexicalData(item.second);
+            }
+        }
+
         return true;
     }
     return false;
@@ -441,18 +508,22 @@ std::string Area::serialize(){
 }
 
 
-bool Area::deserialize(std::string){
-    return false;
+Area* Area::deserialize(std::string){
+    return nullptr; 
 }
 
 
-std::string Area::look(std::vector<EffectType> *effects){
-    std::string message = getFullDescription(-1);
+std::string Area::look(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message = getFullDescription(aPlayer);
+    std::string resultMsg = "";
     EffectType anEffect = EffectType::NONE;
 
     message += " ";
 
-    message += getTextAndEffect(CommandEnum::LOOK, anEffect);
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
 
     if ((anEffect != EffectType::NONE) && (effects != nullptr)){
         effects->push_back(anEffect);
@@ -463,10 +534,13 @@ std::string Area::look(std::vector<EffectType> *effects){
 
 
 std::string Area::listen(std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
     EffectType anEffect;
 
-    message = getTextAndEffect(CommandEnum::LISTEN, anEffect);
+    resultMsg = getTextAndEffect(CommandEnum::LISTEN, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
 
     if ((anEffect != EffectType::NONE) && (effects != nullptr)){
         effects->push_back(anEffect);
@@ -489,18 +563,22 @@ std::string Area::listen(std::vector<EffectType> *effects){
 } 
 
 
-std::string Area::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
+/*std::string Area::search(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
-}
-
-
-std::string Area::search(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
-} 
+} */
 
 
 std::string Area::warp(Player *aPlayer, Area *anArea){
-    return "";
+    std::string message = "";
+
+    // remove player from current area and add to this area
+    aPlayer->getLocation()->removeCharacter(aPlayer);
+    addCharacter(aPlayer);
+
+    // call this function on player
+    message += aPlayer->warp(aPlayer, this);
+    
+    return message;
 } 
 
 

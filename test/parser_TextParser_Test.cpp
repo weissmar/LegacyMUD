@@ -2,7 +2,7 @@
   \file     parser_TextParser_Test.cpp
   \author   David Rigert
   \created  01/29/2017
-  \modified 02/21/2017
+  \modified 03/02/2017
   \course   CS467, Winter 2017
  
   \details This file contains the unit tests for the TextParser class.
@@ -518,9 +518,7 @@ TEST_F(TextParserTest, GoImpliedHappyPath) {
 
     engine::Area area;
     engine::Area destination;
-    engine::Exit north(engine::ExitDirection::NORTH, engine::EffectType::NONE, &area, &destination, false, nullptr, "an exit to the north", "");
-    ASSERT_TRUE(north.addNounAlias("north"));
-    ASSERT_TRUE(north.addNounAlias("n"));
+    engine::Exit north(engine::ExitDirection::NORTH, &area, &destination, false, nullptr, "an exit to the north", "");
     engine::Action *act = north.addAction(engine::CommandEnum::GO);
     ASSERT_NE(nullptr, act);
     ASSERT_TRUE(act->addAlias("north", new parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO)));

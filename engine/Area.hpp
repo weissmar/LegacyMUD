@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/25/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -34,6 +34,7 @@ class Character;
 class Exit;
 class Item;
 class Feature;
+class Player;
 
 /*!
  * \details     This class defines in-game areas (rooms, fields, etc) and keeps
@@ -44,6 +45,7 @@ class Area: public InteractiveNoun {
     public:
         Area();
         Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size);
+        Area(std::string name, std::string shortDescription, std::string longDescription, AreaSize size, int anID);
         /*Area(const Area &otherArea);
         Area & operator=(const Area &otherArea);
         virtual ~Area();*/
@@ -123,12 +125,12 @@ class Area: public InteractiveNoun {
          * \brief   Gets the full description of an area for first time
          *          entry.
          *          
-         * \param[in] excludeID     Optionally specifies the ID of a
-         *                          player to exclude from the description.
+         * \param[in] aPlayer   Specifies the player that is going to see
+         *                      the description. 
          * 
          * \return  Returns a std::string with the full description.
          */
-        std::string getFullDescription(int excludeID) const;
+        std::string getFullDescription(Player *aPlayer) const;
 
         /*!
          * \brief   Sets the name of this area.
@@ -349,24 +351,25 @@ class Area: public InteractiveNoun {
         virtual std::string serialize();
 
         /*!
-         * \brief   Deserializes this object after reading from file.
+         * \brief   Deserializes and creates an object of this type from the
+         *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
          *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
+         * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        virtual bool deserialize(std::string);
+        static Area* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.
          * 
+         * \param[in] aPlayer   Specifies the player that is doing the looking.
          * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(std::vector<EffectType> *effects);  
+        virtual std::string look(Player *aPlayer, std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Gets the response of this object to the command listen.
@@ -379,27 +382,6 @@ class Area: public InteractiveNoun {
         virtual std::string listen(std::vector<EffectType> *effects); 
 
         /*!
-         * \brief   Moves the specified player or character to this area.
-         *
-         * This function moves the specified player or character to this area. 
-         * After adding the player/character to this area, it calls go() on  
-         * the player/character, passing a pointer of this area in the anArea 
-         * parameter, so the player/character can respond to the go command.
-         *
-         * \param[in] aPlayer   Specifes the player that entered the command and,
-         *                      if character == nullptr, the player to be added 
-         *                      to this area.
-         * \param[out] anArea   Specifies the area to add the player/character to.  
-         * \param[in] character Optionally specifies the character to move to this
-         *                      area, or nullptr if the player is the one moving.
-         * \param[out] effects  Specifies the effects of the action.
-         *
-         * \return  Returns a std::string with the response to the command
-         *          search.
-         */
-        virtual std::string go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects);
-
-        /*!
          * \brief   Gets the response of this object to the command search.
          *
          * \param[in] aPlayer   Specifies the player that is searching the object.
@@ -410,7 +392,7 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::string with the response to the command
          *          search.
          */
-        virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); 
+        /*virtual std::string search(Player *aPlayer, std::vector<EffectType> *effects); */
 
         /*!
          * \brief   Moves the specified player to this area.

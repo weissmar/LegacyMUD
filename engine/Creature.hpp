@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    03/02/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -38,6 +38,7 @@ class Creature: public Combatant {
     public:
         Creature();
         Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*Creature(const Creature &otherCreature);
         Creature & operator=(const Creature &otherCreature);
         virtual ~Creature();*/
@@ -150,24 +151,25 @@ class Creature: public Combatant {
         virtual std::string serialize();
 
         /*!
-         * \brief   Deserializes this object after reading from file.
+         * \brief   Deserializes and creates an object of this type from the
+         *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
          *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
+         * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        virtual bool deserialize(std::string);
+        static Creature* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.
          * 
+         * \param[in] aPlayer   Specifies the player that entered the command.
          * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(std::vector<EffectType> *effects);  
+        virtual std::string look(Player *aPlayer, std::vector<EffectType> *effects);  
 
         /*!
          * \brief   Executes the take command on this creature.
@@ -290,27 +292,6 @@ class Creature: public Combatant {
         virtual std::string attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *character, bool playerAttacker, std::vector<EffectType> *effects);
 
         /*!
-         * \brief   Executes the specified skill on either this creature or the player,
-         *          based on the value of playerSkill.
-         *
-         * This function executes the specified skill from this creature if playerSkill 
-         * is false. Otherwise, it calls this function on the player with a pointer to
-         * this creature as the aRecipient parameter.
-         *
-         * \param[in] aPlayer       Specifies the player that entered the command and, if 
-         *                          playerSkill is true, the player that is using the skill.
-         * \param[in] aSkill        Specifies the skill to use.
-         * \param[in] character     Specifies the character to use the skill on, if playerSkill
-         *                          is true, or the character that is using the skill otherwise.
-         * \param[out] aRecipient   Specifies the recipient of the skill, if playerSkill is true.  
-         * \param[in] playerSkill   Specifies whether or not the player is using the skill.  
-         * \param[out] effects      Specifies the effects of the action.
-         *
-         * \return  Returns a std::string with the results of the skill.
-         */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects); 
-
-        /*!
          * \brief   Creates a copy of this object.
          *
          * This function creates a new object with the same attributes as this
@@ -320,7 +301,7 @@ class Creature: public Combatant {
          *          the copy was unsuccessful.
          */
         virtual InteractiveNoun* copy();
-
+ 
         /*!
          * \brief   Edits an attribute of this object.
          *

@@ -2,7 +2,7 @@
   \file     LexicalData.cpp
   \author   David Rigert
   \created  02/11/2017
-  \modified 02/20/2017
+  \modified 03/01/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the implementation of the LexicalData class.
@@ -71,7 +71,7 @@ void LexicalData::clear() {
     _nounLock.lock();
     for (auto it = _nouns.begin(); it != _nouns.end(); ++it) {
         for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-            WordManager::removeNoun(it->first, *it2);
+            WordManager::removeNoun(it->first, it2->first);
         }
     }
     _nouns.clear();
@@ -80,7 +80,7 @@ void LexicalData::clear() {
     _verbLock.lock();
     for (auto it = _verbs.begin(); it != _verbs.end(); ++it) {
         for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-            WordManager::removeVerb(it->first, *it2);
+            WordManager::removeVerb(it->first, it2->first);
         }
     }
     _verbs.clear();

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/26/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -11,7 +11,6 @@
 #include "Character.hpp"
 #include "Area.hpp"
 #include "Item.hpp"
-#include "ItemType.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -35,6 +34,22 @@ Character::Character(std::string name, std::string description, int money, Area 
 , location(aLocation)
 , maxInventoryWeight(maxInventoryWeight)
 {
+    std::string idAlias = "character " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
+    InteractiveNoun::addNounAlias(name);
+}
+
+
+Character::Character(std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+: InteractiveNoun(anID)
+, name(name)
+, description(description)
+, money(money)
+, location(aLocation)
+, maxInventoryWeight(maxInventoryWeight)
+{
+    std::string idAlias = "character " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(name);
 }
 
@@ -116,6 +131,17 @@ int Character::getMaxInventoryWeight() const{
 }
 
 
+bool Character::hasItem(ItemType *anItemType) const{
+    std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+    for (auto item : inventory){
+        if (item.second->getType() == anItemType){
+            return true;
+        }
+    }
+    return false;
+}
+
+
 bool Character::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
     this->name = name;
@@ -144,7 +170,7 @@ int Character::addMoney(int money){
 
 
 int Character::subtractMoney(int money){
-    this->money += money;
+    this->money -= money;
 
     return money;
 }
@@ -258,11 +284,6 @@ bool Character::unequipItem(Item *anItem){
 
 std::string Character::serialize(){
     return "";
-}
-
-
-bool Character::deserialize(std::string){
-    return false;
 }
 
 

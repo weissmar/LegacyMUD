@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    02/20/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        CreatureType.cpp
  *
@@ -21,6 +21,13 @@ CreatureType::CreatureType()
 
 CreatureType::CreatureType(CharacterSize size, XPTier difficulty, std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints)
 : CombatantType(name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints)
+, size(CharacterSize::MEDIUM)
+, difficulty(XPTier::NORMAL)
+{ }
+
+
+CreatureType::CreatureType(CharacterSize size, XPTier difficulty, std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints, int anID)
+: CombatantType(name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints, anID)
 , size(CharacterSize::MEDIUM)
 , difficulty(XPTier::NORMAL)
 { }
@@ -60,8 +67,8 @@ std::string CreatureType::serialize(){
 }
 
 
-bool CreatureType::deserialize(std::string){
-    return false;
+CreatureType* CreatureType::deserialize(std::string){
+    return nullptr; 
 }
 
 

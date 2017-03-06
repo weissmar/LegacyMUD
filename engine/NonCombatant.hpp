@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/24/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.hpp
  *
@@ -26,6 +26,7 @@ namespace legacymud { namespace engine {
 
 class Area;
 class Quest;
+class Item;
 
 /*!
  * \details     This class defines in-game NPCs that sell and buy items and 
@@ -35,6 +36,7 @@ class NonCombatant: public Character {
     public:
         NonCombatant();
         NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
+        NonCombatant(Quest *aQuest, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
         /*NonCombatant(const NonCombatant &otherNPC);
         NonCombatant & operator=(const NonCombatant &otherNPC);
         virtual ~NonCombatant();*/
@@ -111,6 +113,29 @@ class NonCombatant: public Character {
         virtual bool removeVerbAlias(CommandEnum aCommand, std::string alias);
 
         /*!
+         * \brief   Adds the specified item to this NPC's inventory.
+         *
+         * \param[in] anItem    Specifies the item to add.
+         *
+         * \return  Returns a bool indicating whether or not adding the item was 
+         *          successful.
+         */
+        virtual bool addToInventory(Item *anItem);
+
+        /*!
+         * \brief   Removes the specified item from this NPC's inventory.
+         *
+         * \param[in] anItem    Specifies the item to remove.
+         *
+         * \note    If the item is equipped, this function unequips the item and
+         *          removes it from inventory.
+         *
+         * \return  Returns a bool indicating whether or not removing the item was 
+         *          successful.
+         */
+        virtual bool removeFromInventory(Item *anItem);
+
+        /*!
          * \brief   Gets the object type.
          *
          * \return  Returns an ObjectType indicating the actual class the object
@@ -126,24 +151,25 @@ class NonCombatant: public Character {
         virtual std::string serialize();
 
         /*!
-         * \brief   Deserializes this object after reading from file.
+         * \brief   Deserializes and creates an object of this type from the
+         *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
          *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
+         * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        virtual bool deserialize(std::string);
+        static NonCombatant* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command look.
          * 
+         * \param[in] aPlayer   Specifies the player that entered the command
          * \param[out] effects  Specifies the effects of the action.
          *
          * \return  Returns a std::string with the response to the command
          *          look.
          */
-        virtual std::string look(std::vector<EffectType> *effects); 
+        virtual std::string look(Player *aPlayer, std::vector<EffectType> *effects); 
 
         /*!
          * \brief   Executes the take command on this non-combatant.
@@ -214,7 +240,7 @@ class NonCombatant: public Character {
          * \param[out] aNPC     Specifies the non-combatant the player is talking to.
          * \param[out] effects  Specifies the effects of the action.
          *
-         * \return  Returns a std::string with the response to the command
+         * \return  Returns a std::string with the response to the command 
          *          talk.
          */
         virtual std::string talk(Player *aPlayer, NonCombatant *aNPC, std::vector<EffectType> *effects); 

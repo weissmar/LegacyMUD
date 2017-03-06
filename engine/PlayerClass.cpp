@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/20/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        PlayerClass.cpp
  *
@@ -21,6 +21,12 @@ PlayerClass::PlayerClass()
 
 PlayerClass::PlayerClass(int primaryStat, std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints)
 : CombatantType(name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints)
+, primaryStat(primaryStat)
+{ }
+
+
+PlayerClass::PlayerClass(int primaryStat, std::string name, SpecialSkill* skill, int attackBonus, int armorBonus, DamageType resistantTo, DamageType weakTo, float healPoints, int anID)
+: CombatantType(name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints, anID)
 , primaryStat(primaryStat)
 { }
 
@@ -49,8 +55,8 @@ std::string PlayerClass::serialize(){
 }
 
 
-bool PlayerClass::deserialize(std::string){
-    return false;
+PlayerClass* PlayerClass::deserialize(std::string){
+    return nullptr; 
 }
 
 

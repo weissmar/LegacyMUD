@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/26/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -29,6 +29,9 @@
 #include "ItemType.hpp"
 #include "Exit.hpp"
 #include "WeaponType.hpp"
+#include "Quest.hpp"
+#include "QuestStep.hpp"
+#include "SpecialSkill.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -76,12 +79,23 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     ItemType *anItemType, *anotherItemType, *aWeaponType;
     Item *anItem, *aWeapon;
     Container *aContainer;
+    Exit *anExit, *otherExit;
+    Area *anArea;
+    Quest *aQuest;
+    QuestStep *aStep, *anotherStep;
+    Player *aPlayer;
+    SpecialSkill *aSkill;
+    NonCombatant *aNPC, *anotherNPC;
 
     accountManager = anAccount;
     theServer = aServer;
 
+    // create a SpecialSkill
+    aSkill = new SpecialSkill("Totally Rad Healing", 3, DamageType::HEAL, 1, 3);
+    manager->addObject(aSkill, -1);
+
     // create a default player class
-    aClass = new PlayerClass(0, "default class", nullptr, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
+    aClass = new PlayerClass(0, "default class", aSkill, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
     manager->addObject(aClass, -1);
 
     // create a test item type and item
@@ -90,6 +104,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     anItem = new Item(&startArea, ItemPosition::GROUND, "red apple", anItemType);
     manager->addObject(anItem, -1);
     startArea.addItem(anItem);
+    anItem->addAction(CommandEnum::EAT, true, "The apple tastes sweet and refreshing.", EffectType::HEAL);
 
     // create a test item type and container
     anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
@@ -99,17 +114,52 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     startArea.addItem(aContainer);
 
     // create a test weapon type and item
-    aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 1, EquipmentSlot::RIGHT_HAND); 
+    aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 9, EquipmentSlot::RIGHT_HAND); 
     manager->addObject(aWeaponType, -1);
     aWeapon = new Item(&startArea, ItemPosition::GROUND, "small knife", aWeaponType);
     manager->addObject(aWeapon, -1);
     startArea.addItem(aWeapon);
 
-    return false;
+    // create a second area and two exits
+    anArea = new Area("test area", "You are in a vast space.", "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.", AreaSize::LARGE);
+    manager->addObject(anArea, -1);
+    anExit = new Exit(ExitDirection::NORTH, &startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+    manager->addObject(anExit, -1);
+    startArea.addExit(anExit);
+    otherExit = new Exit(ExitDirection::SOUTH, anArea, &startArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+    manager->addObject(otherExit, -1);
+    anArea->addExit(otherExit);
+
+    // create test NPCs
+    aNPC = new NonCombatant(nullptr, "Sophia", "a truly radical person", 50, &startArea, 100);
+    manager->addObject(aNPC, -1);
+    startArea.addCharacter(aNPC);
+    anotherNPC = new NonCombatant(nullptr, "Mark", "a kinda awesome person", 50, &startArea, 100);
+    manager->addObject(anotherNPC, -1);
+    startArea.addCharacter(anotherNPC);
+
+    // create test player, quest, quest step
+    aQuest = new Quest("Super Cool Quest", "The quest for the totally cool stuff", 30, nullptr);
+    manager->addObject(aQuest, -1);
+    aNPC->setQuest(aQuest);
+    anotherNPC->setQuest(aQuest);
+    aStep = new QuestStep(3, "Go to the next place and get the next thing", aWeaponType, aNPC, anotherNPC, "You did the next thing! Congrats!");
+    manager->addObject(aStep, -1);
+    aQuest->addStep(aStep);
+    anotherStep = new QuestStep(2, "Go to the first place and get the first thing", anItemType, nullptr, nullptr, "You did the first thing! Congrats!");
+    manager->addObject(anotherStep, -1);
+    aQuest->addStep(anotherStep);
+    aPlayer = new Player(CharacterSize::SMALL, aClass, "test", -1, "Tester1", "a super awesome person", &startArea);
+    aPlayer->addOrUpdateQuest(aQuest, 2, true);
+    manager->addObject(aPlayer, -1);
+    accountManager->createAccount("test", "test", true, aPlayer->getID());
+
+    return true;
 }
 
 
 bool GameLogic::newPlayerHandler(int fileDescriptor){
+    std::cout << "inside new player handler\n";
     bool success = false;
     bool validUsername = false;
     bool validPassword = false;
@@ -230,7 +280,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             // move player to start area
             startArea.addCharacter(newPlayer);
             newPlayer->setLocation(&startArea);
-            messagePlayer(newPlayer, startArea.getFullDescription(newPlayer->getID()));
+            messagePlayer(newPlayer, startArea.getFullDescription(newPlayer));
             message = "You see a player named " + playerName + " enter the area.";
             messageAreaPlayers(newPlayer, message, &startArea);
 
@@ -249,15 +299,20 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                 // check if user is already logged in
                 aPlayer = manager->getPlayerByUsername(username);
                 if (aPlayer != nullptr){
+                    std::cout << "before loading player into game\n";
                     // load player into game
                     manager->loadPlayer(username, fileDescriptor);
+                    std::cout << "after loading player\n";
                     aPlayer = manager->getPlayerByFD(fileDescriptor);
                     aPlayer->activate(fileDescriptor);
+                    std::cout << "after activate\n";
 
                     // move player to current location
                     anArea = aPlayer->getLocation();
+                    std::cout << "after get location\n";
                     anArea->addCharacter(aPlayer);
-                    messagePlayer(aPlayer, anArea->getFullDescription(aPlayer->getID()));
+                    std::cout << "after addCharacter\n";
+                    messagePlayer(aPlayer, anArea->getFullDescription(aPlayer));
                     message = "You see a player named " + aPlayer->getName() + " enter the area.";
                     messageAreaPlayers(aPlayer, message, anArea);
 
@@ -302,9 +357,13 @@ int GameLogic::validateStringNumber(std::string number, int min, int max){
 
 
 bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string &response){
+    std::cout << "inside getValueFromUser\n";
+    std::cout << "file descriptor = " + std::to_string(FD) + "\n";
+    std::cout << "message = " + outMessage + "\n";
     bool success;
 
     theServer->sendMsg(FD, outMessage);
+    std::cout << "after send message\n";
     success = theServer->receiveMsg(FD, response);
     if (!success){
         theServer->disconnectPlayer(FD);
@@ -1240,7 +1299,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
 
 InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *directObj = nullptr;
-std::cout << "inside clarifyDirect\n";
 
     if (result.direct.size() == 1){
         directObj = result.direct[0];
@@ -1254,7 +1312,6 @@ std::cout << "inside clarifyDirect\n";
 
 InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *indirectObj = nullptr;
-std::cout << "inside clarifyIndirect\n";
 
     if (result.indirect.size() == 1){
         indirectObj = result.indirect[0];
@@ -1268,8 +1325,6 @@ std::cout << "inside clarifyIndirect\n";
 
 bool GameLogic::helpCommand(Player *aPlayer){
     std::string message;
-
-    std::cout << "inside help command\n";
 
     if (aPlayer != nullptr){
         if (aPlayer->isEditMode()){
@@ -1386,10 +1441,10 @@ bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
 
     // if command is look
     if (param == nullptr){
-        message = aPlayer->getLocation()->getFullDescription(aPlayer->getID());
+        message = aPlayer->getLocation()->getFullDescription(aPlayer);
     } else {
         // command is look at
-        message = param->look(&effects);
+        message = param->look(aPlayer, &effects);
     }
     
     message += " ";
@@ -1525,6 +1580,7 @@ bool GameLogic::inventoryCommand(Player *aPlayer){
     for (auto item : inventory){
         message += item->getName() + "\015\012";
     }
+    message += std::to_string(aPlayer->getMoney()) + " money\015\012";
     message += "Equipped Items:\015\012";
     for (auto equip : equipment){
         switch (equip.first){
@@ -1583,7 +1639,10 @@ bool GameLogic::moreCommand(Player *aPlayer, InteractiveNoun *directObj){
     std::string message = "";
 
     if (directObj != nullptr){
-        message = directObj->more();
+        message = directObj->more(aPlayer);
+        if (message.compare("false") == 0){
+            message = "There isn't any more information available about that.";
+        }
         messagePlayer(aPlayer, message);
         return true;
     }
@@ -1677,12 +1736,66 @@ bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::unequipCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You unequip the " + directObj->getName() + ".";
+        resultMessage = directObj->unequip(aPlayer, nullptr, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't unequip the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
+// would be better to get rid of dynamic casts *******************************************************************
 bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+    Player *otherPlayer = nullptr;
+
+    if ((directObj != nullptr) && (indirectObj != nullptr)){
+        message = "You give the " + directObj->getName() + " to " + indirectObj->getName() + ".";
+        resultMessage = directObj->transfer(aPlayer, nullptr, nullptr, indirectObj, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't give the " + directObj->getName() + " to " + indirectObj->getName() + ".";
+    } else {
+        message += "\015\012" + resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+
+        if (indirectObj->getObjectType() == ObjectType::PLAYER){
+            otherPlayer = dynamic_cast<Player*>(indirectObj);
+            if (otherPlayer != nullptr){
+                message = "You receive a " + directObj->getName() + " from " + aPlayer->getName() + ".";
+                messagePlayer(otherPlayer, message);
+            }
+        }  
+    }
+
+    return success;
 }
 
 
@@ -1757,12 +1870,59 @@ bool GameLogic::quitCommand(Player *aPlayer){
 
 
 bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
-    return false;
+    std:: string message;
+    std::vector<EffectType> effects;
+    bool success = false;
+    Area *newArea = nullptr;
+    Area *currLocation = aPlayer->getLocation();
+
+    if (param != nullptr){
+        message = param->go(aPlayer, nullptr, nullptr, &effects);
+        success = true;
+    }
+    
+    if (message.compare("false") == 0){
+        message = "You can't go that way.";
+    } else {
+        newArea = aPlayer->getLocation();
+        message += newArea->getFullDescription(aPlayer);
+        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
+        messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+    return success;
 }
 
 
 bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You move the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->move(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't move the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 // add more Player class info?******************************************************************
@@ -1786,97 +1946,545 @@ bool GameLogic::statsCommand(Player *aPlayer){
 
 
 bool GameLogic::questsCommand(Player *aPlayer){
-    return false;
+    std::string message;
+    std::map<Quest*, std::pair<int, bool>> qList = aPlayer->getQuestList();
+
+    if (qList.size() == 0){
+        message = "You don't have any quests.";
+    } else {
+        message = "Quests:\015\012";
+        for (auto quest : qList){
+            message += quest.first->getName() + ": step ";
+            message += std::to_string(quest.second.first);
+            if (quest.second.second){
+                message += " complete";
+            }
+            message += "\015\012";
+        }
+    }
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 
 bool GameLogic::skillsCommand(Player *aPlayer){
-    return false;
+    std::string message;
+    SpecialSkill *aSkill = aPlayer->getPlayerClass()->getSpecialSkill();
+
+    if (aSkill != nullptr){
+        message = "Class Special Skill: \015\012";
+        message += aSkill->getName() + "\015\012";
+        message += "Damage: " + std::to_string(aSkill->getDamage());
+        switch(aSkill->getDamageType()){
+            case DamageType::NONE:
+                message += " neutral damage\015\012";
+                break;
+            case DamageType::CRUSHING:
+                message += " crushing damage\015\012";
+                break;
+            case DamageType::PIERCING:
+                message += " piercing damage\015\012";
+                break;
+            case DamageType::ELECTRIC:
+                message += " electric damage\015\012";
+                break;
+            case DamageType::FIRE:
+                message += " fire damage\015\012";
+                break;
+            case DamageType::WATER:
+                message += " water damage\015\012";
+                break;
+            case DamageType::WIND:
+                message += " wind damage\015\012";
+                break;
+            case DamageType::EARTH:
+                message += " earth damage\015\012";
+                break;
+            case DamageType::HEAL:
+                message += " healing\015\012";
+                break;
+        }
+        message += "Cost: " + std::to_string(aSkill->getCost()) + "\015\012";
+        message += "Cooldown " + std::to_string(aSkill->getCooldown()) + "\015\012";
+    } else {
+        message = "You don't have any skills.\015\012";
+    }
+    messagePlayer(aPlayer, message);
+    return true;
 }
 
 
 bool GameLogic::attackCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
+    // if player is in combat
+        // if player is in combat with specified character and player cooldown == 0 and combat queue is empty
+            // if indirectObj is not null
+                // if indirectObj is a skill
+                    // get damage from skill
+                    // get damage type from skill
+                    // get cost from skill
+                    // get cooldown from skill
+
+                    // check if player has enough special points to execute the skill
+
+                    // check attack bonus of player
+
+                    // check armor bonus, resistance, weakness, etc of character
+                    // roll for attack success
+                    // roll for attack damage + crit if relevant
+
+                    // subtract damage from creature health
+                    // subtract cost from player special points
+                    // add skill cooldown to cooldown
+                    // send message to player
+                // if indirectObj is a weapon
+                    // get damage from weapon
+                    // get damage type from weapon
+
+                    // check if weapon range is <= area size
+
+                    // check attack bonus of player
+
+                    // check armor bonus, resistance, weakness, etc of character
+                    // roll for attack success
+                    // roll for attack damage + crit if relevant
+
+                    // subtract damage from creature health
+                    // add weapon cooldown to cooldown
+                    // send message to player
+            // else
+                // get default attack damage
+
+                // check attack bonus of player
+
+                // check armor bonus, resistance, weakness, etc of character
+                // roll for attack success
+                // roll for attack damage + crit if relevant
+
+                // subtract damage from creature health
+                // add default cooldown to cooldown
+                // send message to player
+        // if player is in combat with specified character, but player cooldown > 0 or combat queue is not empty
+            // add command to combat queue  
+        // else player is in combat with another character
+            // send message to player (can't attack someone else while in combat)
+    // else player is not yet in combat
+        // start combat with specified attack
+
+    // check if combat is over
+
     return false;
 }
 
 
 bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *param){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (param != nullptr){
+        message = "You greet " + param->getName() + ".\015\012";
+        resultMessage = param->talk(aPlayer, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message += param->getName() + " looks at you blankly and says nothing.";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::shopCommand(Player *aPlayer){
-    return false;
+    std::string message = "";
+    NonCombatant *aNPC = aPlayer->getInConversation();
+    std::vector<Item*> inventory;
+    ItemType *anItemType;
+
+    if (aNPC != nullptr){
+        inventory = aNPC->getItemsInventory();
+        message = aNPC->getName() + "\'s Available Items:\015\012";
+        if (inventory.size() == 0){
+            message += "Nothing available for purchase right now.";
+        }
+        for (auto item : inventory){
+            // should some items not be available for sale? ***********************************************************
+            anItemType = item->getType();
+            message += item->getName() + ", ";
+            switch (anItemType->getRarity()){
+                case ItemRarity::COMMON:
+                    message += "common, ";
+                    break;
+                case ItemRarity::UNCOMMON:
+                    message += "uncommon, ";
+                    break;
+                case ItemRarity::RARE:
+                    message += "rare, ";
+                    break;
+                case ItemRarity::LEGENDARY:
+                    message += "legendary, ";
+                    break;
+                case ItemRarity::QUEST:
+                    message += "quest, ";
+                    break;
+            }
+            message += std::to_string(anItemType->getCost()) + " money\015\012";
+        }
+    } else {
+        message = "You need to talk to someone before you can shop.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 
 bool GameLogic::buyCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        resultMessage = directObj->buy(aPlayer, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't buy the " + directObj->getName() + ".";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::sellCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        resultMessage = directObj->sell(aPlayer, nullptr, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't sell the " + directObj->getName() + ".";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        resultMessage = directObj->search(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't search the " + directObj->getName() + ".";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
+// send message to affected other player? *********************************************************************
 bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
-    return false;
+    std::string message, resultMessage;
+    std::vector<EffectType> effects;
+    bool success = false;
+
+    if (directObj != nullptr){
+        if (indirectObj != nullptr){
+            resultMessage = directObj->useSkill(aPlayer, nullptr, indirectObj, nullptr, &effects);
+        } else {
+            resultMessage = directObj->useSkill(aPlayer, nullptr, aPlayer, nullptr, &effects);
+        }
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't use the " + directObj->getName() + " skill.";
+    } else {
+        message = resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::readCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You read the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->read(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't read the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::breakCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You break the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->breakIt(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't break the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::climbCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You climb the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->climb(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't climb the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::turnCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You turn the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->turn(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't turn the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::pushCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You push the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->push(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't push the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::pullCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You pull the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->pull(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't pull the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std:: string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You eat the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->eat(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't eat the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::vector<EffectType> effects;
+    std::string message, resultMessage;
+    bool success = false;
+
+    if (directObj != nullptr){
+        message = "You drink the " + directObj->getName() + ".\015\012";
+        resultMessage = directObj->drink(aPlayer, &effects);
+        success = true;
+    }
+
+    if (resultMessage.compare("false") == 0){
+        message = "You can't drink the " + directObj->getName() + ".";
+    } else {
+        message += resultMessage;
+    }
+
+    if (success){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 
 bool GameLogic::editModeCommand(Player *aPlayer){
-    if (aPlayer->isEditMode()){
-        aPlayer->setEditMode(false);
-        messagePlayer(aPlayer, "Leaving edit mode...");
+    if (accountManager->verifyAdmin(aPlayer->getUser())){
+        if (aPlayer->isEditMode()){
+            aPlayer->setEditMode(false);
+            messagePlayer(aPlayer, "Leaving edit mode...");
+        } else {
+            aPlayer->setEditMode(true);
+            messagePlayer(aPlayer, "Entering edit mode...");
+        }
     } else {
-        aPlayer->setEditMode(true);
-        messagePlayer(aPlayer, "Entering edit mode...");
+        messagePlayer(aPlayer, "You need to be an administrator to enter edit mode.");
     }
 
     return true;
@@ -1884,7 +2492,25 @@ bool GameLogic::editModeCommand(Player *aPlayer){
 
 
 bool GameLogic::warpCommand(Player *aPlayer, InteractiveNoun *param){
-    return false;
+    std::string message = "";
+    Area *newArea = nullptr;
+    Area *currLocation = aPlayer->getLocation();
+
+    if (param != nullptr){
+        message = param->warp(aPlayer, nullptr);
+    }
+    if (message.compare("false") == 0){
+        message = "You can't warp there.";
+    } else {
+        newArea = aPlayer->getLocation();
+        message += newArea->getFullDescription(aPlayer);
+        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
+        messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return true;
 }
 
 

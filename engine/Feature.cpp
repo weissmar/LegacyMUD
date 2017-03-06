@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -27,6 +27,20 @@ Feature::Feature(std::string name, std::string placement, Area *location, bool i
 , placement(placement)
 , location(location)
 {
+    std::string idAlias = "feature " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
+    InteractiveNoun::addNounAlias(name);
+}
+
+
+Feature::Feature(std::string name, std::string placement, Area *location, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription, int anID)
+: ConditionalElement(isConditional, anItemType, description, altDescription, anID)
+, name(name)
+, placement(placement)
+, location(location)
+{
+    std::string idAlias = "feature " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(name);
 }
 
@@ -138,62 +152,17 @@ std::string Feature::serialize(){
 }
 
 
-bool Feature::deserialize(std::string){
-    return false;
+Feature* Feature::deserialize(std::string){
+    return nullptr; 
 }
 
 
-std::string Feature::look(std::vector<EffectType> *effects){
+std::string Feature::look(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 }  
 
 
 std::string Feature::listen(std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::move(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::read(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::climb(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::turn(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::push(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::pull(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::eat(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Feature::drink(Player*, std::vector<EffectType> *effects){
     return "";
 } 
 

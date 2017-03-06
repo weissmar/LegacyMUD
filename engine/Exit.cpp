@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/25/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -10,27 +10,45 @@
 
 #include "Exit.hpp"
 #include "Area.hpp"
+#include "Character.hpp"
+#include "ItemType.hpp"
+#include "Player.hpp"
 
 namespace legacymud { namespace engine {
 
 Exit::Exit()
 : ConditionalElement()
 , direction(ExitDirection::NORTH)
-, effect(EffectType::NONE)
 , location(nullptr)
 , connectArea(nullptr)
 { }
 
 
-Exit::Exit(ExitDirection direction, EffectType effect, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
+Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription)
 : ConditionalElement(isConditional, anItemType, description, altDescription)
 , direction(direction)
-, effect(effect)
 , location(location)
 , connectArea(connectArea)
 {
+    std::string idAlias = "exit " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(description);
     InteractiveNoun::addNounAlias(altDescription);
+    addDirectionalAliases(direction);
+}
+
+
+Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isConditional, ItemType *anItemType, std::string description, std::string altDescription, int anID)
+: ConditionalElement(isConditional, anItemType, description, altDescription, anID)
+, direction(direction)
+, location(location)
+, connectArea(connectArea)
+{
+    std::string idAlias = "exit " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
+    InteractiveNoun::addNounAlias(description);
+    InteractiveNoun::addNounAlias(altDescription);
+    addDirectionalAliases(direction);
 }
 
 
@@ -47,6 +65,51 @@ Exit & Exit::operator=(const Exit &otherExit){
 Exit::~Exit(){
 
 }*/
+
+void Exit::addDirectionalAliases(ExitDirection direction){
+    switch (direction){
+        case ExitDirection::NORTH:
+            InteractiveNoun::addNounAlias("north");
+            InteractiveNoun::addNounAlias("n");
+            break;
+        case ExitDirection::SOUTH:
+            InteractiveNoun::addNounAlias("south");
+            InteractiveNoun::addNounAlias("s");
+            break;
+        case ExitDirection::EAST:
+            InteractiveNoun::addNounAlias("east");
+            InteractiveNoun::addNounAlias("e");
+            break;
+        case ExitDirection::WEST:
+            InteractiveNoun::addNounAlias("west");
+            InteractiveNoun::addNounAlias("w");
+            break;
+        case ExitDirection::NORTHEAST:
+            InteractiveNoun::addNounAlias("northeast");
+            InteractiveNoun::addNounAlias("ne");
+            break;
+        case ExitDirection::NORTHWEST:
+            InteractiveNoun::addNounAlias("northwest");
+            InteractiveNoun::addNounAlias("nw");
+            break;
+        case ExitDirection::SOUTHEAST:
+            InteractiveNoun::addNounAlias("southeast");
+            InteractiveNoun::addNounAlias("se");
+            break;
+        case ExitDirection::SOUTHWEST:
+            InteractiveNoun::addNounAlias("southwest");
+            InteractiveNoun::addNounAlias("sw");
+            break;
+        case ExitDirection::UP:
+            InteractiveNoun::addNounAlias("up");
+            InteractiveNoun::addNounAlias("u");
+            break;
+        case ExitDirection::DOWN:
+            InteractiveNoun::addNounAlias("down");
+            InteractiveNoun::addNounAlias("d");
+            break;
+    }
+}
 
 
 ExitDirection Exit::getDirection() const{
@@ -96,11 +159,6 @@ std::string Exit::getDirectionString() const{
 }
 
 
-EffectType Exit::getEffect() const{
-    return effect.load();
-}
-
-
 Area* Exit::getLocation() const{
     std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
@@ -115,13 +173,6 @@ Area* Exit::getConnectArea() const{
 
 bool Exit::setDirection(ExitDirection aDirection){
     direction.store(aDirection);
-
-    return true;
-}
-
-
-bool Exit::setEffect(EffectType anEffect){
-    effect.store(anEffect);
 
     return true;
 }
@@ -216,12 +267,12 @@ std::string Exit::serialize(){
 }
 
 
-bool Exit::deserialize(std::string){
-    return false;
+Exit* Exit::deserialize(std::string){
+    return nullptr; 
 }
 
 
-std::string Exit::look(std::vector<EffectType> *effects){
+std::string Exit::look(Player *aPlayer, std::vector<EffectType> *effects){
     return "";
 }  
 
@@ -231,49 +282,57 @@ std::string Exit::listen(std::vector<EffectType> *effects){
 } 
 
 
-std::string Exit::move(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
+std::string Exit::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
+    std::string message, resultMsg;
+    EffectType anEffect = EffectType::NONE;
+    bool conditional = isConditional();
+    Area *location = getLocation();
+    Area *connectingArea = getConnectArea();
+    ItemType *anItemType = getConditionItem();
+    Character *aCharacter = nullptr;
+    bool hasAccess = true;
 
+    if (character != nullptr){
+        // character is the one going
+        aCharacter = dynamic_cast<Character*>(character);
 
-std::string Exit::read(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
+    } else {
+        // player is the one going
+        aCharacter = aPlayer;
+    }
 
+    if ((conditional) && (anItemType != nullptr)){
+        hasAccess = false;
+        // check if the character has the conditional item
+        if ((aCharacter != nullptr) && (aCharacter->hasItem(anItemType))){
+            // character has the required item
+            message = "You go towards " + getAltDescription() + ".\015\012";
+            hasAccess = true;
+        } else {
+            message = "false";
+        }
+    } else {
+        message = "You go towards " + getDescription() + ".\015\012";
+    }
 
-std::string Exit::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
+    if (hasAccess){
+        location->removeCharacter(aCharacter); 
+        connectingArea->addCharacter(aCharacter);
 
+        // get message and effects of GO on this object
+        resultMsg += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
 
-std::string Exit::climb(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::turn(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::push(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::pull(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::eat(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string Exit::drink(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
+        // call this function on character
+        message += aCharacter->go(aPlayer, connectingArea, character, effects);
+    }
+    return message;
+}
 
 
 InteractiveNoun* Exit::copy(){
@@ -295,7 +354,6 @@ std::map<std::string, DataType> Exit::getAttributeSignature(){
     std::map<std::string, DataType> signature;
 
     signature["direction"] = DataType::EXIT_DIRECTION;
-    signature["effect"] = DataType::EFFECT_TYPE;
     signature["connecting area"] = DataType::AREA_PTR;
     signature["is conditional"] = DataType::BOOL_TYPE;
     signature["condition item"] = DataType::ITEM_TYPE_PTR;

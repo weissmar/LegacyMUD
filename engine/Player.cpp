@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    02/26/2017
+ * \modified    03/03/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -12,6 +12,7 @@
 #include "Player.hpp"
 #include "Area.hpp"
 #include "Quest.hpp"
+#include "QuestStep.hpp"
 #include "NonCombatant.hpp"
 #include "PlayerClass.hpp"
 #include "InteractiveNoun.hpp"
@@ -36,12 +37,12 @@ Player::Player()
 , username("")
 , active(false)
 , fileDescriptor(-1)
-, editMode(false)
+, editMode(false) 
 { }
 
 
 Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, std::string name, std::string description, Area *startArea)
-: Combatant(START_HEALTH, nullptr, START_SPECIAL_PTS, name, description, START_MONEY, nullptr, MAX_INVENTORY_WEIGHT)
+: Combatant(START_HEALTH, startArea, START_SPECIAL_PTS, name, description, START_MONEY, startArea, MAX_INVENTORY_WEIGHT)
 , experiencePoints(0)
 , level(1)
 , size(size)
@@ -51,7 +52,10 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , active(true)
 , fileDescriptor(FD)
 , editMode(false)
-{ }
+{
+    addAllLexicalData(aClass); 
+    addAllLexicalData(aClass->getSpecialSkill());
+}
 
 
 Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight)
@@ -65,7 +69,27 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , active(true)
 , fileDescriptor(FD)
 , editMode(false)
-{ }
+{ 
+    addAllLexicalData(aClass); 
+    addAllLexicalData(aClass->getSpecialSkill());
+}
+
+
+Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+: Combatant(maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID)
+, experiencePoints(0)
+, level(1)
+, size(size)
+, playerClass(aClass)
+, inConversation(nullptr)
+, username(username)
+, active(false)
+, fileDescriptor(FD)
+, editMode(false)
+{ 
+    addAllLexicalData(aClass); 
+    addAllLexicalData(aClass->getSpecialSkill());
+}
 
 
 /*Player::Player(const Player &otherPlayer){
@@ -137,9 +161,22 @@ bool Player::isEditMode() const{
 }
 
 
-std::vector<std::pair<Quest*, int>> Player::getQuestList() const{
+std::map<Quest*, std::pair<int, bool>> Player::getQuestList() const{
     std::lock_guard<std::mutex> questListLock(questListMutex);
     return questList;
+}
+
+
+std::pair<int, bool> Player::getQuestCurrStep(Quest *aQuest) const{
+    if (aQuest != nullptr){
+        std::lock_guard<std::mutex> questListLock(questListMutex);
+        int found = questList.count(aQuest);
+
+        if (found == 1){
+            return questList.at(aQuest);
+        }
+    }
+    return std::make_pair(-1, false);
 }
 
 
@@ -171,7 +208,9 @@ bool Player::setSize(CharacterSize size){
 
 bool Player::setPlayerClass(PlayerClass *aClass){
     std::lock_guard<std::mutex> playerClassLock(playerClassMutex);
+    removeAllLexicalData(playerClass);
     playerClass = aClass;
+    addAllLexicalData(playerClass);
 
     return true;
 }
@@ -234,14 +273,28 @@ bool Player::setEditMode(bool editing){
 }
 
 
-bool Player::addQuest(Quest *aQuest, int step){
+bool Player::addOrUpdateQuest(Quest *aQuest, int step, bool complete){
+    int found;
+
+    if (aQuest != nullptr){
+        std::lock_guard<std::mutex> questListLock(questListMutex);
+        found = questList.count(aQuest);
+
+        if (found != 1){
+            // add quest
+            questList[aQuest] = std::make_pair(step, complete);
+            addAllLexicalData(aQuest);
+            addAllLexicalData(aQuest->getStep(step));
+        } else {
+            // update quest
+            removeAllLexicalData(aQuest->getStep(questList.at(aQuest).first));
+            questList.at(aQuest) = std::make_pair(step, complete);
+            addAllLexicalData(aQuest->getStep(step));
+        }
+        return true;
+    }   
     return false;
 }
-
-
-bool Player::updateQuest(Quest *aQuest, int step){
-    return false;
-} 
 
 
 bool Player::addToInventory(Item *anItem){
@@ -433,24 +486,40 @@ std::string Player::serialize(){
 }
 
 
-bool Player::deserialize(std::string){
-    return false;
+Player* Player::deserialize(std::string){
+    return nullptr; 
 }
 
 
-std::string Player::look(std::vector<EffectType> *effects){
-    return "";
+std::string Player::look(Player *aPlayer, std::vector<EffectType> *effects){
+    std::string message = getName() + " is " + getDescription() + ".";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 }  
 
 
 std::string Player::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContainer, InteractiveNoun *aCharacters, std::vector<EffectType> *effects){
     std::string message = "";
+    std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
     bool success;
 
     success = addToInventory(anItem);
     if (success){
-        message = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        resultMsg = getTextAndEffect(CommandEnum::TAKE, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -464,7 +533,7 @@ std::string Player::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContai
 
 std::string Player::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
     std::string message = "";
-    std::string strSuccess;
+    std::string strSuccess, resultMsg;
     EffectType anEffect = EffectType::NONE;
     bool success = false;
 
@@ -482,7 +551,10 @@ std::string Player::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
     }
 
     if (success){
-        message += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        resultMsg += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
         if (anEffect != EffectType::NONE){
             effects->push_back(anEffect);
         }
@@ -492,53 +564,253 @@ std::string Player::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
 }
 
 
-std::string Player::unequip(Player *aPlayer, Item *anItem, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Player::unequip(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+    bool success = false;
+
+    if (anItem != nullptr){
+        success = unequipItem(anItem);
+    }
+
+    if (success){
+        resultMsg += getTextAndEffect(CommandEnum::EQUIP, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
-std::string Player::transfer(Player *aPlayer, Item *anItem, InteractiveNoun*, InteractiveNoun*, std::vector<EffectType> *effects){
-    return "";
+std::string Player::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCharacter, InteractiveNoun *destination, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        if (aPlayer == this){
+            // item is being removed from this player
+            success = removeFromInventory(anItem);
+        } else if ((destination != nullptr) && (destination->getID() == this->getID())){
+            // item is being added to this player
+            success = addToInventory(anItem);
+        }
+    }
+
+    if (success){
+        resultMsg += getTextAndEffect(CommandEnum::TRANSFER, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
 std::string Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anArea != nullptr){
+        setLocation(anArea);
+
+        // if the player is in conversation, end the conversation
+        if (getInConversation() != nullptr){
+            setInConversation(nullptr);
+        }
+
+        resultMsg += getTextAndEffect(CommandEnum::GO, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
 std::string Player::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+
+    return message;
 }
 
 
-std::string Player::talk(Player *aPlayer, NonCombatant*, std::vector<EffectType> *effects){
-    return "";
+std::string Player::talk(Player *aPlayer, NonCombatant *aNPC, std::vector<EffectType> *effects){
+    std::string message = "";
+    std::string resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    if (aNPC != nullptr){
+        setInConversation(aNPC);
+
+        resultMsg += getTextAndEffect(CommandEnum::TALK, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 } 
 
-
+// would be better to have NonCombatant do their own selling **************************************************
 std::string Player::buy(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    int price;
+    EffectType anEffect = EffectType::NONE;
+
+    if (anItem != nullptr){
+        // check price  
+        price = anItem->getType()->getCost();
+        if (price > getMoney()){
+            // can't afford the item
+            message = "fYou don't have enough money to buy the " + anItem->getName() + ".";
+            return message;
+        } else {
+            // buy the item
+            aPlayer->subtractMoney(price);
+            aPlayer->getInConversation()->addMoney(price);
+            aPlayer->getInConversation()->removeFromInventory(anItem);
+            aPlayer->addToInventory(anItem);
+            success = true;
+            message = "You bought the " + anItem->getName() + " for " + std::to_string(price) + " money.";
+        }
+    }
+
+    if (success){
+        resultMsg = getTextAndEffect(CommandEnum::BUY, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
+// would be better to have NonCombatant do their own buying **************************************************
 std::string Player::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMsg;
+    bool success = false;
+    int price;
+    EffectType anEffect = EffectType::NONE;
+    NonCombatant *aNPC = getInConversation();
+
+    if (anItem != nullptr){
+        // check price  
+        price = anItem->getType()->getCost();
+        if (price > aNPC->getMoney()){
+            // NPC can't afford the item
+            message = "f" + aNPC->getName() + " doesn't have enough money to buy the " + anItem->getName() + ".";
+            return message;
+        } else {
+            // buy the item
+            aNPC->subtractMoney(price);
+            aPlayer->addMoney(price);
+            aPlayer->removeFromInventory(anItem);
+            aNPC->addToInventory(anItem);
+            success = true;
+            message = "You sold the " + anItem->getName() + " to " + aNPC->getName() + " for " + std::to_string(price) + " money.";
+        }
+    }
+
+    if (success){
+        resultMsg = getTextAndEffect(CommandEnum::BUY, anEffect);
+        if (resultMsg.compare("false") != 0){
+            message += resultMsg;
+        }
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
+        }
+    }
+
+    return message;
 }
 
 
-std::string Player::search(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects){
+    std::string message, resultMsg;
+    EffectType anEffect = EffectType::NONE;
+    int healAmount = aSkill->getDamage();
+    int skillCost = aSkill->getCost();
+
+    if ((this == aPlayer) && (aRecipient != nullptr)){
+        // this is the player using the skill
+        if (getPlayerClass()->getSpecialSkill() == aSkill){
+            // the specified skill can be used 
+            if (getCurrentSpecialPts() >= skillCost){
+                // the player has enough points to use the skill
+                subtractFromCurrSpecialPts(skillCost);
+                aRecipient->addToCurrentHealth(healAmount);
+                message = "You used the " + aSkill->getName() + " skill on ";
+                if (aPlayer == aRecipient){
+                    message += "yourself.\015\012You gained ";
+                } else {
+                    message += aRecipient->getName() + ". They gained ";
+                }
+                message += std::to_string(healAmount) + " health.";
+
+                // get the effects of useSkill
+                resultMsg = getTextAndEffect(CommandEnum::USE_SKILL, anEffect);
+                if (resultMsg.compare("false") != 0){
+                    message += resultMsg;
+                }
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
+            } else {
+                message = "fYou don't have enough special points to use the " + aSkill->getName() + " skill.";
+            }
+        } else {
+            // the specified skill isn't available for this player to use
+            message = "fYou can't use the " + aSkill->getName() + " skill.";
+        }
+    } else {
+        // this is the recipient of the skill
+        message = aPlayer->useSkill(aPlayer, aSkill, nullptr, this, effects);
+    }
+
+    return message;
 } 
 
 
-std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Combatant *aRecipient, bool playerSkill, std::vector<EffectType> *effects){
-    return "";
-} 
+std::string Player::warp(Player *aPlayer, Area *anArea){
+    std::string message = "";
 
+    if (anArea != nullptr){
+        setLocation(anArea);
 
-std::string Player::warp(Player *aPlayer, Area*){
-    return "";
+        // if the player is in conversation, end the conversation
+        if (getInConversation() != nullptr){
+            setInConversation(nullptr);
+        }
+    }
+
+    return message;
 } 
 
 

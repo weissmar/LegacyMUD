@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.hpp
  *
@@ -39,6 +39,7 @@ class ItemType: public InteractiveNoun {
     public:
         ItemType();
         ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType);
+        ItemType(int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType, int anID);
 
         /*!
          * \brief   Gets the weight of this item type.
@@ -262,14 +263,14 @@ class ItemType: public InteractiveNoun {
         virtual std::string serialize();
 
         /*!
-         * \brief   Deserializes this object after reading from file.
+         * \brief   Deserializes and creates an object of this type from the
+         *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
          *
-         * \return  Returns a bool indicating whether or not deserializing
-         *          the string into an Action succeeded.
+         * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        virtual bool deserialize(std::string);
+        static ItemType* deserialize(std::string);
 
         /*!
          * \brief   Gets the response of this object to the command move.

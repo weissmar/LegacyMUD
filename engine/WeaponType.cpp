@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/23/2017
+ * \modified    03/01/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.cpp
  *
@@ -23,6 +23,15 @@ WeaponType::WeaponType()
 
 WeaponType::WeaponType(int damage, DamageType type, AreaSize range, int critMultiplier, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType)
 : ItemType(weight, rarity, description, name, cost, slotType)
+, damage(damage)
+, damageType(type)
+, range(range)
+, critMultiplier(critMultiplier)
+{ }
+
+
+WeaponType::WeaponType(int damage, DamageType type, AreaSize range, int critMultiplier, int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType, int anID)
+: ItemType(weight, rarity, description, name, cost, slotType, anID)
 , damage(damage)
 , damageType(type)
 , range(range)
@@ -88,54 +97,9 @@ std::string WeaponType::serialize(){
 }
 
 
-bool WeaponType::deserialize(std::string){
-    return false;
+WeaponType* WeaponType::deserialize(std::string){
+    return nullptr; 
 }
-
-
-std::string WeaponType::move(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::read(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::breakIt(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::climb(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::turn(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::push(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::pull(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::eat(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
-
-
-std::string WeaponType::drink(Player*, std::vector<EffectType> *effects){
-    return "";
-} 
 
 
 InteractiveNoun* WeaponType::copy(){
