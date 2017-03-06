@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/03/2017
+ * \modified    03/06/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -83,7 +83,7 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , playerClass(aClass)
 , inConversation(nullptr)
 , username(username)
-, active(true)
+, active(false)
 , fileDescriptor(FD)
 , editMode(false)
 { 

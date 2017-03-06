@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/05/2017
+ * \modified    03/06/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -495,176 +495,544 @@ int GameLogic::rollDice(int numSides, int numDice){
 
 
 bool GameLogic::createObject(Player *aPlayer, ObjectType type){
-    std::map<std::string, DataType> signature;
     bool success = false;
 
     switch (type){
         case ObjectType::NONE:
             break;
         case ObjectType::AREA:
-            signature = Area::getAttributeSignature();
+            success = createArea(aPlayer);
             break;
         case ObjectType::ARMOR_TYPE:
-            signature = ArmorType::getAttributeSignature();
+            success = createArmorType(aPlayer);
             break;
         case ObjectType::CONTAINER:
-            signature = Container::getAttributeSignature();
+            success = createContainer(aPlayer);
             break;
         case ObjectType::CREATURE:
-            signature = Creature::getAttributeSignature();
+            success = createCreature(aPlayer);
             break;
         case ObjectType::CREATURE_TYPE:
-            signature = CreatureType::getAttributeSignature();
+            success = createCreatureType(aPlayer);
             break;
         case ObjectType::EXIT:
-            signature = Exit::getAttributeSignature();
+            success = createExit(aPlayer);
             break;
         case ObjectType::FEATURE:
-            signature = Feature::getAttributeSignature();
+            success = createFeature(aPlayer);
             break;
         case ObjectType::ITEM:
-            signature = Item::getAttributeSignature();
+            success = createItem(aPlayer);
             break;
         case ObjectType::ITEM_TYPE:
-            signature = ItemType::getAttributeSignature();
+            success = createItemType(aPlayer);
             break;
         case ObjectType::NON_COMBATANT:
-            signature = NonCombatant::getAttributeSignature();
+            success = createNonCombatant(aPlayer);
             break;
         case ObjectType::PLAYER:
-            signature = Player::getAttributeSignature();
+            success = createPlayer(aPlayer);
             break;
         case ObjectType::PLAYER_CLASS:
-            signature = PlayerClass::getAttributeSignature();
+            success = createPlayerClass(aPlayer);
             break;
         case ObjectType::QUEST:
-            signature = Quest::getAttributeSignature();
+            success = createQuest(aPlayer);
             break;
         case ObjectType::QUEST_STEP:
-            signature = QuestStep::getAttributeSignature();
+            success = createQuestStep(aPlayer);
             break;
         case ObjectType::SPECIAL_SKILL:
-            signature = SpecialSkill::getAttributeSignature();
+            success = createSpecialSkill(aPlayer);
             break;
         case ObjectType::WEAPON_TYPE:
-            signature = WeaponType::getAttributeSignature();
+            success = createWeaponType(aPlayer);
             break;
     }
-
-    success = createObjectFromSignature(aPlayer, signature);
 
     return success;
 }
 
 
-bool GameLogic::createObjectFromSignature(Player *aPlayer, std::map<std::string, DataType> signature){
-    bool success = false;
+bool GameLogic::createArea(Player *aPlayer){
+    Area *newArea = nullptr;
+    std::string name = "";
+    std::string shortDescription = "";
+    std::string longDescription = "";
+    AreaSize size;
 
-    int intParam;
-    bool boolParam;
-    float floatParam;
-    std::string stringParam;
-    EffectType effectTypeParam;
-    AreaSize areaSizeParam;
-    DamageType damageTypeParam;
-    ItemRarity itemRarityParam;
-    EquipmentSlot equipmentSlotParam;
-    ItemPosition itemPositionParam;
-    CharacterSize characterSizeParam;
-    ExitDirection exitDirectionParam;
-    XPTier xpTierParam;
-    Area *areaParam;
-    SpecialSkill *specialSkillParam;
-    ItemType *itemTypeParam;
-    InteractiveNoun *interactiveNounParam;
-    CreatureType *creatureTypeParam;
-    Quest *questParam;
-    PlayerClass *playerClassParam;
-    Item *itemParam;
-    NonCombatant *nonCombatantParam;
+    addPlayerMessageQueue(aPlayer);
 
-    if (signature.size() == 0){
-        success = false;
-    } else {
-        addPlayerMessageQueue(aPlayer);
-        for (auto element : signature){
-            switch(element.second){
-                case DataType::INT_TYPE:
-                    intParam = getIntParameter(aPlayer, element.first);
-                    //************************************************************** add to some struct? ***********************
-                    break;
-                case DataType::BOOL_TYPE:
-                    boolParam = getBoolParameter(aPlayer, element.first);
-                    break;
-                case DataType::FLOAT_TYPE:
-                    floatParam = getFloatParameter(aPlayer, element.first);
-                    break;
-                case DataType::STRING_TYPE:
-                    stringParam = getStringParameter(aPlayer, element.first);
-                    break;
-                case DataType::EFFECT_TYPE:
-                    effectTypeParam = getEffectTypeParameter(aPlayer, element.first);
-                    break;
-                case DataType::AREA_SIZE:
-                    areaSizeParam = getAreaSizeParameter(aPlayer, element.first);
-                    break;
-                case DataType::DAMAGE_TYPE:
-                    damageTypeParam = getDamageTypeParameter(aPlayer, element.first);
-                    break;
-                case DataType::ITEM_RARITY:
-                    itemRarityParam = getItemRarityParameter(aPlayer, element.first);
-                    break;
-                case DataType::EQUIPMENT_SLOT:
-                    equipmentSlotParam = getEquimentSlotParameter(aPlayer, element.first);
-                    break;
-                case DataType::ITEM_POSITION:
-                    itemPositionParam = getItemPositionParameter(aPlayer, element.first);
-                    break;
-                case DataType::CHARACTER_SIZE:
-                    characterSizeParam = getCharacterSizeParameter(aPlayer, element.first);
-                    break;
-                case DataType::EXIT_DIRECTION:
-                    exitDirectionParam = getExitDirectionParameter(aPlayer, element.first);
-                    break;
-                case DataType::X_P_TIER:
-                    xpTierParam = getXPTierParameter(aPlayer, element.first);
-                    break;
-                case DataType::AREA_PTR:
-                    areaParam = getAreaParameter(aPlayer, element.first);
-                    break;
-                case DataType::SPECIAL_SKILL_PTR:
-                    specialSkillParam = getSpecialSkillParameter(aPlayer, element.first);
-                    break;
-                case DataType::ITEM_TYPE_PTR:
-                    itemTypeParam = getItemTypeParameter(aPlayer, element.first);
-                    break;
-                case DataType::INTERACTIVE_NOUN_PTR: 
-                    interactiveNounParam = getInteractiveNounParameter(aPlayer, element.first);
-                    break;
-                case DataType::CREATURE_TYPE_PTR:
-                    creatureTypeParam = getCreatureTypeParameter(aPlayer, element.first);
-                    break;
-                case DataType::QUEST_PTR:
-                    questParam = getQuestParameter(aPlayer, element.first);
-                    break;
-                case DataType::PLAYER_CLASS_PTR:
-                    playerClassParam = getPlayerClassParameter(aPlayer, element.first);
-                    break;
-                case DataType::ITEM_PTR:
-                    itemParam = getItemParameter(aPlayer, element.first);
-                    break;
-                case DataType::NON_COMBATANT_PTR:
-                    nonCombatantParam = getNonCombatantParameter(aPlayer, element.first);
-                    break;
-                default:
-                    // this shouldn't be executed
-                    break;
-            }
-        }
-        removePlayerMessageQueue(aPlayer);
-    }
+    name = getStringParameter(aPlayer, "name");
+    shortDescription = getStringParameter(aPlayer, "short description");
+    longDescription = getStringParameter(aPlayer, "long description");
+    size = getAreaSizeParameter(aPlayer, "aize");
 
-    return success;
+    removePlayerMessageQueue(aPlayer);
+
+    newArea = new Area(name, shortDescription, longDescription, size);
+
+    manager->addObject(newArea, -1);
+
+    messagePlayer(aPlayer, "You have created a new area. The ID of the new area is " + std::to_string(newArea->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createArmorType(Player *aPlayer){
+    ArmorType *newArmorType = nullptr;
+    int bonus;
+    DamageType resistantTo;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+
+    addPlayerMessageQueue(aPlayer);
+
+    bonus = getIntParameter(aPlayer, "armor bonus");
+    resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+    weight = getIntParameter(aPlayer, "weight");
+    rarity = getItemRarityParameter(aPlayer, "rarity");
+    description = getStringParameter(aPlayer, "description");
+    name = getStringParameter(aPlayer, "name");
+    cost = getIntParameter(aPlayer, "cost");
+    slotType = getEquimentSlotParameter(aPlayer, "slot type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newArmorType = new ArmorType(bonus, resistantTo, weight, rarity, description, name, cost, slotType);
+
+    manager->addObject(newArmorType, -1);
+
+    messagePlayer(aPlayer, "You have created a new armor type. The ID of the new armor type is " + std::to_string(newArmorType->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createContainer(Player *aPlayer){
+    Container *newContainer = nullptr;
+    int capacity;
+    InteractiveNoun *location = nullptr;
+    ItemPosition position;
+    std::string name;
+    ItemType *type = nullptr;
+
+    addPlayerMessageQueue(aPlayer);
+
+    capacity = getIntParameter(aPlayer, "capacity");
+    location = getInteractiveNounParameter(aPlayer, "location");
+    position = getItemPositionParameter(aPlayer, "position");
+    name = getStringParameter(aPlayer, "name");
+    type = getItemTypeParameter(aPlayer, "type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newContainer = new Container(capacity, location, position, name, type);
+
+    manager->addObject(newContainer, -1);
+    // add to location and message players in location if applicable ***************************************************************************************************************************
+
+    messagePlayer(aPlayer, "You have created a new container. The ID of the new container is " + std::to_string(newContainer->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createCreature(Player *aPlayer){
+    Creature *newCreature = nullptr;
+    CreatureType *aType = nullptr;
+    bool ambulatory;
+    int maxHealth;
+    Area *spawnLocation = nullptr;
+    int maxSpecialPts;
+    std::string name;
+    std::string description;
+    int money;
+    Area *aLocation = nullptr;
+    int maxInventoryWeight;
+
+    addPlayerMessageQueue(aPlayer);
+
+    aType = getCreatureTypeParameter(aPlayer, "creature type");
+    ambulatory = getBoolParameter(aPlayer, "ambulatory");
+    maxHealth = getIntParameter(aPlayer, "maximum health");
+    spawnLocation = getAreaParameter(aPlayer, "spawn location");
+    maxSpecialPts = getIntParameter(aPlayer, "maximum special points");
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    money = getIntParameter(aPlayer, "money");
+    aLocation = getAreaParameter(aPlayer, "current location");
+    maxInventoryWeight = getIntParameter(aPlayer, "maximum inventory weight");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newCreature = new Creature(aType, ambulatory, maxHealth, spawnLocation, maxSpecialPts, name, description, money, aLocation, maxInventoryWeight);
+
+    manager->addObject(newCreature, -1);
+    // add to location and message players there ***************************************************************************************************************************
+
+    messagePlayer(aPlayer, "You have created a new creature. The ID of the new creature is " + std::to_string(newCreature->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createCreatureType(Player *aPlayer){
+    CreatureType *newCreatureType = nullptr;
+    CharacterSize size;
+    XPTier difficulty;
+    std::string name;
+    SpecialSkill *skill = nullptr;
+    int attackBonus;
+    int armorBonus;
+    DamageType resistantTo;
+    DamageType weakTo;
+    float healPoints;
+
+    addPlayerMessageQueue(aPlayer);
+
+    size = getCharacterSizeParameter(aPlayer, "size");
+    difficulty = getXPTierParameter(aPlayer, "difficulty");
+    name = getStringParameter(aPlayer, "name");
+    skill = getSpecialSkillParameter(aPlayer, "special skill");
+    attackBonus = getIntParameter(aPlayer, "attack bonus");
+    armorBonus = getIntParameter(aPlayer, "armor bonus");
+    resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+    weakTo = getDamageTypeParameter(aPlayer, "weakness type");
+    healPoints = getFloatParameter(aPlayer, "healing point rate");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newCreatureType = new CreatureType(size, difficulty, name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints);
+
+    manager->addObject(newCreatureType, -1);
+
+    messagePlayer(aPlayer, "You have created a new creature type. The ID of the new creature type is " + std::to_string(newCreatureType->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createExit(Player *aPlayer){
+    Exit *newExit = nullptr;
+    ExitDirection direction;
+    Area *location = nullptr;
+    Area *connectArea = nullptr;
+    bool isConditional;
+    ItemType *anItemType = nullptr;
+    std::string description;
+    std::string altDescription;
+
+    addPlayerMessageQueue(aPlayer);
+
+    direction = getExitDirectionParameter(aPlayer, "direction");
+    location = getAreaParameter(aPlayer, "location");
+    connectArea = getAreaParameter(aPlayer, "connecting area");
+    isConditional = getBoolParameter(aPlayer, "conditional");
+    anItemType = getItemTypeParameter(aPlayer, "conditional item type");
+    description = getStringParameter(aPlayer, "description");
+    altDescription = getStringParameter(aPlayer, "alternate description");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newExit = new Exit(direction, location, connectArea, isConditional, anItemType, description, altDescription);
+
+    manager->addObject(newExit, -1);
+    // add to location and message players there ***************************************************************************************************************************
+
+    messagePlayer(aPlayer, "You have created a new exit. The ID of the new exit is " + std::to_string(newExit->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createFeature(Player *aPlayer){
+    Feature *newFeature = nullptr;
+    std::string name;
+    std::string placement;
+    Area *location = nullptr;
+    bool isConditional;
+    ItemType *anItemType = nullptr;
+    std::string description;
+    std::string altDescription;
+
+    addPlayerMessageQueue(aPlayer);
+
+    name = getStringParameter(aPlayer, "name");
+    placement = getStringParameter(aPlayer, "placement");
+    location = getAreaParameter(aPlayer, "location");
+    isConditional = getBoolParameter(aPlayer, "conditional");
+    anItemType = getItemTypeParameter(aPlayer, "conditional item type");
+    description = getStringParameter(aPlayer, "description");
+    altDescription = getStringParameter(aPlayer, "alternate description");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newFeature = new Feature(name, placement, location, isConditional, anItemType, description, altDescription);
+
+    manager->addObject(newFeature, -1);
+    // add to location and message players there ***************************************************************************************************************************
+
+    messagePlayer(aPlayer, "You have created a new feature. The ID of the new feature is " + std::to_string(newFeature->getID()) + ".");
+
+    return true;
+
+}
+
+
+bool GameLogic::createItem(Player *aPlayer){
+    Item *newItem = nullptr;
+    InteractiveNoun* location = nullptr;
+    ItemPosition position;
+    std::string name;
+    ItemType *type = nullptr;
+
+    addPlayerMessageQueue(aPlayer);
+
+    location = getInteractiveNounParameter(aPlayer, "location");
+    position = getItemPositionParameter(aPlayer, "position");
+    name = getStringParameter(aPlayer, "name");
+    type = getItemTypeParameter(aPlayer, "type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newItem = new Item(location, position, name, type);
+
+    manager->addObject(newItem, -1);
+    // add to location and message players there if applicable ***************************************************************************************************************************
+
+    messagePlayer(aPlayer, "You have created a new item. The ID of the new item is " + std::to_string(newItem->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createItemType(Player *aPlayer){
+    ItemType *newItemType = nullptr;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+
+    addPlayerMessageQueue(aPlayer);
+
+    weight = getIntParameter(aPlayer, "weight");
+    rarity = getItemRarityParameter(aPlayer, "rarity");
+    description = getStringParameter(aPlayer, "description");
+    name = getStringParameter(aPlayer, "name");
+    cost = getIntParameter(aPlayer, "cost");
+    slotType = getEquimentSlotParameter(aPlayer, "slot type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newItemType = new ItemType(weight, rarity, description, name, cost, slotType);
+
+    manager->addObject(newItemType, -1);
+
+    messagePlayer(aPlayer, "You have created a new item type. The ID of the new item type is " + std::to_string(newItemType->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createNonCombatant(Player *aPlayer){
+    NonCombatant *newNonCombatant = nullptr;
+    Quest *aQuest = nullptr;
+    std::string name;
+    std::string description;
+    int money;
+    Area *aLocation = nullptr;
+    int maxInventoryWeight;
+
+    addPlayerMessageQueue(aPlayer);
+
+    aQuest = getQuestParameter(aPlayer, "quest");
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    money = getIntParameter(aPlayer, "money");
+    aLocation = getAreaParameter(aPlayer, "location");
+    maxInventoryWeight = getIntParameter(aPlayer, "maximum inventory weight");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newNonCombatant = new NonCombatant(aQuest, name, description, money, aLocation, maxInventoryWeight);
+
+    manager->addObject(newNonCombatant, -1);
+    // add to location and message players there ***************************************************************************************************************************
+
+    messagePlayer(aPlayer, "You have created a new non-combatant. The ID of the new non-combatant is " + std::to_string(newNonCombatant->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createPlayer(Player *aPlayer){
+    messagePlayer(aPlayer, "You can't create a new player this way. Use the login process to create new user/player pairs.");
+
+    return false;
+}
+
+
+bool GameLogic::createPlayerClass(Player *aPlayer){
+    PlayerClass *newPlayerClass = nullptr;
+    int primaryStat;
+    std::string name;
+    SpecialSkill* skill = nullptr;
+    int attackBonus;
+    int armorBonus;
+    DamageType resistantTo;
+    DamageType weakTo;
+    float healPoints;
+
+    addPlayerMessageQueue(aPlayer);
+
+    primaryStat = getIntParameter(aPlayer, "primary stat (enter 0 for dexterity, 1 for intelligence, or 2 for strength)");
+    name = getStringParameter(aPlayer, "name");
+    skill = getSpecialSkillParameter(aPlayer, "special skill");
+    attackBonus = getIntParameter(aPlayer, "attack bonus");
+    armorBonus = getIntParameter(aPlayer, "armor bonus");
+    resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+    weakTo = getDamageTypeParameter(aPlayer, "weakness type");
+    healPoints = getFloatParameter(aPlayer, "healing point rate");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newPlayerClass = new PlayerClass(primaryStat, name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints);
+
+    manager->addObject(newPlayerClass, -1);
+
+    messagePlayer(aPlayer, "You have created a new player class. The ID of the new player class is " + std::to_string(newPlayerClass->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createQuest(Player *aPlayer){
+    Quest *newQuest = nullptr;
+    std::string name;
+    std::string description;
+    int rewardMoney;
+    Item *rewardItem = nullptr;
+
+    addPlayerMessageQueue(aPlayer);
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    rewardMoney = getIntParameter(aPlayer, "reward money");
+    rewardItem = getItemParameter(aPlayer, "reward item"); // may want to change this so they can't choose ANY item ANYWHERE in the game
+
+    removePlayerMessageQueue(aPlayer);
+
+    newQuest = new Quest(name, description, rewardMoney, rewardItem);
+
+    manager->addObject(newQuest, -1);
+
+    messagePlayer(aPlayer, "You have created a new quest. The ID of the new quest is " + std::to_string(newQuest->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createQuestStep(Player *aPlayer){
+    QuestStep *newQuestStep = nullptr;
+    int ordinalNumber;
+    std::string description;
+    ItemType *anItemType = nullptr;
+    NonCombatant *giver = nullptr;
+    NonCombatant *receiver = nullptr;
+    std::string completionText;
+
+    addPlayerMessageQueue(aPlayer);
+
+    ordinalNumber = getIntParameter(aPlayer, "ordinal number");
+    description = getStringParameter(aPlayer, "description");
+    anItemType = getItemTypeParameter(aPlayer, "fetch item type");
+    giver = getNonCombatantParameter(aPlayer, "giver");
+    receiver = getNonCombatantParameter(aPlayer, "receiver");
+    completionText = getStringParameter(aPlayer, "complettion text");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newQuestStep = new QuestStep(ordinalNumber, description, anItemType, giver, receiver, completionText);
+
+    manager->addObject(newQuestStep, -1);
+
+    messagePlayer(aPlayer, "You have created a new quest step. The ID of the new quest step is " + std::to_string(newQuestStep->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createSpecialSkill(Player *aPlayer){
+    SpecialSkill *newSpecialSkill = nullptr;
+    std::string name;
+    int damage;
+    DamageType type;
+    int cost;
+    time_t cooldown;
+
+    addPlayerMessageQueue(aPlayer);
+
+    name = getStringParameter(aPlayer, "name");
+    damage = getIntParameter(aPlayer, "damage");
+    type = getDamageTypeParameter(aPlayer, "damage type");
+    cost = getIntParameter(aPlayer, "cost");
+    cooldown = getIntParameter(aPlayer, "cooldown (in seconds)");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newSpecialSkill = new SpecialSkill(name, damage, type, cost, cooldown);
+
+    manager->addObject(newSpecialSkill, -1);
+
+    messagePlayer(aPlayer, "You have created a new special skill. The ID of the new special skill is " + std::to_string(newSpecialSkill->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createWeaponType(Player *aPlayer){
+    WeaponType *newWeaponType = nullptr;
+    int damage;
+    DamageType type;
+    AreaSize range;
+    int critMultiplier;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+
+    addPlayerMessageQueue(aPlayer);
+
+    damage = getIntParameter(aPlayer, "damage");
+    type = getDamageTypeParameter(aPlayer, "damage type");
+    range = getAreaSizeParameter(aPlayer, "range");
+    critMultiplier = getIntParameter(aPlayer, "crit multiplier");
+    weight = getIntParameter(aPlayer, "weight");
+    rarity = getItemRarityParameter(aPlayer, "rarity");
+    description = getStringParameter(aPlayer, "description");
+    name = getStringParameter(aPlayer, "name");
+    cost = getIntParameter(aPlayer, "cost");
+    slotType = getEquimentSlotParameter(aPlayer, "slot type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newWeaponType = new WeaponType(damage, type, range, critMultiplier, weight, rarity, description, name, cost, slotType);
+
+    manager->addObject(newWeaponType, -1);
+
+    messagePlayer(aPlayer, "You have created a new weapon type. The ID of the new weapon type is " + std::to_string(newWeaponType->getID()) + ".");
+
+    return true;
 }
 
 
@@ -1195,13 +1563,15 @@ int GameLogic::getPointerParameter(Player *aPlayer, std::string paramName, std::
         }
     }
 
-    messagePlayer(aPlayer, message); 
-    response = blockingGetMsg(aPlayer);
-    choice = validateStringNumber(response, 1, possibleVals.size());
-    while (choice == -1){
-        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+    if (possibleVals.size() == 0){
+        messagePlayer(aPlayer, message); 
         response = blockingGetMsg(aPlayer);
         choice = validateStringNumber(response, 1, possibleVals.size());
+        while (choice == -1){
+            messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+            response = blockingGetMsg(aPlayer);
+            choice = validateStringNumber(response, 1, possibleVals.size());
+        }
     }
 
     return choice;
@@ -1215,7 +1585,9 @@ Area* GameLogic::getAreaParameter(Player *aPlayer, std::string paramName){
     
     allAreas = manager->getGameAreas();
     choice = getPointerParameter<Area*>(aPlayer, paramName, allAreas);
-    areaParam = allAreas[choice - 1];
+    if (choice == -1){
+        areaParam = allAreas[choice - 1];
+    } 
 
     return areaParam;
 }
@@ -1228,7 +1600,9 @@ SpecialSkill* GameLogic::getSpecialSkillParameter(Player *aPlayer, std::string p
     
     allSpecialSkills = manager->getGameSkills();
     choice = getPointerParameter<SpecialSkill*>(aPlayer, paramName, allSpecialSkills);
-    specialSkillParam = allSpecialSkills[choice - 1];
+    if (choice == -1){
+        specialSkillParam = allSpecialSkills[choice - 1];
+    } 
 
     return specialSkillParam;
 }
@@ -1241,7 +1615,9 @@ ItemType* GameLogic::getItemTypeParameter(Player *aPlayer, std::string paramName
     
     allItemTypes = manager->getGameItemTypes();
     choice = getPointerParameter<ItemType*>(aPlayer, paramName, allItemTypes);
-    itemTypeParam = allItemTypes[choice - 1];
+    if (choice == -1){
+        itemTypeParam = allItemTypes[choice - 1];
+    } 
 
     return itemTypeParam;
 }
@@ -1352,7 +1728,9 @@ CreatureType* GameLogic::getCreatureTypeParameter(Player *aPlayer, std::string p
     
     allCreatureTypes = manager->getGameCreatureTypes();
     choice = getPointerParameter<CreatureType*>(aPlayer, paramName, allCreatureTypes);
-    creatureTypeParam = allCreatureTypes[choice - 1];
+    if (choice == -1){
+        creatureTypeParam = allCreatureTypes[choice - 1];
+    } 
 
     return creatureTypeParam;
 }
@@ -1365,7 +1743,9 @@ Quest* GameLogic::getQuestParameter(Player *aPlayer, std::string paramName){
     
     allQuests = manager->getGameQuests();
     choice = getPointerParameter<Quest*>(aPlayer, paramName, allQuests);
-    questParam = allQuests[choice - 1];
+    if (choice == -1){
+        questParam = allQuests[choice - 1];
+    } 
 
     return questParam;
 }
@@ -1378,7 +1758,9 @@ PlayerClass* GameLogic::getPlayerClassParameter(Player *aPlayer, std::string par
     
     allPlayerClasses = manager->getPlayerClasses();
     choice = getPointerParameter<PlayerClass*>(aPlayer, paramName, allPlayerClasses);
-    playerClassParam = allPlayerClasses[choice - 1];
+    if (choice == -1){
+        playerClassParam = allPlayerClasses[choice - 1];
+    } 
 
     return playerClassParam;
 }
@@ -1391,7 +1773,9 @@ Item* GameLogic::getItemParameter(Player *aPlayer, std::string paramName){
     
     allItems = manager->getGameItems();
     choice = getPointerParameter<Item*>(aPlayer, paramName, allItems);
-    itemParam = allItems[choice - 1];
+    if (choice == -1){
+        itemParam = allItems[choice - 1];
+    } 
 
     return itemParam;
 }
@@ -1404,7 +1788,9 @@ NonCombatant* GameLogic::getNonCombatantParameter(Player *aPlayer, std::string p
     
     allNonCombatants = manager->getGameNPCs();
     choice = getPointerParameter<NonCombatant*>(aPlayer, paramName, allNonCombatants);
-    nonCombatantParam = allNonCombatants[choice - 1];
+    if (choice == -1){
+        nonCombatantParam = allNonCombatants[choice - 1];
+    } 
 
     return nonCombatantParam;
 }
