@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/05/2017
+ * \modified    03/06/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -195,12 +195,42 @@ class GameLogic {
          */
         bool createObject(Player *aPlayer, ObjectType type);
 
-        bool createObjectFromSignature(Player *aPlayer, std::map<std::string, DataType> signature);
+        bool createArea(Player *aPlayer);
+
+        bool createArmorType(Player *aPlayer);
+
+        bool createContainer(Player *aPlayer);
+
+        bool createCreature(Player *aPlayer);
+
+        bool createCreatureType(Player *aPlayer);
+
+        bool createExit(Player *aPlayer);
+
+        bool createFeature(Player *aPlayer);
+
+        bool createItem(Player *aPlayer);
+
+        bool createItemType(Player *aPlayer);
+
+        bool createNonCombatant(Player *aPlayer);
+
+        bool createPlayer(Player *aPlayer);
+
+        bool createPlayerClass(Player *aPlayer);
+
+        bool createQuest(Player *aPlayer);
+
+        bool createQuestStep(Player *aPlayer);
+
+        bool createSpecialSkill(Player *aPlayer);
+
+        bool createWeaponType(Player *aPlayer);
 
         template <class aType>
-        int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals);
+        int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull = false);
         
-        int getIntParameter(Player *aPlayer, std::string paramName);
+        int getIntParameter(Player *aPlayer, std::string paramName, int maxNum = std::numeric_limits<int>::max());
 
         bool getBoolParameter(Player *aPlayer, std::string paramName);
 
@@ -218,7 +248,7 @@ class GameLogic {
 
         EquipmentSlot getEquimentSlotParameter(Player *aPlayer, std::string paramName);
 
-        ItemPosition getItemPositionParameter(Player *aPlayer, std::string paramName);
+        ItemPosition getItemPositionParameter(Player *aPlayer, std::string paramName, int choice = 10);
 
         CharacterSize getCharacterSizeParameter(Player *aPlayer, std::string paramName);
 
@@ -236,13 +266,13 @@ class GameLogic {
 
         CreatureType* getCreatureTypeParameter(Player *aPlayer, std::string paramName);
 
-        Quest* getQuestParameter(Player *aPlayer, std::string paramName);
+        Quest* getQuestParameter(Player *aPlayer, std::string paramName, bool canBeNull = false);
 
         PlayerClass* getPlayerClassParameter(Player *aPlayer, std::string paramName);
 
         Item* getItemParameter(Player *aPlayer, std::string paramName);
 
-        NonCombatant* getNonCombatantParameter(Player *aPlayer, std::string paramName);
+        NonCombatant* getNonCombatantParameter(Player *aPlayer, std::string paramName, Quest *aQuest = nullptr);
 
         /*!
          * \brief   Gets the object type based on the input string.
@@ -251,7 +281,7 @@ class GameLogic {
          *
          * \return  Returns an ObjectType with the object type.
          */
-        ObjectType getObjectType(const std::string &input);
+        ObjectType getObjectType(std::string input);
 
         /*!
          * \brief   Sends the specified message to the specified player.
@@ -1005,7 +1035,7 @@ class GameLogic {
         std::mutex playerMsgQMutex;
         account::Account* accountManager;
         telnet::Server* theServer;
-        Area startArea;
+        Area *startArea;
 };
 
 }}
