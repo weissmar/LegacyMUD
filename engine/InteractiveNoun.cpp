@@ -17,6 +17,14 @@
 #include "Area.hpp"
 #include "NonCombatant.hpp"
 #include "Combatant.hpp"
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <Grammar.hpp>  
+#include <CommandEnum_Data.hpp>  
+#include <EffectType_Data.hpp>  
+#include <GrammarSupport_Data.hpp>  
+#include <PrepositionType_Data.hpp> 
 
 namespace legacymud { namespace engine {
 
