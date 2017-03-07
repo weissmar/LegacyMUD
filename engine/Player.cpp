@@ -1,7 +1,8 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
+ * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/06/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -19,6 +20,17 @@
 #include "SpecialSkill.hpp"
 #include "Item.hpp"
 #include "Container.hpp"
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <map>
+#include <Grammar.hpp> 
+#include <CharacterSize_Data.hpp>
+#include <CommandEnum_Data.hpp>  
+#include <EffectType_Data.hpp>  
+#include <GrammarSupport_Data.hpp>  
+#include <PrepositionType_Data.hpp>
+
 
 namespace legacymud { namespace engine {
 
@@ -481,13 +493,155 @@ ObjectType Player::getObjectType() const{
 }
 
 
-std::string Player::serialize(){
-    return "";
+std::string Player::serialize(){    
+    rapidjson::StringBuffer buffer;  
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);    
+    
+    // Setup the object document.
+    writer.StartObject();
+    writer.String("object");   
+    writer.StartObject();  
+    writer.String("class");     
+    writer.String("PLAYER");  // class of this object
+   
+    // This is all data in the Player class that is not inherited from other classes.
+    writer.String("character_size");
+    writer.String(gamedata::CharacterSize_Data::enumToString(this->getSize()).c_str());    
+    writer.String("player_class_id");
+    writer.Int(this->getPlayerClass()->getID());
+    writer.String("username");
+    writer.String(this->getUser().c_str());
+    writer.String("experience_points");
+    writer.Int(this->getExperiencePoints());
+    writer.String("level");
+    writer.Int(this->getLevel());
+    
+    // capture this player's quest data
+    writer.String("quest_list");    
+    std::map<Quest*, std::pair<int, bool>> questMap = this->getQuestList();
+    writer.StartArray(); 
+    for (auto aQuest = questMap.begin(); aQuest != questMap.end(); aQuest++ ) {
+        writer.StartObject();
+        writer.String("quest_id");
+        writer.Int(aQuest->first->getID());
+        writer.String("step");  
+        writer.Int(aQuest->second.first);  
+        writer.String("complete");
+        writer.Bool(aQuest->second.second);  
+        writer.EndObject();
+    }
+    writer.EndArray();    
+   
+    // This is all data kept by the inherited Combatant class.
+    writer.String("max_health");
+    writer.Int(this->getMaxHealth());
+    writer.String("spawn_location_id");
+    writer.Int(this->getSpawnLocation()->getID());
+    writer.String("max_special_points");
+    writer.Int(this->getMaxSpecialPts());
+    writer.String("dexterity");
+    writer.Int(this->getDexterity());
+    writer.String("strength");
+    writer.Int(this->getStrength()); 
+    writer.String("intelligence");
+    writer.Int(this->getIntelligence());
+   
+    // This is all data kept by the inherited Character class.
+    writer.String("name");
+    writer.String(this->getName().c_str());
+    writer.String("description");
+    writer.String(this->getDescription().c_str());
+    writer.String("money");
+    writer.Int(this->getMoney());
+    writer.String("location_area_id");
+    writer.Int(this->getLocation()->getID());
+    writer.String("max_inventory_weight");
+    writer.Int(this->getMaxInventoryWeight());    
+    
+    writer.EndObject(); // ends this object     
+    writer.EndObject(); // outer object wrapper
+          
+    // Convert to a document so that inherited data from InteractiveNoun can be added.
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(buffer.GetString());    
+    
+    // Get the data inherited from the InteractiveNoun class and add it to the object document.
+    rapidjson::Document interactiveNounDataDoc(&objectDoc.GetAllocator());
+    interactiveNounDataDoc.Parse(this->serializeJustInteractiveNoun().c_str());
+    objectDoc["object"].AddMember("interactive_noun_data",interactiveNounDataDoc, objectDoc.GetAllocator() );
+    
+    // Write the object doc to a buffer for output.
+    buffer.Clear();
+    rapidjson::Writer<rapidjson::StringBuffer> outWriter(buffer);
+    objectDoc.Accept(outWriter);
+    
+    return buffer.GetString();
 }
 
 
-Player* Player::deserialize(std::string){
-    return nullptr; 
+Player* Player::deserialize(std::string jsonStr, GameObjectManager* gom){  
+
+    // parse jsonStr into a document object module
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(jsonStr.c_str());
+    
+    // Construct a new Player object, getting all the data needed to do so from the objectDoc. 
+    const int NO_FILE_DESCRIPTOR = -1;
+    Player *newPlayer = new Player(gamedata::CharacterSize_Data::stringToEnum(objectDoc["character_size"].GetString()),
+                                   static_cast<PlayerClass*>(gom->getPointer(objectDoc["player_class_id"].GetInt())),  
+                                   objectDoc["username"].GetString(),
+                                   NO_FILE_DESCRIPTOR,      
+                                   objectDoc["max_health"].GetInt(),
+                                   static_cast<Area*>(gom->getPointer(objectDoc["spawn_location_id"].GetInt())),
+                                   objectDoc["max_special_points"].GetInt(),
+                                   objectDoc["dexterity"].GetInt(),
+                                   objectDoc["strength"].GetInt(),
+                                   objectDoc["intelligence"].GetInt(),
+                                   objectDoc["name"].GetString(),
+                                   objectDoc["description"].GetString(),
+                                   objectDoc["money"].GetInt(),
+                                   static_cast<Area*>(gom->getPointer(objectDoc["location_area_id"].GetInt())),
+                                   objectDoc["max_inventory_weight"].GetInt(),
+                                   objectDoc["interactive_noun_data"]["id"].GetInt() );
+    
+    // Rebuild the new Player noun alias list. 
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
+        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
+            newPlayer->addNounAlias(noun.GetString() );    
+    }
+   
+    // Rebuild the new Player action list.
+    for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
+        
+        //  get the command from the object doc
+        engine::CommandEnum command = gamedata::CommandEnum_Data::stringToEnum(action["command"].GetString());
+                
+        // add the action to the new Player          
+        newPlayer->addAction(command, 
+                           action["valid"].GetBool(), 
+                           action["flavor_text"].GetString(), 
+                           gamedata::EffectType_Data::stringToEnum(action["effect"].GetString()) );
+ 
+        // Rebuild the verb alias list for this action command.
+        for (auto& alias : action["aliases"].GetArray()) {              
+
+            // rebuild the preposition map
+            std::map<std::string, parser::PrepositionType> prepMap;           
+            for (auto& prep : alias["grammar"]["preposition_map"].GetArray()) {              
+                parser::PrepositionType prepType = gamedata::PrepositionType_Data::stringToEnum(prep["preposition_type"].GetString() );               
+                prepMap[prep["preposition"].GetString()] = prepType;
+            }           
+            
+            // add the verb alias
+            newPlayer->addVerbAlias(command, 
+                                  alias["verb_alias"].GetString(), 
+                                  gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
+                                  gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 
+                                  prepMap );
+        }       
+    }    
+    
+    return newPlayer; 
 }
 
 
