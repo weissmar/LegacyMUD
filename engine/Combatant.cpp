@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/02/2017
+ * \modified    03/06/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -23,7 +23,8 @@ Combatant::Combatant()
 , health(std::make_pair(BEGIN_MAX_HEALTH, BEGIN_MAX_HEALTH))
 , spawnLocation(nullptr)
 , specialPoints(std::make_pair(BEGIN_MAX_SPECIAL, BEGIN_MAX_SPECIAL))
-, inCombat(nullptr) {
+, inCombat(nullptr) 
+{
     rollStats();
 }
 
@@ -34,7 +35,8 @@ Combatant::Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, std:
 , health(std::make_pair(maxHealth, maxHealth))
 , spawnLocation(spawnLocation)
 , specialPoints(std::make_pair(maxSpecialPts, maxSpecialPts))
-, inCombat(nullptr) {
+, inCombat(nullptr) 
+{
     rollStats();
 }
 
@@ -48,9 +50,8 @@ Combatant::Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, int 
 , dexterity(dexterity)
 , strength(strength)
 , intelligence(intelligence)
-, inCombat(nullptr) {
-    rollStats();
-}
+, inCombat(nullptr) 
+{ }
 
 /*Combatant::Combatant(const Combatant &otherCombatant){
 
