@@ -745,9 +745,9 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
   
 
 /////////////////////////////////////////////////////////////////////////////////
-// Quest - Unit test - serialize and deserialize
+// Quest with reward item - Unit test - serialize and deserialize
 /////////////////////////////////////////////////////////////////////////////////
- TEST(DataManagementTest, SerializeDeserializeQuest) {
+ TEST(DataManagementTest, SerializeDeserializeQuestWithReward) {
     legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID
@@ -811,6 +811,84 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Deserialize, re-serialize, and test.
     std::string inputJsonStr = "{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":3,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"quest 4\",\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}";        
+    legacymud::engine::Quest *rebuiltQuest = legacymud::engine::Quest::deserialize(inputJsonStr, gom);
+    std::string reserializedJsonStr = rebuiltQuest->serialize();
+    std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
+    EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
+
+    // Clean-up. 
+    delete gom;  
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// Quest no reward item - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
+ TEST(DataManagementTest, SerializeDeserializeQuestNoReward) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
+    
+    // Initialize staticID
+    legacymud::engine::InteractiveNoun::setStaticID(0); 
+    
+    // Create objects needed by Quest                                                                     
+    
+    // Area (name, short desciption, long description, area size, id)    
+    legacymud::engine::Area* area1 = new legacymud::engine::Area("name of area1", "short description of area1", "longer description1", 
+                                                                 legacymud::engine::AreaSize::LARGE, 1);   
+                                                                 
+                                                                 // Area (name, short desciption, long description2, area size, id)    
+    legacymud::engine::Area* area2 = new legacymud::engine::Area("name of area2", "short description of area2", "longer description2", 
+                                                                 legacymud::engine::AreaSize::LARGE, 2);   
+    
+        // ItemType (weight, rarity, description, name, cost, equipment slot, id)
+    legacymud::engine::ItemType* itemType = new legacymud::engine::ItemType(25, legacymud::engine::ItemRarity::RARE, 
+                                                                            "description of itemtype", "name of item type", 2500, 
+                                                                            legacymud::engine::EquipmentSlot::HEAD, 3); 
+    
+    // Quest  (name, description, reward money, reward item, id)                                               
+    legacymud::engine::Quest* quest = new legacymud::engine::Quest("name of quest", "description of quest", 1000, nullptr, 4);    
+    
+    // Add to Quest: Action,VerbAlias, NonCombatant Characters, and QuestSteps 
+    
+    // addAction(command, valid, flavor text, effect) 
+    quest->addAction(legacymud::engine::CommandEnum::LOOK, true, "some flavor text", 
+                     legacymud::engine::EffectType::DROP_ALL_ITEMS);   
+                     
+    std::map<std::string, legacymud::parser::PrepositionType> preps; 
+    preps["above"] = legacymud::parser::PrepositionType::ON;         
+    
+    // addVerbAlias(command, alias,direct object support, indirect object support, prepositions) 
+    quest->addVerbAlias(legacymud::engine::CommandEnum::LOOK, "vas far", legacymud::parser::Grammar::Support::YES, 
+                       legacymud::parser::Grammar::Support::NO, preps);                         
+                       
+    // NonCombatant(Quest, name, description, money, location, maxinventoryweight, id)
+    legacymud::engine::NonCombatant* giver = new legacymud::engine::NonCombatant(quest, "GiverMan", "a description", 1000, area1, 100, 5);                                                                                                                                                            
+    legacymud::engine::NonCombatant* receiver = new legacymud::engine::NonCombatant(quest, "ReceiverMan", "a description", 10, area2, 100, 6);
+    
+    // QuestStep (ordinalNumber, description, anItemType, giver, receiver, completionText, id)
+    legacymud::engine::QuestStep* step1 = new legacymud::engine::QuestStep(1, "start", itemType, giver, receiver, "go to step 2",7);                                                                     
+    legacymud::engine::QuestStep* step2 = new legacymud::engine::QuestStep(2, "end", itemType, giver, receiver, "end", 8);  
+                                                                           
+    quest->addStep(step1);
+    quest->addStep(step2); 
+    
+    // Serialize and Test
+    std::string serializedJsonStr = quest->serialize();    
+    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":-1,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"quest 4\",\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}}";
+    EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
+    
+    // Add objects to the GameObjectManager that Quest needs for deserialize. 
+    EXPECT_TRUE(gom->addObject(area1,-1) );
+    EXPECT_TRUE(gom->addObject(area2,-1) );   
+    EXPECT_TRUE(gom->addObject(giver,-1) );
+    EXPECT_TRUE(gom->addObject(itemType,-1) );    
+    EXPECT_TRUE(gom->addObject(receiver,-1) );
+    EXPECT_TRUE(gom->addObject(step1,-1) );  
+    EXPECT_TRUE(gom->addObject(step2,-1) );     
+    
+    // Deserialize, re-serialize, and test.
+    std::string inputJsonStr =  "{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":-1,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"quest 4\",\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}";
+
     legacymud::engine::Quest *rebuiltQuest = legacymud::engine::Quest::deserialize(inputJsonStr, gom);
     std::string reserializedJsonStr = rebuiltQuest->serialize();
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
