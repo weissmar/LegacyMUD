@@ -1,5 +1,5 @@
 # Author:      David Rigert
-# Created:     1/24/2017
+# Created:     3/7/2017
 # Course:      CS 467, Winter 2017
 # Description: Makefile for engine library in LegacyMUD project
 
@@ -11,7 +11,7 @@ LIBNAME = engine
 # and stores them as a list of .o filenames
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 # List the relative paths to any include directories here
-INCLUDE_DIRS = ../engine ../parser ../telnet ../account
+INCLUDE_DIRS = ../engine ../parser ../telnet ../account ../gamedata ../external/headers/rapidjson/include
 # Append the include paths to the g++ flags
 CXXFLAGS += $(foreach include_dir, $(INCLUDE_DIRS), -I$(include_dir))
 
