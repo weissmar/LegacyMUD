@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -270,7 +270,10 @@ std::string Quest::serialize(){
     writer.String("reward_money");
     writer.Int(this->getRewardMoney());
     writer.String("reward_item_id");
-    writer.Int(this->getRewardItem()->getID());
+    if(this->getRewardItem() == nullptr) 
+        writer.Int(-1);    // indicates there is no reward item
+    else  
+        writer.Int(this->getRewardItem()->getID()); // there is a reward
     
     // capture the quest steps
     writer.String("quest_steps");    
@@ -313,11 +316,18 @@ Quest* Quest::deserialize(std::string jsonStr, GameObjectManager* gom){
     rapidjson::Document objectDoc;
     objectDoc.Parse(jsonStr.c_str());
     
+    // Check if there is a reward item
+    Item* rewardItem;
+    if (objectDoc["reward_item_id"].GetInt() == -1)
+        rewardItem = nullptr;
+    else
+        rewardItem = static_cast<Item*>(gom->getPointer(objectDoc["reward_item_id"].GetInt()));
+    
     // Construct a new Quest object, getting all the data needed to do so from the objectDoc.  
     Quest *newQuest = new Quest(objectDoc["name"].GetString(),
                                 objectDoc["description"].GetString(),
                                 objectDoc["reward_money"].GetInt(),
-                                static_cast<Item*>(gom->getPointer(objectDoc["reward_item_id"].GetInt())),
+                                rewardItem,
                                 objectDoc["interactive_noun_data"]["id"].GetInt() ); 
 
     // Rebuild the quest steps          
