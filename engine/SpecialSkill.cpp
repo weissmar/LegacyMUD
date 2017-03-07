@@ -1,7 +1,8 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
+ * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/03/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -11,6 +12,16 @@
 #include "SpecialSkill.hpp"
 #include "EffectType.hpp"
 #include "CommandEnum.hpp"
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <map>
+#include <Grammar.hpp> 
+#include <DamageType_Data.hpp>  
+#include <CommandEnum_Data.hpp>  
+#include <EffectType_Data.hpp>  
+#include <GrammarSupport_Data.hpp>  
+#include <PrepositionType_Data.hpp>
 
 namespace legacymud { namespace engine {
 
@@ -119,13 +130,102 @@ ObjectType SpecialSkill::getObjectType() const{
 }
 
 
-std::string SpecialSkill::serialize(){
-    return "";
+std::string SpecialSkill::serialize(){    
+    rapidjson::StringBuffer buffer;  
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);    
+    
+    // Setup the object document.
+    writer.StartObject();
+    writer.String("object");   
+    writer.StartObject();  
+    writer.String("class");     
+    writer.String("SPECIAL_SKILL");  // class of this object
+
+    // This is all data in the SpecialSkill class that is not inherited from other classes.  
+    writer.String("name");
+    writer.String(this->getName().c_str());
+    writer.String("damage");
+    writer.Int(this->getDamage());
+    writer.String("damage_type");
+    writer.String(gamedata::DamageType_Data::enumToString(this->getDamageType()).c_str());
+    writer.String("cost");
+    writer.Int(this->getCost());
+    writer.String("cooldown");
+    writer.Int(this->getCooldown());
+    
+    writer.EndObject(); // ends this object     
+    writer.EndObject(); // outer object wrapper
+    
+    // Convert to a document so that data from inherited classes can be added.
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(buffer.GetString());    
+    
+    // Get the data inherited from the InteractiveNoun class and add it to the object document.
+    rapidjson::Document interactiveNounDataDoc(&objectDoc.GetAllocator());
+    interactiveNounDataDoc.Parse(this->serializeJustInteractiveNoun().c_str());
+    objectDoc["object"].AddMember("interactive_noun_data",interactiveNounDataDoc, objectDoc.GetAllocator() );
+    
+    // Stringify the object doc for output
+    buffer.Clear();
+    rapidjson::Writer<rapidjson::StringBuffer> outWriter(buffer);
+    objectDoc.Accept(outWriter);
+    
+    return buffer.GetString();
 }
 
 
-SpecialSkill* SpecialSkill::deserialize(std::string){
-    return nullptr; 
+SpecialSkill* SpecialSkill::deserialize(std::string jsonStr){  
+
+    // parse jsonStr into a document object module
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(jsonStr.c_str());
+ 
+    // Construct a new SpecialSkill object, getting all the data needed to do so from the objectDoc. 
+    SpecialSkill *newSpecialSkill = new SpecialSkill(objectDoc["name"].GetString(),
+                                                     objectDoc["damage"].GetInt(),
+                                                     gamedata::DamageType_Data::stringToEnum(objectDoc["damage_type"].GetString()),
+                                                     objectDoc["cost"].GetInt(),
+                                                     objectDoc["cooldown"].GetInt(),
+                                                     objectDoc["interactive_noun_data"]["id"].GetInt() );
+ 
+    // Rebuild the new SpecialSkill noun alias list. 
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
+        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
+            newSpecialSkill->addNounAlias(noun.GetString() );    
+    }
+   
+    // Rebuild the new SpecialSkill action list.
+    for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
+        
+        //  get the command from the object doc
+        engine::CommandEnum command = gamedata::CommandEnum_Data::stringToEnum(action["command"].GetString());
+                
+        // add the action to the new SpecialSkill          
+        newSpecialSkill->addAction(command, 
+                                   action["valid"].GetBool(), 
+                                   action["flavor_text"].GetString(), 
+                                   gamedata::EffectType_Data::stringToEnum(action["effect"].GetString()) );
+ 
+        // Rebuild the verb alias list for this action command.
+        for (auto& alias : action["aliases"].GetArray()) {              
+
+            // rebuild the preposition map
+            std::map<std::string, parser::PrepositionType> prepMap;           
+            for (auto& prep : alias["grammar"]["preposition_map"].GetArray()) {              
+                parser::PrepositionType prepType = gamedata::PrepositionType_Data::stringToEnum(prep["preposition_type"].GetString() );               
+                prepMap[prep["preposition"].GetString()] = prepType;
+            }           
+            
+            // add the verb alias
+            newSpecialSkill->addVerbAlias(command, 
+                                          alias["verb_alias"].GetString(), 
+                                          gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
+                                          gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 
+                                          prepMap );
+        }       
+    }    
+    
+    return newSpecialSkill; 
 }
 
 

@@ -2,24 +2,20 @@
   \file     DataManager.cpp
   \author   Keith Adkins
   \created  2/20/2017
-  \modified 3/3/2017
+  \modified 3/7/2017
   \course   CS467, Winter 2017
  
   \details  Implementation file for the DataManager class.
 */
 
-
-#include <iostream>         // displaying messages on server
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
-
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
-
 #include <GameObjectManager.hpp>
 #include <InteractiveNoun.hpp>
 #include <Area.hpp>
@@ -39,9 +35,7 @@
 #include <SpecialSkill.hpp>
 #include <WeaponType.hpp>
 #include <ItemPosition.hpp>
-
 #include "DataManager.hpp"
-
 
 namespace legacymud { namespace gamedata {
 

@@ -1,7 +1,8 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
+ * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/09/2017
- * \modified    03/02/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -14,6 +15,16 @@
 #include "Area.hpp"
 #include "ItemType.hpp"
 #include <algorithm>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <map>
+#include <Grammar.hpp>   
+#include <ItemPosition_Data.hpp> 
+#include <CommandEnum_Data.hpp>  
+#include <EffectType_Data.hpp>  
+#include <GrammarSupport_Data.hpp>  
+#include <PrepositionType_Data.hpp>
 
 namespace legacymud { namespace engine {
 
@@ -233,13 +244,112 @@ ObjectType Container::getObjectType() const{
 }
 
 
-std::string Container::serialize(){
-    return "";
+std::string Container::serialize(){    
+    rapidjson::StringBuffer buffer;  
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);    
+    
+    // Setup the object document.
+    writer.StartObject();
+    writer.String("object");   
+    writer.StartObject();  
+    writer.String("class");     
+    writer.String("CONTAINER");  // class of this object
+
+    // This is all data in the Container class that is not inherited from other classes.
+    writer.String("capacity");
+    writer.Int(this->getInsideCapacity());
+
+    // This is all data inherited from the Item class.    
+    writer.String("name");
+    writer.String(this->getName().c_str()); 
+    writer.String("location");
+    writer.Int(this->getLocation()->getID());                 
+    writer.String("position");
+    writer.String(gamedata::ItemPosition_Data::enumToString(this->getPosition()).c_str());
+    writer.String("item_type_id");
+    writer.Int(this->getType()->getID()); 
+   
+    writer.EndObject(); // ends this object     
+    writer.EndObject(); // outer object wrapper
+          
+    // Convert to a document so that data from inherited classes can be added.
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(buffer.GetString());    
+    
+    // Get the data inherited from the InteractiveNoun class and add it to the object document.
+    rapidjson::Document interactiveNounDataDoc(&objectDoc.GetAllocator());
+    interactiveNounDataDoc.Parse(this->serializeJustInteractiveNoun().c_str());
+    objectDoc["object"].AddMember("interactive_noun_data",interactiveNounDataDoc, objectDoc.GetAllocator() );
+    
+    // Stringify the object doc for output
+    buffer.Clear();
+    rapidjson::Writer<rapidjson::StringBuffer> outWriter(buffer);
+    objectDoc.Accept(outWriter);
+     
+    return buffer.GetString();
 }
 
 
-Container* Container::deserialize(std::string){
-    return nullptr; 
+Container* Container::deserialize(std::string jsonStr, GameObjectManager* gom){  
+
+    // parse jsonStr into a document object module
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(jsonStr.c_str());
+    
+    // Confirm that the location of this container has already been added to the gom.
+    if (gom->getPointer(objectDoc["location"].GetInt()) == nullptr)
+        return nullptr;   // this can happen if the location of this container is another container that hasn't been loaded yet.
+    
+    // Confirm that this container has not already been added to the gom.
+    if (gom->getPointer(objectDoc["interactive_noun_data"]["id"].GetInt()) != nullptr) 
+        return nullptr;
+    else {
+        // Construct a new Container object, getting all the data needed to do so from the objectDoc. 
+        Container *newContainer = new Container(objectDoc["capacity"].GetInt(),
+                                                gom->getPointer(objectDoc["location"].GetInt()),
+                                                gamedata::ItemPosition_Data::stringToEnum(objectDoc["position"].GetString()), 
+                                                objectDoc["name"].GetString(), 
+                                                static_cast<ItemType*>(gom->getPointer(objectDoc["item_type_id"].GetInt())),        
+                                                objectDoc["interactive_noun_data"]["id"].GetInt() );    
+    
+        // Rebuild the new Container noun alias list. 
+        for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
+            if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
+                newContainer->addNounAlias(noun.GetString() );    
+        }
+       
+        // Rebuild the new Container action list.
+        for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
+            
+            //  get the command from the object doc
+            engine::CommandEnum command = gamedata::CommandEnum_Data::stringToEnum(action["command"].GetString());
+                    
+            // add the action to the new Container          
+            newContainer->addAction(command, 
+                               action["valid"].GetBool(), 
+                               action["flavor_text"].GetString(), 
+                               gamedata::EffectType_Data::stringToEnum(action["effect"].GetString()) );
+     
+            // Rebuild the verb alias list for this action command.
+            for (auto& alias : action["aliases"].GetArray()) {              
+
+                // rebuild the preposition map
+                std::map<std::string, parser::PrepositionType> prepMap;           
+                for (auto& prep : alias["grammar"]["preposition_map"].GetArray()) {              
+                    parser::PrepositionType prepType = gamedata::PrepositionType_Data::stringToEnum(prep["preposition_type"].GetString() );               
+                    prepMap[prep["preposition"].GetString()] = prepType;
+                }           
+                
+                // add the verb alias
+                newContainer->addVerbAlias(command, 
+                                      alias["verb_alias"].GetString(), 
+                                      gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
+                                      gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 
+                                      prepMap );
+            }       
+        }            
+        return newContainer; 
+    }
 }
 
 

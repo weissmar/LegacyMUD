@@ -1,7 +1,7 @@
 /*************************************************************************
  * Author:        Keith Adkins
  * Date Created:  2/20/2017
- * Last Modified: 3/3/2017
+ * Last Modified: 3/7/2017
  * Course:        CS467, Winter 2017
  * Filename:      DataManager_Test.cpp
  *
@@ -14,7 +14,6 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-
 #include <Area.hpp>
 #include <ArmorType.hpp>
 #include <Container.hpp>
@@ -31,12 +30,10 @@
 #include <QuestStep.hpp>
 #include <SpecialSkill.hpp>
 #include <WeaponType.hpp>
-
 #include <InteractiveNoun.hpp>
 #include <Grammar.hpp>
 #include <map>
-#include <vector>
-          
+#include <vector>        
 #include <gtest/gtest.h>
 
 namespace {
@@ -44,7 +41,6 @@ namespace {
 // create a GameObjectManager and DataManager 
 legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
 legacymud::gamedata::DataManager* dm = new legacymud::gamedata::DataManager();
-
 
 
 /************************************************************************************************************ 

@@ -1,7 +1,8 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
+ * \author      Keith Adkins (serializeJustInteractiveNoun function) 
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -274,6 +275,86 @@ std::string InteractiveNoun::getTextAndEffect(CommandEnum aCommand, EffectType &
     }
 
     return message;
+}
+
+
+std::string InteractiveNoun::serializeJustInteractiveNoun() {
+    rapidjson::StringBuffer buffer;  
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer); 
+    
+    writer.StartObject();
+   
+   // from InteractiveNoun class
+    
+    writer.String("id");                           // this object's id
+    writer.Int(this->getID());  
+
+    // noun alliases in InteractiveNoun
+    std::vector<std::string> nounAliases = this->getNounAliases();                                                    
+    writer.String("noun_aliases");                 // noun alliases
+
+    writer.StartArray();
+    for (size_t i = 0; i < nounAliases.size(); i++){
+        writer.String(nounAliases[i].c_str());    
+    }
+    writer.EndArray();
+
+    // actions in InteractiveNoun  
+    std::vector<Action*> allActions = this->getAllActions();
+    writer.String("actions");                       // actions
+    writer.StartArray();
+    for (size_t i = 0; i < allActions.size(); i++){
+        writer.StartObject();
+        writer.String("command");                   // command
+        writer.String(gamedata::CommandEnum_Data::enumToString(allActions[i]->getCommand()).c_str());
+        
+        writer.String("valid");                         // valid
+        writer.Bool(allActions[i]->getValid());                   
+
+        writer.String("flavor_text");                   // flavor_text
+        writer.String(allActions[i]->getFlavorText().c_str());
+
+        writer.String("effect");                        // effect
+        writer.String(gamedata::EffectType_Data::enumToString(allActions[i]->getEffect()).c_str());
+        
+        // from Grammar class and needed by InteractiveNoun
+        writer.String("aliases");                         // aliases
+        std::map<std::string, parser::Grammar*> allAliasesAndGrammerMap = allActions[i]->getAliasesAndGrammar();
+        writer.StartArray();
+        // loop over map getting all
+        for (auto alias = allAliasesAndGrammerMap.begin(); alias != allAliasesAndGrammerMap.end(); alias++ ) {
+            writer.StartObject();
+            writer.String("verb_alias");             // verb alias
+            writer.String(alias->first.c_str());            
+            writer.String("grammar");                // grammer
+            writer.StartObject();
+            writer.String("direct_object");          // direct object 
+            writer.String(gamedata::GrammarSupport_Data::enumToString(alias->second->takesDirectObject()).c_str() );
+            writer.String("indirect_object");        // indirect_object            
+            writer.String(gamedata::GrammarSupport_Data::enumToString(alias->second->takesIndirectObject()).c_str() );                     
+            writer.String("preposition_map");        // preposition_map
+            std::map<std::string, parser::PrepositionType> prepositionMap = alias->second->getAllPrepositions();
+            writer.StartArray();
+            for (auto prep = prepositionMap.begin(); prep != prepositionMap.end(); prep++ ) {
+                writer.StartObject();
+                writer.String("preposition");
+                writer.String(prep->first.c_str());
+                writer.String("preposition_type");      // preposition type
+                writer.String(gamedata::PrepositionType_Data::enumToString(prep->second).c_str() );                
+                writer.EndObject();
+            }
+            writer.EndArray();
+            writer.EndObject();
+            writer.EndObject();
+        } 
+        writer.EndArray();       
+        writer.EndObject();
+    } 
+    writer.EndArray();   // end of stuff from InteractiveNounClass   
+       
+    writer.EndObject();
+    
+    return buffer.GetString();
 }
 
 }}

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.hpp
  *
@@ -19,6 +19,7 @@
 #include "InteractiveNoun.hpp"
 #include "DataType.hpp"
 #include "ObjectType.hpp"
+#include "GameObjectManager.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -166,11 +167,12 @@ class QuestStep: public InteractiveNoun {
          * \brief   Deserializes and creates an object of this type from the
          *          specified string of serialized data.
          * 
-         * \param[in] string    Holds the data to be deserialized.
+         * \param[in] string               Holds the data to be deserialized.
+         * \param[in] GameObjectManager    Provides access to other game objects in memory.
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static QuestStep* deserialize(std::string);
+        static QuestStep* deserialize(std::string, GameObjectManager*);
 
         /*!
          * \brief   Gets the response of this object to the command more.

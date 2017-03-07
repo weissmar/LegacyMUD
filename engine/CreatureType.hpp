@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        CreatureType.hpp
  *
@@ -22,6 +22,7 @@
 #include "DataType.hpp"
 #include "XPTier.hpp"
 #include "ObjectType.hpp"
+#include "GameObjectManager.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -91,10 +92,11 @@ class CreatureType: public CombatantType {
          *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
+         * \param[in] GameObjectManager    Provides access to other game objects in memory.
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static CreatureType* deserialize(std::string);
+        static CreatureType* deserialize(std::string, GameObjectManager* gom);
 
         /*!
          * \brief   Creates a copy of this object.

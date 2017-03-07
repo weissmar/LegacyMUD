@@ -1,7 +1,8 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
+ * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/04/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -17,6 +18,15 @@
 #include "EffectType.hpp"
 #include "ItemType.hpp"
 #include "Player.hpp"
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <map>
+#include <Grammar.hpp> 
+#include <CommandEnum_Data.hpp>  
+#include <EffectType_Data.hpp>  
+#include <GrammarSupport_Data.hpp>  
+#include <PrepositionType_Data.hpp>
 
 namespace legacymud { namespace engine {
 
@@ -214,13 +224,117 @@ ObjectType NonCombatant::getObjectType() const{
 }
 
 
-std::string NonCombatant::serialize(){
-    return "";
+std::string NonCombatant::serialize(){    
+    rapidjson::StringBuffer buffer;  
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);    
+    
+    // Setup the object document.
+    writer.StartObject();
+    writer.String("object");   
+    writer.StartObject();  
+    writer.String("class");     
+    writer.String("NON_COMBATANT");  // class of this object
+
+    // This is all data in the NonCombatant class that is not inherited from other classes.
+    writer.String("quest_id");
+    if (this->getQuest() == nullptr)
+        writer.Int(-1);   
+    else
+        writer.Int(this->getQuest()->getID());
+    
+    // This is all data inherited from the Character class. 
+    writer.String("name");
+    writer.String(this->getName().c_str());
+    writer.String("description");
+    writer.String(this->getDescription().c_str());
+    writer.String("money");
+    writer.Int(this->getMoney());
+    writer.String("location_area_id");
+    writer.Int(this->getLocation()->getID());
+    writer.String("max_inventory_weight");
+    writer.Int(this->getMaxInventoryWeight());
+    
+    writer.EndObject(); // ends this object     
+    writer.EndObject(); // outer object wrapper
+          
+    // Convert to a document so that inherited data from InteractiveNoun can be added.
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(buffer.GetString());    
+    
+    // Get the data inherited from the InteractiveNoun class and add it to the object document.
+    rapidjson::Document interactiveNounDataDoc(&objectDoc.GetAllocator());
+    interactiveNounDataDoc.Parse(this->serializeJustInteractiveNoun().c_str());
+    objectDoc["object"].AddMember("interactive_noun_data",interactiveNounDataDoc, objectDoc.GetAllocator() );
+    
+    // Write the object doc to a buffer for output.
+    buffer.Clear();
+    rapidjson::Writer<rapidjson::StringBuffer> outWriter(buffer);
+    objectDoc.Accept(outWriter);
+    
+    return buffer.GetString();
 }
 
 
-NonCombatant* NonCombatant::deserialize(std::string){
-    return nullptr; 
+NonCombatant* NonCombatant::deserialize(std::string jsonStr, GameObjectManager* gom){  
+
+    // parse jsonStr into a document object module
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(jsonStr.c_str());
+    
+    // Check if there is a Quest
+    Quest* quest;
+    if (objectDoc["quest_id"].GetInt() == -1)
+        quest = nullptr;
+    else
+        quest = static_cast<Quest*>(gom->getPointer(objectDoc["quest_id"].GetInt()));
+    
+    // Construct a new NonCombatant object, getting all the data needed to do so from the objectDoc. 
+    NonCombatant *newNonCombatant = new NonCombatant(quest,
+                                                     objectDoc["name"].GetString(),
+                                                     objectDoc["description"].GetString(),
+                                                     objectDoc["money"].GetInt(),
+                                                     static_cast<Area*>(gom->getPointer(objectDoc["location_area_id"].GetInt())),
+                                                     objectDoc["max_inventory_weight"].GetInt(),
+                                                     objectDoc["interactive_noun_data"]["id"].GetInt() );
+                                                     
+    // Rebuild the new NonCombatant noun alias list. 
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
+        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
+            newNonCombatant->addNounAlias(noun.GetString() );    
+    }
+   
+    // Rebuild the new NonCombatant action list.
+    for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
+        
+        //  get the command from the object doc
+        engine::CommandEnum command = gamedata::CommandEnum_Data::stringToEnum(action["command"].GetString());
+                
+        // add the action to the new NonCombatant          
+        newNonCombatant->addAction(command, 
+                           action["valid"].GetBool(), 
+                           action["flavor_text"].GetString(), 
+                           gamedata::EffectType_Data::stringToEnum(action["effect"].GetString()) );
+ 
+        // Rebuild the verb alias list for this action command.
+        for (auto& alias : action["aliases"].GetArray()) {              
+
+            // rebuild the preposition map
+            std::map<std::string, parser::PrepositionType> prepMap;           
+            for (auto& prep : alias["grammar"]["preposition_map"].GetArray()) {              
+                parser::PrepositionType prepType = gamedata::PrepositionType_Data::stringToEnum(prep["preposition_type"].GetString() );               
+                prepMap[prep["preposition"].GetString()] = prepType;
+            }           
+            
+            // add the verb alias
+            newNonCombatant->addVerbAlias(command, 
+                                  alias["verb_alias"].GetString(), 
+                                  gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
+                                  gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 
+                                  prepMap );
+        }       
+    }    
+    
+    return newNonCombatant; 
 }
 
 

@@ -1,7 +1,8 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
+ * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/03/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -14,6 +15,18 @@
 #include "Player.hpp"
 #include "NonCombatant.hpp"
 #include <algorithm>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <vector>
+#include <map>
+#include <Grammar.hpp>  
+#include <ItemRarity_Data.hpp>  
+#include <EquipmentSlot_Data.hpp>  
+#include <CommandEnum_Data.hpp>  
+#include <EffectType_Data.hpp>  
+#include <GrammarSupport_Data.hpp>  
+#include <PrepositionType_Data.hpp> 
 
 namespace legacymud { namespace engine {
 
@@ -238,13 +251,118 @@ ObjectType Quest::getObjectType() const{
 }
 
 
-std::string Quest::serialize(){
-    return "";
+std::string Quest::serialize(){    
+    rapidjson::StringBuffer buffer;  
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);    
+    
+    // Setup the object document.
+    writer.StartObject();
+    writer.String("object");   
+    writer.StartObject();  
+    writer.String("class");     
+    writer.String("QUEST");  // class of this object
+
+    // This is all data in the Quest class that is not inherited from other classes.  
+    writer.String("name");
+    writer.String(this->getName().c_str()); 
+    writer.String("description");
+    writer.String(this->getDescription().c_str());
+    writer.String("reward_money");
+    writer.Int(this->getRewardMoney());
+    writer.String("reward_item_id");
+    writer.Int(this->getRewardItem()->getID());
+    
+    // capture the quest steps
+    writer.String("quest_steps");    
+    std::map<int, QuestStep*> questSteps = this->getAllSteps();
+    writer.StartArray(); 
+    for (auto step = questSteps.begin(); step != questSteps.end(); step++ ) {
+        writer.StartObject();
+        writer.String("step_count");
+        writer.Int(step->first);
+        writer.String("quest_step_id");  
+        writer.Int(step->second->getID());  
+        writer.EndObject();
+    }
+    writer.EndArray(); 
+        
+    writer.EndObject(); // ends this object     
+    writer.EndObject(); // outer object wrapper    
+    
+    // Convert to a document so that data from inherited classes can be added.
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(buffer.GetString());    
+    
+    // Get the data inherited from the InteractiveNoun class and add it to the object document.
+    rapidjson::Document interactiveNounDataDoc(&objectDoc.GetAllocator());
+    interactiveNounDataDoc.Parse(this->serializeJustInteractiveNoun().c_str());
+    objectDoc["object"].AddMember("interactive_noun_data",interactiveNounDataDoc, objectDoc.GetAllocator() );
+    
+    // Stringify the object doc for output
+    buffer.Clear();
+    rapidjson::Writer<rapidjson::StringBuffer> outWriter(buffer);
+    objectDoc.Accept(outWriter);
+    
+    return buffer.GetString();
 }
 
 
-Quest* Quest::deserialize(std::string){
-    return nullptr; 
+Quest* Quest::deserialize(std::string jsonStr, GameObjectManager* gom){  
+
+    // parse jsonStr into a document object module
+    rapidjson::Document objectDoc;
+    objectDoc.Parse(jsonStr.c_str());
+    
+    // Construct a new Quest object, getting all the data needed to do so from the objectDoc.  
+    Quest *newQuest = new Quest(objectDoc["name"].GetString(),
+                                objectDoc["description"].GetString(),
+                                objectDoc["reward_money"].GetInt(),
+                                static_cast<Item*>(gom->getPointer(objectDoc["reward_item_id"].GetInt())),
+                                objectDoc["interactive_noun_data"]["id"].GetInt() ); 
+
+    // Rebuild the quest steps          
+    for (auto& step : objectDoc["quest_steps"].GetArray()) {              
+        newQuest->addStep(static_cast<QuestStep*>(gom->getPointer(step["quest_step_id"].GetInt())));          
+    }     
+                               
+    // Rebuild the new Quest noun alias list. 
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
+        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
+            newQuest->addNounAlias(noun.GetString() );    
+    }
+   
+    // Rebuild the new Quest action list.
+    for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
+        
+        //  get the command from the object doc
+        engine::CommandEnum command = gamedata::CommandEnum_Data::stringToEnum(action["command"].GetString());
+                
+        // add the action to the new Quest          
+        newQuest->addAction(command, 
+                           action["valid"].GetBool(), 
+                           action["flavor_text"].GetString(), 
+                           gamedata::EffectType_Data::stringToEnum(action["effect"].GetString()) );
+ 
+        // Rebuild the verb alias list for this action command.
+        for (auto& alias : action["aliases"].GetArray()) {              
+
+            // rebuild the preposition map
+            std::map<std::string, parser::PrepositionType> prepMap;           
+            for (auto& prep : alias["grammar"]["preposition_map"].GetArray()) {              
+                parser::PrepositionType prepType = gamedata::PrepositionType_Data::stringToEnum(prep["preposition_type"].GetString() );               
+                prepMap[prep["preposition"].GetString()] = prepType;
+            }           
+            
+            // add the verb alias
+            newQuest->addVerbAlias(command, 
+                                  alias["verb_alias"].GetString(), 
+                                  gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
+                                  gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 
+                                  prepMap );
+        }       
+    }    
+    
+    return newQuest; 
 }
 
 

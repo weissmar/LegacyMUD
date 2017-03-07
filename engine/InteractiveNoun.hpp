@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -563,6 +563,13 @@ class InteractiveNoun {
          * \return  Returns a std::string with the serialized data.
          */
         virtual std::string serialize() = 0;
+
+        /*!
+         * \brief   Serializes just InteractiveNoun for writing to file.
+         *
+         * \return  Returns a std::string with the serialized data.
+         */        
+        virtual std::string serializeJustInteractiveNoun();
     private:
         std::vector<Action*> actions;
         mutable std::mutex actionsMutex;

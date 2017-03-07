@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        Feature.hpp
  *
@@ -21,6 +21,7 @@
 #include "DataType.hpp"
 #include "ObjectType.hpp"
 #include "EffectType.hpp"
+#include "GameObjectManager.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -160,10 +161,11 @@ class Feature: public ConditionalElement {
          *          specified string of serialized data.
          * 
          * \param[in] string    Holds the data to be deserialized.
+         * \param[in] GameObjectManager    Provides access to other game objects in memory.
          *
          * \return  Returns an InteractiveNoun* with the newly created object.
          */
-        static Feature* deserialize(std::string);
+        static Feature* deserialize(std::string, GameObjectManager* gom);
 
         /*!
          * \brief   Gets the response of this object to the command look.
