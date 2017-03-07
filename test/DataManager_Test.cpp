@@ -39,14 +39,14 @@
 namespace {
    
 // create a GameObjectManager and DataManager 
-legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
 legacymud::gamedata::DataManager* dm = new legacymud::gamedata::DataManager();
 
 
-/************************************************************************************************************ 
- * Area - Unit test - serialize and deserialize
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// Area - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeArea) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();    
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -57,28 +57,29 @@ TEST(DataManagementTest, SerializeDeserializeArea) {
     
     // Serialize and Test
     std::string serializedJsonStr = area->serialize();   
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"AREA\",\"name\":\"name of area\",\"short_description\":\"short description of area\",\"long_description\":\"longer description\",\"area_size\":\"MEDIUM\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"name of area\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"AREA\",\"name\":\"name of area\",\"short_description\":\"short description of area\",\"long_description\":\"longer description\",\"area_size\":\"MEDIUM\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"area 1\",\"name of area\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Area needs for deserialize.  
     // none
     
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"AREA\",\"name\":\"name of area\",\"short_description\":\"short description of area\",\"long_description\":\"longer description\",\"area_size\":\"MEDIUM\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"name of area\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"AREA\",\"name\":\"name of area\",\"short_description\":\"short description of area\",\"long_description\":\"longer description\",\"area_size\":\"MEDIUM\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"area 1\",\"name of area\"],\"actions\":[]}}";
     legacymud::engine::Area *rebuiltArea = legacymud::engine::Area::deserialize(inputJsonStr);   
     std::string reserializedJsonStr = rebuiltArea->serialize();
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    // none
+    // Clean-up. 
+    delete gom;
 } 
 
 
-/************************************************************************************************************
- * ArmorType - Unit test - serialize and deserialize
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// ArmorType - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeArmorType) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();  
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);    
@@ -94,29 +95,30 @@ TEST(DataManagementTest, SerializeDeserializeArmorType) {
    
     // Serialize and Test 
     std::string serializedJsonStr = armorType->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"ARMOR_TYPE\",\"armor_bonus\":4,\"resistant_to\":\"FIRE\",\"name\":\"a name\",\"weight\":50,\"rarity\":\"COMMON\",\"description\":\"a description\",\"cost\":2500,\"slot_type\":\"TORSO\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";    
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"ARMOR_TYPE\",\"armor_bonus\":4,\"resistant_to\":\"FIRE\",\"name\":\"a name\",\"weight\":50,\"rarity\":\"COMMON\",\"description\":\"a description\",\"cost\":2500,\"slot_type\":\"TORSO\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}}";    
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
 
     // Add objects to the GameObjectManager that armorType needs for deserialize. 
     // none
     
     // Deserialize, re-serialize, and test. 
-    std::string inputJsonStr = "{\"class\":\"ARMOR_TYPE\",\"armor_bonus\":4,\"resistant_to\":\"FIRE\",\"name\":\"a name\",\"weight\":50,\"rarity\":\"COMMON\",\"description\":\"a description\",\"cost\":2500,\"slot_type\":\"TORSO\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"a name\"],\"actions\":[]}}"; 
+    std::string inputJsonStr = "{\"class\":\"ARMOR_TYPE\",\"armor_bonus\":4,\"resistant_to\":\"FIRE\",\"name\":\"a name\",\"weight\":50,\"rarity\":\"COMMON\",\"description\":\"a description\",\"cost\":2500,\"slot_type\":\"TORSO\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}"; 
     legacymud::engine::ArmorType *rebuiltWeaponType = legacymud::engine::ArmorType::deserialize(inputJsonStr);  
     std::string reserializedJsonStr = rebuiltWeaponType->serialize();  
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );  
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    // none
-   
+    // Clean-up. 
+    delete gom;
 }
 
+
  
-/************************************************************************************************************
- * Container - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// Container - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeContainer) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();  
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -137,7 +139,7 @@ TEST(DataManagementTest, SerializeDeserializeContainer) {
                                                               
     // Serialize and Test
     std::string serializedJsonStr = container->serialize();      
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"CONTAINER\",\"capacity\":100,\"name\":\"name of container\",\"location\":1,\"position\":\"GROUND\",\"item_type_id\":2,\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"name of container\"],\"actions\":[]}}}";   
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"CONTAINER\",\"capacity\":100,\"name\":\"name of container\",\"location\":1,\"position\":\"GROUND\",\"item_type_id\":2,\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"item 3\",\"name of container\"],\"actions\":[]}}}";   
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Container needs for deserialize. 
@@ -145,22 +147,22 @@ TEST(DataManagementTest, SerializeDeserializeContainer) {
     EXPECT_TRUE(gom->addObject(itemType,-1) );   
     
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"CONTAINER\",\"capacity\":100,\"name\":\"name of container\",\"location\":1,\"position\":\"GROUND\",\"item_type_id\":2,\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"name of container\"],\"actions\":[]}}";   
+    std::string inputJsonStr = "{\"class\":\"CONTAINER\",\"capacity\":100,\"name\":\"name of container\",\"location\":1,\"position\":\"GROUND\",\"item_type_id\":2,\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"item 3\",\"name of container\"],\"actions\":[]}}";   
     legacymud::engine::Container *rebuiltContainer = legacymud::engine::Container::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltContainer->serialize();  
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) );
-    EXPECT_TRUE(gom->removeObject(itemType,-1) ); 
+    // Clean-up. . 
+    delete gom;
 } 
 
 
-/************************************************************************************************************      
- * Creature - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////      
+// Creature - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeCreature) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();  
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -193,7 +195,7 @@ TEST(DataManagementTest, SerializeDeserializeCreature) {
     
     // Serialize and Test
     std::string serializedJsonStr = creature->serialize();   
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE\",\"creature_type_id\":2,\"ambulatory\":true,\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":50,\"dexterity\":70,\"strength\":80,\"intelligence\":90,\"name\":\"a name\",\"description\":\"a description\",\"money\":1500,\"location_area_id\":4,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE\",\"creature_type_id\":2,\"ambulatory\":true,\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":50,\"dexterity\":70,\"strength\":80,\"intelligence\":90,\"name\":\"a name\",\"description\":\"a description\",\"money\":1500,\"location_area_id\":4,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
@@ -203,24 +205,22 @@ TEST(DataManagementTest, SerializeDeserializeCreature) {
     EXPECT_TRUE(gom->addObject(area2,-1) ); 
       
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"CREATURE\",\"creature_type_id\":2,\"ambulatory\":true,\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":50,\"dexterity\":70,\"strength\":80,\"intelligence\":90,\"name\":\"a name\",\"description\":\"a description\",\"money\":1500,\"location_area_id\":4,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"CREATURE\",\"creature_type_id\":2,\"ambulatory\":true,\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":50,\"dexterity\":70,\"strength\":80,\"intelligence\":90,\"name\":\"a name\",\"description\":\"a description\",\"money\":1500,\"location_area_id\":4,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}";
     legacymud::engine::Creature *rebuiltCreature = legacymud::engine::Creature::deserialize(inputJsonStr, gom);    
     std::string reserializedJsonStr = rebuiltCreature->serialize();  
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(skill,-1) );
-    EXPECT_TRUE(gom->removeObject(creatureType,-1) ); 
-    EXPECT_TRUE(gom->removeObject(area1,-1) ); 
-    EXPECT_TRUE(gom->removeObject(area2,-1) ); 
+    // Clean-up. Remove objects from the GameObjectManager.   
+    delete gom;
 } 
 
 
-/************************************************************************************************************      
- * CreatureType - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////      
+// CreatureType - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeCreatureType) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -242,28 +242,29 @@ TEST(DataManagementTest, SerializeDeserializeCreatureType) {
     
     // Serialize and Test
     std::string serializedJsonStr = creatureType->serialize();    
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE_TYPE\",\"size\":\"MEDIUM\",\"difficulty\":\"NORMAL\",\"name\":\"a name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"WATER\",\"weak_to\":\"FIRE\",\"heal_points\":10.300000190734864,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}"; 
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE_TYPE\",\"size\":\"MEDIUM\",\"difficulty\":\"NORMAL\",\"name\":\"a name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"WATER\",\"weak_to\":\"FIRE\",\"heal_points\":10.300000190734864,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"combatant type 2\",\"a name\"],\"actions\":[]}}}"; 
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
     EXPECT_TRUE(gom->addObject(skill,-1) );
       
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"CREATURE_TYPE\",\"size\":\"MEDIUM\",\"difficulty\":\"NORMAL\",\"name\":\"a name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"WATER\",\"weak_to\":\"FIRE\",\"heal_points\":10.300000190734864,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";   
+    std::string inputJsonStr = "{\"class\":\"CREATURE_TYPE\",\"size\":\"MEDIUM\",\"difficulty\":\"NORMAL\",\"name\":\"a name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"WATER\",\"weak_to\":\"FIRE\",\"heal_points\":10.300000190734864,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"combatant type 2\",\"a name\"],\"actions\":[]}}";   
     legacymud::engine::CreatureType *rebuiltCreatureType = legacymud::engine::CreatureType::deserialize(inputJsonStr, gom);    
     std::string reserializedJsonStr = rebuiltCreatureType->serialize();  
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(skill,-1) );
+    // Clean-up. 
+    delete gom;
 }
 
 
-/************************************************************************************************************
- * Exit with conditional- Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// Exit with conditional- Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeExitConditionl) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0); 
@@ -287,7 +288,7 @@ TEST(DataManagementTest, SerializeDeserializeExitConditionl) {
                                                                             
     // Serialize and Test
     std::string serializedJsonStr = exit->serialize();       
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":true,\"condition_itemtype_id\":3,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":true,\"condition_itemtype_id\":3,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"exit 4\",\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
@@ -296,23 +297,22 @@ TEST(DataManagementTest, SerializeDeserializeExitConditionl) {
     EXPECT_TRUE(gom->addObject(itemType,-1) );   
    
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":true,\"condition_itemtype_id\":3,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":true,\"condition_itemtype_id\":3,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"exit 4\",\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}";
     legacymud::engine::Exit *rebuiltExit = legacymud::engine::Exit::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltExit->serialize();   
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area1,-1) );
-    EXPECT_TRUE(gom->removeObject(area2,-1) );
-    EXPECT_TRUE(gom->removeObject(itemType,-1) ); 
+    // Clean-up. 
+    delete gom;
 } 
 
 
-/************************************************************************************************************
- * Exit with non-conditional - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// Exit with non-conditional - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeExitNoConditional) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0); 
@@ -331,7 +331,7 @@ TEST(DataManagementTest, SerializeDeserializeExitNoConditional) {
                                                                             
     // Serialize and Test
     std::string serializedJsonStr = exit->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":false,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":false,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"exit 3\",\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
@@ -339,22 +339,22 @@ TEST(DataManagementTest, SerializeDeserializeExitNoConditional) {
     EXPECT_TRUE(gom->addObject(area2,-1) );
      
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":false,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":false,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"exit 3\",\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}";
     legacymud::engine::Exit *rebuiltExit = legacymud::engine::Exit::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltExit->serialize();   
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area1,-1) );
-    EXPECT_TRUE(gom->removeObject(area2,-1) );
+    // Clean-up. 
+    delete gom;
 }
 
 
-/************************************************************************************************************
- * Feature with conditional- Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// Feature with conditional- Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeFeatureConditional) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0); 
@@ -376,7 +376,7 @@ TEST(DataManagementTest, SerializeDeserializeFeatureConditional) {
                                                                 
     // Serialize and Test
     std::string serializedJsonStr = feature->serialize(); 
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":true,\"condition_itemtype_id\":2,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":true,\"condition_itemtype_id\":2,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"feature 3\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
@@ -384,22 +384,22 @@ TEST(DataManagementTest, SerializeDeserializeFeatureConditional) {
     EXPECT_TRUE(gom->addObject(itemType,-1) );   
    
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":true,\"condition_itemtype_id\":2,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":true,\"condition_itemtype_id\":2,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"feature 3\",\"a name\"],\"actions\":[]}}";
     legacymud::engine::Feature *rebuiltFeature = legacymud::engine::Feature::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltFeature->serialize();   
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) );
-    EXPECT_TRUE(gom->removeObject(itemType,-1) );   
+    // Clean-up. 
+    delete gom;   
 }  
 
 
-/************************************************************************************************************
- * Feature with no conditional- Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// Feature with no conditional- Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0); 
@@ -416,28 +416,29 @@ TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
                                                                 
     // Serialize and Test
     std::string serializedJsonStr = feature->serialize();    
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":false,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":false,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"feature 2\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
     EXPECT_TRUE(gom->addObject(area,-1) );   
    
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":false,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":false,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"feature 2\",\"a name\"],\"actions\":[]}}";
     legacymud::engine::Feature *rebuiltFeature = legacymud::engine::Feature::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltFeature->serialize();   
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) ); 
+    // Clean-up. 
+    delete gom;
 } 
  
 
-/************************************************************************************************************      
- * Item - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////      
+// Item - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
  TEST(DataManagementTest, SerializeDeserializeItem) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -461,7 +462,7 @@ TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
                                                                    
     // Serialize and Test
     std::string serializedJsonStr = item->serialize();         
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM\",\"name\":\"name of item\",\"location\":2,\"position\":\"INVENTORY\",\"item_type_id\":3,\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"name of item\"],\"actions\":[]}}}";    
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM\",\"name\":\"name of item\",\"location\":2,\"position\":\"INVENTORY\",\"item_type_id\":3,\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"item 4\",\"name of item\"],\"actions\":[]}}}";    
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Item needs for deserialize. 
@@ -470,23 +471,22 @@ TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
     EXPECT_TRUE(gom->addObject(itemType,-1) ); 
       
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"ITEM\",\"name\":\"name of item\",\"location\":2,\"position\":\"INVENTORY\",\"item_type_id\":3,\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"name of item\"],\"actions\":[]}}";  
+    std::string inputJsonStr = "{\"class\":\"ITEM\",\"name\":\"name of item\",\"location\":2,\"position\":\"INVENTORY\",\"item_type_id\":3,\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"item 4\",\"name of item\"],\"actions\":[]}}";  
     legacymud::engine::Item *rebuiltItem = legacymud::engine::Item::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltItem->serialize(); 
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) );
-    EXPECT_TRUE(gom->removeObject(giver,-1) ); 
-    EXPECT_TRUE(gom->removeObject(itemType,-1) );
+    // Clean-up. 
+    delete gom;
 } 
 
 
-/************************************************************************************************************      
- * ItemType - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////     
+// ItemType - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
  TEST(DataManagementTest, SerializeDeserializeItemType) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -498,28 +498,29 @@ TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
                                                                                                                                      
     // Serialize and Test
     std::string serializedJsonStr = itemType->serialize();    
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM_TYPE\",\"weight\":25,\"rarity\":\"COMMON\",\"description\":\"a description\",\"name\":\"a name\",\"cost\":2545,\"slot_type\":\"BELT\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM_TYPE\",\"weight\":25,\"rarity\":\"COMMON\",\"description\":\"a description\",\"name\":\"a name\",\"cost\":2545,\"slot_type\":\"BELT\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Item needs for deserialize. 
     // none
       
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"ITEM_TYPE\",\"weight\":25,\"rarity\":\"COMMON\",\"description\":\"a description\",\"name\":\"a name\",\"cost\":2545,\"slot_type\":\"BELT\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"ITEM_TYPE\",\"weight\":25,\"rarity\":\"COMMON\",\"description\":\"a description\",\"name\":\"a name\",\"cost\":2545,\"slot_type\":\"BELT\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}";
     legacymud::engine::ItemType *rebuiltItemType = legacymud::engine::ItemType::deserialize(inputJsonStr);   
     std::string reserializedJsonStr = rebuiltItemType->serialize(); 
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    // none
+    // Clean-up. 
+    delete gom;
 } 
  
 
-/************************************************************************************************************      
- * NonCombatant with Quest - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////      
+// NonCombatant with Quest - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeNonCombatantWithQuest) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -548,7 +549,7 @@ TEST(DataManagementTest, SerializeDeserializeNonCombatantWithQuest) {
     
     // Serialize and Test
     std::string serializedJsonStr = nonCombatant->serialize(); 
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":4,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":4,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
@@ -558,25 +559,22 @@ TEST(DataManagementTest, SerializeDeserializeNonCombatantWithQuest) {
     EXPECT_TRUE(gom->addObject(quest,-1) );
       
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"NON_COMBATANT\",\"quest_id\":4,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"NON_COMBATANT\",\"quest_id\":4,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}";
     legacymud::engine::NonCombatant *rebuiltNonCombatant = legacymud::engine::NonCombatant::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltNonCombatant->serialize();  
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) );
-    EXPECT_TRUE(gom->removeObject(itemType,-1) );
-    EXPECT_TRUE(gom->removeObject(item,-1) );
-    EXPECT_TRUE(gom->removeObject(quest,-1) );
-
+    // Clean-up. 
+    delete gom;
 } 
 
 
-/************************************************************************************************************      
- * NonCombatant without Quest - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////      
+// NonCombatant without Quest - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeNonCombatantWithOutQuest) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -592,28 +590,29 @@ TEST(DataManagementTest, SerializeDeserializeNonCombatantWithOutQuest) {
     
     // Serialize and Test
     std::string serializedJsonStr = nonCombatant->serialize();  
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":-1,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":-1,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
     EXPECT_TRUE(gom->addObject(area,-1) );  
     
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"NON_COMBATANT\",\"quest_id\":-1,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"NON_COMBATANT\",\"quest_id\":-1,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}";
     legacymud::engine::NonCombatant *rebuiltNonCombatant = legacymud::engine::NonCombatant::deserialize(inputJsonStr, gom);
     std::string reserializedJsonStr = rebuiltNonCombatant->serialize(); 
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) );
+    // Clean-up. 
+    delete gom;
 } 
 
 
-/************************************************************************************************************      
- * Player - Unit test - serialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////    
+// Player - Unit test - serialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializePlayer) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -646,15 +645,19 @@ TEST(DataManagementTest, SerializePlayer) {
 
     // Serialize and Test
     std::string serializedJsonStr = player->serialize();         
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
+    
+    // Clean-up. 
+    delete gom;
 }
 
 
-/************************************************************************************************************      
- * Player - Unit test - deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////     
+// Player - Unit test - deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializePlayer) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -687,24 +690,22 @@ TEST(DataManagementTest, SerializeDeserializePlayer) {
     EXPECT_TRUE(gom->addObject(area2,-1) ); 
        
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";  
+    std::string inputJsonStr = "{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}";  
     legacymud::engine::Player *rebuiltPlayer = legacymud::engine::Player::deserialize(inputJsonStr, gom);  
     std::string reserializedJsonStr = rebuiltPlayer->serialize(); 
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(skill,-1) );
- //   EXPECT_TRUE(gom->removeObject(playerClass,-1) );   // fails for some reason
-    EXPECT_TRUE(gom->removeObject(area1,-1) ); 
-    EXPECT_TRUE(gom->removeObject(area2,-1) );    
+    // Clean-up. 
+    delete gom;  
 } 
 
-    
-/************************************************************************************************************      
- * PlayerClass - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+  
+/////////////////////////////////////////////////////////////////////////////////     
+// PlayerClass - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializePlayerClass) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0);
@@ -724,30 +725,31 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
 
    // Serialize and Test
     std::string serializedJsonStr = playerClass->serialize();            
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER_CLASS\",\"primary_stat\":45,\"name\":\"playerClass1 name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"FIRE\",\"weak_to\":\"WATER\",\"heal_points\":35.5,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"playerClass1 name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER_CLASS\",\"primary_stat\":45,\"name\":\"playerClass1 name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"FIRE\",\"weak_to\":\"WATER\",\"heal_points\":35.5,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"combatant type 2\",\"playerClass1 name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
    
     // Add objects to the GameObjectManager that player needs for deserialize. 
     EXPECT_TRUE(gom->addObject(skill,-1) );
       
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"PLAYER_CLASS\",\"primary_stat\":45,\"name\":\"playerClass1 name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"FIRE\",\"weak_to\":\"WATER\",\"heal_points\":35.5,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"playerClass1 name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"PLAYER_CLASS\",\"primary_stat\":45,\"name\":\"playerClass1 name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"FIRE\",\"weak_to\":\"WATER\",\"heal_points\":35.5,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"combatant type 2\",\"playerClass1 name\"],\"actions\":[]}}";
     legacymud::engine::PlayerClass *rebuiltPlayerClass = legacymud::engine::PlayerClass::deserialize(inputJsonStr, gom);   
     std::string reserializedJsonStr = rebuiltPlayerClass->serialize();  
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(skill,-1) ); 
+    // Clean-up. 
+    delete gom;
 
 }
   
 
-/************************************************************************************************************
- * Quest - Unit test - serialize and deserialize
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// Quest - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
  TEST(DataManagementTest, SerializeDeserializeQuest) {
-
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
+    
     // Initialize staticID
     legacymud::engine::InteractiveNoun::setStaticID(0); 
     
@@ -795,7 +797,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Serialize and Test
     std::string serializedJsonStr = quest->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":3,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":3,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"quest 4\",\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Quest needs for deserialize. 
@@ -808,28 +810,23 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     EXPECT_TRUE(gom->addObject(step2,-1) );     
     
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":3,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}";        
+    std::string inputJsonStr = "{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":3,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"quest 4\",\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}";        
     legacymud::engine::Quest *rebuiltQuest = legacymud::engine::Quest::deserialize(inputJsonStr, gom);
     std::string reserializedJsonStr = rebuiltQuest->serialize();
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) );
-    EXPECT_TRUE(gom->removeObject(itemType,-1) );
-    EXPECT_TRUE(gom->removeObject(item,-1) );       
-    EXPECT_TRUE(gom->removeObject(giver,-1) ); 
-    EXPECT_TRUE(gom->removeObject(receiver,-1) );
-    EXPECT_TRUE(gom->removeObject(step1,-1) );  
-    EXPECT_TRUE(gom->removeObject(step2,-1) );  
+    // Clean-up. 
+    delete gom;  
 }
 
 
-/************************************************************************************************************
- * QuestStep - Unit test - serialize and deserialize
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// QuestStep - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
  TEST(DataManagementTest, SerializeDeserializeQuestStep) {
-
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
+    
     // Initialize staticID
     legacymud::engine::InteractiveNoun::setStaticID(0); 
     
@@ -852,7 +849,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Serialize and Test
     std::string serializedJsonStr = step->serialize();   
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":4,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"step 1\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":4,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Quest needs for deserialize. 
@@ -862,24 +859,22 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     EXPECT_TRUE(gom->addObject(receiver,-1) );     
     
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":4,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"step 1\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":4,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}";
     legacymud::engine::QuestStep *rebuiltQuestStep = legacymud::engine::QuestStep::deserialize(inputJsonStr, gom);    
     std::string reserializedJsonStr = rebuiltQuestStep->serialize();
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    EXPECT_TRUE(gom->removeObject(area,-1) );
-    EXPECT_TRUE(gom->removeObject(itemType,-1) );       
-    EXPECT_TRUE(gom->removeObject(giver,-1) ); 
-    EXPECT_TRUE(gom->removeObject(receiver,-1) );       
+    // Clean-up. 
+    delete gom;       
 }
 
 
-/************************************************************************************************************      
- * SpecialSkill - Unit test - serialize and deserialize 
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////     
+// SpecialSkill - Unit test - serialize and deserialize 
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeSpecialSkill) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
     legacymud::engine::InteractiveNoun::setStaticID(0); 
@@ -891,29 +886,30 @@ TEST(DataManagementTest, SerializeDeserializeSpecialSkill) {
 
    // Serialize and Test
     std::string serializedJsonStr = skill->serialize();             
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"SPECIAL_SKILL\",\"name\":\"special skill name\",\"damage\":20,\"damage_type\":\"PIERCING\",\"cost\":10,\"cooldown\":2,\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"special skill name\"],\"actions\":[]}}}";   
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"SPECIAL_SKILL\",\"name\":\"special skill name\",\"damage\":20,\"damage_type\":\"PIERCING\",\"cost\":10,\"cooldown\":2,\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"skill 1\",\"special skill name\"],\"actions\":[]}}}";   
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
    
     // Add objects to the GameObjectManager that player needs for deserialize. 
     //  none
       
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"SPECIAL_SKILL\",\"name\":\"special skill name\",\"damage\":20,\"damage_type\":\"PIERCING\",\"cost\":10,\"cooldown\":2,\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"special skill name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"SPECIAL_SKILL\",\"name\":\"special skill name\",\"damage\":20,\"damage_type\":\"PIERCING\",\"cost\":10,\"cooldown\":2,\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"skill 1\",\"special skill name\"],\"actions\":[]}}";
     legacymud::engine::SpecialSkill *rebuiltSpecialSkill = legacymud::engine::SpecialSkill::deserialize(inputJsonStr);
     std::string reserializedJsonStr = rebuiltSpecialSkill->serialize();  
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    // none 
+    // Clean-up. 
+    delete gom;
 }
 
 
-/************************************************************************************************************
- * WeaponType - Unit test - serialize and deserialize
- ************************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////
+// WeaponType - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
 TEST(DataManagementTest, SerializeDeserializeWeaponType) {
-        
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
+      
     // Initialize staticID
     legacymud::engine::InteractiveNoun::setStaticID(0); 
     
@@ -926,21 +922,21 @@ TEST(DataManagementTest, SerializeDeserializeWeaponType) {
                                                                                      
     // Serialize and Test
     std::string serializedJsonStr = weaponType->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"WEAPON_TYPE\",\"damage\":25,\"damage_type\":\"CRUSHING\",\"range\":\"SMALL\",\"crit_multiplier\":2,\"name\":\"a name\",\"weight\":15,\"rarity\":\"LEGENDARY\",\"description\":\"a description\",\"cost\":1500,\"slot_type\":\"HANDS\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"WEAPON_TYPE\",\"damage\":25,\"damage_type\":\"CRUSHING\",\"range\":\"SMALL\",\"crit_multiplier\":2,\"name\":\"a name\",\"weight\":15,\"rarity\":\"LEGENDARY\",\"description\":\"a description\",\"cost\":1500,\"slot_type\":\"HANDS\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
 
     // Add objects to the GameObjectManager that weaponType needs for deserialize. 
     // none
 
     // Deserialize, re-serialize, and test. 
-    std::string inputJsonStr = "{\"class\":\"WEAPON_TYPE\",\"damage\":25,\"damage_type\":\"CRUSHING\",\"range\":\"SMALL\",\"crit_multiplier\":2,\"name\":\"a name\",\"weight\":15,\"rarity\":\"LEGENDARY\",\"description\":\"a description\",\"cost\":1500,\"slot_type\":\"HANDS\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"a name\"],\"actions\":[]}}";
+    std::string inputJsonStr = "{\"class\":\"WEAPON_TYPE\",\"damage\":25,\"damage_type\":\"CRUSHING\",\"range\":\"SMALL\",\"crit_multiplier\":2,\"name\":\"a name\",\"weight\":15,\"rarity\":\"LEGENDARY\",\"description\":\"a description\",\"cost\":1500,\"slot_type\":\"HANDS\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}";
     legacymud::engine::WeaponType *rebuiltWeaponType = legacymud::engine::WeaponType::deserialize(inputJsonStr); 
     std::string reserializedJsonStr = rebuiltWeaponType->serialize();
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
     EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr ); 
 
-    // Clean-up. Remove objects from the GameObjectManager. 
-    // none             
+    // Clean-up. 
+    delete gom;            
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -949,7 +945,8 @@ TEST(DataManagementTest, SerializeDeserializeWeaponType) {
 
 //  data management save data
 TEST(DataManagementTest, SaveAllData) {
-
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
+    
     // Initialize staticID
     legacymud::engine::InteractiveNoun::setStaticID(0);
     
@@ -1121,12 +1118,11 @@ TEST(DataManagementTest, SaveAllData) {
     // save the game
     EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );   
 
-    delete gom;
-    
+    delete gom;   
 }
 
 
-// ItemType load data and compare with previous saved
+// Load data and compare with previous saved
 TEST(DataManagementTest, LoadAllData) {
     legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
 
