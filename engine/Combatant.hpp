@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/02/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -33,9 +33,9 @@ class Combatant: public Character {
         Combatant();
         Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight);
         Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID);
-        /*Combatant(const Combatant &otherCombatant);
+        Combatant(const Combatant &otherCombatant);
         Combatant & operator=(const Combatant &otherCombatant);
-        virtual ~Combatant();*/
+        //virtual ~Combatant();
 
         /*!
          * \brief   Gets whether the cooldown period for this combatant is over.

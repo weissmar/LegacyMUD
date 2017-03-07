@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/05/2017
  * \course      CS467, Winter 2017
  * \file        GameObjectManager.hpp
  *
@@ -24,6 +24,14 @@ class InteractiveNoun;
 class Creature;
 class Player;
 class PlayerClass;
+class Area;
+class SpecialSkill;
+class ItemType;
+class NonCombatant;
+class Container;
+class CreatureType;
+class Quest;
+class Item;
 
 /*!
  * \details     This class tracks all game objects. It should only be 
@@ -150,6 +158,69 @@ class GameObjectManager {
          * \return  Returns a vector of pointers to PlayerClass.
          */
         std::vector<PlayerClass*> getPlayerClasses() const;
+
+        /*!
+         * \brief   Gets list of Areas.
+         *
+         * \return  Returns a vector of pointers to Area.
+         */
+        std::vector<Area*> getGameAreas() const;
+
+        /*!
+         * \brief   Gets list of SpecialSkills.
+         *
+         * \return  Returns a vector of pointers to SpecialSkill.
+         */
+        std::vector<SpecialSkill*> getGameSkills() const;
+
+        /*!
+         * \brief   Gets list of ItemTypes.
+         *
+         * \return  Returns a vector of pointers to ItemType.
+         */
+        std::vector<ItemType*> getGameItemTypes() const;
+
+        /*!
+         * \brief   Gets list of NonCombatants.
+         *
+         * \return  Returns a vector of pointers to NonCombatant.
+         */
+        std::vector<NonCombatant*> getGameNPCs() const;
+
+        /*!
+         * \brief   Gets list of Containers.
+         *
+         * \return  Returns a vector of pointers to Container.
+         */
+        std::vector<Container*> getGameContainers() const;
+
+        /*!
+         * \brief   Gets list of CreatureTypes.
+         *
+         * \return  Returns a vector of pointers to CreatureType.
+         */
+        std::vector<CreatureType*> getGameCreatureTypes() const;
+
+        /*!
+         * \brief   Gets list of Quests.
+         *
+         * \return  Returns a vector of pointers to Quest.
+         */
+        std::vector<Quest*> getGameQuests() const;
+
+        /*!
+         * \brief   Gets list of Items.
+         *
+         * \return  Returns a vector of pointers to Items.
+         */
+        std::vector<Item*> getGameItems() const;
+
+        /*!
+         * \brief   Gets list of all Players (active and inactive).
+         *
+         * \return  Returns a vector of pointers to Player.
+         */
+        std::vector<Player*> getGamePlayers() const;
     private:
         std::map<int, InteractiveNoun*> gameObjects;
         mutable std::mutex gameObjectsMutex;
@@ -161,6 +232,22 @@ class GameObjectManager {
         mutable std::mutex inactivePlayersMutex;
         std::vector<PlayerClass*> gamePlayerClasses;
         mutable std::mutex gamePlayerClassesMutex;
+        std::vector<Area*> gameAreas;
+        mutable std::mutex gameAreasMutex;
+        std::vector<SpecialSkill*> gameSkills;
+        mutable std::mutex gameSkillsMutex;
+        std::vector<ItemType*> gameItemTypes;
+        mutable std::mutex gameItemTypesMutex;
+        std::vector<NonCombatant*> gameNPCs;
+        mutable std::mutex gameNPCsMutex;
+        std::vector<Container*> gameContainers;
+        mutable std::mutex gameContainersMutex;
+        std::vector<CreatureType*> gameCreatureTypes;
+        mutable std::mutex gameCreatureTypesMutex;
+        std::vector<Quest*> gameQuests;
+        mutable std::mutex gameQuestsMutex;
+        std::vector<Item*> gameItems;
+        mutable std::mutex gameItemsMutex;
 };
 
 }}

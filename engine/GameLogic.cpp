@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/03/2017
+ * \modified    03/06/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -12,6 +12,10 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <limits>
+#include <cctype>
+#include <algorithm>
+#undef HUGE
 #include "parser.hpp"
 #include <Account.hpp>
 #include <Server.hpp>
@@ -32,6 +36,11 @@
 #include "Quest.hpp"
 #include "QuestStep.hpp"
 #include "SpecialSkill.hpp"
+#include "ItemType.hpp"
+#include "CreatureType.hpp"
+#include "ArmorType.hpp"
+#include "Feature.hpp"
+
 
 namespace legacymud { namespace engine {
 
@@ -40,16 +49,20 @@ const std::string ADMIN_PASSWORD = "default";
 GameLogic::GameLogic() 
 : accountManager(nullptr)
 , theServer(nullptr)
-, startArea("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE){
+{
     manager = new GameObjectManager;
+    startArea = new Area("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE);
+    manager->addObject(startArea, -1);
 }
 
 
 GameLogic::GameLogic(const GameLogic &otherGameLogic)
 : accountManager(nullptr)
 , theServer(nullptr)
-, startArea("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE){
+{
     manager = new GameObjectManager(*otherGameLogic.manager);
+    startArea = new Area("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE);
+    manager->addObject(startArea, -1);
 }
 
 
@@ -75,7 +88,6 @@ GameLogic::~GameLogic(){
 
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
-    PlayerClass *aClass;
     ItemType *anItemType, *anotherItemType, *aWeaponType;
     Item *anItem, *aWeapon;
     Container *aContainer;
@@ -87,56 +99,111 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     SpecialSkill *aSkill;
     NonCombatant *aNPC, *anotherNPC;
 
+    ArmorType *defaultArmorType = nullptr;
+    ItemType *defaultItemType = nullptr;
+    Container *defaultContainer = nullptr;
+    Creature *defaultCreature = nullptr;
+    CreatureType *defaultCreatureType = nullptr;
+    Exit *defaultExit = nullptr;
+    Feature *defaultFeature = nullptr;
+    Item *defaultItem = nullptr;
+    NonCombatant *defaultNonCombatant = nullptr;
+    PlayerClass *defaultPlayerClass = nullptr;
+    Quest *defaultQuest = nullptr;
+    QuestStep *defaultQuestStep = nullptr;
+    SpecialSkill *defaultSpecialSkill = nullptr;
+    WeaponType *defaultWeaponType = nullptr;
+
     accountManager = anAccount;
     theServer = aServer;
+
+    // create default object of each type other than area and player
+    defaultArmorType = new ArmorType(3, DamageType::NONE, 2, ItemRarity::COMMON, "some armor", "default armor type", 1, EquipmentSlot::TORSO);
+    manager->addObject(defaultArmorType, -1);
+
+    defaultItemType = new ItemType(1, ItemRarity::COMMON, "a default item type", "default item type", 1, EquipmentSlot::FEET);
+    manager->addObject(defaultItemType, -1);
+
+    defaultContainer = new Container(12345, startArea, ItemPosition::GROUND, "default container", defaultItemType);
+    manager->addObject(defaultContainer, -1);
+
+    defaultSpecialSkill = new SpecialSkill("default special skill", 5, DamageType::ELECTRIC, 3, 2);
+    manager->addObject(defaultSpecialSkill, -1);
+
+    defaultCreatureType = new CreatureType(CharacterSize::MEDIUM, XPTier::HARD, "default creature type", defaultSpecialSkill, 2, 3, DamageType::NONE, DamageType::FIRE, 0.3);
+    manager->addObject(defaultCreatureType, -1);
+
+    defaultCreature = new Creature(defaultCreatureType, true, 4, startArea, 3, "default creature", "a creature", 0, startArea, 100);
+    manager->addObject(defaultCreature, -1);
+
+    defaultExit = new Exit(ExitDirection::WEST, startArea, startArea, false, nullptr, "default exit", "still a default exit");
+    manager->addObject(defaultExit, -1);
+
+    defaultFeature = new Feature("default feature", "in the default location", startArea, false, nullptr, "a feature", "still a feature");
+    manager->addObject(defaultFeature, -1);
+
+    defaultItem = new Item(startArea, ItemPosition::GROUND, "default item", defaultItemType);
+    manager->addObject(defaultItem, -1);
+
+    defaultNonCombatant = new NonCombatant(nullptr, "default NPC", "a non-combatant", 5, startArea, 1000);
+    manager->addObject(defaultNonCombatant, -1);
+
+    defaultPlayerClass = new PlayerClass(0, "default class", defaultSpecialSkill, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
+    manager->addObject(defaultPlayerClass, -1);
+
+    defaultQuest = new Quest("default quest", "a quest", 1, nullptr);
+    manager->addObject(defaultQuest, -1);
+
+    defaultQuestStep = new QuestStep(1, "a default quest step", defaultItemType, defaultNonCombatant, defaultNonCombatant, "default completion message");
+    manager->addObject(defaultQuestStep, -1);
+
+    defaultWeaponType = new WeaponType(3, DamageType::NONE, AreaSize::SMALL, 1, 2, ItemRarity::COMMON, "a default weapon type", "default weapon type", 1, EquipmentSlot::NONE);
+    manager->addObject(defaultWeaponType, -1);
+
 
     // create a SpecialSkill
     aSkill = new SpecialSkill("Totally Rad Healing", 3, DamageType::HEAL, 1, 3);
     manager->addObject(aSkill, -1);
 
-    // create a default player class
-    aClass = new PlayerClass(0, "default class", aSkill, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
-    manager->addObject(aClass, -1);
-
     // create a test item type and item
     anItemType = new ItemType(5, ItemRarity::COMMON, "a bright and shiny apple", "apple", 1, EquipmentSlot::NONE); 
     manager->addObject(anItemType, -1);
-    anItem = new Item(&startArea, ItemPosition::GROUND, "red apple", anItemType);
+    anItem = new Item(startArea, ItemPosition::GROUND, "red apple", anItemType);
     manager->addObject(anItem, -1);
-    startArea.addItem(anItem);
+    startArea->addItem(anItem);
     anItem->addAction(CommandEnum::EAT, true, "The apple tastes sweet and refreshing.", EffectType::HEAL);
 
     // create a test item type and container
     anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
     manager->addObject(anItemType, -1);
-    aContainer = new Container(5, &startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
+    aContainer = new Container(5, startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
     manager->addObject(aContainer, -1);
-    startArea.addItem(aContainer);
+    startArea->addItem(aContainer);
 
     // create a test weapon type and item
     aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 9, EquipmentSlot::RIGHT_HAND); 
     manager->addObject(aWeaponType, -1);
-    aWeapon = new Item(&startArea, ItemPosition::GROUND, "small knife", aWeaponType);
+    aWeapon = new Item(startArea, ItemPosition::GROUND, "small knife", aWeaponType);
     manager->addObject(aWeapon, -1);
-    startArea.addItem(aWeapon);
+    startArea->addItem(aWeapon);
 
     // create a second area and two exits
     anArea = new Area("test area", "You are in a vast space.", "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.", AreaSize::LARGE);
     manager->addObject(anArea, -1);
-    anExit = new Exit(ExitDirection::NORTH, &startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+    anExit = new Exit(ExitDirection::NORTH, startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
     manager->addObject(anExit, -1);
-    startArea.addExit(anExit);
-    otherExit = new Exit(ExitDirection::SOUTH, anArea, &startArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+    startArea->addExit(anExit);
+    otherExit = new Exit(ExitDirection::SOUTH, anArea, startArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
     manager->addObject(otherExit, -1);
     anArea->addExit(otherExit);
 
     // create test NPCs
-    aNPC = new NonCombatant(nullptr, "Sophia", "a truly radical person", 50, &startArea, 100);
+    aNPC = new NonCombatant(nullptr, "Sophia", "a truly radical person", 50, startArea, 100);
     manager->addObject(aNPC, -1);
-    startArea.addCharacter(aNPC);
-    anotherNPC = new NonCombatant(nullptr, "Mark", "a kinda awesome person", 50, &startArea, 100);
+    startArea->addCharacter(aNPC);
+    anotherNPC = new NonCombatant(nullptr, "Mark", "a kinda awesome person", 50, startArea, 100);
     manager->addObject(anotherNPC, -1);
-    startArea.addCharacter(anotherNPC);
+    startArea->addCharacter(anotherNPC);
 
     // create test player, quest, quest step
     aQuest = new Quest("Super Cool Quest", "The quest for the totally cool stuff", 30, nullptr);
@@ -149,7 +216,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     anotherStep = new QuestStep(2, "Go to the first place and get the first thing", anItemType, nullptr, nullptr, "You did the first thing! Congrats!");
     manager->addObject(anotherStep, -1);
     aQuest->addStep(anotherStep);
-    aPlayer = new Player(CharacterSize::SMALL, aClass, "test", -1, "Tester1", "a super awesome person", &startArea);
+    aPlayer = new Player(CharacterSize::SMALL, defaultPlayerClass, "test", -1, "Tester1", "a super awesome person", startArea);
     aPlayer->addOrUpdateQuest(aQuest, 2, true);
     manager->addObject(aPlayer, -1);
     accountManager->createAccount("test", "test", true, aPlayer->getID());
@@ -268,7 +335,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                 return false;
 
             // create player
-            newPlayer = new Player(static_cast<CharacterSize>(playerSize - 1), pClasses[pClassNumber - 1], username, fileDescriptor, playerName, pDescription, &startArea);
+            newPlayer = new Player(static_cast<CharacterSize>(playerSize - 1), pClasses[pClassNumber - 1], username, fileDescriptor, playerName, pDescription, startArea);
             manager->addObject(newPlayer, fileDescriptor);
 
             // create account
@@ -278,11 +345,11 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             }
 
             // move player to start area
-            startArea.addCharacter(newPlayer);
-            newPlayer->setLocation(&startArea);
-            messagePlayer(newPlayer, startArea.getFullDescription(newPlayer));
+            startArea->addCharacter(newPlayer);
+            newPlayer->setLocation(startArea);
+            messagePlayer(newPlayer, startArea->getFullDescription(newPlayer));
             message = "You see a player named " + playerName + " enter the area.";
-            messageAreaPlayers(newPlayer, message, &startArea);
+            messageAreaPlayers(newPlayer, message, startArea);
 
             validUser = true;
         } else {
@@ -490,44 +557,1516 @@ int GameLogic::rollDice(int numSides, int numDice){
 
 
 bool GameLogic::createObject(Player *aPlayer, ObjectType type){
+    bool success = false;
+
+    switch (type){
+        case ObjectType::NONE:
+            break;
+        case ObjectType::AREA:
+            success = createArea(aPlayer);
+            break;
+        case ObjectType::ARMOR_TYPE:
+            success = createArmorType(aPlayer);
+            break;
+        case ObjectType::CONTAINER:
+            success = createContainer(aPlayer);
+            break;
+        case ObjectType::CREATURE:
+            success = createCreature(aPlayer);
+            break;
+        case ObjectType::CREATURE_TYPE:
+            success = createCreatureType(aPlayer);
+            break;
+        case ObjectType::EXIT:
+            success = createExit(aPlayer);
+            break;
+        case ObjectType::FEATURE:
+            success = createFeature(aPlayer);
+            break;
+        case ObjectType::ITEM:
+            success = createItem(aPlayer);
+            break;
+        case ObjectType::ITEM_TYPE:
+            success = createItemType(aPlayer);
+            break;
+        case ObjectType::NON_COMBATANT:
+            success = createNonCombatant(aPlayer);
+            break;
+        case ObjectType::PLAYER:
+            success = createPlayer(aPlayer);
+            break;
+        case ObjectType::PLAYER_CLASS:
+            success = createPlayerClass(aPlayer);
+            break;
+        case ObjectType::QUEST:
+            success = createQuest(aPlayer);
+            break;
+        case ObjectType::QUEST_STEP:
+            success = createQuestStep(aPlayer);
+            break;
+        case ObjectType::SPECIAL_SKILL:
+            success = createSpecialSkill(aPlayer);
+            break;
+        case ObjectType::WEAPON_TYPE:
+            success = createWeaponType(aPlayer);
+            break;
+    }
+
+    return success;
+}
+
+
+bool GameLogic::createArea(Player *aPlayer){
+    Area *newArea = nullptr;
+    std::string name = "";
+    std::string shortDescription = "";
+    std::string longDescription = "";
+    AreaSize size;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Area Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    shortDescription = getStringParameter(aPlayer, "short description");
+    longDescription = getStringParameter(aPlayer, "long description");
+    size = getAreaSizeParameter(aPlayer, "size");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newArea = new Area(name, shortDescription, longDescription, size);
+
+    manager->addObject(newArea, -1);
+
+    messagePlayer(aPlayer, "You have created a new area. The ID of the new area is " + std::to_string(newArea->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createArmorType(Player *aPlayer){
+    ArmorType *newArmorType = nullptr;
+    int bonus;
+    DamageType resistantTo;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Armor Type Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    bonus = getIntParameter(aPlayer, "armor bonus");
+    resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+    weight = getIntParameter(aPlayer, "weight");
+    rarity = getItemRarityParameter(aPlayer, "rarity");
+    cost = getIntParameter(aPlayer, "cost");
+    slotType = getEquimentSlotParameter(aPlayer, "slot type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newArmorType = new ArmorType(bonus, resistantTo, weight, rarity, description, name, cost, slotType);
+
+    manager->addObject(newArmorType, -1);
+
+    messagePlayer(aPlayer, "You have created a new armor type. The ID of the new armor type is " + std::to_string(newArmorType->getID()) + ".");
+
+    return true;
+}
+
+
+// would be better without dynamic casts 
+bool GameLogic::createContainer(Player *aPlayer){
+    Container *newContainer = nullptr;
+    ObjectType anObjectType = ObjectType::NONE;
+    Area *anArea = nullptr;
+    Character *aCharacter = nullptr;
+    Container *aContainer = nullptr;
+    int capacity;
+    InteractiveNoun *location = nullptr;
+    ItemPosition position;
+    std::string name;
+    ItemType *type = nullptr;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Container Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    type = getItemTypeParameter(aPlayer, "type");
+    capacity = getIntParameter(aPlayer, "capacity");
+    location = getInteractiveNounParameter(aPlayer, "location");
+    
+    if (location != nullptr){
+        // make sure that the given combo of location and position make sense
+        anObjectType = location->getObjectType();
+        if (anObjectType == ObjectType::AREA){
+            position = ItemPosition::GROUND;  
+        } else if (anObjectType == ObjectType::CONTAINER){
+            // position should be IN, ON, or UNDER
+            position = getItemPositionParameter(aPlayer, "position", 0);
+        } else {
+            // position should be either INVENTORY or EQUIPPED
+            position = getItemPositionParameter(aPlayer, "position", 1);
+        }
+    } else {
+        position = ItemPosition::NONE;
+    }
+
+    removePlayerMessageQueue(aPlayer);
+
+    newContainer = new Container(capacity, location, position, name, type);
+
+    manager->addObject(newContainer, -1);
+    if (location != nullptr){
+        // add to location
+        if (anObjectType == ObjectType::AREA){
+            anArea = dynamic_cast<Area*>(location);
+            if (anArea != nullptr){
+                anArea->addItem(newContainer);
+                messageAreaPlayers(nullptr, "A new " + name + " appears on the ground.", anArea);
+            }
+        } else if (anObjectType == ObjectType::CONTAINER){
+            aContainer = dynamic_cast<Container*>(location);
+            if (aContainer != nullptr){
+                aContainer->place(newContainer, position);
+            }
+        } else {
+            aCharacter = dynamic_cast<Character*>(location);
+            if (aCharacter != nullptr){
+                aCharacter->addToInventory(newContainer);
+                if (position == ItemPosition::EQUIPPED){
+                    aCharacter->equipItem(newContainer);
+                }
+            }
+        }
+    }
+    
+    messagePlayer(aPlayer, "You have created a new container. The ID of the new container is " + std::to_string(newContainer->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createCreature(Player *aPlayer){
+    Creature *newCreature = nullptr;
+    CreatureType *aType = nullptr;
+    bool ambulatory;
+    int maxHealth;
+    Area *spawnLocation = nullptr;
+    int maxSpecialPts;
+    std::string name;
+    std::string description;
+    int money;
+    Area *aLocation = nullptr;
+    int maxInventoryWeight;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Creature Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    aType = getCreatureTypeParameter(aPlayer, "creature type");
+    ambulatory = getBoolParameter(aPlayer, "ambulatory");
+    aLocation = getAreaParameter(aPlayer, "current location");
+    spawnLocation = getAreaParameter(aPlayer, "spawn location");
+    maxHealth = getIntParameter(aPlayer, "maximum health");
+    maxSpecialPts = getIntParameter(aPlayer, "maximum special points");
+    money = getIntParameter(aPlayer, "money");
+    maxInventoryWeight = getIntParameter(aPlayer, "maximum inventory weight");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newCreature = new Creature(aType, ambulatory, maxHealth, spawnLocation, maxSpecialPts, name, description, money, aLocation, maxInventoryWeight);
+
+    manager->addObject(newCreature, -1);
+    aLocation->addCharacter(newCreature);
+    messageAreaPlayers(nullptr, "A creature named " + name + " appears out of nowhere.", aLocation);
+
+    messagePlayer(aPlayer, "You have created a new creature. The ID of the new creature is " + std::to_string(newCreature->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createCreatureType(Player *aPlayer){
+    CreatureType *newCreatureType = nullptr;
+    CharacterSize size;
+    XPTier difficulty;
+    std::string name;
+    SpecialSkill *skill = nullptr;
+    int attackBonus;
+    int armorBonus;
+    DamageType resistantTo;
+    DamageType weakTo;
+    float healPoints;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Creature Type Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    size = getCharacterSizeParameter(aPlayer, "size");
+    difficulty = getXPTierParameter(aPlayer, "difficulty");
+    skill = getSpecialSkillParameter(aPlayer, "special skill");
+    attackBonus = getIntParameter(aPlayer, "attack bonus");
+    armorBonus = getIntParameter(aPlayer, "armor bonus");
+    resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+    weakTo = getDamageTypeParameter(aPlayer, "weakness type");
+    healPoints = getFloatParameter(aPlayer, "healing point rate");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newCreatureType = new CreatureType(size, difficulty, name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints);
+
+    manager->addObject(newCreatureType, -1);
+
+    messagePlayer(aPlayer, "You have created a new creature type. The ID of the new creature type is " + std::to_string(newCreatureType->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createExit(Player *aPlayer){
+    Exit *newExit = nullptr;
+    ExitDirection direction;
+    Area *location = nullptr;
+    Area *connectArea = nullptr;
+    bool isConditional;
+    ItemType *anItemType = nullptr;
+    std::string description;
+    std::string altDescription = "";
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Exit Creation Wizard...");
+
+    direction = getExitDirectionParameter(aPlayer, "direction");
+    description = getStringParameter(aPlayer, "description");
+    location = getAreaParameter(aPlayer, "location");
+    connectArea = getAreaParameter(aPlayer, "connecting area");
+    isConditional = getBoolParameter(aPlayer, "conditional");
+    // if conditional is false, then don't need conditional item type or alt description
+    if (isConditional){
+        anItemType = getItemTypeParameter(aPlayer, "conditional item type");
+        altDescription = getStringParameter(aPlayer, "alternate description");
+    }
+
+    removePlayerMessageQueue(aPlayer);
+
+    newExit = new Exit(direction, location, connectArea, isConditional, anItemType, description, altDescription);
+
+    manager->addObject(newExit, -1);
+    location->addExit(newExit);
+    messageAreaPlayers(nullptr, newExit->getDirectionString() + " you see " + description + " appear out of nowhere.", location);
+    
+    messagePlayer(aPlayer, "You have created a new exit. The ID of the new exit is " + std::to_string(newExit->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createFeature(Player *aPlayer){
+    Feature *newFeature = nullptr;
+    std::string name;
+    std::string placement;
+    Area *location = nullptr;
+    bool isConditional;
+    ItemType *anItemType = nullptr;
+    std::string description;
+    std::string altDescription;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Feature Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    placement = getStringParameter(aPlayer, "placement");
+    location = getAreaParameter(aPlayer, "location");
+    isConditional = getBoolParameter(aPlayer, "conditional");
+    // if conditional is false, then don't need conditional item type or alt description
+    if (isConditional){
+        anItemType = getItemTypeParameter(aPlayer, "conditional item type");
+        altDescription = getStringParameter(aPlayer, "alternate description");
+    }
+
+    removePlayerMessageQueue(aPlayer);
+
+    newFeature = new Feature(name, placement, location, isConditional, anItemType, description, altDescription);
+
+    manager->addObject(newFeature, -1);
+    location->addFeature(newFeature);
+    messageAreaPlayers(nullptr, "You see a " + name + " appear out of nowhere " + placement + ".", location);
+
+    messagePlayer(aPlayer, "You have created a new feature. The ID of the new feature is " + std::to_string(newFeature->getID()) + ".");
+
+    return true;
+
+}
+
+
+bool GameLogic::createItem(Player *aPlayer){
+    ObjectType anObjectType = ObjectType::NONE;
+    Area *anArea = nullptr;
+    Character *aCharacter = nullptr;
+    Container *aContainer = nullptr;
+    Item *newItem = nullptr;
+    InteractiveNoun* location = nullptr;
+    ItemPosition position;
+    std::string name;
+    ItemType *type = nullptr;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Item Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    type = getItemTypeParameter(aPlayer, "type");
+    location = getInteractiveNounParameter(aPlayer, "location");
+    
+    if (location != nullptr){
+        // make sure that the given combo of location and position make sense
+        anObjectType = location->getObjectType();
+        if (anObjectType == ObjectType::AREA){
+            position = ItemPosition::GROUND;  
+        } else if (anObjectType == ObjectType::CONTAINER){
+            // position should be IN, ON, or UNDER
+            position = getItemPositionParameter(aPlayer, "position", 0);
+        } else {
+            // position should be either INVENTORY or EQUIPPED
+            position = getItemPositionParameter(aPlayer, "position", 1);
+        }
+    } else {
+        position = ItemPosition::NONE;
+    }
+
+    removePlayerMessageQueue(aPlayer);
+
+    newItem = new Item(location, position, name, type);
+
+    manager->addObject(newItem, -1);
+    if (location != nullptr){
+        // add to location
+        if (anObjectType == ObjectType::AREA){
+            anArea = dynamic_cast<Area*>(location);
+            if (anArea != nullptr){
+                anArea->addItem(newItem);
+                messageAreaPlayers(nullptr, "A new " + name + " appears on the ground.", anArea);
+            }
+        } else if (anObjectType == ObjectType::CONTAINER){
+            aContainer = dynamic_cast<Container*>(location);
+            if (aContainer != nullptr){
+                aContainer->place(newItem, position);
+            }
+        } else {
+            aCharacter = dynamic_cast<Character*>(location);
+            if (aCharacter != nullptr){
+                aCharacter->addToInventory(newItem);
+                if (position == ItemPosition::EQUIPPED){
+                    aCharacter->equipItem(newItem);
+                }
+            }
+        }
+    }
+
+    messagePlayer(aPlayer, "You have created a new item. The ID of the new item is " + std::to_string(newItem->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createItemType(Player *aPlayer){
+    ItemType *newItemType = nullptr;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Item Type Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    weight = getIntParameter(aPlayer, "weight");
+    rarity = getItemRarityParameter(aPlayer, "rarity");
+    cost = getIntParameter(aPlayer, "cost");
+    slotType = getEquimentSlotParameter(aPlayer, "slot type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newItemType = new ItemType(weight, rarity, description, name, cost, slotType);
+
+    manager->addObject(newItemType, -1);
+
+    messagePlayer(aPlayer, "You have created a new item type. The ID of the new item type is " + std::to_string(newItemType->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createNonCombatant(Player *aPlayer){
+    NonCombatant *newNonCombatant = nullptr;
+    Quest *aQuest = nullptr;
+    std::string name;
+    std::string description;
+    int money;
+    Area *aLocation = nullptr;
+    int maxInventoryWeight;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting NonCombatant Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    money = getIntParameter(aPlayer, "money");
+    aLocation = getAreaParameter(aPlayer, "location");
+    maxInventoryWeight = getIntParameter(aPlayer, "maximum inventory weight");
+    aQuest = getQuestParameter(aPlayer, "quest", true);
+
+    removePlayerMessageQueue(aPlayer);
+
+    newNonCombatant = new NonCombatant(aQuest, name, description, money, aLocation, maxInventoryWeight);
+
+    manager->addObject(newNonCombatant, -1);
+    aLocation->addCharacter(newNonCombatant);
+    messageAreaPlayers(nullptr, "A person named " + name + " appears out of nowhere.", aLocation);
+
+    messagePlayer(aPlayer, "You have created a new non-combatant. The ID of the new non-combatant is " + std::to_string(newNonCombatant->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createPlayer(Player *aPlayer){
+    messagePlayer(aPlayer, "You can't create a new player this way. Use the login process to create new user/player pairs.");
+
     return false;
 }
 
 
-ObjectType GameLogic::getObjectType(const std::string &input){
+bool GameLogic::createPlayerClass(Player *aPlayer){
+    PlayerClass *newPlayerClass = nullptr;
+    int primaryStat;
+    std::string name;
+    SpecialSkill* skill = nullptr;
+    int attackBonus;
+    int armorBonus;
+    DamageType resistantTo;
+    DamageType weakTo;
+    float healPoints;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Player Class Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    primaryStat = getIntParameter(aPlayer, "primary stat (enter [0] for dexterity, [1] for intelligence, or [2] for strength)", 2);
+    skill = getSpecialSkillParameter(aPlayer, "special skill");
+    attackBonus = getIntParameter(aPlayer, "attack bonus");
+    armorBonus = getIntParameter(aPlayer, "armor bonus");
+    resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+    weakTo = getDamageTypeParameter(aPlayer, "weakness type");
+    healPoints = getFloatParameter(aPlayer, "healing point rate");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newPlayerClass = new PlayerClass(primaryStat, name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints);
+
+    manager->addObject(newPlayerClass, -1);
+
+    messagePlayer(aPlayer, "You have created a new player class. The ID of the new player class is " + std::to_string(newPlayerClass->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createQuest(Player *aPlayer){
+    Quest *newQuest = nullptr;
+    std::string name;
+    std::string description;
+    int rewardMoney;
+    Item *rewardItem = nullptr;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Quest Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    rewardMoney = getIntParameter(aPlayer, "reward money");
+    rewardItem = getItemParameter(aPlayer, "reward item"); // may want to change this so they can't choose ANY item ANYWHERE in the game
+
+    removePlayerMessageQueue(aPlayer);
+
+    newQuest = new Quest(name, description, rewardMoney, rewardItem);
+
+    manager->addObject(newQuest, -1);
+
+    messagePlayer(aPlayer, "You have created a new quest. The ID of the new quest is " + std::to_string(newQuest->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createQuestStep(Player *aPlayer){
+    QuestStep *newQuestStep = nullptr;
+    int ordinalNumber;
+    std::string description;
+    ItemType *anItemType = nullptr;
+    NonCombatant *giver = nullptr;
+    NonCombatant *receiver = nullptr;
+    std::string completionText;
+    Quest *aQuest = nullptr;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Quest Step Creation Wizard...");
+
+    aQuest = getQuestParameter(aPlayer, "quest", false);
+    ordinalNumber = getIntParameter(aPlayer, "ordinal number");
+    description = getStringParameter(aPlayer, "description");
+    anItemType = getItemTypeParameter(aPlayer, "fetch item type");
+    giver = getNonCombatantParameter(aPlayer, "giver", aQuest);
+    giver->setQuest(aQuest);
+    receiver = getNonCombatantParameter(aPlayer, "receiver", aQuest);
+    receiver->setQuest(aQuest);
+    completionText = getStringParameter(aPlayer, "completion text");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newQuestStep = new QuestStep(ordinalNumber, description, anItemType, giver, receiver, completionText);
+    aQuest->addStep(newQuestStep);
+
+    manager->addObject(newQuestStep, -1);
+
+    messagePlayer(aPlayer, "You have created a new quest step. The ID of the new quest step is " + std::to_string(newQuestStep->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createSpecialSkill(Player *aPlayer){
+    SpecialSkill *newSpecialSkill = nullptr;
+    std::string name;
+    int damage;
+    DamageType type;
+    int cost;
+    time_t cooldown;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Special Skill Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    damage = getIntParameter(aPlayer, "damage");
+    type = getDamageTypeParameter(aPlayer, "damage type");
+    cost = getIntParameter(aPlayer, "cost");
+    cooldown = getIntParameter(aPlayer, "cooldown (in seconds)");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newSpecialSkill = new SpecialSkill(name, damage, type, cost, cooldown);
+
+    manager->addObject(newSpecialSkill, -1);
+
+    messagePlayer(aPlayer, "You have created a new special skill. The ID of the new special skill is " + std::to_string(newSpecialSkill->getID()) + ".");
+
+    return true;
+}
+
+
+bool GameLogic::createWeaponType(Player *aPlayer){
+    WeaponType *newWeaponType = nullptr;
+    int damage;
+    DamageType type;
+    AreaSize range;
+    int critMultiplier;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+
+    addPlayerMessageQueue(aPlayer);
+    messagePlayer(aPlayer, "\015\012Starting Weapon Type Creation Wizard...");
+
+    name = getStringParameter(aPlayer, "name");
+    description = getStringParameter(aPlayer, "description");
+    damage = getIntParameter(aPlayer, "damage");
+    type = getDamageTypeParameter(aPlayer, "damage type");
+    range = getAreaSizeParameter(aPlayer, "range");
+    critMultiplier = getIntParameter(aPlayer, "crit multiplier");
+    weight = getIntParameter(aPlayer, "weight");
+    rarity = getItemRarityParameter(aPlayer, "rarity");
+    cost = getIntParameter(aPlayer, "cost");
+    slotType = getEquimentSlotParameter(aPlayer, "slot type");
+
+    removePlayerMessageQueue(aPlayer);
+
+    newWeaponType = new WeaponType(damage, type, range, critMultiplier, weight, rarity, description, name, cost, slotType);
+
+    manager->addObject(newWeaponType, -1);
+
+    messagePlayer(aPlayer, "You have created a new weapon type. The ID of the new weapon type is " + std::to_string(newWeaponType->getID()) + ".");
+
+    return true;
+}
+
+
+int GameLogic::getIntParameter(Player *aPlayer, std::string paramName, int maxNum){
+    std::string response = "";
+    int intParam = -1;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Please enter a positive integer value no greater than " + std::to_string(maxNum) + ".";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    intParam = validateStringNumber(response, 0, maxNum);
+    while (intParam == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter a positive integer value no greater than " + std::to_string(maxNum) + ".");
+        response = blockingGetMsg(aPlayer);
+        intParam = validateStringNumber(response, 0, maxNum);
+    }
+
+    return intParam;
+}
+
+
+bool GameLogic::getBoolParameter(Player *aPlayer, std::string paramName){
+    bool boolParam = false;
+    std::string response = "";
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Please enter TRUE or FALSE.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    std::transform(response.begin(), response.end(), response.begin(), ::tolower);
+    while ((response.compare("true") != 0) && (response.compare("false") != 0)){
+        messagePlayer(aPlayer, "Invalid input. Please enter TRUE or FALSE.");
+        response = blockingGetMsg(aPlayer);
+        std::transform(response.begin(), response.end(), response.begin(), ::tolower);
+    }
+
+    if (response.compare("true") == 0){
+        boolParam = true;
+    } else if (response.compare("false") == 0){
+        boolParam = false;
+    }
+
+    return boolParam;
+}
+
+
+float GameLogic::getFloatParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    float floatParam = -1.0;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Please enter a floating point value greater than zero.";
+
+    messagePlayer(aPlayer, message);
+    response = blockingGetMsg(aPlayer);
+    floatParam = std::atof(response.c_str());
+    if (floatParam <= 0.0){
+        messagePlayer(aPlayer, "Invalid input. Please enter a floating point value greater than zero.");
+        response = blockingGetMsg(aPlayer);
+        floatParam = std::atof(response.c_str());
+    }
+
+    return floatParam;
+}
+
+
+std::string GameLogic::getStringParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Please enter a string.";
+
+    messagePlayer(aPlayer, message);
+    response = blockingGetMsg(aPlayer);
+
+    return response;
+}
+
+
+EffectType GameLogic::getEffectTypeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    EffectType effectTypeParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] NONE, [2] DAMAGE, [3] FALL, [4] LONG FALL, [5] LOST ITEM, [6] DROP ALL ITEMS, [7] GAIN MONEY, [8] LOSE MONEY, [9] HEAL, or [10] GET SPECIAL POINTS. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 10);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 10);
+    }
+
+    switch (choice){
+        case 1:
+            effectTypeParam = EffectType::NONE;
+            break;
+        case 2:
+            effectTypeParam = EffectType::DAMAGE;
+            break;
+        case 3:
+            effectTypeParam = EffectType::FALL;
+            break;
+        case 4:
+            effectTypeParam = EffectType::LONG_FALL;
+            break;
+        case 5:
+            effectTypeParam = EffectType::LOST_ITEM;
+            break;
+        case 6:
+            effectTypeParam = EffectType::DROP_ALL_ITEMS;
+            break;
+        case 7:
+            effectTypeParam = EffectType::GAIN_MONEY;
+            break;
+        case 8:
+            effectTypeParam = EffectType::LOSE_MONEY;
+            break;
+        case 9:
+            effectTypeParam = EffectType::HEAL;
+            break;
+        case 10:
+            effectTypeParam = EffectType::GET_SPECIAL_POINTS;
+            break;
+        default:
+            effectTypeParam = EffectType::NONE;
+            break;
+    }
+
+    return effectTypeParam;
+}
+
+
+AreaSize GameLogic::getAreaSizeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    AreaSize areaSizeParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] SMALL, [2] MEDIUM, or [3] LARGE. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 3);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 3);
+    }
+
+    switch (choice){
+        case 1:
+            areaSizeParam = AreaSize::SMALL;
+            break;
+        case 2:
+            areaSizeParam = AreaSize::MEDIUM;
+            break;
+        case 3:
+            areaSizeParam = AreaSize::LARGE;
+            break;
+        default:
+            areaSizeParam = AreaSize::SMALL;
+            break;
+    }
+
+    return areaSizeParam;
+}
+
+
+DamageType GameLogic::getDamageTypeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    DamageType damageTypeParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] NONE, [2] CRUSHING, [3] PIERCING, [4] ELECTRIC, [5] FIRE, [6] WATER, [7] WIND, [8] EARTH, or [9] HEAL. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 9);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 9);
+    }
+
+    switch (choice){
+        case 1:
+            damageTypeParam = DamageType::NONE;
+            break;
+        case 2:
+            damageTypeParam = DamageType::CRUSHING;
+            break;
+        case 3:
+            damageTypeParam = DamageType::PIERCING;
+            break;
+        case 4:
+            damageTypeParam = DamageType::ELECTRIC;
+            break;
+        case 5:
+            damageTypeParam = DamageType::FIRE;
+            break;
+        case 6:
+            damageTypeParam = DamageType::WATER;
+            break;
+        case 7:
+            damageTypeParam = DamageType::WIND;
+            break;
+        case 8:
+            damageTypeParam = DamageType::EARTH;
+            break;
+        case 9:
+            damageTypeParam = DamageType::HEAL;
+            break;
+        default:
+            damageTypeParam = DamageType::NONE;
+            break;
+    }
+
+    return damageTypeParam;
+}
+
+
+ItemRarity GameLogic::getItemRarityParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    ItemRarity itemRarityParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] COMMON, [2] UNCOMMON, [3] RARE, [4] LEGENDARY, or [5] QUEST. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 5);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 5);
+    }
+
+    switch (choice){
+        case 1:
+            itemRarityParam = ItemRarity::COMMON;
+            break;
+        case 2:
+            itemRarityParam = ItemRarity::UNCOMMON;
+            break;
+        case 3:
+            itemRarityParam = ItemRarity::RARE;
+            break;
+        case 4:
+            itemRarityParam = ItemRarity::LEGENDARY;
+            break;
+        case 5:
+            itemRarityParam = ItemRarity::QUEST;
+            break;
+        default:
+            itemRarityParam = ItemRarity::COMMON;
+            break;
+    }
+
+    return itemRarityParam;
+}
+
+
+EquipmentSlot GameLogic::getEquimentSlotParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    EquipmentSlot equipmentSlotParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] NONE, [2] HEAD, [3] SHOULDERS, [4] NECK, [5] TORSO, [6] BELT, [7] LEGS, [8] ARMS, [9] HANDS, [10] RIGHT HAND, [11] LEFT HAND, [12] FEET, [13] RIGHT RING, or [14] LEFT RING. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 14);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 14);
+    }
+
+    switch (choice){
+        case 1:
+            equipmentSlotParam = EquipmentSlot::NONE;
+            break;
+        case 2:
+            equipmentSlotParam = EquipmentSlot::HEAD;
+            break;
+        case 3:
+            equipmentSlotParam = EquipmentSlot::SHOULDERS;
+            break;
+        case 4:
+            equipmentSlotParam = EquipmentSlot::NECK;
+            break;
+        case 5:
+            equipmentSlotParam = EquipmentSlot::TORSO;
+            break;
+        case 6:
+            equipmentSlotParam = EquipmentSlot::BELT;
+            break;
+        case 7:
+            equipmentSlotParam = EquipmentSlot::LEGS;
+            break;
+        case 8:
+            equipmentSlotParam = EquipmentSlot::ARMS;
+            break;
+        case 9:
+            equipmentSlotParam = EquipmentSlot::HANDS;
+            break;
+        case 10:
+            equipmentSlotParam = EquipmentSlot::RIGHT_HAND;
+            break;
+        case 11:
+            equipmentSlotParam = EquipmentSlot::LEFT_HAND;
+            break;
+        case 12:
+            equipmentSlotParam = EquipmentSlot::FEET;
+            break;
+        case 13:
+            equipmentSlotParam = EquipmentSlot::RIGHT_RING;
+            break;
+        case 14:
+            equipmentSlotParam = EquipmentSlot::LEFT_RING;
+            break;
+        default:
+            equipmentSlotParam = EquipmentSlot::NONE;
+            break;
+    }
+
+    return equipmentSlotParam;
+}
+
+
+ItemPosition GameLogic::getItemPositionParameter(Player *aPlayer, std::string paramName, int option){
+    std::string response = "";
+    int choice = -1;
+    int numOptions = 0;
+    ItemPosition itemPositionParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+
+    if (option == 0){
+        message += " Your choices are: [1] IN, [2] ON, or [3] UNDER. Please enter the number that corresponds to your choice."; 
+        numOptions = 3;
+    } else if (option == 1){
+        message += " Your choices are: [1] INVENTORY or [2] EQUIPPED. Please enter the number that corresponds to your choice."; 
+        numOptions = 2;
+    } else {
+        message += " Your choices are: [1] GROUND, [2] INVENTORY, [3] EQUIPPED, [4] IN, [5] ON, or [6] UNDER. Please enter the number that corresponds to your choice."; 
+        numOptions = 6;
+    }
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, numOptions);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, numOptions);
+    }
+
+    switch (choice){
+        case 1:
+            if (option == 0){
+                itemPositionParam = ItemPosition::IN;
+            } else if (option == 1){
+                itemPositionParam = ItemPosition::INVENTORY;
+            } else {
+                itemPositionParam = ItemPosition::GROUND;
+            }
+            break;
+        case 2:
+            if (option == 0){
+                itemPositionParam = ItemPosition::ON;
+            } else if (option == 1){
+                itemPositionParam = ItemPosition::EQUIPPED;
+            } else {
+                itemPositionParam = ItemPosition::INVENTORY;
+            }
+            break;
+        case 3:
+            if (option == 0){
+                itemPositionParam = ItemPosition::UNDER;
+            } else {
+                itemPositionParam = ItemPosition::EQUIPPED;
+            }
+            break;
+        case 4:
+            itemPositionParam = ItemPosition::IN;
+            break;
+        case 5:
+            itemPositionParam = ItemPosition::ON;
+            break;
+        case 6:
+            itemPositionParam = ItemPosition::UNDER;
+            break;
+        default:
+            itemPositionParam = ItemPosition::NONE;
+            break;
+    }
+
+    return itemPositionParam;
+}
+
+
+CharacterSize GameLogic::getCharacterSizeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    CharacterSize characterSizeParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] TINY, [2] SMALL, [3] MEDIUM, [4] LARGE, or [5] HUGE. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 5);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 5);
+    }
+
+    switch (choice){
+        case 1:
+            characterSizeParam = CharacterSize::TINY;
+            break;
+        case 2:
+            characterSizeParam = CharacterSize::SMALL;
+            break;
+        case 3:
+            characterSizeParam = CharacterSize::MEDIUM;
+            break;
+        case 4:
+            characterSizeParam = CharacterSize::LARGE;
+            break;
+        case 5:
+            characterSizeParam = CharacterSize::HUGE;
+            break;
+        default:
+            characterSizeParam = CharacterSize::TINY;
+            break;
+    }
+
+    return characterSizeParam;
+}
+
+
+ExitDirection GameLogic::getExitDirectionParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    ExitDirection exitDirectionParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] NORTH, [2] SOUTH, [3] EAST, [4] WEST, [5] NORTHEAST, [6] NORTHWEST, [7] SOUTHEAST, [8] SOUTHWEST, [9] UP, or [10] DOWN. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 10);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 10);
+    }
+
+    switch (choice){
+        case 1:
+            exitDirectionParam = ExitDirection::NORTH;
+            break;
+        case 2:
+            exitDirectionParam = ExitDirection::SOUTH;
+            break;
+        case 3:
+            exitDirectionParam = ExitDirection::EAST;
+            break;
+        case 4:
+            exitDirectionParam = ExitDirection::WEST;
+            break;
+        case 5:
+            exitDirectionParam = ExitDirection::NORTHEAST;
+            break;
+        case 6:
+            exitDirectionParam = ExitDirection::NORTHWEST;
+            break;
+        case 7:
+            exitDirectionParam = ExitDirection::SOUTHEAST;
+            break;
+        case 8:
+            exitDirectionParam = ExitDirection::SOUTHWEST;
+            break;
+        case 9:
+            exitDirectionParam = ExitDirection::UP;
+            break;
+        case 10:
+            exitDirectionParam = ExitDirection::DOWN;
+            break;
+        default:
+            exitDirectionParam = ExitDirection::NORTH;
+            break;
+    }
+
+    return exitDirectionParam;
+}
+
+
+XPTier GameLogic::getXPTierParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    XPTier xpTierParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] TRIVIAL, [2] EASY, [3] NORMAL, [4] HARD, or [5] LEGENDARY. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 5);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 5);
+    }
+
+    switch (choice){
+        case 1:
+            xpTierParam = XPTier::TRIVIAL;
+            break;
+        case 2:
+            xpTierParam = XPTier::EASY;
+            break;
+        case 3:
+            xpTierParam = XPTier::NORMAL;
+            break;
+        case 4:
+            xpTierParam = XPTier::HARD;
+            break;
+        case 5:
+            xpTierParam = XPTier::LEGENDARY;
+            break;
+        default:
+            xpTierParam = XPTier::TRIVIAL;
+            break;
+    }
+
+    return xpTierParam;
+}
+
+
+template <class aType>
+int GameLogic::getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull){
+    std::string response = "";
+    int choice = -1;
+    int optionsSize = possibleVals.size();
+    std::string message = "What would you like the " + paramName + " to be?";
+    
+    message += " Your choices are: ";
+    for (size_t i = 0; i < optionsSize; i++){
+        message += "[" + std::to_string(i + 1) + "] " + possibleVals[i]->getName();
+        if (i == (optionsSize - 1)){
+            message += ". Please enter the number that corresponds to your choice.";
+        } else {
+            message += ", ";
+        }
+    }
+
+    if (canBeNull){
+        message += " Enter [0] if you would like to leave this attribute blank.";
+    }
+
+    if ((optionsSize != 0) || (canBeNull)){
+        messagePlayer(aPlayer, message); 
+        response = blockingGetMsg(aPlayer);
+        if ((canBeNull) && (response.compare("0") == 0)){
+            choice = 0;
+        } else {
+            choice = validateStringNumber(response, 1, optionsSize);
+        }
+        while (choice == -1){
+            messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+            response = blockingGetMsg(aPlayer);
+            if ((canBeNull) && (response.compare("0") == 0)){
+                choice = 0;
+            } else {
+                choice = validateStringNumber(response, 1, optionsSize);
+            }
+        }
+    }
+
+    return choice;
+}
+
+
+Area* GameLogic::getAreaParameter(Player *aPlayer, std::string paramName){
+    Area *areaParam = nullptr;
+    std::vector<Area*> allAreas;
+    int choice;
+    
+    allAreas = manager->getGameAreas();
+    choice = getPointerParameter<Area*>(aPlayer, paramName, allAreas);
+    if (choice != -1){
+        areaParam = allAreas[choice - 1];
+    } 
+
+    return areaParam;
+}
+
+
+SpecialSkill* GameLogic::getSpecialSkillParameter(Player *aPlayer, std::string paramName){
+    SpecialSkill *specialSkillParam = nullptr;
+    std::vector<SpecialSkill*> allSpecialSkills;
+    int choice;
+    
+    allSpecialSkills = manager->getGameSkills();
+    choice = getPointerParameter<SpecialSkill*>(aPlayer, paramName, allSpecialSkills);
+    if (choice != -1){
+        specialSkillParam = allSpecialSkills[choice - 1];
+    } 
+
+    return specialSkillParam;
+}
+
+
+ItemType* GameLogic::getItemTypeParameter(Player *aPlayer, std::string paramName){
+    ItemType *itemTypeParam = nullptr;
+    std::vector<ItemType*> allItemTypes;
+    int choice;
+    
+    allItemTypes = manager->getGameItemTypes();
+    choice = getPointerParameter<ItemType*>(aPlayer, paramName, allItemTypes);
+    if (choice != -1){
+        itemTypeParam = allItemTypes[choice - 1];
+    } 
+
+    return itemTypeParam;
+}
+
+
+InteractiveNoun* GameLogic::getInteractiveNounParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    std::vector<Creature*> allCreatures;
+    std::vector<Player*> allPlayers;
+    std::vector<Area*> allAreas;
+    std::vector<NonCombatant*> allNPCs;
+    std::vector<Container*> allContainers;
+    size_t totalSize, index, playerOffset, creatureOffset, npcOffset, containerOffset, unsignChoice;
+    std::string message = "What would you like the " + paramName + " to be?";
+    InteractiveNoun *param = nullptr;
+    int choice;
+
+    allAreas = manager->getGameAreas();
+    allPlayers = manager->getGamePlayers();
+    allCreatures = manager->getCreatures();
+    allNPCs = manager->getGameNPCs();
+    allContainers = manager->getGameContainers();
+    totalSize = allAreas.size() + allPlayers.size() + allCreatures.size() + allNPCs.size() + allContainers.size();
+    playerOffset = allAreas.size();
+    creatureOffset = playerOffset + allPlayers.size();
+    npcOffset = creatureOffset + allCreatures.size();
+    containerOffset = npcOffset + allNPCs.size();
+    index = 0;
+
+    message += " Your choices are: ";
+    for (size_t i = 0; i < allAreas.size(); i++){
+        message += "[" + std::to_string(index + 1) + "] " + allAreas[i]->getName();
+        if (i == (totalSize - 1)){
+            message += ". Please enter the number that corresponds to your choice.";
+        } else {
+            message += ", ";
+        }
+        index++;
+    }
+    for (size_t i = 0; i < allPlayers.size(); i++){
+        message += "[" + std::to_string(index + 1) + "] " + allPlayers[i]->getName();
+        if (i == (totalSize - 1)){
+            message += ". Please enter the number that corresponds to your choice.";
+        } else {
+            message += ", ";
+        }
+        index++;
+    }
+    for (size_t i = 0; i < allCreatures.size(); i++){
+        message += "[" + std::to_string(index + 1) + "] " + allCreatures[i]->getName();
+        if (i == (totalSize - 1)){
+            message += ". Please enter the number that corresponds to your choice.";
+        } else {
+            message += ", ";
+        }
+        index++;
+    }
+    for (size_t i = 0; i < allNPCs.size(); i++){
+        message += "[" + std::to_string(index + 1) + "] " + allNPCs[i]->getName();
+        if (i == (totalSize - 1)){
+            message += ". Please enter the number that corresponds to your choice.";
+        } else {
+            message += ", ";
+        }
+        index++;
+    }
+    for (size_t i = 0; i < allContainers.size(); i++){
+        message += "[" + std::to_string(index + 1) + "] " + allContainers[i]->getName();
+        if (i == (totalSize - 1)){
+            message += ". Please enter the number that corresponds to your choice.";
+        } else {
+            message += ", ";
+        }
+        index++;
+    }
+    
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, index);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, index);
+    }
+    unsignChoice = choice;
+
+    if (unsignChoice <= allAreas.size()){
+        param = allAreas[unsignChoice - 1];
+    } else if (unsignChoice <= (playerOffset + allPlayers.size())){
+        param = allPlayers[unsignChoice - playerOffset - 1];
+    } else if (unsignChoice <= (creatureOffset + allCreatures.size())){
+        param = allPlayers[unsignChoice - creatureOffset - 1];
+    } else if (unsignChoice <= (npcOffset + allNPCs.size())){
+        param = allNPCs[unsignChoice -  npcOffset - 1];
+    } else if (unsignChoice <= (containerOffset + allContainers.size())){
+        param = allContainers[unsignChoice - containerOffset - 1];
+    } else {
+        param = nullptr;
+    }
+
+    return param;
+}
+
+
+CreatureType* GameLogic::getCreatureTypeParameter(Player *aPlayer, std::string paramName){
+    CreatureType *creatureTypeParam = nullptr;
+    std::vector<CreatureType*> allCreatureTypes;
+    int choice;
+    
+    allCreatureTypes = manager->getGameCreatureTypes();
+    choice = getPointerParameter<CreatureType*>(aPlayer, paramName, allCreatureTypes);
+    if (choice != -1){
+        creatureTypeParam = allCreatureTypes[choice - 1];
+    } 
+
+    return creatureTypeParam;
+}
+
+
+Quest* GameLogic::getQuestParameter(Player *aPlayer, std::string paramName, bool canBeNull){
+    Quest *questParam = nullptr;
+    std::vector<Quest*> allQuests;
+    int choice;
+    
+    allQuests = manager->getGameQuests();
+    choice = getPointerParameter<Quest*>(aPlayer, paramName, allQuests, canBeNull);
+    if (choice == 0){
+        questParam = nullptr;
+    } else if (choice != -1){
+        questParam = allQuests[choice - 1];
+    } 
+
+    return questParam;
+}
+
+
+PlayerClass* GameLogic::getPlayerClassParameter(Player *aPlayer, std::string paramName){
+    PlayerClass *playerClassParam = nullptr;
+    std::vector<PlayerClass*> allPlayerClasses;
+    int choice;
+    
+    allPlayerClasses = manager->getPlayerClasses();
+    choice = getPointerParameter<PlayerClass*>(aPlayer, paramName, allPlayerClasses);
+    if (choice != -1){
+        playerClassParam = allPlayerClasses[choice - 1];
+    } 
+
+    return playerClassParam;
+}
+
+
+Item* GameLogic::getItemParameter(Player *aPlayer, std::string paramName){
+    Item *itemParam = nullptr;
+    std::vector<Item*> allItems;
+    int choice;
+    
+    allItems = manager->getGameItems();
+    choice = getPointerParameter<Item*>(aPlayer, paramName, allItems);
+    if (choice != -1){
+        itemParam = allItems[choice - 1];
+    } 
+
+    return itemParam;
+}
+
+
+NonCombatant* GameLogic::getNonCombatantParameter(Player *aPlayer, std::string paramName, Quest *aQuest){
+    NonCombatant *nonCombatantParam = nullptr;
+    std::vector<NonCombatant*> allNonCombatants, availableNPCs;
+    int choice;
+    
+    allNonCombatants = manager->getGameNPCs();
+
+    if (aQuest != nullptr){
+        for (auto NPC : allNonCombatants){
+            if (NPC->getQuest() == aQuest){
+                if (aQuest->isGiverOrReceiver(NPC) == nullptr){
+                    availableNPCs.push_back(NPC);
+                }
+            } else if (NPC->getQuest() == nullptr){
+                availableNPCs.push_back(NPC);
+            }
+        }
+        choice = getPointerParameter<NonCombatant*>(aPlayer, paramName, availableNPCs);
+    } else {
+        choice = getPointerParameter<NonCombatant*>(aPlayer, paramName, allNonCombatants);
+    }
+    if (choice != -1){
+        if (aQuest != nullptr){
+            nonCombatantParam = availableNPCs[choice - 1];
+        } else {
+            nonCombatantParam = allNonCombatants[choice - 1];
+        }
+    } 
+
+    return nonCombatantParam;
+}
+
+
+ObjectType GameLogic::getObjectType(std::string input){
     ObjectType type = ObjectType::NONE;
 
-    if ((input.compare("Area") == 0) || (input.compare("AREA") == 0) || (input.compare("area") == 0)) {
+    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+
+    if (input.compare("area") == 0){
         type = ObjectType::AREA;
-    } else if ((input.compare("Exit") == 0) || (input.compare("armor type")  == 0) || (input.compare("ARMOR_TYPE") == 0)){
+    } else if ((input.compare("armor type")  == 0) || (input.compare("armor_type") == 0)){
         type = ObjectType::ARMOR_TYPE;  
-    } else if ((input.compare("Container") == 0) || (input.compare("CONTAINER")  == 0) || (input.compare("container") == 0)){
+    } else if (input.compare("container") == 0){
         type = ObjectType::CONTAINER;  
-    } else if ((input.compare("Creature") == 0) || (input.compare("CREATURE")  == 0) || (input.compare("creature") == 0)) {
+    } else if (input.compare("creature") == 0) {
         type = ObjectType::CREATURE;   
-    } else if ((input.compare("Creature Type") == 0) || (input.compare("creature type")  == 0) || (input.compare("CREATURE_TYPE") == 0)){
+    } else if ((input.compare("creature type")  == 0) || (input.compare("creature_type") == 0)){
         type = ObjectType::CREATURE_TYPE;  
-    } else if ((input.compare("Exit") == 0) || (input.compare("EXIT")  == 0) || (input.compare("exit") == 0)){
+    } else if (input.compare("exit") == 0){
         type = ObjectType::EXIT;   
-    } else if ((input.compare("Feature") == 0) || (input.compare("FEATURE")  == 0) || (input.compare("feature") == 0)){
+    } else if (input.compare("feature") == 0){
         type = ObjectType::FEATURE;   
-    } else if ((input.compare("Item") == 0) || (input.compare("ITEM")  == 0) || (input.compare("item") == 0)){
+    } else if (input.compare("item") == 0){
         type = ObjectType::ITEM;   
-    } else if ((input.compare("Item Type") == 0) || (input.compare("item type")  == 0) || (input.compare("ITEM_TYPE") == 0)){
+    } else if ((input.compare("item type")  == 0) || (input.compare("item_type") == 0)){
         type = ObjectType::ITEM_TYPE;  
-    } else if ((input.compare("Non Combatant") == 0) || (input.compare("non combatant")  == 0) || (input.compare("NON_COMBATANT") == 0)){
+    } else if ((input.compare("non combatant")  == 0) || (input.compare("non_combatant") == 0) || (input.compare("noncombatant") == 0)){
         type = ObjectType::NON_COMBATANT;  
-    } else if ((input.compare("Player") == 0) || (input.compare("PLAYER")  == 0) || (input.compare("player") == 0)){
+    } else if (input.compare("player") == 0){
         type = ObjectType::PLAYER;   
-    } else if ((input.compare("Player Class") == 0) || (input.compare("player class")  == 0) || (input.compare("PLAYER_CLASS") == 0)){
+    } else if ((input.compare("player class")  == 0) || (input.compare("player_class") == 0)){
         type = ObjectType::PLAYER_CLASS; 
-    } else if ((input.compare("Quest") == 0) || (input.compare("QUEST")  == 0) || (input.compare("quest") == 0)) {
+    } else if (input.compare("quest") == 0) {
         type = ObjectType::QUEST;   
-    } else if ((input.compare("Quest Step") == 0) || (input.compare("quest step")  == 0) || (input.compare("QUEST_STEP") == 0)){
+    } else if ((input.compare("quest step")  == 0) || (input.compare("quest_step") == 0)){
         type = ObjectType::QUEST_STEP;  
-    } else if ((input.compare("Special Skill") == 0) || (input.compare("special skill")  == 0) || (input.compare("SPECIAL_SKILL") == 0)){
+    } else if ((input.compare("special skill")  == 0) || (input.compare("special_skill") == 0)){
         type = ObjectType::SPECIAL_SKILL;  
-    } else if ((input.compare("Weapon Type") == 0) || (input.compare("weapon type")  == 0) || (input.compare("WEAPON_TYPE") == 0)){
+    } else if ((input.compare("weapon type")  == 0) || (input.compare("weapon_type") == 0)){
         type = ObjectType::WEAPON_TYPE;
     } else {
         type = ObjectType::NONE;
@@ -953,7 +2492,7 @@ std::string GameLogic::blockingGetMsg(Player *aPlayer){
     std::string message = "";
 
     while (!msgRecived){
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         message = getMsgFromPlayerQ(aPlayer);
         if (message != ""){
             msgRecived = true;
@@ -2496,16 +4035,19 @@ bool GameLogic::warpCommand(Player *aPlayer, InteractiveNoun *param){
     Area *newArea = nullptr;
     Area *currLocation = aPlayer->getLocation();
 
-    if (param != nullptr){
+    if ((aPlayer->isEditMode()) && (param != nullptr)){
         message = param->warp(aPlayer, nullptr);
-    }
-    if (message.compare("false") == 0){
-        message = "You can't warp there.";
+    
+        if (message.compare("false") == 0){
+            message = "You can't warp there.";
+        } else {
+            newArea = aPlayer->getLocation();
+            message += newArea->getFullDescription(aPlayer);
+            messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
+            messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
+        }
     } else {
-        newArea = aPlayer->getLocation();
-        message += newArea->getFullDescription(aPlayer);
-        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
-        messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
+        message = "You must be in editmode to warp.";
     }
 
     messagePlayer(aPlayer, message);
@@ -2520,7 +4062,28 @@ bool GameLogic::copyCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::createCommand(Player *aPlayer, const std::string &stringParam){
-    return false;
+    std::string message = "";
+    bool sendMessage = false;
+    ObjectType anObjectType = getObjectType(stringParam);
+    bool success = false;
+
+    if (aPlayer->isEditMode()){
+        if (anObjectType != ObjectType::NONE){
+            success = createObject(aPlayer, anObjectType);
+        } else {
+            message = "I don't understand what you're trying to create.";
+            sendMessage = true;
+        }
+    } else {
+        message = "You must be in editmode to create.";
+        sendMessage = true;
+    }
+
+    if (sendMessage){
+        messagePlayer(aPlayer, message);
+    }
+
+    return success;
 }
 
 

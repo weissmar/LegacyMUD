@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/03/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -54,16 +54,33 @@ Character::Character(std::string name, std::string description, int money, Area 
 }
 
 
-/*Character::Character(const Character &otherCharacter){
-
+Character::Character(const Character &otherCharacter) : InteractiveNoun(otherCharacter) {
+    name = otherCharacter.name;
+    description = otherCharacter.description;
+    money.store(otherCharacter.money.load());
+    location = otherCharacter.location;
+    maxInventoryWeight.store(otherCharacter.maxInventoryWeight.load());
+    std::string idAlias = "character " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
+    InteractiveNoun::addNounAlias(name);
 }
 
 
 Character & Character::operator=(const Character &otherCharacter){
+    InteractiveNoun::operator=(otherCharacter);
+    name = otherCharacter.name;
+    description = otherCharacter.description;
+    money.store(otherCharacter.money.load());
+    location = otherCharacter.location;
+    maxInventoryWeight.store(otherCharacter.maxInventoryWeight.load());
+    std::string idAlias = "character " + std::to_string(getID());
+    InteractiveNoun::addNounAlias(idAlias);
+    InteractiveNoun::addNounAlias(name);
 
+    return *this;
 }
 
-
+/*
 Character::~Character(){
 
 }*/

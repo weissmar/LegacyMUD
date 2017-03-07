@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/02/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -36,16 +36,27 @@ Creature::Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *sp
 { }
 
 
-/*Creature::Creature(const Creature &otherCreature){
-
+Creature::Creature(const Creature &otherCreature) : Combatant(otherCreature) {
+    otherCreature.typeMutex.lock();
+    type = otherCreature.type;
+    otherCreature.typeMutex.unlock();
+    ambulatory.store(false);
 }
 
 
 Creature & Creature::operator=(const Creature &otherCreature){
+    if (this == &otherCreature)
+        return *this;
 
+    otherCreature.typeMutex.lock();
+    type = otherCreature.type;
+    otherCreature.typeMutex.unlock();
+    ambulatory.store(false);
+
+    return *this;
 } 
 
-
+/*
 Creature::~Creature(){
 
 }*/

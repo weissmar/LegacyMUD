@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/28/2017
+ * \modified    03/06/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -21,6 +21,12 @@
 #include "CommandEnum.hpp"
 #include "ItemPosition.hpp"
 #include "Area.hpp"
+#include "ExitDirection.hpp"
+#include "XPTier.hpp"
+#include "DamageType.hpp"
+#include "ItemRarity.hpp"
+#include "EquipmentSlot.hpp"
+#include "CharacterSize.hpp"
 
 namespace legacymud { namespace parser {
     struct ParseResult;
@@ -45,6 +51,11 @@ class InteractiveNoun;
 class Player;
 class Creature;
 class NonCombatant;
+class ItemType;
+class CreatureType;
+class Quest;
+class PlayerClass;
+class Container;
 
 class GameLogic {
     public:
@@ -184,6 +195,85 @@ class GameLogic {
          */
         bool createObject(Player *aPlayer, ObjectType type);
 
+        bool createArea(Player *aPlayer);
+
+        bool createArmorType(Player *aPlayer);
+
+        bool createContainer(Player *aPlayer);
+
+        bool createCreature(Player *aPlayer);
+
+        bool createCreatureType(Player *aPlayer);
+
+        bool createExit(Player *aPlayer);
+
+        bool createFeature(Player *aPlayer);
+
+        bool createItem(Player *aPlayer);
+
+        bool createItemType(Player *aPlayer);
+
+        bool createNonCombatant(Player *aPlayer);
+
+        bool createPlayer(Player *aPlayer);
+
+        bool createPlayerClass(Player *aPlayer);
+
+        bool createQuest(Player *aPlayer);
+
+        bool createQuestStep(Player *aPlayer);
+
+        bool createSpecialSkill(Player *aPlayer);
+
+        bool createWeaponType(Player *aPlayer);
+
+        template <class aType>
+        int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull = false);
+        
+        int getIntParameter(Player *aPlayer, std::string paramName, int maxNum = std::numeric_limits<int>::max());
+
+        bool getBoolParameter(Player *aPlayer, std::string paramName);
+
+        float getFloatParameter(Player *aPlayer, std::string paramName);
+
+        std::string getStringParameter(Player *aPlayer, std::string paramName);
+
+        EffectType getEffectTypeParameter(Player *aPlayer, std::string paramName);
+
+        AreaSize getAreaSizeParameter(Player *aPlayer, std::string paramName);
+
+        DamageType getDamageTypeParameter(Player *aPlayer, std::string paramName);
+
+        ItemRarity getItemRarityParameter(Player *aPlayer, std::string paramName);
+
+        EquipmentSlot getEquimentSlotParameter(Player *aPlayer, std::string paramName);
+
+        ItemPosition getItemPositionParameter(Player *aPlayer, std::string paramName, int choice = 10);
+
+        CharacterSize getCharacterSizeParameter(Player *aPlayer, std::string paramName);
+
+        ExitDirection getExitDirectionParameter(Player *aPlayer, std::string paramName);
+
+        XPTier getXPTierParameter(Player *aPlayer, std::string paramName);
+
+        Area* getAreaParameter(Player *aPlayer, std::string paramName);
+
+        SpecialSkill* getSpecialSkillParameter(Player *aPlayer, std::string paramName);
+
+        ItemType* getItemTypeParameter(Player *aPlayer, std::string paramName);
+
+        InteractiveNoun* getInteractiveNounParameter(Player *aPlayer, std::string paramName);
+
+        CreatureType* getCreatureTypeParameter(Player *aPlayer, std::string paramName);
+
+        Quest* getQuestParameter(Player *aPlayer, std::string paramName, bool canBeNull = false);
+
+        PlayerClass* getPlayerClassParameter(Player *aPlayer, std::string paramName);
+
+        Item* getItemParameter(Player *aPlayer, std::string paramName);
+
+        NonCombatant* getNonCombatantParameter(Player *aPlayer, std::string paramName, Quest *aQuest = nullptr);
+
         /*!
          * \brief   Gets the object type based on the input string.
          * 
@@ -191,7 +281,7 @@ class GameLogic {
          *
          * \return  Returns an ObjectType with the object type.
          */
-        ObjectType getObjectType(const std::string &input);
+        ObjectType getObjectType(std::string input);
 
         /*!
          * \brief   Sends the specified message to the specified player.
@@ -945,7 +1035,7 @@ class GameLogic {
         std::mutex playerMsgQMutex;
         account::Account* accountManager;
         telnet::Server* theServer;
-        Area startArea;
+        Area *startArea;
 };
 
 }}

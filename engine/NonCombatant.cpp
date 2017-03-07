@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/02/2017
+ * \modified    03/04/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -38,16 +38,15 @@ NonCombatant::NonCombatant(Quest *aQuest, std::string name, std::string descript
 { }
 
 
-/*NonCombatant::NonCombatant(const NonCombatant &otherNPC){
+NonCombatant::NonCombatant(const NonCombatant &otherNPC) : Character(otherNPC) {
 
 }
-
 
 NonCombatant & NonCombatant::operator=(const NonCombatant &otherNPC){
-
+    return *this;
 }
 
-
+/*
 NonCombatant::~NonCombatant(){
 
 }*/
