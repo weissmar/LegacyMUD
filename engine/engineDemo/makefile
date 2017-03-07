@@ -4,7 +4,7 @@ CXXFLAGS = -std=c++11 -g -Wall -pthread
 # and stores them as a list of .o filenames
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 # List the relative paths to the libraries being tested here
-LIB_DIRS = ../../account ../../display ../../engine ../../telnet ../../parser ../../gamedata ../../external/headers/rapidjson/include
+LIB_DIRS = ../../account ../../display ../../engine ../../telnet ../../parser ../../gamedata
 # Get the paths to the static libraries being tested
 LIBS = $(foreach lib_dir, $(LIB_DIRS), $(lib_dir)/$(patsubst ../../%,%,$(lib_dir)).a)
 # Append the include paths for the libraries to the g++ flags
