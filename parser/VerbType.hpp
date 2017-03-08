@@ -2,7 +2,7 @@
   \file     VerbType.hpp
   \author   David Rigert
   \created  02/12/2017
-  \modified 02/12/2017
+  \modified 03/07/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the declaration for the VerbType enumerated type.
@@ -12,6 +12,8 @@
 */
 #ifndef LEGACYMUD_PARSER_VERBTYPE_HPP
 #define LEGACYMUD_PARSER_VERBTYPE_HPP
+
+namespace legacymud { namespace parser {
 
 /*!
   \enum legacymud::parser::VerbType
@@ -28,4 +30,5 @@ enum class VerbType {
     EDITMODE
 };
 
+}}
 #endif
