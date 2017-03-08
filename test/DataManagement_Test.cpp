@@ -900,9 +900,9 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
 
 
 /////////////////////////////////////////////////////////////////////////////////
-// QuestStep - Unit test - serialize and deserialize
+// QuestStepWithRecieverAndGiver - Unit test - serialize and deserialize
 /////////////////////////////////////////////////////////////////////////////////
- TEST(DataManagementTest, SerializeDeserializeQuestStep) {
+ TEST(DataManagementTest, SerializeDeserializeQuestStepWithReceiverAndGiver) {
     legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID
@@ -938,6 +938,96 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Deserialize, re-serialize, and test.
     std::string inputJsonStr = "{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":4,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}";
+    legacymud::engine::QuestStep *rebuiltQuestStep = legacymud::engine::QuestStep::deserialize(inputJsonStr, gom);    
+    std::string reserializedJsonStr = rebuiltQuestStep->serialize();
+    std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
+    EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
+
+    // Clean-up. 
+    delete gom;       
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// QuestStepNoReciever - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
+ TEST(DataManagementTest, SerializeDeserializeQuestStepNoReceiver) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
+    
+    // Initialize staticID
+    legacymud::engine::InteractiveNoun::setStaticID(0); 
+    
+    // Create objects needed by Quest.  
+                                                                 
+    // Area (name, short desciption, long description, area size, id)    
+    legacymud::engine::Area* area = new legacymud::engine::Area("name of area", "short description of area", "longer description", 
+                                                                 legacymud::engine::AreaSize::LARGE, 1);   
+    // ItemType (weight, rarity, description, name, cost, equipment slot, id)
+    legacymud::engine::ItemType* itemType = new legacymud::engine::ItemType(25, legacymud::engine::ItemRarity::RARE, 
+                                                                            "description of itemtype", "name of item type", 2500, 
+                                                                            legacymud::engine::EquipmentSlot::HEAD, 2);  
+    
+    // NonCombatant(Quest, name, description, money, location, maxinventoryweight, id)
+    legacymud::engine::NonCombatant* giver = new legacymud::engine::NonCombatant(nullptr, "GiverMan", "a description", 1000, area, 100, 3);                                                                                                                                                            
+    
+     // QuestStep (ordinalNumber, description, anItemType, giver, receiver, completionText, id)
+    legacymud::engine::QuestStep* step = new legacymud::engine::QuestStep(1, "start", itemType, giver, nullptr, "go to step 2",5); 
+    
+    // Serialize and Test
+    std::string serializedJsonStr = step->serialize();   
+    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":-1,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}}";
+    EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
+    
+    // Add objects to the GameObjectManager that Quest needs for deserialize. 
+    EXPECT_TRUE(gom->addObject(area,-1) );
+    EXPECT_TRUE(gom->addObject(itemType,-1) );        
+    EXPECT_TRUE(gom->addObject(giver,-1) );     
+    
+    // Deserialize, re-serialize, and test.
+    std::string inputJsonStr =  "{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":-1,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}";
+
+    legacymud::engine::QuestStep *rebuiltQuestStep = legacymud::engine::QuestStep::deserialize(inputJsonStr, gom);    
+    std::string reserializedJsonStr = rebuiltQuestStep->serialize();
+    std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
+    EXPECT_EQ(newExpectedJsonStr, reserializedJsonStr );
+
+    // Clean-up. 
+    delete gom;       
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// QuestStepNoGiverNoItem - Unit test - serialize and deserialize
+/////////////////////////////////////////////////////////////////////////////////
+ TEST(DataManagementTest, SerializeDeserializeQuestStepNoGiverNoItem) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
+    
+    // Initialize staticID
+    legacymud::engine::InteractiveNoun::setStaticID(0); 
+    
+    // Create objects needed by Quest.  
+                                                                 
+    // Area (name, short desciption, long description, area size, id)    
+    legacymud::engine::Area* area = new legacymud::engine::Area("name of area", "short description of area", "longer description", 
+                                                                 legacymud::engine::AreaSize::LARGE, 1);   
+    
+    // NonCombatant(Quest, name, description, money, location, maxinventoryweight, id)
+    legacymud::engine::NonCombatant* receiver = new legacymud::engine::NonCombatant(nullptr, "GiverMan", "a description", 1000, area, 100, 3);                                                                                                                                                            
+    
+     // QuestStep (ordinalNumber, description, anItemType, giver, receiver, completionText, id)
+    legacymud::engine::QuestStep* step = new legacymud::engine::QuestStep(1, "start", nullptr, nullptr, receiver, "go to step 2",5); 
+    
+    // Serialize and Test
+    std::string serializedJsonStr = step->serialize();   
+    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":-1,\"giver_id\":-1,\"receiver_id\":3,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}}";
+    EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
+    
+    // Add objects to the GameObjectManager that Quest needs for deserialize. 
+    EXPECT_TRUE(gom->addObject(area,-1) );       
+    EXPECT_TRUE(gom->addObject(receiver,-1) );     
+    
+    // Deserialize, re-serialize, and test.
+    std::string inputJsonStr = "{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":-1,\"giver_id\":-1,\"receiver_id\":3,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}";
     legacymud::engine::QuestStep *rebuiltQuestStep = legacymud::engine::QuestStep::deserialize(inputJsonStr, gom);    
     std::string reserializedJsonStr = rebuiltQuestStep->serialize();
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
