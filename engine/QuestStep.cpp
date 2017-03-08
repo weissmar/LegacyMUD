@@ -200,12 +200,28 @@ std::string QuestStep::serialize(){
     writer.Int(this->getOrdinalNumber());
     writer.String("description");
     writer.String(this->getDescription().c_str());
-    writer.String("fetch_item_type_id");
-    writer.Int(this->getFetchItem()->getID());
+    
+    // check for no fetch item
+    writer.String("fetch_item_type_id");   
+        if(this->getFetchItem() == nullptr) 
+        writer.Int(-1); // no giver
+    else
+        writer.Int(this->getFetchItem()->getID()); 
+    
+    // check for no giver
     writer.String("giver_id");
-    writer.Int(this->getGiver()->getID());   
+    if(this->getGiver() == nullptr) 
+        writer.Int(-1); // no giver
+    else
+        writer.Int(this->getGiver()->getID());  
+    
+    // check for no receiver
     writer.String("receiver_id");
-    writer.Int(this->getReceiver()->getID());    
+        if(this->getReceiver() == nullptr) 
+        writer.Int(-1); // no receiver
+    else
+        writer.Int(this->getReceiver()->getID());
+    
     writer.String("completion_text");
     writer.String(this->getCompletionText().c_str());
     
@@ -236,19 +252,39 @@ QuestStep* QuestStep::deserialize(std::string jsonStr, GameObjectManager* gom){
     rapidjson::Document objectDoc;
     objectDoc.Parse(jsonStr.c_str());
      
+    // check for no fetch item
+    ItemType* fetchItem;
+    if (objectDoc["fetch_item_type_id"].GetInt() == -1)
+        fetchItem = nullptr;
+    else
+        fetchItem = static_cast<ItemType*>(gom->getPointer(objectDoc["fetch_item_type_id"].GetInt()));
+
+    // check for no giver
+    NonCombatant* giver;
+    if (objectDoc["giver_id"].GetInt() == -1)
+        giver = nullptr;
+    else
+        giver = static_cast<NonCombatant*>(gom->getPointer(objectDoc["giver_id"].GetInt()));
+    
+    // check for no receiver
+    NonCombatant* receiver;
+    if (objectDoc["receiver_id"].GetInt() == -1)
+        receiver = nullptr;
+    else
+        receiver = static_cast<NonCombatant*>(gom->getPointer(objectDoc["receiver_id"].GetInt()));
+    
     // Construct a new QuestStep object, getting all the data needed to do so from the objectDoc. 
     QuestStep *newQuest = new QuestStep(objectDoc["ordinal_number"].GetInt(),
                                         objectDoc["description"].GetString(),
-                                        static_cast<ItemType*>(gom->getPointer(objectDoc["fetch_item_type_id"].GetInt())),
-                                        static_cast<NonCombatant*>(gom->getPointer(objectDoc["giver_id"].GetInt())),
-                                        static_cast<NonCombatant*>(gom->getPointer(objectDoc["receiver_id"].GetInt())),
+                                        fetchItem,
+                                        giver,
+                                        receiver,
                                         objectDoc["completion_text"].GetString(),
                                         objectDoc["interactive_noun_data"]["id"].GetInt() );
     
     // Rebuild the new QuestStep noun alias list. 
-    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())            
         newQuest->addNounAlias(noun.GetString() );    
-    }
  
     // Rebuild the new QuestStep action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
