@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/06/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -227,6 +227,38 @@ class GameLogic {
 
         bool createWeaponType(Player *aPlayer);
 
+        bool editAttributeOfArea(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfArmorType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfContainer(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfCreature(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfCreatureType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfExit(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfFeature(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfItem(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfItemType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfNonCombatant(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfPlayer(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfPlayerClass(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfQuest(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfQuestStep(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfSpecialSkill(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
+        bool editAttributeOfWeaponType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
+
         template <class aType>
         int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull = false);
         
@@ -270,7 +302,7 @@ class GameLogic {
 
         PlayerClass* getPlayerClassParameter(Player *aPlayer, std::string paramName);
 
-        Item* getItemParameter(Player *aPlayer, std::string paramName);
+        Item* getItemParameter(Player *aPlayer, std::string paramName, bool canBeNull = false);
 
         NonCombatant* getNonCombatantParameter(Player *aPlayer, std::string paramName, Quest *aQuest = nullptr);
 
@@ -967,7 +999,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not executing the edit attribute command
          *          was successful.
          */
-        bool editAttributeCommand(Player *aPlayer, InteractiveNoun *indirectObj, const std::string &stringParam);
+        bool editAttributeCommand(Player *aPlayer, InteractiveNoun *indirectObj, std::string stringParam);
 
         /*!
          * \brief   Executes the edit wizard command.

@@ -44,7 +44,9 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
     std::string idAlias = "exit " + std::to_string(getID());
     InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(description);
-    InteractiveNoun::addNounAlias(altDescription);
+    if (altDescription != ""){
+        InteractiveNoun::addNounAlias(altDescription);
+    }
     addDirectionalAliases(direction);
 }
 
@@ -58,7 +60,9 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
     std::string idAlias = "exit " + std::to_string(getID());
     InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(description);
-    InteractiveNoun::addNounAlias(altDescription);
+    if (altDescription != ""){
+        InteractiveNoun::addNounAlias(altDescription);
+    }
     addDirectionalAliases(direction);
 }
 
