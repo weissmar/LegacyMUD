@@ -838,6 +838,8 @@ class GameLogicShim {
 
         engine::GameObjectManager *getGameObjectManager();
 
+        std::queue<std::pair<std::string, int>> *getMessageQueue();
+
     private:
         engine::GameLogic *_logic;
 };

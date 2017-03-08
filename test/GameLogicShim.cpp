@@ -316,5 +316,7 @@ engine::GameObjectManager *GameLogicShim::getGameObjectManager() {
     return _logic->manager;
 }
 
-
+std::queue<std::pair<std::string, int>> *GameLogicShim::getMessageQueue() {
+    return &_logic->messageQueue;
+}
 }}
