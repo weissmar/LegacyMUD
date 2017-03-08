@@ -611,11 +611,14 @@ std::string Area::warp(Player *aPlayer, Area *anArea){
 
 
 InteractiveNoun* Area::copy(){
-    return nullptr;
+    Area *anArea = new Area(*this);
+
+    return anArea;
 }
 
 
 bool Area::editAttribute(Player *aPlayer, std::string attribute){
+
     return false;
 }
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/04/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -296,6 +296,13 @@ bool Character::unequipItem(Item *anItem){
         }
     }
     return false;
+}
+
+
+bool Character::setMaxInventoryWeight(int maxWeight){
+    maxInventoryWeight.store(maxWeight);
+
+    return true;
 }
 
 

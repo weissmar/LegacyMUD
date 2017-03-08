@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/06/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -40,6 +40,7 @@
 #include "CreatureType.hpp"
 #include "ArmorType.hpp"
 #include "Feature.hpp"
+#include "EnumToString.hpp"
 
 
 namespace legacymud { namespace engine {
@@ -1093,7 +1094,7 @@ bool GameLogic::createQuest(Player *aPlayer){
     name = getStringParameter(aPlayer, "name");
     description = getStringParameter(aPlayer, "description");
     rewardMoney = getIntParameter(aPlayer, "reward money");
-    rewardItem = getItemParameter(aPlayer, "reward item"); // may want to change this so they can't choose ANY item ANYWHERE in the game
+    rewardItem = getItemParameter(aPlayer, "reward item", true); // may want to change this so they can't choose ANY item ANYWHERE in the game
 
     removePlayerMessageQueue(aPlayer);
 
@@ -1211,6 +1212,1208 @@ bool GameLogic::createWeaponType(Player *aPlayer){
 }
 
 
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfArea(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    std::string name = "";
+    std::string shortDescription = "";
+    std::string longDescription = "";
+    AreaSize size;
+    Area *anArea = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::AREA)){
+        anArea = dynamic_cast<Area*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Area Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            anArea->setName(name);
+            message = "The name of the area is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("short description") == 0){
+            shortDescription = getStringParameter(aPlayer, "short description");
+            anArea->setShortDesc(shortDescription);
+            message = "The short description of the area is now " + shortDescription + ".";
+            success = true;
+        } else if (attribute.compare("long description") == 0){
+            longDescription = getStringParameter(aPlayer, "long description");
+            anArea->setLongDesc(longDescription);
+            message = "The long description of the area is now " + longDescription + ".";
+            success = true;
+        } else if (attribute.compare("size") == 0){
+            size = getAreaSizeParameter(aPlayer, "size");
+            anArea->setSize(size);
+            message = "The size of the area is now " + areaSizeToString(size) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfArmorType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    int bonus;
+    DamageType resistantTo;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+    ArmorType *anArmorType = nullptr; 
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::ARMOR_TYPE)){
+        anArmorType = dynamic_cast<ArmorType*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Armor Type Attribute Editing Wizard...");
+
+        if (attribute.compare("armor bonus") == 0){
+            bonus = getIntParameter(aPlayer, "armor bonus");
+            anArmorType->setArmorBonus(bonus);
+            message = "The armor bonus of the armor type is now " + std::to_string(bonus) + ".";
+            success = true;
+        } else if (attribute.compare("resistance type") == 0){
+            resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+            anArmorType->setResistantTo(resistantTo);
+            message = "The resistance type of the armor type is now " + damageTypeToString(resistantTo) + ".";
+            success = true;
+        } else if (attribute.compare("weight") == 0){
+            weight = getIntParameter(aPlayer, "weight");
+            anArmorType->setWeight(weight);
+            message = "The weight of the armor type is now " + std::to_string(weight) + ".";
+            success = true;
+        } else if (attribute.compare("rarity") == 0){
+            rarity = getItemRarityParameter(aPlayer, "rarity");
+            anArmorType->setRarity(rarity);
+            message = "The rarity of the armor type is now " + itemRarityToString(rarity) + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            anArmorType->setDescription(description);
+            message = "The description of the armor type is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            anArmorType->setName(name);
+            message = "The name of the armor type is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("cost") == 0){
+            cost = getIntParameter(aPlayer, "cost");
+            anArmorType->setCost(cost);
+            message = "The cost of the armor type is now " + std::to_string(cost) + ".";
+            success = true;
+        } else if (attribute.compare("slot type") == 0){
+            slotType = getEquimentSlotParameter(aPlayer, "slot type");
+            anArmorType->setSlotType(slotType);
+            message = "The slot type of the armor type is now " + equipmentSlotToString(slotType) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfContainer(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    int capacity;
+    //InteractiveNoun *location = nullptr;
+    //ItemPosition position;
+    std::string name;
+    ItemType *type = nullptr;
+    Container *aContainer = nullptr;
+    //ObjectType anObjectType;
+    //InteractiveNoun *oldLocation = nullptr;
+
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::CONTAINER)){
+        aContainer = dynamic_cast<Container*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting  Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aContainer->setName(name);
+            message = "The name of the container is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("type") == 0){
+            type = getItemTypeParameter(aPlayer, "type");
+            aContainer->setType(type);
+            message = "The type of the container is now " + type->getName() + ".";
+            success = true;
+        } else if (attribute.compare("capacity") == 0){
+            capacity = getIntParameter(aPlayer, "capacity");
+            aContainer->setInsideCapacity(capacity);
+            message = "The capacity of the container is now " + std::to_string(capacity) + ".";
+            success = true;
+        } else if (attribute.compare("location") == 0){
+            // disallow editing location for the time being
+            message = "You can't edit the location of the container.";
+            /*location = getInteractiveNounParameter(aPlayer, "location");
+            oldLocation = aContainer->getLocation();
+            // remove from old location and add to new location
+            aContainer->setLocation(location);
+            message = "The location of the container is now " + location->getName() + ".";
+            success = true;*/
+        } else if (attribute.compare("position") == 0){
+            // disallow editing position for the time being
+            message = "You can't edit the position of the container.";
+            /*// make sure that the given combo of location and position make sense
+            anObjectType = aContainer->getLocation()->getObjectType();
+            if (anObjectType == ObjectType::AREA){
+                // position can only be ground (can't be changed)
+                message = "You can't change the position of this container before changing its location.";
+            } else if (anObjectType == ObjectType::CONTAINER){
+                // position should be IN, ON, or UNDER
+                position = getItemPositionParameter(aPlayer, "position", 0);
+                aContainer->setPosition(position);
+                message = "The position of the container is now " + itemPositionToString(position) + ".";
+                success = true;
+            } else {
+                // position should be either INVENTORY or EQUIPPED
+                position = getItemPositionParameter(aPlayer, "position", 1);
+                aContainer->setPosition(position);
+                message = "The position of the container is now " + itemPositionToString(position) + ".";
+                success = true;
+            }*/
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfCreature(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    CreatureType *aType = nullptr;
+    bool ambulatory;
+    int maxHealth;
+    Area *spawnLocation = nullptr;
+    int maxSpecialPts;
+    std::string name;
+    std::string description;
+    int money;
+    Area *aLocation = nullptr;
+    int maxInventoryWeight;
+    Creature *aCreature = nullptr;
+    Area *oldLocation = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::CREATURE)){
+        aCreature = dynamic_cast<Creature*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Creature Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aCreature->setName(name);
+            message = "The name of the creature is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            aCreature->setDescription(description);
+            message = "The description of the creature is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("creature type") == 0){
+            aType = getCreatureTypeParameter(aPlayer, "creature type");
+            aCreature->setType(aType);
+            message = "The type of the creature is now " + aType->getName() + ".";
+            success = true;
+        } else if (attribute.compare("ambulatory") == 0){
+            ambulatory = getBoolParameter(aPlayer, "ambulatory");
+            aCreature->setAmbulatory(ambulatory);
+            message = "The ambulatory of the creature is now ";
+            if (ambulatory){
+                message += "true.";
+            } else {
+                message += "false.";
+            }
+            success = true;
+        } else if (attribute.compare("current location") == 0){
+            aLocation = getAreaParameter(aPlayer, "current location");
+            oldLocation = aCreature->getLocation();
+            oldLocation->removeCharacter(aCreature);
+            messageAreaPlayers(nullptr, "A creature named " + aCreature->getName() + " leaves the area.", oldLocation);
+            aLocation->addCharacter(aCreature);
+            messageAreaPlayers(nullptr, "A creature named " + aCreature->getName() + " leaves the area.", aLocation);
+            aCreature->setLocation(aLocation);
+            message = "The location of the creature is now " + aLocation->getName() + ".";
+            success = true;
+        } else if (attribute.compare("spawn location") == 0){
+            spawnLocation = getAreaParameter(aPlayer, "spawn location");
+            aCreature->setSpawnLocation(spawnLocation);
+            message = "The spawn location of the creature is now " + spawnLocation->getName() + ".";
+            success = true;
+        } else if (attribute.compare("maximum health") == 0){
+            maxHealth = getIntParameter(aPlayer, "maximum health");
+            aCreature->setMaxHealth(maxHealth);
+            message = "The maximum health of the creature is now " + std::to_string(maxHealth) + ".";
+            success = true;
+        } else if (attribute.compare("maximum special points") == 0){
+            maxSpecialPts = getIntParameter(aPlayer, "maximum special points");
+            aCreature->setMaxSpecialPts(maxSpecialPts);
+            message = "The maximum special points of the creature is now " + std::to_string(maxSpecialPts) + ".";
+            success = true;
+        } else if (attribute.compare("money") == 0){
+            money = getIntParameter(aPlayer, "money");
+            aCreature->setMoney(money);
+            message = "The money of the creature is now " + std::to_string(money) + ".";
+            success = true;
+        } else if (attribute.compare("maximum inventory weight") == 0){
+            maxInventoryWeight = getIntParameter(aPlayer, "maximum inventory weight");
+            aCreature->setMaxInventoryWeight(maxInventoryWeight);
+            message = "The weight of the creature is now " + std::to_string(maxInventoryWeight) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfCreatureType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    CharacterSize size;
+    XPTier difficulty;
+    std::string name;
+    SpecialSkill *skill = nullptr;
+    int attackBonus;
+    int armorBonus;
+    DamageType resistantTo;
+    DamageType weakTo;
+    float healPoints;
+    CreatureType *aCreatureType = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::CREATURE_TYPE)){
+        aCreatureType = dynamic_cast<CreatureType*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Creature Type Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aCreatureType->setName(name);
+            message = "The name of the creature type is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("size") == 0){
+            size = getCharacterSizeParameter(aPlayer, "size");
+            aCreatureType->setSize(size);
+            message = "The size of the creature type is now " + characterSizeToString(size) + ".";
+            success = true;
+        } else if (attribute.compare("difficulty") == 0){
+            difficulty = getXPTierParameter(aPlayer, "difficulty");
+            aCreatureType->setDifficulty(difficulty);
+            message = "The difficulty of the creature type is now " + xpTierToString(difficulty) + ".";
+            success = true;
+        } else if (attribute.compare("special skill") == 0){
+            skill = getSpecialSkillParameter(aPlayer, "special skill");
+            aCreatureType->setSpecialSkill(skill);
+            message = "The special skill of the creature type is now " + skill->getName() + ".";
+            success = true;
+        } else if (attribute.compare("attack bonus") == 0){
+            attackBonus = getIntParameter(aPlayer, "attack bonus");
+            aCreatureType->setAttackBonus(attackBonus);
+            message = "The attack bonus of the creature type is now " + std::to_string(attackBonus) + ".";
+            success = true;
+        } else if (attribute.compare("armor bonus") == 0){
+            armorBonus = getIntParameter(aPlayer, "armor bonus");
+            aCreatureType->setArmorBonus(armorBonus);
+            message = "The armor bonus of the creature type is now " + std::to_string(armorBonus) + ".";
+            success = true;
+        } else if (attribute.compare("resistance type") == 0){
+            resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+            aCreatureType->setResistantTo(resistantTo);
+            message = "The resistance type of the creature type is now " + damageTypeToString(resistantTo) + ".";
+            success = true;
+        } else if (attribute.compare("weakness type") == 0){
+            weakTo = getDamageTypeParameter(aPlayer, "weakness type");
+            aCreatureType->setWeakTo(weakTo);
+            message = "The weakness type of the creature type is now " + damageTypeToString(weakTo) + ".";
+            success = true;
+        } else if (attribute.compare("healing point rate") == 0){
+            healPoints = getFloatParameter(aPlayer, "healing point rate");
+            aCreatureType->setHealPoints(healPoints);
+            message = "The healing point rate of the creature type is now " + std::to_string(healPoints) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfExit(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    ExitDirection direction;
+    Area *location = nullptr;
+    Area *connectArea = nullptr;
+    bool isConditional;
+    ItemType *anItemType = nullptr;
+    std::string description;
+    std::string altDescription = "";
+    Exit *anExit = nullptr;
+    Area *oldLocation = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::EXIT)){
+        anExit = dynamic_cast<Exit*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Exit Attribute Editing Wizard...");
+
+        if (attribute.compare("direction") == 0){
+            direction = getExitDirectionParameter(aPlayer, "direction");
+            anExit->setDirection(direction);
+            message = "The direction of the exit is now " + exitDirectionToString(direction) + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            anExit->setDescription(description);
+            message = "The description of the exit is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("location") == 0){
+            location = getAreaParameter(aPlayer, "location");
+            oldLocation = anExit->getLocation();
+            oldLocation->removeExit(anExit);
+            messageAreaPlayers(nullptr, anExit->getDirectionString() + " you see " + description + " disappear into thin air.", oldLocation);
+            location->addExit(anExit);
+            messageAreaPlayers(nullptr, anExit->getDirectionString() + " you see " + description + " appear out of nowhere.", location);
+            anExit->setLocation(location);
+            message = "The location of the exit is now " + location->getName() + ".";
+            success = true;
+        } else if (attribute.compare("connecting area") == 0){
+            connectArea = getAreaParameter(aPlayer, "connecting area");
+            anExit->setConnectArea(connectArea);
+            message = "The connecting area of the exit is now " + connectArea->getName() + ".";
+            success = true;
+        } else if (attribute.compare("conditional") == 0){
+            isConditional = getBoolParameter(aPlayer, "conditional");
+            anExit->setConditional(isConditional);
+            message = "The conditional of the exit is now ";
+            if (isConditional){
+                message += "true.";
+            } else {
+                message += "false.";
+            }
+            success = true;
+        } else if (attribute.compare("conditional item type") == 0){
+            // if conditional is false, then don't need conditional item type
+            if (anExit->isConditional()){
+                anItemType = getItemTypeParameter(aPlayer, "conditional item type");
+                anExit->setConditionItem(anItemType);
+                message = "The conditional item type of the exit is now " + anItemType->getName() + ".";
+                success = true;
+            } else {
+                message = "You must set conditional to true before you can edit the conditional item type.";
+            }
+        } else if (attribute.compare("alternate description") == 0){
+            // if conditional is false, then don't need alt description
+            if (anExit->isConditional()){
+                altDescription = getStringParameter(aPlayer, "alternate description");
+                anExit->setAltDescription(altDescription);
+                message = "The alternate description of the exit is now " + altDescription + ".";
+                success = true;
+            } else {
+                message = "You must set conditional to true before you can edit the alternate description.";
+            }
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfFeature(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    std::string name;
+    std::string placement;
+    Area *location = nullptr;
+    bool isConditional;
+    ItemType *anItemType = nullptr;
+    std::string description;
+    std::string altDescription;
+    Feature *aFeature = nullptr;
+    Area *oldLocation = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::FEATURE)){
+        aFeature = dynamic_cast<Feature*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Feature Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aFeature->setName(name);
+            message = "The name of the feature is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            aFeature->setDescription(description);
+            message = "The description of the feature is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("placement") == 0){
+            placement = getStringParameter(aPlayer, "placement");
+            aFeature->setPlacement(placement);
+            message = "The placement of the feature is now " + placement + ".";
+            success = true;
+        } else if (attribute.compare("location") == 0){
+            location = getAreaParameter(aPlayer, "location");
+            oldLocation = aFeature->getLocation();
+            oldLocation->removeFeature(aFeature);
+            messageAreaPlayers(nullptr, "The " + aFeature->getName() + aFeature->getPlacement() + " disappears into thin air.", oldLocation);
+            location->addFeature(aFeature);
+            messageAreaPlayers(nullptr, "You see a " + aFeature->getName() + " appear out of nowhere " + aFeature->getPlacement() + ".", location);
+            aFeature->setLocation(location);
+            message = "The location of the feature is now " + location->getName() + ".";
+            success = true;
+        } else if (attribute.compare("conditional") == 0){
+            isConditional = getBoolParameter(aPlayer, "conditional");
+            aFeature->setConditional(isConditional);
+            message = "The conditional of the feature is now ";
+            if (isConditional){
+                message += "true.";
+            } else {
+                message += "false.";
+            }
+            success = true;
+        } else if (attribute.compare("conditional item type") == 0){
+            // if conditional is false, then don't need conditional item type or alt description
+            if (aFeature->isConditional()){
+                anItemType = getItemTypeParameter(aPlayer, "conditional item type");
+                aFeature->setConditionItem(anItemType);
+                message = "The conditional item type of the feature is now " + anItemType->getName() + ".";
+                success = true;
+            } else {
+                message = "You must set conditional to true before you can edit the conditional item type.";
+            }
+        } else if (attribute.compare("alternate description") == 0){
+            if (aFeature->isConditional()){
+                altDescription = getStringParameter(aPlayer, "alternate description");
+                aFeature->setAltDescription(altDescription);
+                message = "The alternate description of the feature is now " + altDescription + ".";
+                success = true;
+            } else {
+                message = "You must set conditional to true before you can edit the alternate description.";
+            }
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfItem(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    //InteractiveNoun* location = nullptr;
+    //ItemPosition position;
+    std::string name;
+    Item *anItem = nullptr;
+    ItemType *type = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::ITEM)){
+        anItem = dynamic_cast<Item*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Item Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            anItem->setName(name);
+            message = "The name of the item is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("type") == 0){
+            type = getItemTypeParameter(aPlayer, "type");
+            anItem->setType(type);
+            message = "The type of the item is now " + type->getName() + ".";
+            success = true;
+        } else if (attribute.compare("location") == 0){
+            // disallow editing location for the time being
+            message = "You can't edit the location of the item.";
+            /*location = getInteractiveNounParameter(aPlayer, "location");
+            oldLocation = anItem->getLocation();
+            // remove from old location and add to new location
+            anItem->setLocation(location);
+            message = "The location of the item is now " + location->getName() + ".";
+            success = true;*/
+        } else if (attribute.compare("position") == 0){
+            // disallow editing position for the time being
+            message = "You can't edit the position of the item.";
+            /*// make sure that the given combo of location and position make sense
+            anObjectType = anItem->getLocation()->getObjectType();
+            if (anObjectType == ObjectType::AREA){
+                // position can only be ground (can't be changed)
+                message = "You can't change the position of this item before changing its location.";
+            } else if (anObjectType == ObjectType::CONTAINER){
+                // position should be IN, ON, or UNDER
+                position = getItemPositionParameter(aPlayer, "position", 0);
+                anItem->setPosition(position);
+                message = "The position of the item is now " + itemPositionToString(position) + ".";
+                success = true;
+            } else {
+                // position should be either INVENTORY or EQUIPPED
+                position = getItemPositionParameter(aPlayer, "position", 1);
+                anItem->setPosition(position);
+                message = "The position of the item is now " + itemPositionToString(position) + ".";
+                success = true;
+            }*/
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfItemType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+    ItemType *anItemType = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::ITEM_TYPE)){
+        anItemType = dynamic_cast<ItemType*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Item Type Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            anItemType->setName(name);
+            message = "The name of the item type is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            anItemType->setDescription(description);
+            message = "The description of the item type is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("weight") == 0){
+            weight = getIntParameter(aPlayer, "weight");
+            anItemType->setWeight(weight);
+            message = "The weight of the item type is now " + std::to_string(weight) + ".";
+            success = true;
+        } else if (attribute.compare("rarity") == 0){
+            rarity = getItemRarityParameter(aPlayer, "rarity");
+            anItemType->setRarity(rarity);
+            message = "The rarity of the item type is now " + itemRarityToString(rarity) + ".";
+            success = true;
+        } else if (attribute.compare("cost") == 0){
+            cost = getIntParameter(aPlayer, "cost");
+            anItemType->setCost(cost);
+            message = "The cost of the item type is now " + std::to_string(cost) + ".";
+            success = true;
+        } else if (attribute.compare("slot type") == 0){
+            slotType = getEquimentSlotParameter(aPlayer, "slot type");
+            anItemType->setSlotType(slotType);
+            message = "The slot type of the item type is now " + equipmentSlotToString(slotType) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfNonCombatant(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    Quest *aQuest = nullptr;
+    std::string name;
+    std::string description;
+    int money;
+    Area *aLocation = nullptr;
+    int maxInventoryWeight;
+    NonCombatant *aNonCombatant = nullptr;
+    Area *oldLocation = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::NON_COMBATANT)){
+        aNonCombatant = dynamic_cast<NonCombatant*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting NonCombatant Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aNonCombatant->setName(name);
+            message = "The name of the non-combatant is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            aNonCombatant->setDescription(description);
+            message = "The description of the non-combatant is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("money") == 0){
+            money = getIntParameter(aPlayer, "money");
+            aNonCombatant->setMoney(money);
+            message = "The money of the non-combatant is now " + std::to_string(money) + ".";
+            success = true;
+        } else if (attribute.compare("location") == 0){
+            aLocation = getAreaParameter(aPlayer, "location");
+            oldLocation = aNonCombatant->getLocation();
+            oldLocation->removeCharacter(aNonCombatant);
+            messageAreaPlayers(nullptr, "A person named " + aNonCombatant->getName() + " disappears into thin air.", oldLocation);
+            aLocation->addCharacter(aNonCombatant);
+            messageAreaPlayers(nullptr, "A person named " + aNonCombatant->getName() + " appears out of nowhere.", aLocation);
+            aNonCombatant->setLocation(aLocation);
+            message = "The location of the non-combatant is now " + aLocation->getName() + ".";
+            success = true;
+        } else if (attribute.compare("maximum inventory weight") == 0){
+            maxInventoryWeight = getIntParameter(aPlayer, "maximum inventory weight");
+            aNonCombatant->setMaxInventoryWeight(maxInventoryWeight);
+            message = "The maximum inventory weight of the non-combatant is now " + std::to_string(maxInventoryWeight) + ".";
+            success = true;
+        } else if (attribute.compare("quest") == 0){
+            aQuest = getQuestParameter(aPlayer, "quest", true);
+            aNonCombatant->setQuest(aQuest);
+            message = "The quest of the non-combatant is now ";
+            if (aQuest != nullptr){
+                message += aQuest->getName() + ".";
+            } else {
+                message += "none.";
+            }
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfPlayer(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    CharacterSize size;
+    PlayerClass *aClass;
+    Area *spawnLocation;
+    std::string name;
+    std::string description;
+    int money;
+    int maxInventoryWeight;
+    Player *thePlayer = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::PLAYER)){
+        thePlayer = dynamic_cast<Player*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Player Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            thePlayer->setName(name);
+            message = "The name of the player is now " + name + ".";
+            success = true;
+            messagePlayer(thePlayer, "Your name is now " + name + ".");
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            thePlayer->setDescription(description);
+            message = "The description of the player is now " + description + ".";
+            success = true;
+            messagePlayer(thePlayer, "Your description is now " + description + ".");
+        } else if (attribute.compare("size") == 0){
+            size = getCharacterSizeParameter(aPlayer, "size");
+            thePlayer->setSize(size);
+            message = "The size of the player is now " + characterSizeToString(size) + ".";
+            success = true;
+            messagePlayer(thePlayer, "Your size is now " + characterSizeToString(size) + ".");
+        } else if (attribute.compare("player class") == 0){
+            aClass = getPlayerClassParameter(aPlayer, "player class");
+            thePlayer->setPlayerClass(aClass);
+            message = "The player class of the player is now " + aClass->getName() + ".";
+            success = true;
+            messagePlayer(thePlayer, "Your player class is now " + aClass->getName() + ".");
+        } else if (attribute.compare("spawn location") == 0){
+            spawnLocation = getAreaParameter(aPlayer, "spawn location");
+            thePlayer->setSpawnLocation(spawnLocation);
+            message = "The spawn location of the player is now " + spawnLocation->getName() + ".";
+            success = true;
+        } else if (attribute.compare("money") == 0){
+            money = getIntParameter(aPlayer, "money");
+            thePlayer->setMoney(money);
+            message = "The money of the player is now " + std::to_string(money) + ".";
+            success = true;
+            messagePlayer(thePlayer, "You now have " + std::to_string(money) + " money.");
+        } else if (attribute.compare("maximum inventory weight") == 0){
+            maxInventoryWeight = getIntParameter(aPlayer, "maximum inventory weight");
+            thePlayer->setMaxInventoryWeight(maxInventoryWeight);
+            message = "The maximum inventory weight of the player is now " + std::to_string(maxInventoryWeight) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfPlayerClass(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    int primaryStat;
+    std::string name;
+    SpecialSkill* skill = nullptr;
+    int attackBonus;
+    int armorBonus;
+    DamageType resistantTo;
+    DamageType weakTo;
+    float healPoints;
+    PlayerClass *aPlayerClass = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::PLAYER_CLASS)){
+        aPlayerClass = dynamic_cast<PlayerClass*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting PLayer Class Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aPlayerClass->setName(name);
+            message = "The name of the player class is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("primary stat") == 0){
+            primaryStat = getIntParameter(aPlayer, "primary stat (enter [0] for dexterity, [1] for intelligence, or [2] for strength)", 2);
+            aPlayerClass->setPrimaryStat(primaryStat);
+            message = "The primary stat of the player class is now ";
+            if (primaryStat == 0){
+                message += "dexterity.";
+            } else if (primaryStat == 1){
+                message += "intelligence.";
+            } else {
+                message += "strength.";
+            }
+            success = true;
+        } else if (attribute.compare("special skill") == 0){
+            skill = getSpecialSkillParameter(aPlayer, "special skill");
+            aPlayerClass->setSpecialSkill(skill);
+            message = "The special skill of the player class is now " + skill->getName() + ".";
+            success = true;
+        } else if (attribute.compare("attack bonus") == 0){
+            attackBonus = getIntParameter(aPlayer, "attack bonus");
+            aPlayerClass->setAttackBonus(attackBonus);
+            message = "The attack bonus of the player class is now " + std::to_string(attackBonus) + ".";
+            success = true;
+        } else if (attribute.compare("armor bonus") == 0){
+            armorBonus = getIntParameter(aPlayer, "armor bonus");
+            aPlayerClass->setArmorBonus(armorBonus);
+            message = "The armor bonus of the player class is now " + std::to_string(armorBonus) + ".";
+            success = true;
+        } else if (attribute.compare("resistance type") == 0){
+            resistantTo = getDamageTypeParameter(aPlayer, "resistance type");
+            aPlayerClass->setResistantTo(resistantTo);
+            message = "The resistance type of the player class is now " + damageTypeToString(resistantTo) + ".";
+            success = true;
+        } else if (attribute.compare("weakness type") == 0){
+            weakTo = getDamageTypeParameter(aPlayer, "weakness type");
+            aPlayerClass->setWeakTo(weakTo);
+            message = "The weakness type of the player class is now " + damageTypeToString(weakTo) + ".";
+            success = true;
+        } else if (attribute.compare("healing point rate") == 0){
+            healPoints = getFloatParameter(aPlayer, "healing point rate");
+            aPlayerClass->setHealPoints(healPoints);
+            message = "The healing point rate of the player class is now " + std::to_string(healPoints) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfQuest(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    std::string name;
+    std::string description;
+    int rewardMoney;
+    Item *rewardItem = nullptr;
+    Quest *aQuest = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::QUEST)){
+        aQuest = dynamic_cast<Quest*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Quest Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aQuest->setName(name);
+            message = "The name of the quest is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            aQuest->setDescription(description);
+            message = "The description of the quest is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("reward money") == 0){
+            rewardMoney = getIntParameter(aPlayer, "reward money");
+            aQuest->setRewardMoney(rewardMoney);
+            message = "The reward money of the quest is now " + std::to_string(rewardMoney) + ".";
+            success = true;
+        } else if (attribute.compare("reward item") == 0){
+            rewardItem = getItemParameter(aPlayer, "reward item", true); // may want to change this so they can't choose ANY item ANYWHERE in the game
+            aQuest->setRewardItem(rewardItem);
+            message = "The reward item of the quest is now ";
+            if (rewardItem == nullptr){
+                message += "none.";
+            } else {
+                message += rewardItem->getName() + ".";
+            }
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfQuestStep(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    int ordinalNumber;
+    std::string description;
+    ItemType *anItemType = nullptr;
+    NonCombatant *giver = nullptr;
+    NonCombatant *receiver = nullptr;
+    std::string completionText;
+    QuestStep *aQuestStep = nullptr;
+    Quest *aQuest = nullptr;
+    NonCombatant *oldGiver = nullptr;
+    NonCombatant *oldReceiver = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::QUEST_STEP)){
+        aQuestStep = dynamic_cast<QuestStep*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Quest Step Attribute Editing Wizard...");
+
+        if (attribute.compare("ordinal number") == 0){
+            ordinalNumber = getIntParameter(aPlayer, "ordinal number");
+            aQuestStep->setOrdinalNumber(ordinalNumber);
+            message = "The ordinal number of the quest step is now " + std::to_string(ordinalNumber) + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            aQuestStep->setDescription(description);
+            message = "The description of the quest step is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("fetch item type") == 0){
+            anItemType = getItemTypeParameter(aPlayer, "fetch item type");
+            aQuestStep->setFetchItem(anItemType);
+            message = "The fetch item type of the quest step is now " + anItemType->getName() + ".";
+            success = true;
+        } else if (attribute.compare("giver") == 0){
+            giver = getNonCombatantParameter(aPlayer, "giver", aQuest);
+            oldGiver = aQuestStep->getGiver();
+            aQuest = oldGiver->getQuest();
+            oldGiver->setQuest(nullptr);
+            giver->setQuest(aQuest);
+            aQuestStep->setGiver(giver);
+            message = "The giver of the quest step is now " + giver->getName() + ".";
+            success = true;
+        } else if (attribute.compare("receiver") == 0){
+            receiver = getNonCombatantParameter(aPlayer, "receiver", aQuest);
+            oldReceiver = aQuestStep->getReceiver();
+            aQuest = oldReceiver->getQuest();
+            oldReceiver->setQuest(nullptr);
+            receiver->setQuest(aQuest);
+            aQuestStep->setReceiver(receiver);
+            message = "The receiver of the quest step is now " + receiver->getName() + ".";
+            success = true;
+        } else if (attribute.compare("completion text") == 0){
+            completionText = getStringParameter(aPlayer, "completion text");
+            aQuestStep->setCompletionText(completionText);
+            message = "The completion text of the quest step is now " + completionText + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfSpecialSkill(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    std::string name;
+    int damage;
+    DamageType type;
+    int cost;
+    time_t cooldown;
+    SpecialSkill *aSpecialSkill = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::SPECIAL_SKILL)){
+        aSpecialSkill = dynamic_cast<SpecialSkill*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Special Skill Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aSpecialSkill->setName(name);
+            message = "The name of the special skill is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("damage") == 0){
+            damage = getIntParameter(aPlayer, "damage");
+            aSpecialSkill->setDamage(damage);
+            message = "The damage of the special skill is now " + std::to_string(damage) + ".";
+            success = true;
+        } else if (attribute.compare("damage type") == 0){
+            type = getDamageTypeParameter(aPlayer, "damage type");
+            aSpecialSkill->setDamageType(type);
+            message = "The damage type of the special skill is now " + damageTypeToString(type) + ".";
+            success = true;
+        } else if (attribute.compare("cost") == 0){
+            cost = getIntParameter(aPlayer, "cost");
+            aSpecialSkill->setCost(cost);
+            message = "The cost of the special skill is now " + std::to_string(cost) + ".";
+            success = true;
+        } else if (attribute.compare("cooldown (in seconds)") == 0){
+            cooldown = getIntParameter(aPlayer, "cooldown (in seconds)");
+            aSpecialSkill->setCooldown(cooldown);
+            message = "The cooldown of the special skill is now " + std::to_string(cooldown) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
+// would be better without dynamic casts
+bool GameLogic::editAttributeOfWeaponType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
+    std::string message = "";
+    bool success = false;
+    int damage;
+    DamageType type;
+    AreaSize range;
+    int critMultiplier;
+    int weight;
+    ItemRarity rarity;
+    std::string description;
+    std::string name;
+    int cost;
+    EquipmentSlot slotType;
+    WeaponType *aWeaponType = nullptr;
+
+    if ((objectToEdit != nullptr) && (objectToEdit->getObjectType() == ObjectType::WEAPON_TYPE)){
+        aWeaponType = dynamic_cast<WeaponType*>(objectToEdit);
+
+        addPlayerMessageQueue(aPlayer);
+        messagePlayer(aPlayer, "\015\012Starting Weapon Type Attribute Editing Wizard...");
+
+        if (attribute.compare("name") == 0){
+            name = getStringParameter(aPlayer, "name");
+            aWeaponType->setName(name);
+            message = "The name of the weapon type is now " + name + ".";
+            success = true;
+        } else if (attribute.compare("description") == 0){
+            description = getStringParameter(aPlayer, "description");
+            aWeaponType->setDescription(description);
+            message = "The description of the weapon type is now " + description + ".";
+            success = true;
+        } else if (attribute.compare("damage") == 0){
+            damage = getIntParameter(aPlayer, "damage");
+            aWeaponType->setDamage(damage);
+            message = "The damage of the weapon type is now " + std::to_string(damage) + ".";
+            success = true;
+        } else if (attribute.compare("damage type") == 0){
+            type = getDamageTypeParameter(aPlayer, "damage type");
+            aWeaponType->setDamageType(type);
+            message = "The damage type of the weapon type is now " + damageTypeToString(type) + ".";
+            success = true;
+        } else if (attribute.compare("range") == 0){
+            range = getAreaSizeParameter(aPlayer, "range");
+            aWeaponType->setRange(range);
+            message = "The range of the weapon type is now " + areaSizeToString(range) + ".";
+            success = true;
+        } else if (attribute.compare("crit multiplier") == 0){
+            critMultiplier = getIntParameter(aPlayer, "crit multiplier");
+            aWeaponType->setCritMultiplier(critMultiplier);
+            message = "The crit multiplier of the weapon type is now " + std::to_string(critMultiplier) + ".";
+            success = true;
+        } else if (attribute.compare("weight") == 0){
+            weight = getIntParameter(aPlayer, "weight");
+            aWeaponType->setWeight(weight);
+            message = "The weight of the weapon type is now " + std::to_string(weight) + ".";
+            success = true;
+        } else if (attribute.compare("rarity") == 0){
+            rarity = getItemRarityParameter(aPlayer, "rarity");
+            aWeaponType->setRarity(rarity);
+            message = "The rarity of the weapon type is now " + itemRarityToString(rarity) + ".";
+            success = true;
+        } else if (attribute.compare("cost") == 0){
+            cost = getIntParameter(aPlayer, "cost");
+            aWeaponType->setCost(cost);
+            message = "The cost of the weapon type is now " + std::to_string(cost) + ".";
+            success = true;
+        } else if (attribute.compare("slot type") == 0){
+            slotType = getEquimentSlotParameter(aPlayer, "slot type");
+            aWeaponType->setSlotType(slotType);
+            message = "The slot type of the weapon type is now " + equipmentSlotToString(slotType) + ".";
+            success = true;
+        } else {
+            message = "I don't understand which attribute you want to edit.";
+        }
+
+        removePlayerMessageQueue(aPlayer);
+    } else {
+        message = "I don't understand what you want to edit.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
+}
+
+
 int GameLogic::getIntParameter(Player *aPlayer, std::string paramName, int maxNum){
     std::string response = "";
     int intParam = -1;
@@ -1264,7 +2467,7 @@ float GameLogic::getFloatParameter(Player *aPlayer, std::string paramName){
     messagePlayer(aPlayer, message);
     response = blockingGetMsg(aPlayer);
     floatParam = std::atof(response.c_str());
-    if (floatParam <= 0.0){
+    while (floatParam <= 0.0){
         messagePlayer(aPlayer, "Invalid input. Please enter a floating point value greater than zero.");
         response = blockingGetMsg(aPlayer);
         floatParam = std::atof(response.c_str());
@@ -1281,6 +2484,10 @@ std::string GameLogic::getStringParameter(Player *aPlayer, std::string paramName
 
     messagePlayer(aPlayer, message);
     response = blockingGetMsg(aPlayer);
+    while (response == ""){
+        messagePlayer(aPlayer, "Invalid input. Please enter a string.");
+        response = blockingGetMsg(aPlayer);
+    }
 
     return response;
 }
@@ -1983,14 +3190,16 @@ PlayerClass* GameLogic::getPlayerClassParameter(Player *aPlayer, std::string par
 }
 
 
-Item* GameLogic::getItemParameter(Player *aPlayer, std::string paramName){
+Item* GameLogic::getItemParameter(Player *aPlayer, std::string paramName, bool canBeNull){
     Item *itemParam = nullptr;
     std::vector<Item*> allItems;
     int choice;
     
     allItems = manager->getGameItems();
-    choice = getPointerParameter<Item*>(aPlayer, paramName, allItems);
-    if (choice != -1){
+    choice = getPointerParameter<Item*>(aPlayer, paramName, allItems, canBeNull);
+    if (choice == 0){
+        itemParam = nullptr;
+    } else if (choice != -1){
         itemParam = allItems[choice - 1];
     } 
 
@@ -2804,9 +4013,9 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             break;
         case CommandEnum::EDIT_ATTRIBUTE: 
             // clarify indirect
-            indirectObj = clarifyIndirect(aPlayer, result);
+            directObj = clarifyDirect(aPlayer, result);
             // World builder command. Edits the specified attribute of the specified object (or the current area if not specified).
-            success = editAttributeCommand(aPlayer, indirectObj, result.directAlias);    
+            success = editAttributeCommand(aPlayer, directObj, result.indirectAlias);    
             break;
         case CommandEnum::EDIT_WIZARD:    
             // clarify direct
@@ -4087,8 +5296,72 @@ bool GameLogic::createCommand(Player *aPlayer, const std::string &stringParam){
 }
 
 
-bool GameLogic::editAttributeCommand(Player *aPlayer, InteractiveNoun *directObj, const std::string &stringParam){
-    return false;
+bool GameLogic::editAttributeCommand(Player *aPlayer, InteractiveNoun *directObj, std::string stringParam){
+    bool success = false;
+    ObjectType anObjectType;
+
+    std::transform(stringParam.begin(), stringParam.end(), stringParam.begin(), ::tolower);
+
+    if ((directObj != nullptr) && (aPlayer->isEditMode())){
+        anObjectType = directObj->getObjectType();
+        switch (anObjectType){
+            case ObjectType::NONE:
+                messagePlayer(aPlayer, "I don't know what you mean by that.");
+                break;
+            case ObjectType::AREA:
+                success = editAttributeOfArea(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::ARMOR_TYPE:
+                success = editAttributeOfArmorType(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::CONTAINER:
+                success = editAttributeOfContainer(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::CREATURE:
+                success = editAttributeOfCreature(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::CREATURE_TYPE:
+                success = editAttributeOfCreatureType(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::EXIT:
+                success = editAttributeOfExit(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::FEATURE:
+                success = editAttributeOfFeature(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::ITEM:
+                success = editAttributeOfItem(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::ITEM_TYPE:
+                success = editAttributeOfItemType(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::NON_COMBATANT:
+                success = editAttributeOfNonCombatant(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::PLAYER:
+                success = editAttributeOfPlayer(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::PLAYER_CLASS:
+                success = editAttributeOfPlayerClass(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::QUEST:
+                success = editAttributeOfQuest(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::QUEST_STEP:
+                success = editAttributeOfQuestStep(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::SPECIAL_SKILL:
+                success = editAttributeOfSpecialSkill(aPlayer, directObj, stringParam);
+                break;
+            case ObjectType::WEAPON_TYPE:
+                success = editAttributeOfWeaponType(aPlayer, directObj, stringParam);
+                break;
+        }
+    } else {
+        messagePlayer(aPlayer, "You must be in editmode to edit that.");
+    }
+
+    return success;
 }
 
 

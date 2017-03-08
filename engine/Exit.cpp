@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/03/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -33,7 +33,9 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
     std::string idAlias = "exit " + std::to_string(getID());
     InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(description);
-    InteractiveNoun::addNounAlias(altDescription);
+    if (altDescription != ""){
+        InteractiveNoun::addNounAlias(altDescription);
+    }
     addDirectionalAliases(direction);
 }
 
@@ -47,7 +49,9 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
     std::string idAlias = "exit " + std::to_string(getID());
     InteractiveNoun::addNounAlias(idAlias);
     InteractiveNoun::addNounAlias(description);
-    InteractiveNoun::addNounAlias(altDescription);
+    if (altDescription != ""){
+        InteractiveNoun::addNounAlias(altDescription);
+    }
     addDirectionalAliases(direction);
 }
 

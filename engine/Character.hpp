@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/04/2017
+ * \modified    03/07/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -241,6 +241,14 @@ class Character: public InteractiveNoun {
          *          successful.
          */
         bool unequipItem(Item *anItem);
+
+        /*!
+         * \brief   Sets the maximum allowed inventory weight for this character.
+         *
+         * \return  Returns a bool indicating whether or not setting the maximum 
+         *          inventory weight was successful.
+         */
+        bool setMaxInventoryWeight(int maxWeight);
 
         /*!
          * \brief   Serializes this object for writing to file.
