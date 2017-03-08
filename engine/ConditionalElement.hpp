@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/01/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        ConditionalElement.hpp
  *
@@ -94,7 +94,7 @@ class ConditionalElement: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not the description
          *          was set successfully.
          */
-        bool setDescription(std::string description);
+        virtual bool setDescription(std::string description);
 
         /*!
          * \brief   Sets the alternate description of this conditional element.
@@ -104,7 +104,7 @@ class ConditionalElement: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not the alternate 
          *          description was set successfully.
          */
-        bool setAltDescription(std::string altDescription);
+        virtual bool setAltDescription(std::string altDescription);
 
         /*!
          * \brief   Gets the response of this object to the command move.

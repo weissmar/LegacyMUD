@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/03/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -113,6 +113,8 @@ float CombatantType::getHealPoints() const{
 
 bool CombatantType::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
+    removeNounAlias(this->name);
+    addNounAlias(name);
     this->name = name;
     return true;
 }

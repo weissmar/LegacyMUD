@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)
  * \created     02/10/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.cpp
  *
@@ -118,6 +118,10 @@ std::string QuestStep::getCompletionText() const{
 
 
 bool QuestStep::setOrdinalNumber(int number){
+    std::string oldAlias = "step " + std::to_string(ordinalNumber.load());
+    std::string alias = "step " + std::to_string(number);
+    removeNounAlias(oldAlias);
+    addNounAlias(alias);
     ordinalNumber.store(number);
 
     return true; 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Exit.hpp
  *
@@ -98,6 +98,26 @@ class Exit: public ConditionalElement {
          *          was successful.
          */
         bool setLocation(Area *anArea);
+
+        /*!
+         * \brief   Sets the description of this conditional element.
+         *
+         * \param[in] description   Specifies the description.
+         *
+         * \return  Returns a bool indicating whether or not the description
+         *          was set successfully.
+         */
+        virtual bool setDescription(std::string description);
+
+        /*!
+         * \brief   Sets the alternate description of this conditional element.
+         *
+         * \param[in] altDescription    Specifies the alternate description.
+         *
+         * \return  Returns a bool indicating whether or not the alternate 
+         *          description was set successfully.
+         */
+        virtual bool setAltDescription(std::string altDescription);
 
         /*!
          * \brief   Gets the description.
@@ -280,7 +300,9 @@ class Exit: public ConditionalElement {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
+        void addInitialDirectionalAliases(ExitDirection direction);
         void addDirectionalAliases(ExitDirection direction);
+        void removeDirectionalAliases(ExitDirection direction);
         
         std::atomic<ExitDirection> direction;
         Area *location;

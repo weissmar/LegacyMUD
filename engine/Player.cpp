@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -221,8 +221,10 @@ bool Player::setSize(CharacterSize size){
 bool Player::setPlayerClass(PlayerClass *aClass){
     std::lock_guard<std::mutex> playerClassLock(playerClassMutex);
     removeAllLexicalData(playerClass);
+    removeAllLexicalData(playerClass->getSpecialSkill());
     playerClass = aClass;
     addAllLexicalData(playerClass);
+    addAllLexicalData(playerClass->getSpecialSkill());
 
     return true;
 }

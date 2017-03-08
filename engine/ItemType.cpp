@@ -123,6 +123,8 @@ bool ItemType::setDescription(std::string description){
 
 bool ItemType::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
+    removeNounAlias(this->name);
+    addNounAlias(name);
     this->name = name;
 
     return true;

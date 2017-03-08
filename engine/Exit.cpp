@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -47,7 +47,7 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
     if (altDescription != ""){
         InteractiveNoun::addNounAlias(altDescription);
     }
-    addDirectionalAliases(direction);
+    addInitialDirectionalAliases(direction);
 }
 
 
@@ -63,7 +63,7 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
     if (altDescription != ""){
         InteractiveNoun::addNounAlias(altDescription);
     }
-    addDirectionalAliases(direction);
+    addInitialDirectionalAliases(direction);
 }
 
 
@@ -81,7 +81,7 @@ Exit::~Exit(){
 
 }*/
 
-void Exit::addDirectionalAliases(ExitDirection direction){
+void Exit::addInitialDirectionalAliases(ExitDirection direction){
     switch (direction){
         case ExitDirection::NORTH:
             InteractiveNoun::addNounAlias("north");
@@ -122,6 +122,98 @@ void Exit::addDirectionalAliases(ExitDirection direction){
         case ExitDirection::DOWN:
             InteractiveNoun::addNounAlias("down");
             InteractiveNoun::addNounAlias("d");
+            break;
+    }
+}
+
+
+void Exit::addDirectionalAliases(ExitDirection direction){
+    switch (direction){
+        case ExitDirection::NORTH:
+            addNounAlias("north");
+            addNounAlias("n");
+            break;
+        case ExitDirection::SOUTH:
+            addNounAlias("south");
+            addNounAlias("s");
+            break;
+        case ExitDirection::EAST:
+            addNounAlias("east");
+            addNounAlias("e");
+            break;
+        case ExitDirection::WEST:
+            addNounAlias("west");
+            addNounAlias("w");
+            break;
+        case ExitDirection::NORTHEAST:
+            addNounAlias("northeast");
+            addNounAlias("ne");
+            break;
+        case ExitDirection::NORTHWEST:
+            addNounAlias("northwest");
+            addNounAlias("nw");
+            break;
+        case ExitDirection::SOUTHEAST:
+            addNounAlias("southeast");
+            addNounAlias("se");
+            break;
+        case ExitDirection::SOUTHWEST:
+            addNounAlias("southwest");
+            addNounAlias("sw");
+            break;
+        case ExitDirection::UP:
+            addNounAlias("up");
+            addNounAlias("u");
+            break;
+        case ExitDirection::DOWN:
+            addNounAlias("down");
+            addNounAlias("d");
+            break;
+    }
+}
+
+
+void Exit::removeDirectionalAliases(ExitDirection direction){
+    switch (direction){
+        case ExitDirection::NORTH:
+            removeNounAlias("north");
+            removeNounAlias("n");
+            break;
+        case ExitDirection::SOUTH:
+            removeNounAlias("south");
+            removeNounAlias("s");
+            break;
+        case ExitDirection::EAST:
+            removeNounAlias("east");
+            removeNounAlias("e");
+            break;
+        case ExitDirection::WEST:
+            removeNounAlias("west");
+            removeNounAlias("w");
+            break;
+        case ExitDirection::NORTHEAST:
+            removeNounAlias("northeast");
+            removeNounAlias("ne");
+            break;
+        case ExitDirection::NORTHWEST:
+            removeNounAlias("northwest");
+            removeNounAlias("nw");
+            break;
+        case ExitDirection::SOUTHEAST:
+            removeNounAlias("southeast");
+            removeNounAlias("se");
+            break;
+        case ExitDirection::SOUTHWEST:
+            removeNounAlias("southwest");
+            removeNounAlias("sw");
+            break;
+        case ExitDirection::UP:
+            removeNounAlias("up");
+            removeNounAlias("u");
+            break;
+        case ExitDirection::DOWN:
+            removeNounAlias("down");
+            removeNounAlias("d");
             break;
     }
 }
@@ -187,6 +279,8 @@ Area* Exit::getConnectArea() const{
 
 
 bool Exit::setDirection(ExitDirection aDirection){
+    removeDirectionalAliases(direction.load());
+    addDirectionalAliases(aDirection);
     direction.store(aDirection);
 
     return true;
@@ -212,6 +306,22 @@ bool Exit::setConnectArea(Area *anArea){
     }
 
     return false;
+}
+
+
+bool Exit::setDescription(std::string description){
+    removeNounAlias(getDescription());
+    addNounAlias(description);
+    return ConditionalElement::setDescription(description);
+}
+
+
+bool Exit::setAltDescription(std::string altDescription){
+    removeNounAlias(getAltDescription());
+    if (altDescription != ""){
+        addNounAlias(altDescription);
+    }
+    return ConditionalElement::setAltDescription(altDescription);
 }
 
 

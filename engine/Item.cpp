@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -153,6 +153,8 @@ bool Item::setPosition(ItemPosition position){
 
 bool Item::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
+    removeNounAlias(this->name);
+    addNounAlias(name);
     this->name = name;
 
     return true;

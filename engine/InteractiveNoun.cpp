@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serializeJustInteractiveNoun function) 
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -17,6 +17,7 @@
 #include "Area.hpp"
 #include "NonCombatant.hpp"
 #include "Combatant.hpp"
+#include <WordManager.hpp>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
@@ -214,6 +215,7 @@ bool InteractiveNoun::addNounAlias(std::string anAlias){
 
     if (!found){
         aliases.push_back(anAlias);
+        parser::WordManager::addNoun(anAlias, this);
         return true;
     }
     return false;
@@ -231,6 +233,7 @@ bool InteractiveNoun::removeNounAlias(std::string anAlias){
 
     if (index != -1){
         aliases.erase(aliases.begin() + index);
+        parser::WordManager::removeNoun(anAlias, this);
         return true;
     }
 
@@ -252,6 +255,7 @@ bool InteractiveNoun::addVerbAlias(CommandEnum aCommand, std::string alias, pars
             }
         }
         anAction->addAlias(alias, aGrammar);
+        parser::WordManager::addVerb(alias, this);
         return true;
     }
 
@@ -264,6 +268,7 @@ bool InteractiveNoun::removeVerbAlias(CommandEnum aCommand, std::string alias){
 
     if (anAction != nullptr){
         anAction->removeAlias(alias);
+        parser::WordManager::removeVerb(alias, this);
         return true;
     }
     return false;

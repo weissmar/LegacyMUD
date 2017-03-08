@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -161,6 +161,8 @@ bool Character::hasItem(ItemType *anItemType) const{
 
 bool Character::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
+    InteractiveNoun::removeNounAlias(this->name);
+    InteractiveNoun::addNounAlias(name);
     this->name = name;
     return true;
 }
