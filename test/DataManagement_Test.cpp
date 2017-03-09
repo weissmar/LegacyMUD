@@ -1341,18 +1341,18 @@ TEST(DataManagementTest, SaveDefaultDataFile) {
     
     // Starting Area (name, short desciption, long description, area size, id)    
     legacymud::engine::Area* area = new legacymud::engine::Area("default area name", "short description of area", "longer description of area", 
-                                                                 legacymud::engine::AreaSize::LARGE, 0);   
+                                                                 legacymud::engine::AreaSize::LARGE, 1);   
                                                                  
     // SpecialSkill(name, damage, damageType, cost, cooldown);
     legacymud::engine::SpecialSkill* skill = new legacymud::engine::SpecialSkill("default special skill name", 20, 
                                                                                 legacymud::engine::DamageType::PIERCING, 
-                                                                                10, 1);
+                                                                                10, 2);
 
     // PlayerClass (primaryStat, name, special skill, attackBonus, armorBonus, resistantTo, weakTo, float healPoints);
     legacymud::engine::PlayerClass* playerClass = new legacymud::engine::PlayerClass(45, "playerClass name", skill, 10, 20, 
                                                                                 legacymud::engine::DamageType::FIRE,
                                                                                 legacymud::engine::DamageType::WATER,
-                                                                                35.5, 2); 
+                                                                                35.5, 3); 
         
     
     // put the objects in the GameObjectManager
