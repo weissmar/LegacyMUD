@@ -118,7 +118,10 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
         gamedata::DataManager dm;
         std::cout << "Loading " << fileName << std::endl;
         success = dm.loadGame(fileName, manager);
-        if (!success) {
+        if (success) {
+            std::cout << "Successfully loaded " << fileName << std::endl;
+        }
+        else {
             std::cerr << "Failed to load " << fileName << std::endl;
         }
     }
