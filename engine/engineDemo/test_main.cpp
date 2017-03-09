@@ -14,22 +14,22 @@ void setEditModeVerbs();
 
 int main(int argc, char *argv[]) {
     legacymud::telnet::Server ts;
-    legacymud::account::Account accountM("account.dat");
     legacymud::engine::GameLogic logic;
     int serverPort;
     std::string file = "";
 
     // Validate command line entry. 
-    if (argc < 2 || argc > 3) {
-        std::cout << "Error: Usage is server [port number] ([filename])" << std::endl;
+    if (argc != 3) {
+        std::cout << "Error: Usage is server [port number] [game data filename]" << std::endl;
         return 1;
     }
     
     // Convert from c-string to int.
     serverPort = atoi(argv[1]);
+    // Get game data filename
+    file = std::string(argv[2]);
 
-    if (argc == 3)
-        file = std::string(argv[2]);
+    legacymud::account::Account accountM(file + ".accounts");
     
     // initialize parser vocab
     setGlobalVerbs();
