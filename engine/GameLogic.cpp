@@ -108,10 +108,14 @@ GameLogic::~GameLogic(){
 
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
-    // reinitialize saving flag
+    accountManager = anAccount;
+    theServer = aServer;
+
+    // initialize saving flag
     saving.store(false);
 
     bool success = false;
+
     // try to load file if one is specified
     if (!fileName.empty()) {
         currentFilename = fileName;
@@ -154,8 +158,6 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
         SpecialSkill *defaultSpecialSkill = nullptr;
 /*        WeaponType *defaultWeaponType = nullptr;
 */
-        accountManager = anAccount;
-        theServer = aServer;
 /*
         // create default object of each type other than area and player
         defaultArmorType = new ArmorType(3, DamageType::NONE, 2, ItemRarity::COMMON, "some armor", "default armor type", 1, EquipmentSlot::TORSO);
@@ -5497,6 +5499,7 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
                 // use current fileName
                 std::cout << "Saving " << currentFilename << std::endl;
                 success = dm.saveGame(currentFilename, manager);
+                if (success) accountManager->saveToDisk();
             }
             else {
                 messagePlayer(aPlayer, "You must specify a filename");
@@ -5504,7 +5507,10 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
         }
         else {
             success = dm.saveGame(stringParam, manager);
-            if (success) currentFilename = stringParam;
+            if (success) {
+                accountManager->saveToDisk();
+                currentFilename = stringParam;
+            }
         }
         if (success) {
             messagePlayer(aPlayer, "Successfully saved " + stringParam);
