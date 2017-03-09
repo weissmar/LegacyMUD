@@ -41,6 +41,7 @@
 #include "ArmorType.hpp"
 #include "Feature.hpp"
 #include "EnumToString.hpp"
+#include "Action.hpp"
 
 
 namespace legacymud { namespace engine {
@@ -1212,6 +1213,205 @@ bool GameLogic::createWeaponType(Player *aPlayer){
 }
 
 
+std::string GameLogic::editActionAttribute(Player *aPlayer, InteractiveNoun *objectToEdit){
+    std::string message = "";
+    std::string response;
+    int choice = -1;
+    int actionChoice = -1;
+    int attributeChoice = -1;
+    std::vector<Action*> allActions = objectToEdit->getAllActions();
+    Action *anAction = nullptr;
+    bool valid;
+    std::string flavorText;
+    EffectType anEffect;
+    CommandEnum aCommand;
+
+    messagePlayer(aPlayer, "What would you like to do? Your options are: [1] edit action, [2] add action, or [3] remove action. Please enter the number that corresponds to your choice.");
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 3);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 3);
+    }
+
+    switch (choice){
+        case 1:
+            // edit 
+            messagePlayer(aPlayer, "Starting Edit Action Wizard...");
+            actionChoice = getPointerParameter<Action*>(aPlayer, "", allActions, true, "Which action would you like to edit?");
+            if (actionChoice == 0){
+                messagePlayer(aPlayer, "Aborting Edit Action Wizard...");
+            } else if (actionChoice != -1){
+                anAction = allActions[actionChoice];
+                messagePlayer(aPlayer, anAction->getToString());
+                messagePlayer(aPlayer, "Which action attribute would you like to edit? Your options are: [1] valid, [2] flavor text, or [3] effect. Please enter the number that corresponds to your choice.");
+                response = blockingGetMsg(aPlayer);
+                attributeChoice = validateStringNumber(response, 1, 3);
+                while (attributeChoice == -1){
+                    messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+                    response = blockingGetMsg(aPlayer);
+                    attributeChoice = validateStringNumber(response, 1, 3);
+                }
+                switch (attributeChoice){
+                    case 1:
+                        // edit valid
+                        valid = getBoolParameter(aPlayer, "valid");
+                        anAction->setValid(valid);
+                        message = "Valid is now ";
+                        if (valid){
+                            message += "true.";
+                        } else {
+                            message += "false.";
+                        }
+                        break;
+                    case 2:
+                        // edit flavor text
+                        flavorText = getStringParameter(aPlayer, "flavor text");
+                        anAction->setFlavorText(flavorText);
+                        message = "The flavor text is now " + flavorText + ".";
+                        break;
+                    case 3:
+                        // edit effect
+                        anEffect = getEffectTypeParameter(aPlayer, "effect");
+                        anAction->setEffect(anEffect);
+                        message = "The effect is now " + effectTypeToString(anEffect) + "."; 
+                        break;
+                    default:
+                        break;
+                }
+            }
+            break;
+        case 2:
+            // add
+            messagePlayer(aPlayer, "Starting Action Creation Wizard...");
+            aCommand = getCommandEnumParameter(aPlayer, "command");
+            valid = getBoolParameter(aPlayer, "valid");
+            flavorText = getStringParameter(aPlayer, "flavor text");
+            anEffect = getEffectTypeParameter(aPlayer, "effect");
+            anAction = objectToEdit->addAction(aCommand, valid, flavorText, anEffect);
+            if ((anAction->getValid() == valid) && (anAction->getFlavorText().compare(flavorText) == 0) && (anAction->getEffect() == anEffect)){
+                message = "The action has been successfully created.";
+            } else {
+                messagePlayer(aPlayer, "There is already an action with that command. \015\012Aborting Action Creation Wizard...");
+            }
+            break;
+        case 3:
+            // remove
+            messagePlayer(aPlayer, "Starting Action Removal Wizard...");
+            actionChoice = getPointerParameter<Action*>(aPlayer, "", allActions, true, "Which action would you like to remove?");
+            if (actionChoice == 0){
+                messagePlayer(aPlayer, "Aborting Action Removal Wizard...");
+            } else if (actionChoice != -1){
+                anAction = allActions[actionChoice];
+                objectToEdit->removeAction(anAction->getCommand());
+                message = "The action has been successfully removed.";
+            }
+            break;
+        default:
+            break;
+    }
+
+    return message;
+}
+
+
+std::string GameLogic::editAliasAttribute(Player *aPlayer, InteractiveNoun *objectToEdit){
+    std::string message = "";
+    std::string response;
+    int choice1 = -1;
+    int choice2 = -1;
+    int choice = -1;
+    bool success;
+    std::string alias;
+    CommandEnum aCommand;
+    parser::Grammar::Support directSupport, indirectSupport;
+    std::map<std::string, parser::PrepositionType> prepositions;
+    bool complete = false;
+    std::string prepAlias;
+    parser::PrepositionType prepType;
+
+    messagePlayer(aPlayer, "What kind of alias would you like to edit? Your options are: [1] noun alias or [2] verb alias. Please enter the number that corresponds to your choice.");
+    response = blockingGetMsg(aPlayer);
+    choice1 = validateStringNumber(response, 1, 2);
+    while (choice1 == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice1 = validateStringNumber(response, 1, 2);
+    }
+
+    messagePlayer(aPlayer, "What would you like to do to the alias? Your options are: [1] add alias or [2] remove alias. Please enter the number that corresponds to your choice.");
+    response = blockingGetMsg(aPlayer);
+    choice2 = validateStringNumber(response, 1, 2);
+    while (choice2 == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice2 = validateStringNumber(response, 1, 2);
+    }
+
+    if ((choice1 == 1) && (choice2 == 1)){
+        //add noun alias
+        alias = getStringParameter(aPlayer, "noun alias to add");
+        success = objectToEdit->addNounAlias(alias);
+        if (success){
+            message = "The noun alias was successfully added.";
+        } else {
+            messagePlayer(aPlayer, "The noun alias could not be added.");
+        }
+    } else if ((choice1 == 1) && (choice2 == 2)){
+        // remove noun alias
+        alias = getStringParameter(aPlayer, "noun alias to remove");
+        success = objectToEdit->removeNounAlias(alias);
+        if (success){
+            message = "The noun alias was successfully removed.";
+        } else {
+            messagePlayer(aPlayer, "The noun alias could not be removed.");
+        }
+    } else if ((choice1 == 2) && (choice2 == 1)){
+        // add verb alias
+        alias = getStringParameter(aPlayer, "verb alias to add");
+        aCommand = getCommandEnumParameter(aPlayer, "command to alias");
+        directSupport = getSupportParameter(aPlayer, "direct object support");
+        indirectSupport = getSupportParameter(aPlayer, "indirect object support");
+        while (!complete){
+            messagePlayer(aPlayer, "Would you like to add a preposition? Your options are: [1] yes or [2] no. Please enter the number that corresponds to your choice.");
+            response = blockingGetMsg(aPlayer);
+            choice = validateStringNumber(response, 1, 2);
+            while (choice == -1){
+                messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+                response = blockingGetMsg(aPlayer);
+                choice = validateStringNumber(response, 1, 2);
+            }
+            if (choice == 1){
+                prepAlias = getStringParameter(aPlayer, "preposition");
+                prepType = getPrepositionTypeParameter(aPlayer, "preposition type");
+                prepositions[prepAlias] = prepType;
+            } else {
+                complete = true;
+            }
+        }
+        success = objectToEdit->addVerbAlias(aCommand, alias, directSupport, indirectSupport, prepositions);
+        if (success){
+            message = "The verb alias was successfully added.";
+        } else {
+            messagePlayer(aPlayer, "The verb alias could not be added.");
+        }
+    } else {
+        //remove verb alias
+        alias = getStringParameter(aPlayer, "verb alias to remove");
+        aCommand = getCommandEnumParameter(aPlayer, "command that was aliased");
+        success = objectToEdit->removeVerbAlias(aCommand, alias);
+        if (success){
+            message = "The verb alias was successfully removed.";
+        } else {
+            messagePlayer(aPlayer, "The verb alias could not be removed.");
+        }
+    }
+
+    return message;
+}
+
+
 // would be better without dynamic casts
 bool GameLogic::editAttributeOfArea(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
     std::string message = "";
@@ -1248,6 +1448,18 @@ bool GameLogic::editAttributeOfArea(Player *aPlayer, InteractiveNoun *objectToEd
             anArea->setSize(size);
             message = "The size of the area is now " + areaSizeToString(size) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1323,6 +1535,18 @@ bool GameLogic::editAttributeOfArmorType(Player *aPlayer, InteractiveNoun *objec
             anArmorType->setSlotType(slotType);
             message = "The slot type of the armor type is now " + equipmentSlotToString(slotType) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1403,6 +1627,18 @@ bool GameLogic::editAttributeOfContainer(Player *aPlayer, InteractiveNoun *objec
                 message = "The position of the container is now " + itemPositionToString(position) + ".";
                 success = true;
             }*/
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1501,6 +1737,18 @@ bool GameLogic::editAttributeOfCreature(Player *aPlayer, InteractiveNoun *object
             aCreature->setMaxInventoryWeight(maxInventoryWeight);
             message = "The weight of the creature is now " + std::to_string(maxInventoryWeight) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1582,6 +1830,18 @@ bool GameLogic::editAttributeOfCreatureType(Player *aPlayer, InteractiveNoun *ob
             aCreatureType->setHealPoints(healPoints);
             message = "The healing point rate of the creature type is now " + std::to_string(healPoints) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1672,6 +1932,18 @@ bool GameLogic::editAttributeOfExit(Player *aPlayer, InteractiveNoun *objectToEd
             } else {
                 message = "You must set conditional to true before you can edit the alternate description.";
             }
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1761,6 +2033,18 @@ bool GameLogic::editAttributeOfFeature(Player *aPlayer, InteractiveNoun *objectT
             } else {
                 message = "You must set conditional to true before you can edit the alternate description.";
             }
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1832,6 +2116,18 @@ bool GameLogic::editAttributeOfItem(Player *aPlayer, InteractiveNoun *objectToEd
                 message = "The position of the item is now " + itemPositionToString(position) + ".";
                 success = true;
             }*/
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1895,6 +2191,18 @@ bool GameLogic::editAttributeOfItemType(Player *aPlayer, InteractiveNoun *object
             anItemType->setSlotType(slotType);
             message = "The slot type of the item type is now " + equipmentSlotToString(slotType) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -1969,6 +2277,18 @@ bool GameLogic::editAttributeOfNonCombatant(Player *aPlayer, InteractiveNoun *ob
                 message += "none.";
             }
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -2043,6 +2363,18 @@ bool GameLogic::editAttributeOfPlayer(Player *aPlayer, InteractiveNoun *objectTo
             thePlayer->setMaxInventoryWeight(maxInventoryWeight);
             message = "The maximum inventory weight of the player is now " + std::to_string(maxInventoryWeight) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -2125,6 +2457,18 @@ bool GameLogic::editAttributeOfPlayerClass(Player *aPlayer, InteractiveNoun *obj
             aPlayerClass->setHealPoints(healPoints);
             message = "The healing point rate of the player class is now " + std::to_string(healPoints) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -2181,6 +2525,18 @@ bool GameLogic::editAttributeOfQuest(Player *aPlayer, InteractiveNoun *objectToE
                 message += rewardItem->getName() + ".";
             }
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -2255,6 +2611,18 @@ bool GameLogic::editAttributeOfQuestStep(Player *aPlayer, InteractiveNoun *objec
             aQuestStep->setCompletionText(completionText);
             message = "The completion text of the quest step is now " + completionText + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -2312,6 +2680,18 @@ bool GameLogic::editAttributeOfSpecialSkill(Player *aPlayer, InteractiveNoun *ob
             aSpecialSkill->setCooldown(cooldown);
             message = "The cooldown of the special skill is now " + std::to_string(cooldown) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -2399,6 +2779,18 @@ bool GameLogic::editAttributeOfWeaponType(Player *aPlayer, InteractiveNoun *obje
             aWeaponType->setSlotType(slotType);
             message = "The slot type of the weapon type is now " + equipmentSlotToString(slotType) + ".";
             success = true;
+        } else if (attribute.compare("action") == 0){
+            // add, edit, or remove action
+            message = editActionAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
+        } else if (attribute.compare("alias") == 0){
+            // add or remove aliases
+            message = editAliasAttribute(aPlayer, objectToEdit);
+            if (!message.empty()){
+                success = true;
+            }
         } else {
             message = "I don't understand which attribute you want to edit.";
         }
@@ -2584,6 +2976,94 @@ AreaSize GameLogic::getAreaSizeParameter(Player *aPlayer, std::string paramName)
 }
 
 
+parser::Grammar::Support GameLogic::getSupportParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    parser::Grammar::Support supportParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] NO, [2] YES, or [3] TEXT. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 3);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 3);
+    }
+
+    switch (choice){
+        case 1:
+            supportParam = parser::Grammar::Support::NO;
+            break;
+        case 2:
+            supportParam = parser::Grammar::Support::YES;
+            break;
+        case 3:
+            supportParam = parser::Grammar::Support::TEXT;
+            break;
+        default:
+            supportParam = parser::Grammar::Support::NO;
+            break;
+    }
+
+    return supportParam;
+}
+
+
+parser::PrepositionType GameLogic::getPrepositionTypeParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    parser::PrepositionType prepTypeParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] NONE, [2] TO, [3] WITH, [4] OF, [5] FROM, [6] ON, [7] UNDER, [8] IN, or [9] ALL. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 9);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 9);
+    }
+
+    switch (choice){
+        case 1:
+            prepTypeParam = parser::PrepositionType::NONE;
+            break;
+        case 2:
+            prepTypeParam = parser::PrepositionType::TO;
+            break;
+        case 3:
+            prepTypeParam = parser::PrepositionType::WITH;
+            break;
+        case 4:
+            prepTypeParam = parser::PrepositionType::OF;
+            break;
+        case 5:
+            prepTypeParam = parser::PrepositionType::FROM;
+            break;
+        case 6:
+            prepTypeParam = parser::PrepositionType::ON;
+            break;
+        case 7:
+            prepTypeParam = parser::PrepositionType::UNDER;
+            break;
+        case 8:
+            prepTypeParam = parser::PrepositionType::IN;
+            break;
+        case 9:
+            prepTypeParam = parser::PrepositionType::ALL;
+            break;
+        default:
+            prepTypeParam = parser::PrepositionType::NONE;
+            break;
+    }
+
+    return prepTypeParam;
+}
+
+
 DamageType GameLogic::getDamageTypeParameter(Player *aPlayer, std::string paramName){
     std::string response = "";
     int choice = -1;
@@ -2675,6 +3155,82 @@ ItemRarity GameLogic::getItemRarityParameter(Player *aPlayer, std::string paramN
     }
 
     return itemRarityParam;
+}
+
+
+CommandEnum GameLogic::getCommandEnumParameter(Player *aPlayer, std::string paramName){
+    std::string response = "";
+    int choice = -1;
+    CommandEnum commandEnumParam;
+    std::string message = "What would you like the " + paramName + " to be?";
+    message += " Your choices are: [1] LOOK, [2] LISTEN, [3] TAKE, [4] PUT, [5] DROP, [6] EQUIP, [7] UNEQUIP, [8] TRANSFER, [9] GO, [10] MOVE, [11] ATTACK, [12] TALK, [13] SHOP, [14] BUY, [15] SELL, [16] SEARCH, [17] USE_SKILL, [18] READ, [19] BREAK, [20] CLIMB, [21] TURN, [22] PUSH, [23] PULL, [24] EAT, or [25] DRINK. Please enter the number that corresponds to your choice.";
+
+    messagePlayer(aPlayer, message); 
+    response = blockingGetMsg(aPlayer);
+    choice = validateStringNumber(response, 1, 25);
+    while (choice == -1){
+        messagePlayer(aPlayer, "Invalid input. Please enter the number that corresponds to your choice.");
+        response = blockingGetMsg(aPlayer);
+        choice = validateStringNumber(response, 1, 25);
+    }
+
+    switch (choice){
+        case 1:
+            commandEnumParam = CommandEnum::LOOK;
+        case 2:
+            commandEnumParam = CommandEnum::LISTEN;
+        case 3:
+            commandEnumParam = CommandEnum::TAKE;
+        case 4:
+            commandEnumParam = CommandEnum::PUT;
+        case 5:
+            commandEnumParam = CommandEnum::DROP;
+        case 6:
+            commandEnumParam = CommandEnum::EQUIP;
+        case 7:
+            commandEnumParam = CommandEnum::UNEQUIP;
+        case 8:
+            commandEnumParam = CommandEnum::TRANSFER;
+        case 9:
+            commandEnumParam = CommandEnum::GO;
+        case 10:
+            commandEnumParam = CommandEnum::MOVE;
+        case 11:
+            commandEnumParam = CommandEnum::ATTACK;
+        case 12:
+            commandEnumParam = CommandEnum::TALK;
+        case 13:
+            commandEnumParam = CommandEnum::SHOP;
+        case 14:
+            commandEnumParam = CommandEnum::BUY;
+        case 15:
+            commandEnumParam = CommandEnum::SELL;
+        case 16:
+            commandEnumParam = CommandEnum::SEARCH;
+        case 17:
+            commandEnumParam = CommandEnum::USE_SKILL;
+        case 18:
+            commandEnumParam = CommandEnum::READ;
+        case 19:
+            commandEnumParam = CommandEnum::BREAK;
+        case 20:
+            commandEnumParam = CommandEnum::CLIMB;
+        case 21:
+            commandEnumParam = CommandEnum::TURN;
+        case 22:
+            commandEnumParam = CommandEnum::PUSH;
+        case 23:
+            commandEnumParam = CommandEnum::PULL;
+        case 24:
+            commandEnumParam = CommandEnum::EAT;
+        case 25:
+            commandEnumParam = CommandEnum::DRINK;
+        default:
+            commandEnumParam = CommandEnum::INVALID;
+            break;
+    }
+
+    return commandEnumParam;
 }
 
 
@@ -2956,11 +3512,17 @@ XPTier GameLogic::getXPTierParameter(Player *aPlayer, std::string paramName){
 
 
 template <class aType>
-int GameLogic::getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull){
+int GameLogic::getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull, std::string question){
     std::string response = "";
     int choice = -1;
     int optionsSize = possibleVals.size();
-    std::string message = "What would you like the " + paramName + " to be?";
+    std::string message;
+
+    if (question == ""){
+        message = "What would you like the " + paramName + " to be?";
+    } else {
+        message = question;
+    }
     
     message += " Your choices are: ";
     for (size_t i = 0; i < optionsSize; i++){

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    02/20/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Action.hpp
  *
@@ -104,6 +104,20 @@ class Action {
          * \return  Returns a vector of std::string aliases for this action.
          */        
         std::vector<std::string> getAliases() const;
+
+        /*!
+         * \brief   Gets the name (string version of command) for this action
+         *
+         * \return  Returns a std::string with the name for this action.
+         */      
+        std::string getName() const;
+
+        /*!
+         * \brief   Gets a string representation of this action
+         *
+         * \return  Returns a std::string with the string version of this action.
+         */  
+        std::string getToString() const;
 
         /*!
          * \brief   Gets whether or not the specfied alias is an alias for this
