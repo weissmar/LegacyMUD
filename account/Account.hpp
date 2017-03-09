@@ -70,6 +70,15 @@ class Account {
         bool uniqueUsername(std::string username);          
 
         /*!
+          \brief Sets the file for saving data. 
+          
+          \param[in]  filename        file for saving data               
+          \pre none
+          \post the filename is set
+        */
+        void setFileName(std::string filename ); 
+        
+        /*!
           \brief Creates a new user account. 
           
           This function creates a new user account.  This account will not be created if the username is not unique.

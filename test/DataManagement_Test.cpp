@@ -1253,7 +1253,7 @@ TEST(DataManagementTest, SaveAllData) {
     player1->addVerbAlias(legacymud::engine::CommandEnum::LOOK, "vas far", legacymud::parser::Grammar::Support::YES, 
                        legacymud::parser::Grammar::Support::NO, preps);        
     
-    // put the ItemType object in the GameObjectManager
+    // put the objects in the GameObjectManager
     EXPECT_TRUE(gom->addObject(area1,-1) ); 
     EXPECT_TRUE(gom->addObject(area2,-1) ); 
     EXPECT_TRUE(gom->addObject(area3,-1) ); 
@@ -1325,5 +1325,202 @@ TEST(DataManagementTest, LoadAllData) {
     remove("gamedata1.txt");   
     remove("gamedata2.txt");   
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Creating default data file
+///////////////////////////////////////////////////////////////////////////////////////////////////   
+
+//  data management creating a starter file
+TEST(DataManagementTest, SaveDefaultDataFile) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
+    
+    // Initialize staticID
+    legacymud::engine::InteractiveNoun::setStaticID(0);
+    
+    // Create the objects                                                                     
+    
+    // Starting Area (name, short desciption, long description, area size)    
+    legacymud::engine::Area* area = new legacymud::engine::Area("default area name", "short description of area", "longer description of area", 
+                                                                 legacymud::engine::AreaSize::LARGE);   
+                                                                 
+    // SpecialSkill(name, damage, damageType, cost, cooldown);
+    legacymud::engine::SpecialSkill* skill = new legacymud::engine::SpecialSkill("default special skill name", 20, 
+                                                                                legacymud::engine::DamageType::PIERCING, 
+                                                                                10,2);
+
+    // PlayerClass (primaryStat, name, special skill, attackBonus, armorBonus, resistantTo, weakTo, float healPoints);
+    legacymud::engine::PlayerClass* playerClass = new legacymud::engine::PlayerClass(45, "playerClass name", skill, 10, 20, 
+                                                                                legacymud::engine::DamageType::FIRE,
+                                                                                legacymud::engine::DamageType::WATER,
+                                                                                35.5); 
+        
+    
+    // put the objects in the GameObjectManager
+    EXPECT_TRUE(gom->addObject(area,-1) ); 
+    EXPECT_TRUE(gom->addObject(skill,-1) );
+    EXPECT_TRUE(gom->addObject(playerClass,-1) );
+    
+    // save the game
+    EXPECT_TRUE(dm->saveGame("default_game_data.txt", gom) );   
+
+    delete gom;   
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Load Default data file 
+///////////////////////////////////////////////////////////////////////////////////////////////////  
+TEST(DataManagementTest, LoadDefaultDataFile) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
+    
+    // load the game
+    EXPECT_TRUE(dm->loadGame("default_game_data.txt", gom) );   
+
+    delete gom;   
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Save data with one container.
+///////////////////////////////////////////////////////////////////////////////////////////////////  
+TEST(DataManagementTest, SaveGameWithOneContainer) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
+    
+    // Area (name, short desciption, long description, area size) 
+    legacymud::engine::Area* area = new legacymud::engine::Area("name of area", "short description of area", "longer description", 
+                                                                 legacymud::engine::AreaSize::MEDIUM);   
+                                                                   
+    // ItemType (weight, rarity, description, name, cost, slotType)
+    legacymud::engine::ItemType* itemType = new legacymud::engine::ItemType(25, legacymud::engine::ItemRarity::COMMON, 
+                                                                            "a description", "a name", 2545,
+                                                                            legacymud::engine::EquipmentSlot::BELT);
+                                                                            
+    // Container  (capacity, location, position, name, itemeType)
+    legacymud::engine::Container* container = new legacymud::engine::Container(100, area, legacymud::engine::ItemPosition::GROUND, "name of container", itemType);  
+
+    // put the objects in the GameObjectManager
+    EXPECT_TRUE(gom->addObject(area,-1) ); 
+    EXPECT_TRUE(gom->addObject(itemType,-1) );
+    EXPECT_TRUE(gom->addObject(container,-1) );   
+    
+    // save and load the game
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );     
+
+    delete gom;   
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Save data with one container.
+/////////////////////////////////////////////////////////////////////////////////////////////////// 
+TEST(DataManagementTest, LoadGameWithContainerInContainer) {
+    legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
+
+    // load the game followed by saving the game to a different file
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+
+    // load the two files and check for equality
+    std::ifstream inFile1("gamedata1.txt");    
+    std::string gameData1 = "";
+    std::string line;
+    if (inFile1.is_open() ) {       
+        while (getline(inFile1, line) ){           
+            gameData1 += line;
+        }
+        inFile1.close();    // close the file
+    } 
+    std::ifstream inFile2("gamedata2.txt");    
+    std::string gameData2 = "";
+    if (inFile2.is_open() ) {       
+        while (getline(inFile2, line) ){           
+            gameData2 += line;
+        }
+        inFile2.close();    // close the file
+    } 
+
+    // check for equality
+    EXPECT_EQ(gameData1, gameData2 );
+
+    // clean up
+    delete newGom;
+    remove("gamedata1.txt");   
+    remove("gamedata2.txt");   
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Save data with container in a container.
+///////////////////////////////////////////////////////////////////////////////////////////////////  
+TEST(DataManagementTest, SaveGameWithContainerInContainer) {
+    legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
+    
+    // Area (name, short desciption, long description, area size) 
+    legacymud::engine::Area* area = new legacymud::engine::Area("name of area", "short description of area", "longer description", 
+                                                                 legacymud::engine::AreaSize::MEDIUM);   
+                                                                   
+    // ItemType (weight, rarity, description, name, cost, slotType)
+    legacymud::engine::ItemType* itemType = new legacymud::engine::ItemType(25, legacymud::engine::ItemRarity::COMMON, 
+                                                                            "a description", "a name", 2545,
+                                                                            legacymud::engine::EquipmentSlot::BELT);
+                                                                            
+    // Container  (capacity, location, position, name, itemeType)
+    legacymud::engine::Container* container1 = new legacymud::engine::Container(100, area, legacymud::engine::ItemPosition::GROUND, "name of container", itemType);  
+
+    // Container  (capacity, location, position, name, itemeType)
+    legacymud::engine::Container* container2 = new legacymud::engine::Container(100, container1, legacymud::engine::ItemPosition::IN, "name of container", itemType);  
+    
+    
+    // put the objects in the GameObjectManager
+    EXPECT_TRUE(gom->addObject(area,-1) ); 
+    EXPECT_TRUE(gom->addObject(itemType,-1) );
+    EXPECT_TRUE(gom->addObject(container2,-1) );   
+    EXPECT_TRUE(gom->addObject(container1,-1) );
+    
+    // save and load the game
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );     
+
+    delete gom;   
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Save data with one container.
+/////////////////////////////////////////////////////////////////////////////////////////////////// 
+TEST(DataManagementTest, LoadGameWithOneContainer) {
+    legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
+
+    // load the game followed by saving the game to a different file
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+
+    // load the two files and check for equality
+    std::ifstream inFile1("gamedata1.txt");    
+    std::string gameData1 = "";
+    std::string line;
+    if (inFile1.is_open() ) {       
+        while (getline(inFile1, line) ){           
+            gameData1 += line;
+        }
+        inFile1.close();    // close the file
+    } 
+    std::ifstream inFile2("gamedata2.txt");    
+    std::string gameData2 = "";
+    if (inFile2.is_open() ) {       
+        while (getline(inFile2, line) ){           
+            gameData2 += line;
+        }
+        inFile2.close();    // close the file
+    } 
+
+    // check for equality
+    EXPECT_EQ(gameData1, gameData2 );
+
+    // clean up
+    delete newGom;
+    remove("gamedata1.txt");   
+    remove("gamedata2.txt");   
+}
+
 
 }
