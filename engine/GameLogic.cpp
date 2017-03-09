@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -15,8 +15,11 @@
 #include <limits>
 #include <cctype>
 #include <algorithm>
+#include <unistd.h>
+#include <atomic>
 #undef HUGE
-#include "parser.hpp"
+#include <parser.hpp>
+#include <DataManager.hpp>
 #include <Account.hpp>
 #include <Server.hpp>
 #include "GameLogic.hpp"
@@ -42,15 +45,29 @@
 #include "Feature.hpp"
 #include "EnumToString.hpp"
 
-
 namespace legacymud { namespace engine {
 
 const std::string ADMIN_PASSWORD = "default";
+const int SAVE_TIMEOUT = 60;
+std::atomic<bool> saving;
+
+bool waitForSaveOrTimeout() {
+    int counter = 0;
+    while (saving.load()) {
+        ::sleep(1);
+        if (counter++ > SAVE_TIMEOUT) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 GameLogic::GameLogic() 
 : accountManager(nullptr)
 , theServer(nullptr)
 {
+    saving.store(false);
     manager = new GameObjectManager;
     startArea = new Area("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE);
     manager->addObject(startArea, -1);
@@ -61,6 +78,7 @@ GameLogic::GameLogic(const GameLogic &otherGameLogic)
 : accountManager(nullptr)
 , theServer(nullptr)
 {
+    saving.store(false);
     manager = new GameObjectManager(*otherGameLogic.manager);
     startArea = new Area("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE);
     manager->addObject(startArea, -1);
@@ -78,6 +96,7 @@ GameLogic & GameLogic::operator=(const GameLogic &otherGameLogic){
 
 
 GameLogic::~GameLogic(){
+    saving.store(false);
     std::vector<Player*> players = manager->getPlayersPtrs();
 
     for (auto player : players){
@@ -89,140 +108,159 @@ GameLogic::~GameLogic(){
 
 
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
-    ItemType *anItemType, *anotherItemType, *aWeaponType;
-    Item *anItem, *aWeapon;
-    Container *aContainer;
-    Exit *anExit, *otherExit;
-    Area *anArea;
-    Quest *aQuest;
-    QuestStep *aStep, *anotherStep;
-    Player *aPlayer;
-    SpecialSkill *aSkill;
-    NonCombatant *aNPC, *anotherNPC;
+    // reinitialize saving flag
+    saving.store(false);
 
-    ArmorType *defaultArmorType = nullptr;
-    ItemType *defaultItemType = nullptr;
-    Container *defaultContainer = nullptr;
-    Creature *defaultCreature = nullptr;
-    CreatureType *defaultCreatureType = nullptr;
-    Exit *defaultExit = nullptr;
-    Feature *defaultFeature = nullptr;
-    Item *defaultItem = nullptr;
-    NonCombatant *defaultNonCombatant = nullptr;
-    PlayerClass *defaultPlayerClass = nullptr;
-    Quest *defaultQuest = nullptr;
-    QuestStep *defaultQuestStep = nullptr;
-    SpecialSkill *defaultSpecialSkill = nullptr;
-    WeaponType *defaultWeaponType = nullptr;
+    bool success = false;
+    // try to load file if one is specified
+    if (!fileName.empty()) {
+        currentFilename = fileName;
+        gamedata::DataManager dm;
+        std::cout << "Loading " << fileName << std::endl;
+        success = dm.loadGame(fileName, manager);
+        if (!success) {
+            std::cerr << "Failed to load " << fileName << std::endl;
+        }
+    }
 
-    accountManager = anAccount;
-    theServer = aServer;
+    if (!success) {
+        std::cout << "Starting new game" << std::endl;
+        ItemType *anItemType, *anotherItemType, *aWeaponType;
+        Item *anItem, *aWeapon;
+        Container *aContainer;
+        Exit *anExit, *otherExit;
+        Area *anArea;
+        Quest *aQuest;
+        QuestStep *aStep, *anotherStep;
+        Player *aPlayer;
+        SpecialSkill *aSkill;
+        NonCombatant *aNPC, *anotherNPC;
 
-    // create default object of each type other than area and player
-    defaultArmorType = new ArmorType(3, DamageType::NONE, 2, ItemRarity::COMMON, "some armor", "default armor type", 1, EquipmentSlot::TORSO);
-    manager->addObject(defaultArmorType, -1);
+/*        ArmorType *defaultArmorType = nullptr;
+        ItemType *defaultItemType = nullptr;
+        Container *defaultContainer = nullptr;
+        Creature *defaultCreature = nullptr;
+        CreatureType *defaultCreatureType = nullptr;
+        Exit *defaultExit = nullptr;
+        Feature *defaultFeature = nullptr;
+        Item *defaultItem = nullptr;
+        NonCombatant *defaultNonCombatant = nullptr;*/
+        PlayerClass *defaultPlayerClass = nullptr;
+/*        Quest *defaultQuest = nullptr;
+        QuestStep *defaultQuestStep = nullptr; */
+        SpecialSkill *defaultSpecialSkill = nullptr;
+/*        WeaponType *defaultWeaponType = nullptr;
+*/
+        accountManager = anAccount;
+        theServer = aServer;
+/*
+        // create default object of each type other than area and player
+        defaultArmorType = new ArmorType(3, DamageType::NONE, 2, ItemRarity::COMMON, "some armor", "default armor type", 1, EquipmentSlot::TORSO);
+        manager->addObject(defaultArmorType, -1);
 
-    defaultItemType = new ItemType(1, ItemRarity::COMMON, "a default item type", "default item type", 1, EquipmentSlot::FEET);
-    manager->addObject(defaultItemType, -1);
+        defaultItemType = new ItemType(1, ItemRarity::COMMON, "a default item type", "default item type", 1, EquipmentSlot::FEET);
+        manager->addObject(defaultItemType, -1);
 
-    defaultContainer = new Container(12345, startArea, ItemPosition::GROUND, "default container", defaultItemType);
-    manager->addObject(defaultContainer, -1);
+        defaultContainer = new Container(12345, startArea, ItemPosition::GROUND, "default container", defaultItemType);
+        manager->addObject(defaultContainer, -1);
+*/
+        defaultSpecialSkill = new SpecialSkill("default special skill", 5, DamageType::ELECTRIC, 3, 2);
+        manager->addObject(defaultSpecialSkill, -1);
+/*
+        defaultCreatureType = new CreatureType(CharacterSize::MEDIUM, XPTier::HARD, "default creature type", defaultSpecialSkill, 2, 3, DamageType::NONE, DamageType::FIRE, 0.3);
+        manager->addObject(defaultCreatureType, -1);
 
-    defaultSpecialSkill = new SpecialSkill("default special skill", 5, DamageType::ELECTRIC, 3, 2);
-    manager->addObject(defaultSpecialSkill, -1);
+        defaultCreature = new Creature(defaultCreatureType, true, 4, startArea, 3, "default creature", "a creature", 0, startArea, 100);
+        manager->addObject(defaultCreature, -1);
 
-    defaultCreatureType = new CreatureType(CharacterSize::MEDIUM, XPTier::HARD, "default creature type", defaultSpecialSkill, 2, 3, DamageType::NONE, DamageType::FIRE, 0.3);
-    manager->addObject(defaultCreatureType, -1);
+        defaultExit = new Exit(ExitDirection::WEST, startArea, startArea, false, nullptr, "default exit", "still a default exit");
+        manager->addObject(defaultExit, -1);
 
-    defaultCreature = new Creature(defaultCreatureType, true, 4, startArea, 3, "default creature", "a creature", 0, startArea, 100);
-    manager->addObject(defaultCreature, -1);
+        defaultFeature = new Feature("default feature", "in the default location", startArea, false, nullptr, "a feature", "still a feature");
+        manager->addObject(defaultFeature, -1);
 
-    defaultExit = new Exit(ExitDirection::WEST, startArea, startArea, false, nullptr, "default exit", "still a default exit");
-    manager->addObject(defaultExit, -1);
+        defaultItem = new Item(startArea, ItemPosition::GROUND, "default item", defaultItemType);
+        manager->addObject(defaultItem, -1);
 
-    defaultFeature = new Feature("default feature", "in the default location", startArea, false, nullptr, "a feature", "still a feature");
-    manager->addObject(defaultFeature, -1);
+        defaultNonCombatant = new NonCombatant(nullptr, "default NPC", "a non-combatant", 5, startArea, 1000);
+        manager->addObject(defaultNonCombatant, -1);
+*/
+        defaultPlayerClass = new PlayerClass(0, "default class", defaultSpecialSkill, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
+        manager->addObject(defaultPlayerClass, -1);
+/*
+        defaultQuest = new Quest("default quest", "a quest", 1, nullptr);
+        manager->addObject(defaultQuest, -1);
 
-    defaultItem = new Item(startArea, ItemPosition::GROUND, "default item", defaultItemType);
-    manager->addObject(defaultItem, -1);
+        defaultQuestStep = new QuestStep(1, "a default quest step", defaultItemType, defaultNonCombatant, defaultNonCombatant, "default completion message");
+        manager->addObject(defaultQuestStep, -1);
 
-    defaultNonCombatant = new NonCombatant(nullptr, "default NPC", "a non-combatant", 5, startArea, 1000);
-    manager->addObject(defaultNonCombatant, -1);
+        defaultWeaponType = new WeaponType(3, DamageType::NONE, AreaSize::SMALL, 1, 2, ItemRarity::COMMON, "a default weapon type", "default weapon type", 1, EquipmentSlot::NONE);
+        manager->addObject(defaultWeaponType, -1);
 
-    defaultPlayerClass = new PlayerClass(0, "default class", defaultSpecialSkill, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
-    manager->addObject(defaultPlayerClass, -1);
+*/
+        // create a SpecialSkill
+        aSkill = new SpecialSkill("Totally Rad Healing", 3, DamageType::HEAL, 1, 3);
+        manager->addObject(aSkill, -1);
 
-    defaultQuest = new Quest("default quest", "a quest", 1, nullptr);
-    manager->addObject(defaultQuest, -1);
+        // create a test item type and item
+        anItemType = new ItemType(5, ItemRarity::COMMON, "a bright and shiny apple", "apple", 1, EquipmentSlot::NONE); 
+        manager->addObject(anItemType, -1);
+        anItem = new Item(startArea, ItemPosition::GROUND, "red apple", anItemType);
+        manager->addObject(anItem, -1);
+        startArea->addItem(anItem);
+        anItem->addAction(CommandEnum::EAT, true, "The apple tastes sweet and refreshing.", EffectType::HEAL);
 
-    defaultQuestStep = new QuestStep(1, "a default quest step", defaultItemType, defaultNonCombatant, defaultNonCombatant, "default completion message");
-    manager->addObject(defaultQuestStep, -1);
+        // create a test item type and container
+        anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
+        manager->addObject(anItemType, -1);
+        aContainer = new Container(5, startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
+        manager->addObject(aContainer, -1);
+        startArea->addItem(aContainer);
 
-    defaultWeaponType = new WeaponType(3, DamageType::NONE, AreaSize::SMALL, 1, 2, ItemRarity::COMMON, "a default weapon type", "default weapon type", 1, EquipmentSlot::NONE);
-    manager->addObject(defaultWeaponType, -1);
+        // create a test weapon type and item
+        aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 9, EquipmentSlot::RIGHT_HAND); 
+        manager->addObject(aWeaponType, -1);
+        aWeapon = new Item(startArea, ItemPosition::GROUND, "small knife", aWeaponType);
+        manager->addObject(aWeapon, -1);
+        startArea->addItem(aWeapon);
 
+        // create a second area and two exits
+        anArea = new Area("test area", "You are in a vast space.", "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.", AreaSize::LARGE);
+        manager->addObject(anArea, -1);
+        anExit = new Exit(ExitDirection::NORTH, startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+        manager->addObject(anExit, -1);
+        startArea->addExit(anExit);
+        otherExit = new Exit(ExitDirection::SOUTH, anArea, startArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
+        manager->addObject(otherExit, -1);
+        anArea->addExit(otherExit);
 
-    // create a SpecialSkill
-    aSkill = new SpecialSkill("Totally Rad Healing", 3, DamageType::HEAL, 1, 3);
-    manager->addObject(aSkill, -1);
+        // create test NPCs
+        aNPC = new NonCombatant(nullptr, "Sophia", "a truly radical person", 50, startArea, 100);
+        manager->addObject(aNPC, -1);
+        startArea->addCharacter(aNPC);
+        anotherNPC = new NonCombatant(nullptr, "Mark", "a kinda awesome person", 50, startArea, 100);
+        manager->addObject(anotherNPC, -1);
+        startArea->addCharacter(anotherNPC);
 
-    // create a test item type and item
-    anItemType = new ItemType(5, ItemRarity::COMMON, "a bright and shiny apple", "apple", 1, EquipmentSlot::NONE); 
-    manager->addObject(anItemType, -1);
-    anItem = new Item(startArea, ItemPosition::GROUND, "red apple", anItemType);
-    manager->addObject(anItem, -1);
-    startArea->addItem(anItem);
-    anItem->addAction(CommandEnum::EAT, true, "The apple tastes sweet and refreshing.", EffectType::HEAL);
+        // create test player, quest, quest step
+        aQuest = new Quest("Super Cool Quest", "The quest for the totally cool stuff", 30, nullptr);
+        manager->addObject(aQuest, -1);
+        aNPC->setQuest(aQuest);
+        anotherNPC->setQuest(aQuest);
+        aStep = new QuestStep(3, "Go to the next place and get the next thing", aWeaponType, aNPC, anotherNPC, "You did the next thing! Congrats!");
+        manager->addObject(aStep, -1);
+        aQuest->addStep(aStep);
+        anotherStep = new QuestStep(2, "Go to the first place and get the first thing", anItemType, nullptr, nullptr, "You did the first thing! Congrats!");
+        manager->addObject(anotherStep, -1);
+        aQuest->addStep(anotherStep);
+        aPlayer = new Player(CharacterSize::SMALL, defaultPlayerClass, "test", -1, "Tester1", "a super awesome person", startArea);
+        aPlayer->addOrUpdateQuest(aQuest, 2, true);
+        manager->addObject(aPlayer, -1);
+        accountManager->createAccount("test", "test", true, aPlayer->getID());
 
-    // create a test item type and container
-    anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
-    manager->addObject(anItemType, -1);
-    aContainer = new Container(5, startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
-    manager->addObject(aContainer, -1);
-    startArea->addItem(aContainer);
-
-    // create a test weapon type and item
-    aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 9, EquipmentSlot::RIGHT_HAND); 
-    manager->addObject(aWeaponType, -1);
-    aWeapon = new Item(startArea, ItemPosition::GROUND, "small knife", aWeaponType);
-    manager->addObject(aWeapon, -1);
-    startArea->addItem(aWeapon);
-
-    // create a second area and two exits
-    anArea = new Area("test area", "You are in a vast space.", "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.", AreaSize::LARGE);
-    manager->addObject(anArea, -1);
-    anExit = new Exit(ExitDirection::NORTH, startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
-    manager->addObject(anExit, -1);
-    startArea->addExit(anExit);
-    otherExit = new Exit(ExitDirection::SOUTH, anArea, startArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
-    manager->addObject(otherExit, -1);
-    anArea->addExit(otherExit);
-
-    // create test NPCs
-    aNPC = new NonCombatant(nullptr, "Sophia", "a truly radical person", 50, startArea, 100);
-    manager->addObject(aNPC, -1);
-    startArea->addCharacter(aNPC);
-    anotherNPC = new NonCombatant(nullptr, "Mark", "a kinda awesome person", 50, startArea, 100);
-    manager->addObject(anotherNPC, -1);
-    startArea->addCharacter(anotherNPC);
-
-    // create test player, quest, quest step
-    aQuest = new Quest("Super Cool Quest", "The quest for the totally cool stuff", 30, nullptr);
-    manager->addObject(aQuest, -1);
-    aNPC->setQuest(aQuest);
-    anotherNPC->setQuest(aQuest);
-    aStep = new QuestStep(3, "Go to the next place and get the next thing", aWeaponType, aNPC, anotherNPC, "You did the next thing! Congrats!");
-    manager->addObject(aStep, -1);
-    aQuest->addStep(aStep);
-    anotherStep = new QuestStep(2, "Go to the first place and get the first thing", anItemType, nullptr, nullptr, "You did the first thing! Congrats!");
-    manager->addObject(anotherStep, -1);
-    aQuest->addStep(anotherStep);
-    aPlayer = new Player(CharacterSize::SMALL, defaultPlayerClass, "test", -1, "Tester1", "a super awesome person", startArea);
-    aPlayer->addOrUpdateQuest(aQuest, 2, true);
-    manager->addObject(aPlayer, -1);
-    accountManager->createAccount("test", "test", true, aPlayer->getID());
-
-    return true;
+        success = true;
+    }
+    return success;
 }
 
 
@@ -337,6 +375,12 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
             // create player
             newPlayer = new Player(static_cast<CharacterSize>(playerSize - 1), pClasses[pClassNumber - 1], username, fileDescriptor, playerName, pDescription, startArea);
+            
+            // Wait until not saving before adding object
+            if (!waitForSaveOrTimeout()) {
+                messagePlayer(newPlayer, "Timed out while waiting for game to save.");
+                return false;
+            }
             manager->addObject(newPlayer, fileDescriptor);
 
             // create account
@@ -636,6 +680,10 @@ bool GameLogic::createArea(Player *aPlayer){
 
     newArea = new Area(name, shortDescription, longDescription, size);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newArea, -1);
 
     messagePlayer(aPlayer, "You have created a new area. The ID of the new area is " + std::to_string(newArea->getID()) + ".");
@@ -671,6 +719,10 @@ bool GameLogic::createArmorType(Player *aPlayer){
 
     newArmorType = new ArmorType(bonus, resistantTo, weight, rarity, description, name, cost, slotType);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newArmorType, -1);
 
     messagePlayer(aPlayer, "You have created a new armor type. The ID of the new armor type is " + std::to_string(newArmorType->getID()) + ".");
@@ -720,6 +772,10 @@ bool GameLogic::createContainer(Player *aPlayer){
 
     newContainer = new Container(capacity, location, position, name, type);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newContainer, -1);
     if (location != nullptr){
         // add to location
@@ -782,6 +838,10 @@ bool GameLogic::createCreature(Player *aPlayer){
 
     newCreature = new Creature(aType, ambulatory, maxHealth, spawnLocation, maxSpecialPts, name, description, money, aLocation, maxInventoryWeight);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newCreature, -1);
     aLocation->addCharacter(newCreature);
     messageAreaPlayers(nullptr, "A creature named " + name + " appears out of nowhere.", aLocation);
@@ -821,6 +881,10 @@ bool GameLogic::createCreatureType(Player *aPlayer){
 
     newCreatureType = new CreatureType(size, difficulty, name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newCreatureType, -1);
 
     messagePlayer(aPlayer, "You have created a new creature type. The ID of the new creature type is " + std::to_string(newCreatureType->getID()) + ".");
@@ -857,6 +921,10 @@ bool GameLogic::createExit(Player *aPlayer){
 
     newExit = new Exit(direction, location, connectArea, isConditional, anItemType, description, altDescription);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newExit, -1);
     location->addExit(newExit);
     messageAreaPlayers(nullptr, newExit->getDirectionString() + " you see " + description + " appear out of nowhere.", location);
@@ -895,6 +963,10 @@ bool GameLogic::createFeature(Player *aPlayer){
 
     newFeature = new Feature(name, placement, location, isConditional, anItemType, description, altDescription);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newFeature, -1);
     location->addFeature(newFeature);
     messageAreaPlayers(nullptr, "You see a " + name + " appear out of nowhere " + placement + ".", location);
@@ -944,6 +1016,10 @@ bool GameLogic::createItem(Player *aPlayer){
 
     newItem = new Item(location, position, name, type);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newItem, -1);
     if (location != nullptr){
         // add to location
@@ -998,6 +1074,10 @@ bool GameLogic::createItemType(Player *aPlayer){
 
     newItemType = new ItemType(weight, rarity, description, name, cost, slotType);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newItemType, -1);
 
     messagePlayer(aPlayer, "You have created a new item type. The ID of the new item type is " + std::to_string(newItemType->getID()) + ".");
@@ -1029,6 +1109,10 @@ bool GameLogic::createNonCombatant(Player *aPlayer){
 
     newNonCombatant = new NonCombatant(aQuest, name, description, money, aLocation, maxInventoryWeight);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newNonCombatant, -1);
     aLocation->addCharacter(newNonCombatant);
     messageAreaPlayers(nullptr, "A person named " + name + " appears out of nowhere.", aLocation);
@@ -1073,6 +1157,10 @@ bool GameLogic::createPlayerClass(Player *aPlayer){
 
     newPlayerClass = new PlayerClass(primaryStat, name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newPlayerClass, -1);
 
     messagePlayer(aPlayer, "You have created a new player class. The ID of the new player class is " + std::to_string(newPlayerClass->getID()) + ".");
@@ -1100,6 +1188,10 @@ bool GameLogic::createQuest(Player *aPlayer){
 
     newQuest = new Quest(name, description, rewardMoney, rewardItem);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newQuest, -1);
 
     messagePlayer(aPlayer, "You have created a new quest. The ID of the new quest is " + std::to_string(newQuest->getID()) + ".");
@@ -1136,6 +1228,10 @@ bool GameLogic::createQuestStep(Player *aPlayer){
     newQuestStep = new QuestStep(ordinalNumber, description, anItemType, giver, receiver, completionText);
     aQuest->addStep(newQuestStep);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newQuestStep, -1);
 
     messagePlayer(aPlayer, "You have created a new quest step. The ID of the new quest step is " + std::to_string(newQuestStep->getID()) + ".");
@@ -1165,6 +1261,10 @@ bool GameLogic::createSpecialSkill(Player *aPlayer){
 
     newSpecialSkill = new SpecialSkill(name, damage, type, cost, cooldown);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newSpecialSkill, -1);
 
     messagePlayer(aPlayer, "You have created a new special skill. The ID of the new special skill is " + std::to_string(newSpecialSkill->getID()) + ".");
@@ -1204,6 +1304,10 @@ bool GameLogic::createWeaponType(Player *aPlayer){
 
     newWeaponType = new WeaponType(damage, type, range, critMultiplier, weight, rarity, description, name, cost, slotType);
 
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
     manager->addObject(newWeaponType, -1);
 
     messagePlayer(aPlayer, "You have created a new weapon type. The ID of the new weapon type is " + std::to_string(newWeaponType->getID()) + ".");
@@ -3768,6 +3872,12 @@ std::string GameLogic::getMsgFromPlayerQ(Player *aPlayer){
 
 
 bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
+    // Wait for saving to complete before executing any commands
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
+
     bool success = false;
     InteractiveNoun *param = nullptr;
     InteractiveNoun *directObj = nullptr;
@@ -4025,11 +4135,11 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             break;
         case CommandEnum::SAVE:           
             // World builder command. Saves the game to the specified file (or the default file if not specified).
-            success = saveCommand(aPlayer, result.indirectAlias);    
+            success = saveCommand(aPlayer, result.directAlias);    
             break;
         case CommandEnum::LOAD:           
             // World builder command. Loads the game from the specified file (or the default file if not specified).
-            success = loadCommand(aPlayer, result.indirectAlias);    
+            success = loadCommand(aPlayer, result.directAlias);    
             break;
         case CommandEnum::DELETE:         
             // clarify direct
@@ -5371,12 +5481,93 @@ bool GameLogic::editWizardCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
-    return false;
+    bool success = false;
+
+    std::cout << "Calling isEditMode" << std::endl;
+    if (aPlayer->isEditMode()) {
+        saving.store(true);
+
+        gamedata::DataManager dm;
+
+        if (stringParam.empty()) {
+            if (!currentFilename.empty()) {
+                // use current fileName
+                std::cout << "Saving " << currentFilename << std::endl;
+                success = dm.saveGame(currentFilename, manager);
+            }
+            else {
+                messagePlayer(aPlayer, "You must specify a filename");
+            }
+        }
+        else {
+            success = dm.saveGame(stringParam, manager);
+            if (success) currentFilename = stringParam;
+        }
+        if (success) {
+            messagePlayer(aPlayer, "Successfully saved " + stringParam);
+        }
+        else {
+            messagePlayer(aPlayer, "An error occurred while saving " + stringParam);
+        }
+
+        saving.store(false);
+    }
+    else {
+        messagePlayer(aPlayer, "You must be in edit mode to do this.");
+    }
+
+    return success;
 }
 
 
 bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
-    return false;
+    bool success = false;
+
+    if (aPlayer->isEditMode()) {
+        gamedata::DataManager dm;
+
+        // Create new manager to load game data into
+        GameObjectManager *gom = new GameObjectManager();
+        success = dm.loadGame(stringParam, gom);
+
+        // If load was successful, delete the current game world
+        // and replace it with the loaded one
+        if (success) {
+            currentFilename = stringParam;
+            messagePlayer(aPlayer, "Successfully loaded " + stringParam);
+            // Tell everyone the server is shutting down
+            messagePlayer(aPlayer, "Shutting down server. Please reconnect.");
+            messageAllPlayers(aPlayer, "Shutting down server. Please reconnect.");
+            // Get the current server information
+            int port = theServer->getServerPort();
+            int maxPlayers = theServer->getMaxPlayers();
+            int timeout = theServer->getTimeOut();
+            // Pause the server
+            theServer->pause(true);
+            // Disconnect all players
+            for (int plr : manager->getPlayersFDs()) {
+                theServer->disconnectPlayer(plr);
+            }
+
+            // Shut down the server to disconnect all players
+            theServer->shutDownServer();
+
+            // Delete the current game world and replace it with the new one
+            delete manager;
+            manager = gom;
+
+            // Restart the server
+            theServer->initServer(port, maxPlayers, timeout, this);
+        }
+        else {
+            messagePlayer(aPlayer, "An error occurred while loading " + stringParam);
+        }
+    }
+    else {
+        messagePlayer(aPlayer, "You must be in edit mode to do this.");
+    }
+    
+    return success;
 }
 
 
