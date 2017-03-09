@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/09/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -634,9 +634,9 @@ InteractiveNoun* Container::copy(){
 }
 
 
-bool Container::editAttribute(Player *aPlayer, std::string){
+/*bool Container::editAttribute(Player *aPlayer, std::string){
     return false;
-}
+}*/
 
 
 bool Container::editWizard(Player *aPlayer){

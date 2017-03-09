@@ -272,7 +272,7 @@ class Exit: public ConditionalElement {
          * \return  Returns bool indicating whether or not editing the attribute
          *          was successful.
          */
-        virtual bool editAttribute(Player *aPlayer, std::string attribute);
+        //virtual bool editAttribute(Player *aPlayer, std::string attribute);
 
         /*!
          * \brief   Edits  this object.

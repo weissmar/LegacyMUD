@@ -291,9 +291,9 @@ InteractiveNoun* Feature::copy(){
 }
 
 
-bool Feature::editAttribute(Player*, std::string){
+/*bool Feature::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool Feature::editWizard(Player*){

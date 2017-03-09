@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        PlayerClass.cpp
  *
@@ -177,9 +177,9 @@ InteractiveNoun* PlayerClass::copy(){
 }  
 
 
-bool PlayerClass::editAttribute(Player*, std::string){
+/*bool PlayerClass::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool PlayerClass::editWizard(Player*){

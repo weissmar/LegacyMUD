@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.cpp
  *
@@ -227,9 +227,9 @@ InteractiveNoun* WeaponType::copy(){
 }
 
 
-bool WeaponType::editAttribute(Player*, std::string){
+/*bool WeaponType::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool WeaponType::editWizard(Player*){

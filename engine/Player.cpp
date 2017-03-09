@@ -975,9 +975,9 @@ InteractiveNoun* Player::copy(){
 }
 
 
-bool Player::editAttribute(Player *aPlayer, std::string){
+/*bool Player::editAttribute(Player *aPlayer, std::string){
     return false;
-}
+}*/
 
 
 bool Player::editWizard(Player *aPlayer){

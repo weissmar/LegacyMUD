@@ -315,9 +315,9 @@ InteractiveNoun* SpecialSkill::copy(){
 }
 
 
-bool SpecialSkill::editAttribute(Player*, std::string){
+/*bool SpecialSkill::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool SpecialSkill::editWizard(Player*){

@@ -1266,9 +1266,9 @@ InteractiveNoun* Item::copy(){
 }
 
 
-bool Item::editAttribute(Player *aPlayer, std::string){
+/*bool Item::editAttribute(Player *aPlayer, std::string){
     return false;
-}
+}*/
 
 
 bool Item::editWizard(Player *aPlayer){

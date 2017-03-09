@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/09/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -431,9 +431,9 @@ InteractiveNoun* Creature::copy(){
 }
 
 
-bool Creature::editAttribute(Player*, std::string){
+/*bool Creature::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool Creature::editWizard(Player*){

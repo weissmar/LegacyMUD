@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/09/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        ArmorType.cpp
  *
@@ -188,9 +188,9 @@ InteractiveNoun* ArmorType::copy(){
 }
 
 
-bool ArmorType::editAttribute(Player *aPlayer, std::string attribute){
+/*bool ArmorType::editAttribute(Player *aPlayer, std::string attribute){
     return false;
-}
+}*/
 
 
 bool ArmorType::editWizard(Player *aPlayer){

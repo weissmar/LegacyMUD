@@ -569,9 +569,9 @@ InteractiveNoun* Exit::copy(){
 }
 
 
-bool Exit::editAttribute(Player*, std::string){
+/*bool Exit::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool Exit::editWizard(Player*){

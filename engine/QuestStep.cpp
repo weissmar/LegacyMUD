@@ -349,9 +349,9 @@ InteractiveNoun* QuestStep::copy(){
 }
 
 
-bool QuestStep::editAttribute(Player*, std::string){
+/*bool QuestStep::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool QuestStep::editWizard(Player*){

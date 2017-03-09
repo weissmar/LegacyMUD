@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        CreatureType.hpp
  *
@@ -121,7 +121,7 @@ class CreatureType: public CombatantType {
          * \return  Returns bool indicating whether or not editing the attribute
          *          was successful.
          */
-        virtual bool editAttribute(Player *aPlayer, std::string attribute);
+        //virtual bool editAttribute(Player *aPlayer, std::string attribute);
 
         /*!
          * \brief   Edits  this object.

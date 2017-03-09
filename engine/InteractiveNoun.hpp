@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -549,7 +549,7 @@ class InteractiveNoun {
          * \brief   Edits an attribute of the object. This is a pure virtual 
          *          function for interactive noun.
          */
-        virtual bool editAttribute(Player*, std::string) = 0;
+        //virtual bool editAttribute(Player*, std::string) = 0;
 
         /*!
          * \brief   Starts the edit wizard for the object. This is a pure virtual

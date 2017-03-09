@@ -414,9 +414,9 @@ InteractiveNoun* Quest::copy(){
 }
 
 
-bool Quest::editAttribute(Player*, std::string){
+/*bool Quest::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool Quest::editWizard(Player*){
