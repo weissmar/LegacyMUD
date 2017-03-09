@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -338,10 +338,8 @@ Quest* Quest::deserialize(std::string jsonStr, GameObjectManager* gom){
     }     
                                
     // Rebuild the new Quest noun alias list. 
-    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
-        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
-            newQuest->addNounAlias(noun.GetString() );    
-    }
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())           
+        newQuest->addNounAlias(noun.GetString() );    
    
     // Rebuild the new Quest action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          

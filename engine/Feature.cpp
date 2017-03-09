@@ -236,10 +236,8 @@ Feature* Feature::deserialize(std::string jsonStr, GameObjectManager* gom){
                                       objectDoc["interactive_noun_data"]["id"].GetInt() );
    
     // Rebuild the new Feature noun alias list. 
-    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
-        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
-            newFeature->addNounAlias(noun.GetString() );    
-    }
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())           
+        newFeature->addNounAlias(noun.GetString() );    
    
     // Rebuild the new Feature action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          

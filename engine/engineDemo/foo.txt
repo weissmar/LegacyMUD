@@ -1,0 +1,401 @@
+{
+    "nextID": 21,
+    "AREA": [
+        {
+            "class": "AREA",
+            "name": "Start Area",
+            "short_description": "You are surrounded by grey mist.",
+            "long_description": "You are surrounded by grey mist. You appear to be floating in the air.",
+            "area_size": "LARGE",
+            "interactive_noun_data": {
+                "id": 1,
+                "noun_aliases": [
+                    "area 1",
+                    "Start Area"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "test area",
+            "short_description": "You are in a vast space.",
+            "long_description": "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.",
+            "area_size": "LARGE",
+            "interactive_noun_data": {
+                "id": 11,
+                "noun_aliases": [
+                    "area 11",
+                    "test area"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "ARMOR_TYPE": [],
+    "CONTAINER": [
+        {
+            "class": "CONTAINER",
+            "capacity": 5,
+            "name": "wooden table",
+            "location": 1,
+            "position": "GROUND",
+            "item_type_id": 7,
+            "interactive_noun_data": {
+                "id": 8,
+                "noun_aliases": [
+                    "item 8",
+                    "wooden table"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "CREATURE": [],
+    "CREATURE_TYPE": [],
+    "EXIT": [
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 1,
+            "connect_area_id": 11,
+            "is_conditional": true,
+            "condition_itemtype_id": 5,
+            "description": "a strange dark spot in the air",
+            "altdescription": "a dark, shimmering portal",
+            "interactive_noun_data": {
+                "id": 12,
+                "noun_aliases": [
+                    "exit 12",
+                    "a strange dark spot in the air",
+                    "a dark, shimmering portal",
+                    "north",
+                    "n"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 11,
+            "connect_area_id": 1,
+            "is_conditional": true,
+            "condition_itemtype_id": 5,
+            "description": "a strange dark spot in the air",
+            "altdescription": "a dark, shimmering portal",
+            "interactive_noun_data": {
+                "id": 13,
+                "noun_aliases": [
+                    "exit 13",
+                    "a strange dark spot in the air",
+                    "a dark, shimmering portal",
+                    "south",
+                    "s"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "FEATURE": [],
+    "ITEM": [
+        {
+            "class": "ITEM",
+            "name": "red apple",
+            "location": 1,
+            "position": "GROUND",
+            "item_type_id": 5,
+            "interactive_noun_data": {
+                "id": 6,
+                "noun_aliases": [
+                    "item 6",
+                    "red apple"
+                ],
+                "actions": [
+                    {
+                        "command": "EAT",
+                        "valid": true,
+                        "flavor_text": "The apple tastes sweet and refreshing.",
+                        "effect": "HEAL",
+                        "aliases": []
+                    }
+                ]
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "small knife",
+            "location": 1,
+            "position": "GROUND",
+            "item_type_id": 9,
+            "interactive_noun_data": {
+                "id": 10,
+                "noun_aliases": [
+                    "item 10",
+                    "small knife"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "ITEM_TYPE": [
+        {
+            "class": "ITEM_TYPE",
+            "weight": 5,
+            "rarity": "COMMON",
+            "description": "a bright and shiny apple",
+            "name": "apple",
+            "cost": 1,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 5,
+                "noun_aliases": [
+                    "item type 5",
+                    "apple"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "NON_COMBATANT": [
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": 16,
+            "name": "Sophia",
+            "description": "a truly radical person",
+            "money": 50,
+            "location_area_id": 1,
+            "max_inventory_weight": 100,
+            "interactive_noun_data": {
+                "id": 14,
+                "noun_aliases": [
+                    "character 14",
+                    "Sophia"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": 16,
+            "name": "Mark",
+            "description": "a kinda awesome person",
+            "money": 50,
+            "location_area_id": 1,
+            "max_inventory_weight": 100,
+            "interactive_noun_data": {
+                "id": 15,
+                "noun_aliases": [
+                    "character 15",
+                    "Mark"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "PLAYER": [
+        {
+            "class": "PLAYER",
+            "character_size": "SMALL",
+            "player_class_id": 3,
+            "username": "test",
+            "experience_points": 0,
+            "level": 1,
+            "quest_list": [
+                {
+                    "quest_id": 16,
+                    "step": 2,
+                    "complete": true
+                }
+            ],
+            "max_health": 10,
+            "spawn_location_id": 1,
+            "max_special_points": 10,
+            "dexterity": 18,
+            "strength": 3,
+            "intelligence": 15,
+            "name": "Tester1",
+            "description": "a super awesome person",
+            "money": 10,
+            "location_area_id": 1,
+            "max_inventory_weight": 30,
+            "interactive_noun_data": {
+                "id": 19,
+                "noun_aliases": [
+                    "character 19",
+                    "Tester1"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "PLAYER",
+            "character_size": "SMALL",
+            "player_class_id": 3,
+            "username": "a",
+            "experience_points": 0,
+            "level": 1,
+            "quest_list": [],
+            "max_health": 10,
+            "spawn_location_id": 1,
+            "max_special_points": 10,
+            "dexterity": 6,
+            "strength": 17,
+            "intelligence": 13,
+            "name": "Smo",
+            "description": "a desscription",
+            "money": 10,
+            "location_area_id": 1,
+            "max_inventory_weight": 30,
+            "interactive_noun_data": {
+                "id": 20,
+                "noun_aliases": [
+                    "character 20",
+                    "Smo"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "PLAYER_CLASS": [
+        {
+            "class": "PLAYER_CLASS",
+            "primary_stat": 0,
+            "name": "default class",
+            "special_skill_id": 2,
+            "attack_bonus": 5,
+            "armor_bonus": 5,
+            "resistant_to": "NONE",
+            "weak_to": "NONE",
+            "heal_points": 1.0,
+            "interactive_noun_data": {
+                "id": 3,
+                "noun_aliases": [
+                    "combatant type 3",
+                    "default class"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "QUEST": [
+        {
+            "class": "QUEST",
+            "name": "Super Cool Quest",
+            "description": "The quest for the totally cool stuff",
+            "reward_money": 30,
+            "reward_item_id": -1,
+            "quest_steps": [
+                {
+                    "step_count": 2,
+                    "quest_step_id": 18
+                },
+                {
+                    "step_count": 3,
+                    "quest_step_id": 17
+                }
+            ],
+            "interactive_noun_data": {
+                "id": 16,
+                "noun_aliases": [
+                    "quest 16",
+                    "Super Cool Quest"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "QUEST_STEP": [
+        {
+            "class": "QUEST_STEP",
+            "ordinal_number": 3,
+            "description": "Go to the next place and get the next thing",
+            "fetch_item_type_id": 9,
+            "giver_id": 14,
+            "receiver_id": 15,
+            "completion_text": "You did the next thing! Congrats!",
+            "interactive_noun_data": {
+                "id": 17,
+                "noun_aliases": [
+                    "quest step 17",
+                    "step 3"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "QUEST_STEP",
+            "ordinal_number": 2,
+            "description": "Go to the first place and get the first thing",
+            "fetch_item_type_id": 5,
+            "giver_id": -1,
+            "receiver_id": -1,
+            "completion_text": "You did the first thing! Congrats!",
+            "interactive_noun_data": {
+                "id": 18,
+                "noun_aliases": [
+                    "quest step 18",
+                    "step 2"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "SPECIAL_SKILL": [
+        {
+            "class": "SPECIAL_SKILL",
+            "name": "default special skill",
+            "damage": 5,
+            "damage_type": "ELECTRIC",
+            "cost": 3,
+            "cooldown": 2,
+            "interactive_noun_data": {
+                "id": 2,
+                "noun_aliases": [
+                    "skill 2",
+                    "default special skill"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "SPECIAL_SKILL",
+            "name": "Totally Rad Healing",
+            "damage": 3,
+            "damage_type": "HEAL",
+            "cost": 1,
+            "cooldown": 3,
+            "interactive_noun_data": {
+                "id": 4,
+                "noun_aliases": [
+                    "skill 4",
+                    "Totally Rad Healing"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "WEAPON_TYPE": [
+        {
+            "class": "WEAPON_TYPE",
+            "damage": 5,
+            "damage_type": "PIERCING",
+            "range": "MEDIUM",
+            "crit_multiplier": 2,
+            "name": "knife",
+            "weight": 5,
+            "rarity": "COMMON",
+            "description": "a sort-of sharp knife",
+            "cost": 9,
+            "slot_type": "RIGHT_HAND",
+            "interactive_noun_data": {
+                "id": 9,
+                "noun_aliases": [
+                    "item type 9",
+                    "knife"
+                ],
+                "actions": []
+            }
+        }
+    ]
+}

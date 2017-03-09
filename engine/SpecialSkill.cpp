@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -191,10 +191,8 @@ SpecialSkill* SpecialSkill::deserialize(std::string jsonStr){
                                                      objectDoc["interactive_noun_data"]["id"].GetInt() );
  
     // Rebuild the new SpecialSkill noun alias list. 
-    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
-        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
-            newSpecialSkill->addNounAlias(noun.GetString() );    
-    }
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())           
+        newSpecialSkill->addNounAlias(noun.GetString() );    
    
     // Rebuild the new SpecialSkill action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          

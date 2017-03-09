@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/08/2017
- * \modified    03/07/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -598,10 +598,8 @@ Area* Area::deserialize(std::string jsonStr){
                              objectDoc["interactive_noun_data"]["id"].GetInt() );
     
     // Rebuild the new Area noun allias list.  
-    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {     
-        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
-            newArea->addNounAlias(noun.GetString() );    
-    }
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())      
+        newArea->addNounAlias(noun.GetString() );    
    
     // Rebuild the new Area action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          

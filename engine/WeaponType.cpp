@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        WeaponType.cpp
  *
@@ -182,10 +182,8 @@ WeaponType* WeaponType::deserialize(std::string jsonStr){
                                                objectDoc["interactive_noun_data"]["id"].GetInt() );   
 
     // Rebuild the new WeaponType noun alias list. 
-    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray()) {           
-        if (objectDoc["name"].GetString() != noun.GetString() )     // note: `name` is automatically added to noun aliases
-            newWeaponType->addNounAlias(noun.GetString() );    
-    }
+    for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())           
+        newWeaponType->addNounAlias(noun.GetString() );    
    
     // Rebuild the new WeaponType action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
