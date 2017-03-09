@@ -110,6 +110,7 @@ GameLogic::~GameLogic(){
 bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Server *aServer, account::Account *anAccount){
     accountManager = anAccount;
     theServer = aServer;
+    gamedata::DataManager dm;
 
     // initialize saving flag
     saving.store(false);
@@ -119,7 +120,6 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     // try to load file if one is specified
     if (!fileName.empty()) {
         currentFilename = fileName;
-        gamedata::DataManager dm;
         std::cout << "Loading " << fileName << std::endl;
         success = dm.loadGame(fileName, manager);
         if (success) {
@@ -132,138 +132,34 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
 
     if (!success) {
         std::cout << "Starting new game" << std::endl;
-        ItemType *anItemType, *anotherItemType, *aWeaponType;
-        Item *anItem, *aWeapon;
-        Container *aContainer;
-        Exit *anExit, *otherExit;
-        Area *anArea;
-        Quest *aQuest;
-        QuestStep *aStep, *anotherStep;
-        Player *aPlayer;
-        SpecialSkill *aSkill;
-        NonCombatant *aNPC, *anotherNPC;
 
-/*        ArmorType *defaultArmorType = nullptr;
-        ItemType *defaultItemType = nullptr;
-        Container *defaultContainer = nullptr;
-        Creature *defaultCreature = nullptr;
-        CreatureType *defaultCreatureType = nullptr;
-        Exit *defaultExit = nullptr;
-        Feature *defaultFeature = nullptr;
-        Item *defaultItem = nullptr;
-        NonCombatant *defaultNonCombatant = nullptr;*/
-        PlayerClass *defaultPlayerClass = nullptr;
-/*        Quest *defaultQuest = nullptr;
-        QuestStep *defaultQuestStep = nullptr; */
-        SpecialSkill *defaultSpecialSkill = nullptr;
-/*        WeaponType *defaultWeaponType = nullptr;
-*/
-/*
-        // create default object of each type other than area and player
-        defaultArmorType = new ArmorType(3, DamageType::NONE, 2, ItemRarity::COMMON, "some armor", "default armor type", 1, EquipmentSlot::TORSO);
-        manager->addObject(defaultArmorType, -1);
+        // Create the objects                                                                     
+        // Starting Area (name, short desciption, long description, area size)    
+        legacymud::engine::Area* area = new legacymud::engine::Area("default area name", "short description of area", "longer description of area", 
+                                                                    legacymud::engine::AreaSize::LARGE);   
+                                                                    
+        // SpecialSkill(name, damage, damageType, cost, cooldown);
+        legacymud::engine::SpecialSkill* skill = new legacymud::engine::SpecialSkill("default special skill name", 20, 
+                                                                                    legacymud::engine::DamageType::PIERCING, 
+                                                                                    10,2);
 
-        defaultItemType = new ItemType(1, ItemRarity::COMMON, "a default item type", "default item type", 1, EquipmentSlot::FEET);
-        manager->addObject(defaultItemType, -1);
+        // PlayerClass (primaryStat, name, special skill, attackBonus, armorBonus, resistantTo, weakTo, float healPoints);
+        legacymud::engine::PlayerClass* playerClass = new legacymud::engine::PlayerClass(45, "playerClass name", skill, 10, 20, 
+                                                                                    legacymud::engine::DamageType::FIRE,
+                                                                                    legacymud::engine::DamageType::WATER,
+                                                                                    35.5); 
 
-        defaultContainer = new Container(12345, startArea, ItemPosition::GROUND, "default container", defaultItemType);
-        manager->addObject(defaultContainer, -1);
-*/
-        defaultSpecialSkill = new SpecialSkill("default special skill", 5, DamageType::ELECTRIC, 3, 2);
-        manager->addObject(defaultSpecialSkill, -1);
-/*
-        defaultCreatureType = new CreatureType(CharacterSize::MEDIUM, XPTier::HARD, "default creature type", defaultSpecialSkill, 2, 3, DamageType::NONE, DamageType::FIRE, 0.3);
-        manager->addObject(defaultCreatureType, -1);
+        // put the objects in the GameObjectManager
+        manager->addObject(area, -1); 
+        manager->addObject(skill, -1);
+        manager->addObject(playerClass, -1);
 
-        defaultCreature = new Creature(defaultCreatureType, true, 4, startArea, 3, "default creature", "a creature", 0, startArea, 100);
-        manager->addObject(defaultCreature, -1);
-
-        defaultExit = new Exit(ExitDirection::WEST, startArea, startArea, false, nullptr, "default exit", "still a default exit");
-        manager->addObject(defaultExit, -1);
-
-        defaultFeature = new Feature("default feature", "in the default location", startArea, false, nullptr, "a feature", "still a feature");
-        manager->addObject(defaultFeature, -1);
-
-        defaultItem = new Item(startArea, ItemPosition::GROUND, "default item", defaultItemType);
-        manager->addObject(defaultItem, -1);
-
-        defaultNonCombatant = new NonCombatant(nullptr, "default NPC", "a non-combatant", 5, startArea, 1000);
-        manager->addObject(defaultNonCombatant, -1);
-*/
-        defaultPlayerClass = new PlayerClass(0, "default class", defaultSpecialSkill, 5, 5, DamageType::NONE, DamageType::NONE, 1.0);
-        manager->addObject(defaultPlayerClass, -1);
-/*
-        defaultQuest = new Quest("default quest", "a quest", 1, nullptr);
-        manager->addObject(defaultQuest, -1);
-
-        defaultQuestStep = new QuestStep(1, "a default quest step", defaultItemType, defaultNonCombatant, defaultNonCombatant, "default completion message");
-        manager->addObject(defaultQuestStep, -1);
-
-        defaultWeaponType = new WeaponType(3, DamageType::NONE, AreaSize::SMALL, 1, 2, ItemRarity::COMMON, "a default weapon type", "default weapon type", 1, EquipmentSlot::NONE);
-        manager->addObject(defaultWeaponType, -1);
-
-*/
-        // create a SpecialSkill
-        aSkill = new SpecialSkill("Totally Rad Healing", 3, DamageType::HEAL, 1, 3);
-        manager->addObject(aSkill, -1);
-
-        // create a test item type and item
-        anItemType = new ItemType(5, ItemRarity::COMMON, "a bright and shiny apple", "apple", 1, EquipmentSlot::NONE); 
-        manager->addObject(anItemType, -1);
-        anItem = new Item(startArea, ItemPosition::GROUND, "red apple", anItemType);
-        manager->addObject(anItem, -1);
-        startArea->addItem(anItem);
-        anItem->addAction(CommandEnum::EAT, true, "The apple tastes sweet and refreshing.", EffectType::HEAL);
-
-        // create a test item type and container
-        anotherItemType = new ItemType(5, ItemRarity::COMMON, "an average-looking table", "table", 1, EquipmentSlot::NONE); 
-        manager->addObject(anItemType, -1);
-        aContainer = new Container(5, startArea, ItemPosition::GROUND, "wooden table", anotherItemType);
-        manager->addObject(aContainer, -1);
-        startArea->addItem(aContainer);
-
-        // create a test weapon type and item
-        aWeaponType = new WeaponType(5, DamageType::PIERCING, AreaSize::MEDIUM, 2, 5, ItemRarity::COMMON, "a sort-of sharp knife", "knife", 9, EquipmentSlot::RIGHT_HAND); 
-        manager->addObject(aWeaponType, -1);
-        aWeapon = new Item(startArea, ItemPosition::GROUND, "small knife", aWeaponType);
-        manager->addObject(aWeapon, -1);
-        startArea->addItem(aWeapon);
-
-        // create a second area and two exits
-        anArea = new Area("test area", "You are in a vast space.", "You are in a vast space. The walls are blurry and out of focus. You can see light pouring in through high-up windows.", AreaSize::LARGE);
-        manager->addObject(anArea, -1);
-        anExit = new Exit(ExitDirection::NORTH, startArea, anArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
-        manager->addObject(anExit, -1);
-        startArea->addExit(anExit);
-        otherExit = new Exit(ExitDirection::SOUTH, anArea, startArea, true, anItemType, "a strange dark spot in the air", "a dark, shimmering portal");
-        manager->addObject(otherExit, -1);
-        anArea->addExit(otherExit);
-
-        // create test NPCs
-        aNPC = new NonCombatant(nullptr, "Sophia", "a truly radical person", 50, startArea, 100);
-        manager->addObject(aNPC, -1);
-        startArea->addCharacter(aNPC);
-        anotherNPC = new NonCombatant(nullptr, "Mark", "a kinda awesome person", 50, startArea, 100);
-        manager->addObject(anotherNPC, -1);
-        startArea->addCharacter(anotherNPC);
-
-        // create test player, quest, quest step
-        aQuest = new Quest("Super Cool Quest", "The quest for the totally cool stuff", 30, nullptr);
-        manager->addObject(aQuest, -1);
-        aNPC->setQuest(aQuest);
-        anotherNPC->setQuest(aQuest);
-        aStep = new QuestStep(3, "Go to the next place and get the next thing", aWeaponType, aNPC, anotherNPC, "You did the next thing! Congrats!");
-        manager->addObject(aStep, -1);
-        aQuest->addStep(aStep);
-        anotherStep = new QuestStep(2, "Go to the first place and get the first thing", anItemType, nullptr, nullptr, "You did the first thing! Congrats!");
-        manager->addObject(anotherStep, -1);
-        aQuest->addStep(anotherStep);
-        aPlayer = new Player(CharacterSize::SMALL, defaultPlayerClass, "test", -1, "Tester1", "a super awesome person", startArea);
-        aPlayer->addOrUpdateQuest(aQuest, 2, true);
-        manager->addObject(aPlayer, -1);
-        accountManager->createAccount("test", "test", true, aPlayer->getID());
-
-        success = true;
+        success = dm.saveGame(fileName, manager);
+        // save account data file as well
+        if (success) {
+            accountManager->setFileName(fileName + ".accounts");
+            accountManager->saveToDisk();
+        }
     }
     return success;
 }
@@ -5488,7 +5384,6 @@ bool GameLogic::editWizardCommand(Player *aPlayer, InteractiveNoun *directObj){
 bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
     bool success = false;
 
-    std::cout << "Calling isEditMode" << std::endl;
     if (aPlayer->isEditMode()) {
         saving.store(true);
 
@@ -5508,6 +5403,7 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
         else {
             success = dm.saveGame(stringParam, manager);
             if (success) {
+                accountManager->setFileName(stringParam);
                 accountManager->saveToDisk();
                 currentFilename = stringParam;
             }
@@ -5560,6 +5456,10 @@ bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
 
             // Shut down the server to disconnect all players
             theServer->shutDownServer();
+
+            // Change to the new account information
+            accountManager->setFileName(stringParam + ".accounts");
+            accountManager->initialize();
 
             // Delete the current game world and replace it with the new one
             delete manager;
