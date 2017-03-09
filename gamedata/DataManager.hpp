@@ -44,6 +44,7 @@ namespace legacymud {
           
           \param[in]  filename              file where data is to be saved
           \param[in]  gameObjectManagerPtr  pointer to the game object manager       
+          \param[in]  startAreaId           ID of the starting area
           \pre gameObjectManagerPtr         Should not be null.
           \pre The following pointers in objects held by the GameObjectManager should not be null:
                all location pointers, CreatureType of a Creature, ItemType of an Item, PlayerClass of
@@ -51,7 +52,7 @@ namespace legacymud {
                
           \post Returns true if all game data is saved.  Otherwise, it returns false.
         */        
-        bool saveGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr);  
+        bool saveGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr, int startAreaId);  
                
         /*!
           \brief Load the game data
@@ -61,12 +62,13 @@ namespace legacymud {
           that does not contain any objects.
           
           \param[in]  filename              file containing data to be loaded
-          \param[in]  gameObjectManagerPtr  pointer to the game object manager       
+          \param[in]  gameObjectManagerPtr  pointer to the game object manager
+          \param[out] startAreaId           ID of the starting area
           \pre gameObjectManagerPtr         Should not be null and should not contain any game objects.
           
           \post Returns true if all game data is loaded.  Otherwise, it returns false.
         */        
-        bool loadGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr);                 
+        bool loadGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr, int &startAreaId);                 
 
 };
 

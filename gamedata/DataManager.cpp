@@ -45,7 +45,7 @@ namespace legacymud { namespace gamedata {
 /******************************************************************************
 * Function:    saveGame               
 *****************************************************************************/
-bool DataManager::saveGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr) {
+bool DataManager::saveGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr, int startAreaId) {
 
     // Get all the game objects
     std::map<int, engine::InteractiveNoun*> gameObjectMap;
@@ -57,6 +57,8 @@ bool DataManager::saveGame(std::string filename, legacymud::engine::GameObjectMa
     baseWriter.StartObject(); 
     baseWriter.String("nextID");
     baseWriter.Int(engine::InteractiveNoun::getStaticID());
+    baseWriter.String("startAreaId");
+    baseWriter.Int(startAreaId);
     baseWriter.String("AREA");
     baseWriter.StartArray();
     baseWriter.EndArray();
@@ -197,7 +199,7 @@ bool DataManager::saveGame(std::string filename, legacymud::engine::GameObjectMa
 /******************************************************************************
 * Function:    loadGame                 
 *****************************************************************************/
-bool DataManager::loadGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr) {
+bool DataManager::loadGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr, int &startAreaId) {
    
     // load the data from disk
     std::ifstream inFile(filename);    // input stream for account file
@@ -217,8 +219,11 @@ bool DataManager::loadGame(std::string filename, legacymud::engine::GameObjectMa
     rapidjson::Document dom;
     dom.Parse(gameData.c_str()); 
        
-    // Deserialize all AREA objects
     rapidjson::StringBuffer inBuffer;
+    // Deserialize starting area ID
+    startAreaId = dom["startAreaId"].GetInt();
+
+    // Deserialize all AREA objects
     for (auto& jsonObject : dom["AREA"].GetArray()) {          
 
        // Write object to a buffer and convert to a string for deserialization

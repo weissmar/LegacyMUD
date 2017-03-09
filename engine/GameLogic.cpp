@@ -114,14 +114,18 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
     saving.store(false);
 
     bool success = false;
+    int startAreaId = -1;
 
     // try to load file if one is specified
     if (!fileName.empty()) {
         currentFilename = fileName;
         std::cout << "Loading " << fileName << std::endl;
-        success = dm.loadGame(fileName, manager);
+        success = dm.loadGame(fileName, manager, startAreaId);
         if (success) {
             std::cout << "Successfully loaded " << fileName << std::endl;
+
+            // Set starting area
+            startArea = static_cast<Area*>(manager->getPointer(startAreaId));
         }
         else {
             std::cerr << "Failed to load " << fileName << std::endl;
@@ -152,7 +156,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
         manager->addObject(skill, -1);
         manager->addObject(playerClass, -1);
 
-        success = dm.saveGame(fileName, manager);
+        success = dm.saveGame(fileName, manager, startArea->getID());
         // save account data file as well
         if (success) {
             accountManager->setFileName(fileName + ".accounts");
@@ -5391,7 +5395,7 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
             if (!currentFilename.empty()) {
                 // use current fileName
                 std::cout << "Saving " << currentFilename << std::endl;
-                success = dm.saveGame(currentFilename, manager);
+                success = dm.saveGame(currentFilename, manager, startArea->getID());
                 if (success) accountManager->saveToDisk();
             }
             else {
@@ -5399,7 +5403,7 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
             }
         }
         else {
-            success = dm.saveGame(stringParam, manager);
+            success = dm.saveGame(stringParam, manager, startArea->getID());
             if (success) {
                 accountManager->setFileName(stringParam);
                 accountManager->saveToDisk();
@@ -5425,13 +5429,14 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
 
 bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
     bool success = false;
+    int startAreaId = -1;
 
     if (aPlayer->isEditMode()) {
         gamedata::DataManager dm;
 
         // Create new manager to load game data into
         GameObjectManager *gom = new GameObjectManager();
-        success = dm.loadGame(stringParam, gom);
+        success = dm.loadGame(stringParam, gom, startAreaId);
 
         // If load was successful, delete the current game world
         // and replace it with the loaded one
@@ -5462,6 +5467,9 @@ bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
             // Delete the current game world and replace it with the new one
             delete manager;
             manager = gom;
+
+            // Set the starting area
+            startArea = static_cast<Area*>(manager->getPointer(startAreaId));
 
             // Restart the server
             theServer->initServer(port, maxPlayers, timeout, this);
