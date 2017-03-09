@@ -37,6 +37,8 @@
 #include <ItemPosition.hpp>
 #include "DataManager.hpp"
 
+#include <iostream>
+
 namespace legacymud { namespace gamedata {
 
 
@@ -196,7 +198,7 @@ bool DataManager::saveGame(std::string filename, legacymud::engine::GameObjectMa
 * Function:    loadGame                 
 *****************************************************************************/
 bool DataManager::loadGame(std::string filename, legacymud::engine::GameObjectManager* gameObjectManagerPtr) {
-    
+   
     // load the data from disk
     std::ifstream inFile(filename);    // input stream for account file
     std::string gameData = "";
@@ -210,11 +212,11 @@ bool DataManager::loadGame(std::string filename, legacymud::engine::GameObjectMa
     }
     else 
         return false;       // error opening file  
-    
+  
     // parse the data to recover each objects json string
     rapidjson::Document dom;
     dom.Parse(gameData.c_str()); 
-    
+       
     // Deserialize all AREA objects
     rapidjson::StringBuffer inBuffer;
     for (auto& jsonObject : dom["AREA"].GetArray()) {          
@@ -407,13 +409,13 @@ bool DataManager::loadGame(std::string filename, legacymud::engine::GameObjectMa
         // Add the object to the GameObjectManager.
         gameObjectManagerPtr->addObject(rebuiltNonCombatant,-1);      
     }         
-    
+
     // Deserialize all CONTAINER objects.
     bool isComplete = false;
     int countOfCompleteObjects = 0;
     int sizeOfArray = dom["CONTAINER"].GetArray().Size();
     // Loop needed to account for containers in containers
-    while (!isComplete) {       
+    while (!isComplete && sizeOfArray>0 ) {       
         for (auto& jsonObject : dom["CONTAINER"].GetArray()) {          
 
            // Write object to a buffer and convert to a string for deserialization
@@ -457,7 +459,7 @@ bool DataManager::loadGame(std::string filename, legacymud::engine::GameObjectMa
             }   
         } 
     }
-   
+  
     // Deserialize all ITEM objects
     for (auto& jsonObject : dom["ITEM"].GetArray()) {          
 
