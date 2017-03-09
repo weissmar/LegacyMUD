@@ -130,6 +130,14 @@ bool Account::saveToDisk() {
 
 
 /******************************************************************************
+* Function:    setFileName                 
+*****************************************************************************/
+void Account::setFileName(std::string filename ) {
+    _fileName = filename;
+} 
+
+
+/******************************************************************************
 * Function:    uniqueUsername                 
 *****************************************************************************/
 bool Account::uniqueUsername(std::string username) {
