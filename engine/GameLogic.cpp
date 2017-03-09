@@ -69,8 +69,7 @@ GameLogic::GameLogic()
 {
     saving.store(false);
     manager = new GameObjectManager;
-    startArea = new Area("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE);
-    manager->addObject(startArea, -1);
+    startArea = nullptr;
 }
 
 
@@ -80,8 +79,7 @@ GameLogic::GameLogic(const GameLogic &otherGameLogic)
 {
     saving.store(false);
     manager = new GameObjectManager(*otherGameLogic.manager);
-    startArea = new Area("Start Area", "You are surrounded by grey mist.", "You are surrounded by grey mist. You appear to be floating in the air.", AreaSize::LARGE);
-    manager->addObject(startArea, -1);
+    startArea = nullptr;
 }
 
 
@@ -135,7 +133,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
 
         // Create the objects                                                                     
         // Starting Area (name, short desciption, long description, area size)    
-        legacymud::engine::Area* area = new legacymud::engine::Area("default area name", "short description of area", "longer description of area", 
+        startArea = new legacymud::engine::Area("default area name", "short description of area", "longer description of area", 
                                                                     legacymud::engine::AreaSize::LARGE);   
                                                                     
         // SpecialSkill(name, damage, damageType, cost, cooldown);
@@ -150,7 +148,7 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
                                                                                     35.5); 
 
         // put the objects in the GameObjectManager
-        manager->addObject(area, -1); 
+        manager->addObject(startArea, -1); 
         manager->addObject(skill, -1);
         manager->addObject(playerClass, -1);
 
