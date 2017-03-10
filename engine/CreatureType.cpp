@@ -193,9 +193,9 @@ InteractiveNoun* CreatureType::copy(){
 }
 
 
-bool CreatureType::editAttribute(Player*, std::string){
+/*bool CreatureType::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool CreatureType::editWizard(Player*){

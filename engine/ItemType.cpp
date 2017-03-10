@@ -60,11 +60,7 @@ ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::
 , name(name)
 , cost(cost)
 , slotType(slotType)
-{
-    std::string idAlias = "item type " + std::to_string(getID());
-    addNounAlias(idAlias);
-    addNounAlias(name);
-}
+{ }
 
 
 int ItemType::getWeight() const{
@@ -441,9 +437,9 @@ InteractiveNoun* ItemType::copy(){
 }
 
 
-bool ItemType::editAttribute(Player*, std::string){
+/*bool ItemType::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool ItemType::editWizard(Player*){

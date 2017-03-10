@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -11,6 +11,7 @@
 #include "Character.hpp"
 #include "Area.hpp"
 #include "Item.hpp"
+#include <iostream>
 
 namespace legacymud { namespace engine {
 
@@ -47,11 +48,7 @@ Character::Character(std::string name, std::string description, int money, Area 
 , money(money)
 , location(aLocation)
 , maxInventoryWeight(maxInventoryWeight)
-{
-    std::string idAlias = "character " + std::to_string(getID());
-    InteractiveNoun::addNounAlias(idAlias);
-    InteractiveNoun::addNounAlias(name);
-}
+{ }
 
 
 Character::Character(const Character &otherCharacter) : InteractiveNoun(otherCharacter) {
@@ -218,6 +215,7 @@ bool Character::addToInventory(Item *anItem){
 
         if (index == 100000000){
             inventory.push_back(std::make_pair(EquipmentSlot::NONE, anItem));
+std::cout << "add to inventory: " << std::to_string(anItem->getID()) << "\n";
             return true;
         } 
     }

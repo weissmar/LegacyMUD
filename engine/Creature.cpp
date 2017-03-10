@@ -105,8 +105,10 @@ bool Creature::addNounAlias(std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->registerAlias(false, alias, this);
         success = InteractiveNoun::addNounAlias(alias);
+        if (success){
+            anArea->registerAlias(false, alias, this);
+        }
     }
 
     return success;
@@ -118,8 +120,10 @@ bool Creature::removeNounAlias(std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->unregisterAlias(false, alias, this);
         success = InteractiveNoun::removeNounAlias(alias);
+        if (success){
+            anArea->unregisterAlias(false, alias, this);
+        }
     }
 
     return success;
@@ -131,8 +135,10 @@ bool Creature::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Gra
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->registerAlias(true, alias, this);
         success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+        if (success){
+            anArea->registerAlias(true, alias, this);
+        }
     }
 
     return success;
@@ -144,8 +150,10 @@ bool Creature::removeVerbAlias(CommandEnum aCommand, std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->unregisterAlias(true, alias, this);
         success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+        if (success){
+            anArea->unregisterAlias(true, alias, this);
+        }
     }
 
     return success;
@@ -429,9 +437,9 @@ InteractiveNoun* Creature::copy(){
 }
 
 
-bool Creature::editAttribute(Player*, std::string){
+/*bool Creature::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool Creature::editWizard(Player*){

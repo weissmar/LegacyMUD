@@ -632,9 +632,9 @@ InteractiveNoun* Container::copy(){
 }
 
 
-bool Container::editAttribute(Player *aPlayer, std::string){
+/*bool Container::editAttribute(Player *aPlayer, std::string){
     return false;
-}
+}*/
 
 
 bool Container::editWizard(Player *aPlayer){

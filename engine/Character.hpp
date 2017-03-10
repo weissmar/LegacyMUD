@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -26,6 +26,7 @@ namespace legacymud { namespace engine {
 
 class Area;
 class Item;
+class Combatant;
 
 /*!
  * \details     This class defines the inheritable characteristics that define 
@@ -119,6 +120,12 @@ class Character: public InteractiveNoun {
          *          this character.
          */
         int getMaxInventoryWeight() const;
+
+        virtual Combatant* getInCombat() const { return nullptr; }
+        virtual int getIntelligenceModifier() const { return 0; }
+        virtual int getStrengthModifier() const { return 0; }
+        virtual int getDexterityModifier() const { return 0; }
+        virtual int getSizeModifier() const { return 0; }
 
         /*!
          * \brief   Gets whether or not the character currently has an item in 

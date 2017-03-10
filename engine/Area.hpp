@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/04/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -106,7 +106,7 @@ class Area: public InteractiveNoun {
         /*!
          * \brief   Gets a list of the characters in this area.
          *
-         * \return  Returns a std::vector<Item*> with the list of characters
+         * \return  Returns a std::vector<Character*> with the list of characters
          *          in this area.
          */
         std::vector<Character*> getCharacters() const;
@@ -114,7 +114,7 @@ class Area: public InteractiveNoun {
         /*!
          * \brief   Gets a list of the features in this area.
          *
-         * \return  Returns a std::vector<Item*> with the list of features
+         * \return  Returns a std::vector<Feature*> with the list of features
          *          in this area.
          */
         std::vector<Feature*> getFeatures() const;
@@ -122,7 +122,7 @@ class Area: public InteractiveNoun {
         /*!
          * \brief   Gets a list of the exits in this area.
          *
-         * \return  Returns a std::vector<Item*> with the list of exits
+         * \return  Returns a std::vector<Exit*> with the list of exits
          *          in this area.
          */
         std::vector<Exit*> getExits() const;
@@ -447,7 +447,7 @@ class Area: public InteractiveNoun {
          * \return  Returns bool indicating whether or not editing the attribute
          *          was successful.
          */
-        virtual bool editAttribute(Player*, std::string attribute);
+        //virtual bool editAttribute(Player*, std::string attribute);
 
         /*!
          * \brief   Edits  this object.

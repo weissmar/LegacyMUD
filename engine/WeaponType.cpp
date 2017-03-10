@@ -225,9 +225,9 @@ InteractiveNoun* WeaponType::copy(){
 }
 
 
-bool WeaponType::editAttribute(Player*, std::string){
+/*bool WeaponType::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool WeaponType::editWizard(Player*){

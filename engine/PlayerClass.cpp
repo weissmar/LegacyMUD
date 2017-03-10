@@ -175,9 +175,9 @@ InteractiveNoun* PlayerClass::copy(){
 }  
 
 
-bool PlayerClass::editAttribute(Player*, std::string){
+/*bool PlayerClass::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool PlayerClass::editWizard(Player*){

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/07/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -227,6 +227,10 @@ class GameLogic {
 
         bool createWeaponType(Player *aPlayer);
 
+        std::string editActionAttribute(Player *aPlayer, InteractiveNoun *objectToEdit);
+
+        std::string editAliasAttribute(Player *aPlayer, InteractiveNoun *objectToEdit);
+
         bool editAttributeOfArea(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
 
         bool editAttributeOfArmorType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
@@ -260,7 +264,7 @@ class GameLogic {
         bool editAttributeOfWeaponType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
 
         template <class aType>
-        int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull = false);
+        int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull = false, std::string question = "");
         
         int getIntParameter(Player *aPlayer, std::string paramName, int maxNum = std::numeric_limits<int>::max());
 
@@ -278,11 +282,17 @@ class GameLogic {
 
         ItemRarity getItemRarityParameter(Player *aPlayer, std::string paramName);
 
+        CommandEnum getCommandEnumParameter(Player *aPlayer, std::string paramName);
+
         EquipmentSlot getEquimentSlotParameter(Player *aPlayer, std::string paramName);
 
         ItemPosition getItemPositionParameter(Player *aPlayer, std::string paramName, int choice = 10);
 
         CharacterSize getCharacterSizeParameter(Player *aPlayer, std::string paramName);
+
+        parser::Grammar::Support getSupportParameter(Player *aPlayer, std::string paramName);
+
+        parser::PrepositionType getPrepositionTypeParameter(Player *aPlayer, std::string paramName);
 
         ExitDirection getExitDirectionParameter(Player *aPlayer, std::string paramName);
 

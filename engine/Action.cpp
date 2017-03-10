@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    02/25/2017
+ * \modified    03/08/2017
  * \course      CS467, Winter 2017
  * \file        Action.cpp
  *
@@ -10,6 +10,7 @@
 
 #include "Action.hpp"
 #include "Grammar.hpp"
+#include "EnumToString.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -127,6 +128,34 @@ std::vector<std::string> Action::getAliases() const{
     }
 
     return justAliases;
+}
+
+
+std::string Action::getName() const{
+    return commandEnumToString(command.load());
+}
+
+
+std::string Action::getToString() const{
+    std::vector<std::string> allAliases = getAliases();
+    std::string stringVersion = "Command: " + getName() + "\015\012";
+    stringVersion += "Valid: ";
+    if (getValid()){
+        stringVersion += "true\015\012";
+    } else {
+        stringVersion += "false\015\012";
+    }
+    stringVersion += "Flavor Text: " + getFlavorText() + "\015\012";
+    stringVersion += "Effect: " + effectTypeToString(getEffect()) + "\015\012";
+    stringVersion += "Aliases: ";
+    for (size_t i = 0; i < allAliases.size(); i++){
+        stringVersion += allAliases[i];
+        if (i != (allAliases.size() - 1)){
+            stringVersion += ", ";
+        }
+    }
+
+    return stringVersion;
 }
 
 

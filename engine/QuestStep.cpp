@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        QuestStep.cpp
  *
@@ -59,12 +59,7 @@ QuestStep::QuestStep(int ordinalNumber, std::string description, ItemType *anIte
 , giver(giver)
 , receiver(receiver)
 , completionText(completionText)
-{
-    std::string idAlias = "quest step " + std::to_string(getID());
-    addNounAlias(idAlias);
-    std::string alias = "step " + std::to_string(ordinalNumber);
-    addNounAlias(alias);
-}
+{ }
 
 
 /*QuestStep::QuestStep(const QuestStep &otherQuestStep){
@@ -349,9 +344,9 @@ InteractiveNoun* QuestStep::copy(){
 }
 
 
-bool QuestStep::editAttribute(Player*, std::string){
+/*bool QuestStep::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool QuestStep::editWizard(Player*){

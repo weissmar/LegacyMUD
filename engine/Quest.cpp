@@ -58,11 +58,7 @@ Quest::Quest(std::string name, std::string description, int rewardMoney, Item *r
 , description(description)
 , rewardMoney(rewardMoney)
 , rewardItem(rewardItem)
-{
-    std::string idAlias = "quest " + std::to_string(getID());
-    addNounAlias(idAlias);
-    addNounAlias(name);
-}
+{ }
 
 
 /*Quest::Quest(const Quest &otherQuest){
@@ -412,9 +408,9 @@ InteractiveNoun* Quest::copy(){
 }
 
 
-bool Quest::editAttribute(Player*, std::string){
+/*bool Quest::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool Quest::editWizard(Player*){

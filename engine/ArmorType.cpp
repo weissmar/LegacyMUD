@@ -186,9 +186,9 @@ InteractiveNoun* ArmorType::copy(){
 }
 
 
-bool ArmorType::editAttribute(Player *aPlayer, std::string attribute){
+/*bool ArmorType::editAttribute(Player *aPlayer, std::string attribute){
     return false;
-}
+}*/
 
 
 bool ArmorType::editWizard(Player *aPlayer){

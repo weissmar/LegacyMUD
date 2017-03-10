@@ -56,11 +56,7 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 , damageType(type)
 , cost(cost)
 , cooldown(cooldown)
-{
-    std::string idAlias = "skill " + std::to_string(getID());
-    addNounAlias(idAlias);
-    addNounAlias(name);
-}
+{ }
 
 
 std::string SpecialSkill::getName() const{
@@ -313,9 +309,9 @@ InteractiveNoun* SpecialSkill::copy(){
 }
 
 
-bool SpecialSkill::editAttribute(Player*, std::string){
+/*bool SpecialSkill::editAttribute(Player*, std::string){
     return false;
-}
+}*/
 
 
 bool SpecialSkill::editWizard(Player*){

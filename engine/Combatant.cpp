@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/06/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -150,6 +150,26 @@ int Combatant::getIntelligence() const{
 Combatant* Combatant::getInCombat() const{
     std::lock_guard<std::mutex> inCombatLock(inCombatMutex);
     return inCombat;
+}
+
+
+int Combatant::getIntelligenceModifier() const{
+
+}
+
+
+int Combatant::getStrengthModifier() const{
+
+}
+
+
+int Combatant::getDexterityModifier() const{
+
+}
+
+
+int Combatant::getSizeModifier() const{
+    
 }
 
 
