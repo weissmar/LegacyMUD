@@ -2,7 +2,7 @@
   \file     engine_GameLogic_Test.cpp
   \author   David Rigert
   \created  02/27/2017
-  \modified 03/07/2017
+  \modified 03/09/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the unit tests for the GameLogic class.
@@ -24,6 +24,8 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 namespace {
 
 namespace engine = legacymud::engine;
@@ -44,13 +46,16 @@ public:
     }
 
     static void TearDownTestCase() {
+        // Clean up serialized data
+        remove("game.dat");
+        remove("game.dat.accounts");
     }
 
     virtual void SetUp() {
         logic = new engine::GameLogic();
         shim = new test::GameLogicShim(logic);
         server = new test::TestServer();
-        acct = new account::Account("");
+        acct = new account::Account("game.dat.accounts");
     }
 
     virtual void TearDown() {
