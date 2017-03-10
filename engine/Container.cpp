@@ -314,7 +314,7 @@ Container* Container::deserialize(std::string jsonStr, GameObjectManager* gom){
     
         // Rebuild the new Container noun alias list. 
         for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())            
-            newContainer->addNounAlias(noun.GetString() );    
+            newContainer->InteractiveNoun::addNounAlias(noun.GetString() );    
        
         // Rebuild the new Container action list.
         for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
@@ -339,7 +339,7 @@ Container* Container::deserialize(std::string jsonStr, GameObjectManager* gom){
                 }           
                 
                 // add the verb alias
-                newContainer->addVerbAlias(command, 
+                newContainer->InteractiveNoun::addVerbAlias(command, 
                                       alias["verb_alias"].GetString(), 
                                       gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
                                       gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 

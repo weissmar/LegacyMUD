@@ -241,7 +241,7 @@ Feature* Feature::deserialize(std::string jsonStr, GameObjectManager* gom){
    
     // Rebuild the new Feature noun alias list. 
     for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())           
-        newFeature->addNounAlias(noun.GetString() );    
+        newFeature->InteractiveNoun::addNounAlias(noun.GetString() );    
    
     // Rebuild the new Feature action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
@@ -266,7 +266,7 @@ Feature* Feature::deserialize(std::string jsonStr, GameObjectManager* gom){
             }           
             
             // add the verb alias
-            newFeature->addVerbAlias(command, 
+            newFeature->InteractiveNoun::addVerbAlias(command, 
                                   alias["verb_alias"].GetString(), 
                                   gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
                                   gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 
