@@ -1152,14 +1152,17 @@ TEST_F(TextParserTest, AddHappyPath) {
 
 // Test the happy path of the EDIT_ATTRIBUTE command
 TEST_F(TextParserTest, EditAttributeHappyPath) {
-    input = "edit long description";
+    input = "edit long description of area";
+    engine::Area area;
+    areaLex.addNoun("area", &area);
     results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
     EXPECT_EQ(results[0].command, engine::CommandEnum::EDIT_ATTRIBUTE);
-    EXPECT_STREQ("long description", results[0].directAlias.c_str());
-    // Should not be any objects or position
-    EXPECT_EQ(0, results[0].direct.size());
+    EXPECT_STREQ("area", results[0].directAlias.c_str());
+    ASSERT_EQ(1, results[0].direct.size());
+    EXPECT_EQ(&area, results[0].direct[0]);
+    EXPECT_STREQ("long description", results[0].indirectAlias.c_str());
     EXPECT_EQ(0, results[0].indirect.size());
     EXPECT_EQ(engine::ItemPosition::NONE, results[0].position);
 }
@@ -1172,7 +1175,7 @@ TEST_F(TextParserTest, EditWizardHappyPath) {
     areaLex.addNoun("torch", &torch);
 
     results = parser::TextParser::parse(input, playerLex, areaLex, true, true);
-    ASSERT_EQ(2, results.size());
+    ASSERT_EQ(1, results.size());
     if (results[0].command == engine::CommandEnum::EDIT_WIZARD) {
         EXPECT_EQ(parser::ParseStatus::VALID, results[0].status);
         EXPECT_EQ(results[0].command, engine::CommandEnum::EDIT_WIZARD);
