@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/08/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -60,11 +60,7 @@ Area::Area(std::string name, std::string shortDescription, std::string longDescr
 , shortDescription(shortDescription)
 , longDescription(longDescription)
 , size(size)
-{ 
-    std::string idAlias = "area " + std::to_string(getID());
-    addNounAlias(idAlias);
-    addNounAlias(name);
-}
+{ }
 
 
 Area::Area(const Area &otherArea) : InteractiveNoun(otherArea) {
@@ -463,8 +459,10 @@ bool Area::addNounAlias(std::string alias){
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
 
-    contentsLexicalData.addNoun(alias, this);
     success = InteractiveNoun::addNounAlias(alias);
+    if (success){
+        contentsLexicalData.addNoun(alias, this);
+    }
 
     return success;
 }
@@ -475,8 +473,10 @@ bool Area::removeNounAlias(std::string alias){
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
 
-    contentsLexicalData.removeNoun(alias, this);
     success = InteractiveNoun::removeNounAlias(alias);
+    if (success){
+        contentsLexicalData.removeNoun(alias, this);
+    }
 
     return success;
 }
@@ -487,8 +487,10 @@ bool Area::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Grammar
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
 
-    contentsLexicalData.addVerb(alias, this);
     success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+    if (success){
+        contentsLexicalData.addVerb(alias, this);
+    }
 
     return success;
 }
@@ -498,9 +500,11 @@ bool Area::removeVerbAlias(CommandEnum aCommand, std::string alias){
     bool success = false;
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
-
-    contentsLexicalData.removeVerb(alias, this);
+    
     success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+    if (success){
+        contentsLexicalData.removeVerb(alias, this);
+    }
 
     return success;
 }

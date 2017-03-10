@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        ItemType.cpp
  *
@@ -60,11 +60,7 @@ ItemType::ItemType(int weight, ItemRarity rarity, std::string description, std::
 , name(name)
 , cost(cost)
 , slotType(slotType)
-{
-    std::string idAlias = "item type " + std::to_string(getID());
-    addNounAlias(idAlias);
-    addNounAlias(name);
-}
+{ }
 
 
 int ItemType::getWeight() const{

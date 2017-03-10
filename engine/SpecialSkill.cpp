@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -56,11 +56,7 @@ SpecialSkill::SpecialSkill(std::string name, int damage, DamageType type, int co
 , damageType(type)
 , cost(cost)
 , cooldown(cooldown)
-{
-    std::string idAlias = "skill " + std::to_string(getID());
-    addNounAlias(idAlias);
-    addNounAlias(name);
-}
+{ }
 
 
 std::string SpecialSkill::getName() const{

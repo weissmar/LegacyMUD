@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Quest.cpp
  *
@@ -58,11 +58,7 @@ Quest::Quest(std::string name, std::string description, int rewardMoney, Item *r
 , description(description)
 , rewardMoney(rewardMoney)
 , rewardItem(rewardItem)
-{
-    std::string idAlias = "quest " + std::to_string(getID());
-    addNounAlias(idAlias);
-    addNounAlias(name);
-}
+{ }
 
 
 /*Quest::Quest(const Quest &otherQuest){

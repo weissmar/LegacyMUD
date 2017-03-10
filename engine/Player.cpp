@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -98,10 +98,7 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , active(false)
 , fileDescriptor(FD)
 , editMode(false)
-{ 
-    addAllLexicalData(aClass); 
-    addAllLexicalData(aClass->getSpecialSkill());
-}
+{ }
 
 
 /*Player::Player(const Player &otherPlayer){
@@ -406,10 +403,11 @@ bool Player::addNounAlias(std::string alias){
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
 
-    if (location != nullptr){
+    success = InteractiveNoun::addNounAlias(alias);
+
+    if ((location != nullptr) && (success)){
         location->registerAlias(false, alias, this);
     }
-    success = InteractiveNoun::addNounAlias(alias);
 
     return success;
 }
@@ -421,10 +419,11 @@ bool Player::removeNounAlias(std::string alias){
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
 
-    if (location != nullptr){
+    success = InteractiveNoun::removeNounAlias(alias);
+
+    if ((location != nullptr) && (success)){
         location->unregisterAlias(false, alias, this);
     }
-    success = InteractiveNoun::removeNounAlias(alias);
 
     return success;
 }
@@ -436,10 +435,11 @@ bool Player::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Gramm
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
 
-    if (location != nullptr){
+    success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+
+    if ((location != nullptr) && (success)){
         location->registerAlias(true, alias, this);
     }
-    success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
 
     return success;
 }
@@ -451,11 +451,12 @@ bool Player::removeVerbAlias(CommandEnum aCommand, std::string alias){
 
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
 
-    if (location != nullptr){
-        location->unregisterAlias(true, alias, this);
-    }
     success = InteractiveNoun::removeVerbAlias(aCommand, alias);
 
+    if ((location != nullptr) && (success)){
+        location->unregisterAlias(true, alias, this);
+    }
+    
     return success;
 }
 
@@ -682,7 +683,7 @@ std::string Player::take(Player *aPlayer, Item *anItem, InteractiveNoun *aContai
     } else {
         message = "false";
     }
-
+std::cout << "player take result = " << message << "\n";
     return message;
 }
 

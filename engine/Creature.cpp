@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/09/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -105,8 +105,10 @@ bool Creature::addNounAlias(std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->registerAlias(false, alias, this);
         success = InteractiveNoun::addNounAlias(alias);
+        if (success){
+            anArea->registerAlias(false, alias, this);
+        }
     }
 
     return success;
@@ -118,8 +120,10 @@ bool Creature::removeNounAlias(std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->unregisterAlias(false, alias, this);
         success = InteractiveNoun::removeNounAlias(alias);
+        if (success){
+            anArea->unregisterAlias(false, alias, this);
+        }
     }
 
     return success;
@@ -131,8 +135,10 @@ bool Creature::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Gra
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->registerAlias(true, alias, this);
         success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+        if (success){
+            anArea->registerAlias(true, alias, this);
+        }
     }
 
     return success;
@@ -144,8 +150,10 @@ bool Creature::removeVerbAlias(CommandEnum aCommand, std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->unregisterAlias(true, alias, this);
         success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+        if (success){
+            anArea->unregisterAlias(true, alias, this);
+        }
     }
 
     return success;

@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -49,11 +49,7 @@ Feature::Feature(std::string name, std::string placement, Area *location, bool i
 , name(name)
 , placement(placement)
 , location(location)
-{
-    std::string idAlias = "feature " + std::to_string(getID());
-    InteractiveNoun::addNounAlias(idAlias);
-    InteractiveNoun::addNounAlias(name);
-}
+{ }
 
 
 std::string Feature::getName() const{
@@ -108,8 +104,10 @@ bool Feature::addNounAlias(std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->registerAlias(false, alias, this);
         success = InteractiveNoun::addNounAlias(alias);
+        if (success){
+            anArea->registerAlias(false, alias, this);
+        }
     }
 
     return success;
@@ -121,8 +119,10 @@ bool Feature::removeNounAlias(std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->unregisterAlias(false, alias, this);
         success = InteractiveNoun::removeNounAlias(alias);
+        if (success){
+            anArea->unregisterAlias(false, alias, this);
+        }
     }
 
     return success;
@@ -134,8 +134,10 @@ bool Feature::addVerbAlias(CommandEnum aCommand, std::string alias, parser::Gram
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->registerAlias(true, alias, this);
         success = InteractiveNoun::addVerbAlias(aCommand, alias, direct, indirect, prepositions);
+        if (success){
+            anArea->registerAlias(true, alias, this);
+        }
     }
 
     return success;
@@ -147,8 +149,10 @@ bool Feature::removeVerbAlias(CommandEnum aCommand, std::string alias){
 
     Area *anArea = getLocation();
     if (anArea != nullptr){
-        anArea->unregisterAlias(true, alias, this);
         success = InteractiveNoun::removeVerbAlias(aCommand, alias);
+        if (success){
+            anArea->unregisterAlias(true, alias, this);
+        }
     }
 
     return success;

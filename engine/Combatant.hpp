@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/04/2017
+ * \modified    03/09/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -110,6 +110,14 @@ class Combatant: public Character {
          *          not currently in combat.
          */
         Combatant* getInCombat() const;
+
+        int getIntelligenceModifier() const;
+
+        int getStrengthModifier() const;
+
+        int getDexterityModifier() const;
+
+        int getSizeModifier() const;
 
         /*!
          * \brief   Sets the cooldown in seconds for this combatant.

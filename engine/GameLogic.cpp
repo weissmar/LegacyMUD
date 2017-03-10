@@ -513,13 +513,76 @@ bool GameLogic::receivedMessageHandler(std::string message, int fileDescriptor){
     return true;
 }
 
-
+// check cooldown, move creatures, attack players (randomly), update health and special points
 bool GameLogic::updateCreatures(){
+    bool ready = false;
+    bool inCombat = false;
+    std::vector<Creature*> allCreatures = manager->getCreatures();
+    Area *location = nullptr;
+    std::vector<Character*> characters;
+    std::vector<Character*> players;
+    int spotCheck = 0;
+    int hideCheck = 0;
+    size_t index;
+
+    for (auto creature : allCreatures){
+        // check cooldown
+        ready = creature->cooldownIsZero();
+        if (ready){
+            // check to see if already in combat
+            if (creature->getInCombat() != nullptr){
+                inCombat = true;
+            } else {
+                inCombat = false;
+            }
+
+            if (!inCombat){
+                // check if there are players in this location
+                location = creature->getLocation();
+                characters = location->getCharacters();
+                for (auto character : characters){
+                    if (character->getObjectType() == ObjectType::PLAYER){
+                        players.push_back(character);
+                    }
+                }
+
+                if (players.size() != 0){
+                    index = 0;
+                    while ((!inCombat) && (index < players.size())){
+                        // if the player isn't already in combat
+                        if (players[index]->getInCombat() == nullptr){
+                            // creature rolls spot check and player rolls hide check
+                            spotCheck = rollDice(20, 1);
+                        }
+                    }
+
+                    // start combat
+
+                    // roll to see which attack is used
+
+                    // attack
+                } else {
+                    // roll to see if leaves the area
+
+                    // roll to see which exit to take
+
+                    // move creature
+                }
+            } else {
+                // roll to see which attack is used
+
+                // attack
+            }
+        }
+    }
+    
+
     return false;
 }
 
 
 bool GameLogic::updatePlayersInCombat(){
+    // check cooldown, check command queue, otherwise default attack, update health and special points
     return false;
 }
 
@@ -3174,61 +3237,90 @@ CommandEnum GameLogic::getCommandEnumParameter(Player *aPlayer, std::string para
         choice = validateStringNumber(response, 1, 25);
     }
 
+std::cout << "choice = " << std::to_string(choice) << "\n";
+
     switch (choice){
         case 1:
             commandEnumParam = CommandEnum::LOOK;
+            break;
         case 2:
             commandEnumParam = CommandEnum::LISTEN;
+            break;
         case 3:
             commandEnumParam = CommandEnum::TAKE;
+            break;
         case 4:
             commandEnumParam = CommandEnum::PUT;
+            break;
         case 5:
             commandEnumParam = CommandEnum::DROP;
+            break;
         case 6:
             commandEnumParam = CommandEnum::EQUIP;
+            break;
         case 7:
             commandEnumParam = CommandEnum::UNEQUIP;
+            break;
         case 8:
             commandEnumParam = CommandEnum::TRANSFER;
+            break;
         case 9:
             commandEnumParam = CommandEnum::GO;
+            break;
         case 10:
             commandEnumParam = CommandEnum::MOVE;
+            break;
         case 11:
             commandEnumParam = CommandEnum::ATTACK;
+            break;
         case 12:
             commandEnumParam = CommandEnum::TALK;
+            break;
         case 13:
             commandEnumParam = CommandEnum::SHOP;
+            break;
         case 14:
             commandEnumParam = CommandEnum::BUY;
+            break;
         case 15:
             commandEnumParam = CommandEnum::SELL;
+            break;
         case 16:
             commandEnumParam = CommandEnum::SEARCH;
+            break;
         case 17:
             commandEnumParam = CommandEnum::USE_SKILL;
+            break;
         case 18:
             commandEnumParam = CommandEnum::READ;
+            break;
         case 19:
             commandEnumParam = CommandEnum::BREAK;
+            break;
         case 20:
             commandEnumParam = CommandEnum::CLIMB;
+            break;
         case 21:
             commandEnumParam = CommandEnum::TURN;
+            break;
         case 22:
             commandEnumParam = CommandEnum::PUSH;
+            break;
         case 23:
             commandEnumParam = CommandEnum::PULL;
+            break;
         case 24:
             commandEnumParam = CommandEnum::EAT;
+            break;
         case 25:
             commandEnumParam = CommandEnum::DRINK;
+            break;
         default:
             commandEnumParam = CommandEnum::INVALID;
             break;
     }
+
+std::cout << "commandEnumParam = " << commandEnumToString(commandEnumParam) << "\n";
 
     return commandEnumParam;
 }
@@ -4356,7 +4448,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             success = listenCommand(aPlayer);
             break;
         case CommandEnum::TAKE:
-        std::cout << "inside case CommandEnum::TAKE in executeCommand\n";
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);
             // clarify indirect
@@ -4888,7 +4979,11 @@ bool GameLogic::inventoryCommand(Player *aPlayer){
 
     message = "Your Inventory:\015\012";
     for (auto item : inventory){
-        message += item->getName() + "\015\012";
+        if (aPlayer->isEditMode()){
+            message += item->getName() + " [" + std::to_string(item->getID()) + "] \015\012";
+        } else {
+            message += item->getName() + "\015\012";
+        }
     }
     message += std::to_string(aPlayer->getMoney()) + " money\015\012";
     message += "Equipped Items:\015\012";
