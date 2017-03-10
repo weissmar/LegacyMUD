@@ -253,7 +253,7 @@ Creature* Creature::deserialize(std::string jsonStr, GameObjectManager* gom){
                                                      
     // Rebuild the new Creature noun alias list. 
     for (auto& noun : objectDoc["interactive_noun_data"]["noun_aliases"].GetArray())            
-        newCreature->addNounAlias(noun.GetString() );    
+        newCreature->InteractiveNoun::addNounAlias(noun.GetString() );    
    
     // Rebuild the new Creature action list.
     for (auto& action : objectDoc["interactive_noun_data"]["actions"].GetArray()) {                          
@@ -278,7 +278,7 @@ Creature* Creature::deserialize(std::string jsonStr, GameObjectManager* gom){
             }           
             
             // add the verb alias
-            newCreature->addVerbAlias(command, 
+            newCreature->InteractiveNoun::addVerbAlias(command, 
                                   alias["verb_alias"].GetString(), 
                                   gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
                                   gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 

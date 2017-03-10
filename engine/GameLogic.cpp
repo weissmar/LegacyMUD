@@ -5893,6 +5893,7 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::editModeCommand(Player *aPlayer){
+std::cout << "username = " << aPlayer->getUser() << "\n";
     if (accountManager->verifyAdmin(aPlayer->getUser())){
         if (aPlayer->isEditMode()){
             aPlayer->setEditMode(false);

@@ -316,7 +316,7 @@ NonCombatant* NonCombatant::deserialize(std::string jsonStr, GameObjectManager* 
         engine::CommandEnum command = gamedata::CommandEnum_Data::stringToEnum(action["command"].GetString());
                 
         // add the action to the new NonCombatant          
-        newNonCombatant->addAction(command, 
+        newNonCombatant->InteractiveNoun::addAction(command, 
                            action["valid"].GetBool(), 
                            action["flavor_text"].GetString(), 
                            gamedata::EffectType_Data::stringToEnum(action["effect"].GetString()) );
@@ -332,7 +332,7 @@ NonCombatant* NonCombatant::deserialize(std::string jsonStr, GameObjectManager* 
             }           
             
             // add the verb alias
-            newNonCombatant->addVerbAlias(command, 
+            newNonCombatant->InteractiveNoun::addVerbAlias(command, 
                                   alias["verb_alias"].GetString(), 
                                   gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["direct_object"].GetString()), 
                                   gamedata::GrammarSupport_Data::stringToEnum(alias["grammar"]["indirect_object"].GetString()), 
