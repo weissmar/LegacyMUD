@@ -1068,6 +1068,7 @@ class GameLogic {
         account::Account* accountManager;
         telnet::Server* theServer;
         Area *startArea;
+        std::string currentFilename;
 };
 
 }}
