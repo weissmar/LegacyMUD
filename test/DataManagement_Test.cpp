@@ -40,7 +40,7 @@ namespace {
    
 // create a GameObjectManager and DataManager 
 legacymud::gamedata::DataManager* dm = new legacymud::gamedata::DataManager();
-
+int startAreaId;
 
 /////////////////////////////////////////////////////////////////////////////////
 // Area - Unit test - serialize and deserialize
@@ -1284,7 +1284,8 @@ TEST(DataManagementTest, SaveAllData) {
     EXPECT_TRUE(gom->addObject(armorType1,-1) );
     
     // save the game
-    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );   
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom, area1->getID()) );
+    startAreaId = area1->getID();
 
     delete gom;   
 }
@@ -1295,8 +1296,8 @@ TEST(DataManagementTest, LoadAllData) {
     legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
 
     // load the game followed by saving the game to a different file
-    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
-    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom, startAreaId) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom, startAreaId) );
 
     // load the two files and check for equality
     std::ifstream inFile1("gamedata1.txt");    
@@ -1361,7 +1362,7 @@ TEST(DataManagementTest, SaveDefaultDataFile) {
     EXPECT_TRUE(gom->addObject(playerClass,-1) );
     
     // save the game
-    EXPECT_TRUE(dm->saveGame("default_game_data.txt", gom) );   
+    EXPECT_TRUE(dm->saveGame("default_game_data.txt", gom, area->getID()) );   
 
     delete gom;   
 }
@@ -1374,7 +1375,7 @@ TEST(DataManagementTest, LoadDefaultDataFile) {
     legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
     
     // load the game
-    EXPECT_TRUE(dm->loadGame("default_game_data.txt", gom) );   
+    EXPECT_TRUE(dm->loadGame("default_game_data.txt", gom, startAreaId) );   
 
     delete gom;   
 }
@@ -1404,7 +1405,7 @@ TEST(DataManagementTest, SaveGameWithOneContainer) {
     EXPECT_TRUE(gom->addObject(container,-1) );   
     
     // save and load the game
-    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );     
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom, area->getID()) );     
 
     delete gom;   
 }
@@ -1417,8 +1418,8 @@ TEST(DataManagementTest, LoadGameWithContainerInContainer) {
     legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
 
     // load the game followed by saving the game to a different file
-    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
-    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom, startAreaId) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom, startAreaId) );
 
     // load the two files and check for equality
     std::ifstream inFile1("gamedata1.txt");    
@@ -1478,7 +1479,7 @@ TEST(DataManagementTest, SaveGameWithContainerInContainer) {
     EXPECT_TRUE(gom->addObject(container1,-1) );
     
     // save and load the game
-    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );     
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom, area->getID()) );     
 
     delete gom;   
 }
@@ -1491,8 +1492,8 @@ TEST(DataManagementTest, LoadGameWithOneContainer) {
     legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
 
     // load the game followed by saving the game to a different file
-    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
-    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom, startAreaId) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom, startAreaId) );
 
     // load the two files and check for equality
     std::ifstream inFile1("gamedata1.txt");    
