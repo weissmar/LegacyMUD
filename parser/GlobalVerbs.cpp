@@ -298,9 +298,9 @@ void setBuilderVerbs() {
     vi.description = "edit (object) (attrib)";
     parser::WordManager::addBuilderVerb("edit", vi);
 
-    vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
-    vi.description = "edit (attrib)";
-    parser::WordManager::addBuilderVerb("edit", vi);
+    //vi.grammar = parser::Grammar(parser::Grammar::TEXT, false, parser::Grammar::NO);
+    //vi.description = "edit (attrib)";
+    //parser::WordManager::addBuilderVerb("edit", vi);
     
     vi.grammar = parser::Grammar(parser::Grammar::TEXT, true, parser::Grammar::YES);
     vi.grammar.addPreposition("of", parser::PrepositionType::OF);
