@@ -1,0 +1,495 @@
+{
+    "nextID": 26,
+    "startAreaId": 1,
+    "AREA": [
+        {
+            "class": "AREA",
+            "name": "Briartown Inn",
+            "short_description": "short description of area",
+            "long_description": "You are standing in the Briartown Inn. It is an older wooden building, but has a middle-age charm to it.",
+            "area_size": "LARGE",
+            "interactive_noun_data": {
+                "id": 1,
+                "noun_aliases": [
+                    "area 1",
+                    "Briartown Inn"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Briartown Town Square",
+            "short_description": "You are standing in the town square of Briartown.",
+            "long_description": "You are standing in the town square of Briartown. The area is bustling with activity and is surrounded by a number of shops and other establishments.",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 5,
+                "noun_aliases": [
+                    "area 5",
+                    "Briartown Town Square"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Briartown Blacksmith",
+            "short_description": "You are in the shop of the Briartown Blacksmith.",
+            "long_description": "You are standing in the shop of the Briartown Blacksmith. The blacksmith's shop is located in the southwest corner of town.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 8,
+                "noun_aliases": [
+                    "area 8",
+                    "Briartown Blacksmith"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Briartown Armory",
+            "short_description": "You are in the Briartown Armory.",
+            "long_description": "You are standing in the Briartown Armory. The shop isn't much to look at, but the wares are well made.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 11,
+                "noun_aliases": [
+                    "area 11",
+                    "Briartown Armory"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Briartown Park",
+            "short_description": "You are in Briartown Park.",
+            "long_description": "You are standing in a small park on the eastern edge of town.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 14,
+                "noun_aliases": [
+                    "area 14",
+                    "Briartown Park"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Behind Briartown Inn",
+            "short_description": "You are in a dark alleyway behind Briartown Inn.",
+            "long_description": "You are standing in a dark alleyway behind the Briartown Inn.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 17,
+                "noun_aliases": [
+                    "area 17",
+                    "Behind Briartown Inn"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Briartown Town Entrance",
+            "short_description": "You are in the entrance to Briartown.",
+            "long_description": "You are standing in the entrance to the small but charming township of Briartown.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 20,
+                "noun_aliases": [
+                    "area 20",
+                    "Briartown Town Entrance"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Briartown Guard Tower",
+            "short_description": "You are in the Briartown Guard Tower.",
+            "long_description": "You are standing in the guard tower of Briartown.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 23,
+                "noun_aliases": [
+                    "area 23",
+                    "Briartown Guard Tower"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "ARMOR_TYPE": [],
+    "CONTAINER": [],
+    "CREATURE": [],
+    "CREATURE_TYPE": [],
+    "EXIT": [
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 1,
+            "connect_area_id": 5,
+            "is_conditional": false,
+            "description": "Briartown Town Square",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 6,
+                "noun_aliases": [
+                    "exit 6",
+                    "east",
+                    "e",
+                    "entrance",
+                    "town square",
+                    "Briartown Town Square"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 5,
+            "connect_area_id": 1,
+            "is_conditional": false,
+            "description": "the Briartown Inn",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 7,
+                "noun_aliases": [
+                    "exit 7",
+                    "west",
+                    "w",
+                    "inn entrance",
+                    "Briartown Inn",
+                    "inn",
+                    "the Briartown Inn"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTHWEST",
+            "location_id": 5,
+            "connect_area_id": 8,
+            "is_conditional": false,
+            "description": "the Briartown Blacksmith",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 9,
+                "noun_aliases": [
+                    "exit 9",
+                    "southwest",
+                    "sw",
+                    "blacksmith",
+                    "Briartown Blacksmith",
+                    "the Briartown Blacksmith"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTHEAST",
+            "location_id": 8,
+            "connect_area_id": 5,
+            "is_conditional": false,
+            "description": "a door leading to the town square",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 10,
+                "noun_aliases": [
+                    "exit 10",
+                    "a door leading to the town square",
+                    "northeast",
+                    "ne"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTHEAST",
+            "location_id": 5,
+            "connect_area_id": 11,
+            "is_conditional": false,
+            "description": "the Briartown Armory",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 12,
+                "noun_aliases": [
+                    "exit 12",
+                    "southeast",
+                    "se",
+                    "the Briartown Armory"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTHWEST",
+            "location_id": 11,
+            "connect_area_id": 5,
+            "is_conditional": false,
+            "description": "a door leading to the town square",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 13,
+                "noun_aliases": [
+                    "exit 13",
+                    "a door leading to the town square",
+                    "northwest",
+                    "nw",
+                    "town square",
+                    "door",
+                    "door leading to town square"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 5,
+            "connect_area_id": 14,
+            "is_conditional": false,
+            "description": "Briartown Park",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 15,
+                "noun_aliases": [
+                    "exit 15",
+                    "Briartown Park",
+                    "east",
+                    "e",
+                    "park"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 14,
+            "connect_area_id": 5,
+            "is_conditional": false,
+            "description": "Briartown Town Square",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 16,
+                "noun_aliases": [
+                    "exit 16",
+                    "Briartown Town Square",
+                    "west",
+                    "w",
+                    "town square"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTHWEST",
+            "location_id": 5,
+            "connect_area_id": 17,
+            "is_conditional": false,
+            "description": "an alley leading behind the inn",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 18,
+                "noun_aliases": [
+                    "exit 18",
+                    "an alley leading behind the inn",
+                    "northwest",
+                    "nw",
+                    "alley"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTHEAST",
+            "location_id": 17,
+            "connect_area_id": 5,
+            "is_conditional": false,
+            "description": "Briartown Town Square",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 19,
+                "noun_aliases": [
+                    "exit 19",
+                    "Briartown Town Square",
+                    "southeast",
+                    "se",
+                    "town square"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 5,
+            "connect_area_id": 20,
+            "is_conditional": false,
+            "description": "the entrance to town",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 21,
+                "noun_aliases": [
+                    "exit 21",
+                    "the entrance to town",
+                    "north",
+                    "n",
+                    "town entrance",
+                    "entrance"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 20,
+            "connect_area_id": 5,
+            "is_conditional": false,
+            "description": "the town square",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 22,
+                "noun_aliases": [
+                    "exit 22",
+                    "south",
+                    "s",
+                    "the town square",
+                    "town square"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 20,
+            "connect_area_id": 23,
+            "is_conditional": false,
+            "description": "a guard tower",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 24,
+                "noun_aliases": [
+                    "exit 24",
+                    "a guard tower",
+                    "east",
+                    "e",
+                    "guard tower",
+                    "tower"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 23,
+            "connect_area_id": 20,
+            "is_conditional": false,
+            "description": "the town entrance",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 25,
+                "noun_aliases": [
+                    "exit 25",
+                    "the town entrance",
+                    "west",
+                    "w",
+                    "entrance",
+                    "town entrance"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "FEATURE": [],
+    "ITEM": [],
+    "ITEM_TYPE": [],
+    "NON_COMBATANT": [],
+    "PLAYER": [
+        {
+            "class": "PLAYER",
+            "character_size": "MEDIUM",
+            "player_class_id": 3,
+            "username": "rigertd@oregonstate.edu",
+            "experience_points": 0,
+            "level": 1,
+            "quest_list": [],
+            "max_health": 10,
+            "spawn_location_id": 1,
+            "max_special_points": 10,
+            "dexterity": 18,
+            "strength": 3,
+            "intelligence": 15,
+            "name": "Admin",
+            "description": "an administrator",
+            "money": 10,
+            "location_area_id": 20,
+            "max_inventory_weight": 30,
+            "interactive_noun_data": {
+                "id": 4,
+                "noun_aliases": [
+                    "character 4",
+                    "Admin"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "PLAYER_CLASS": [
+        {
+            "class": "PLAYER_CLASS",
+            "primary_stat": 45,
+            "name": "playerClass name",
+            "special_skill_id": 2,
+            "attack_bonus": 10,
+            "armor_bonus": 20,
+            "resistant_to": "FIRE",
+            "weak_to": "WATER",
+            "heal_points": 35.5,
+            "interactive_noun_data": {
+                "id": 3,
+                "noun_aliases": [
+                    "combatant type 3",
+                    "playerClass name"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "QUEST": [],
+    "QUEST_STEP": [],
+    "SPECIAL_SKILL": [
+        {
+            "class": "SPECIAL_SKILL",
+            "name": "default special skill name",
+            "damage": 20,
+            "damage_type": "PIERCING",
+            "cost": 10,
+            "cooldown": 2,
+            "interactive_noun_data": {
+                "id": 2,
+                "noun_aliases": [
+                    "skill 2",
+                    "default special skill name"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "WEAPON_TYPE": []
+}
