@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/09/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -433,7 +433,12 @@ std::string Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bo
 
 
 InteractiveNoun* Creature::copy(){
-    return nullptr;
+    Area *location = getLocation();
+    Creature *aCreature = new Creature(*this);
+
+    location->addCharacter(aCreature);
+
+    return aCreature;
 }
 
 

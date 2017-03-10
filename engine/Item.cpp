@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -1258,7 +1258,34 @@ std::string Item::drink(Player *aPlayer, std::vector<EffectType> *effects){
 
 
 InteractiveNoun* Item::copy(){
-    return nullptr;
+    InteractiveNoun *location = nullptr;
+    Area *anArea = nullptr;
+    Character *aCharacter = nullptr;
+    Container *aContainer = nullptr;
+    Item *anItem = new Item(*this);
+
+    location = anItem->getLocation();
+    anItem->setPosition(this->getPosition());
+
+    if (location->getObjectType() == ObjectType::AREA){
+        anArea = dynamic_cast<Area*>(location);
+        if (anArea != nullptr){
+            anArea->addItem(anItem);
+        }
+    } else if (location->getObjectType() == ObjectType::CONTAINER){
+        aContainer = dynamic_cast<Container*>(location);
+        if (aContainer != nullptr){
+            aContainer->place(anItem, anItem->getPosition());
+        }
+    } else {
+        aCharacter = dynamic_cast<Character*>(location);
+        if (aCharacter != nullptr){
+            aCharacter->addToInventory(anItem);
+            anItem->setPosition(ItemPosition::INVENTORY);
+        }
+    }
+
+    return anItem;
 }
 
 
