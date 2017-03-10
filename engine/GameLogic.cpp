@@ -6062,7 +6062,7 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
         else {
             success = dm.saveGame(stringParam, manager, startArea->getID());
             if (success) {
-                accountManager->setFileName(stringParam);
+                accountManager->setFileName(stringParam + ".accounts");
                 accountManager->saveToDisk();
                 currentFilename = stringParam;
             }
