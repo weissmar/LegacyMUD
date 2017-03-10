@@ -13,6 +13,7 @@
 #include "Area.hpp"
 #include "CreatureType.hpp"
 #include "SpecialSkill.hpp"
+#include "CharacterSize.hpp"
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
@@ -80,6 +81,32 @@ CreatureType* Creature::getType() const{
 
 bool Creature::getAmbulatory() const{
     return ambulatory.load();
+}
+
+
+int Creature::getSizeModifier() const{
+    int modifier = 0;
+    CharacterSize aSize = getType()->getSize();
+
+    switch (aSize){
+        case CharacterSize::TINY:
+            modifier = 2;
+            break;
+        case CharacterSize::SMALL:
+            modifier = 1;
+            break;
+        case CharacterSize::MEDIUM:
+            modifier = 0;
+            break;
+        case CharacterSize::LARGE:
+            modifier = -1;
+            break;
+        case CharacterSize::HUGE:
+            modifier = -2;
+            break;
+    }
+
+    return modifier;
 }
 
 

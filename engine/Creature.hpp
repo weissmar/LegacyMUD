@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -59,6 +59,8 @@ class Creature: public Combatant {
          *          moves autonomously around the game.
          */
         bool getAmbulatory() const;
+
+        virtual int getSizeModifier() const;
 
         /*!
          * \brief   Sets the type of this creature.

@@ -457,10 +457,15 @@ bool GameLogic::updateCreatures(){
     std::vector<Creature*> allCreatures = manager->getCreatures();
     Area *location = nullptr;
     std::vector<Character*> characters;
-    std::vector<Character*> players;
+    std::vector<Player*> players;
     int spotCheck = 0;
     int hideCheck = 0;
+    int weaponChoice = -1;
     size_t index;
+    std::vector<Item*> weapons;
+    std::vector<EffectType> effects;
+    SpecialSkill *aSkill = nullptr;
+    std::string message = "";
 
     for (auto creature : allCreatures){
         // check cooldown
@@ -479,7 +484,7 @@ bool GameLogic::updateCreatures(){
                 characters = location->getCharacters();
                 for (auto character : characters){
                     if (character->getObjectType() == ObjectType::PLAYER){
-                        players.push_back(character);
+                        players.push_back(static_cast<Player*>(character));
                     }
                 }
 
@@ -489,15 +494,34 @@ bool GameLogic::updateCreatures(){
                         // if the player isn't already in combat
                         if (players[index]->getInCombat() == nullptr){
                             // creature rolls spot check and player rolls hide check
-                            spotCheck = rollDice(20, 1);
+                            spotCheck = rollDice(20, 1) + creature->getIntelligenceModifier();
+                            hideCheck = rollDice(20, 1) + players[index]->getDexterityModifier() + players[index]->getSizeModifier();
+
+                            if (spotCheck > hideCheck){
+                                // start combat
+                                startCombat(players[index], creature);
+                                inCombat = true;
+
+                                weapons = creature->getWeapons();
+                                if (weapons.size() != 0){
+                                    weaponChoice = rollDice(weapons.size() + 1, 1);
+                                    if (weaponChoice > weapons.size()){
+                                        // attack with special skill
+                                        aSkill = creature->getType()->getSpecialSkill();
+                                        message = aSkill->attack(players[index], nullptr, nullptr, creature, false, &effects);
+                                    } else {
+                                        // attack with specified weapon
+                                        message = weapons[weaponChoice - 1]->attack(players[index], nullptr, nullptr, creature, false, &effects);
+                                    }
+                                } else {
+                                    // attack with default attack
+                                    message = creature->attack(players[index], nullptr, nullptr, creature, false, &effects);
+                                }
+
+                                messagePlayer(players[index], message);
+                            } 
                         }
                     }
-
-                    // start combat
-
-                    // roll to see which attack is used
-
-                    // attack
                 } else {
                     // roll to see if leaves the area
 
@@ -3975,12 +3999,20 @@ void GameLogic::messageAreaPlayers(Player *aPlayer, std::string message, Area *a
 
 
 bool GameLogic::startCombat(Player* aPlayer, Creature *aCreature){
-    return false;
+    aPlayer->setInCombat(aCreature);
+    aCreature->setInCombat(aPlayer);
+    messagePlayer(aPlayer, "Entering combat...");
+
+    return true;
 }
 
 
 bool GameLogic::endCombat(Player *aPlayer, Creature *aCreature){
-    return false;
+    aPlayer->setInCombat(nullptr);
+    aCreature->setInCombat(nullptr);
+    messagePlayer(aPlayer, "Leaving combat...");
+
+    return true;
 }
 
 

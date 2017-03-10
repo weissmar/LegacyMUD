@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -161,6 +161,8 @@ class Player: public Combatant {
          *          inventory lexical data.
          */
         const parser::LexicalData & getLexicalData() const;
+
+        virtual int getSizeModifier() const;
 
         /*!
          * \brief   Adds the specified points to the experience points of 
