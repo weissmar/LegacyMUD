@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/08/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -169,7 +169,6 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
 
 
 bool GameLogic::newPlayerHandler(int fileDescriptor){
-    std::cout << "inside new player handler\n";
     bool success = false;
     bool validUsername = false;
     bool validPassword = false;
@@ -315,19 +314,14 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
                 // check if user is already logged in
                 aPlayer = manager->getPlayerByUsername(username);
                 if (aPlayer != nullptr){
-                    std::cout << "before loading player into game\n";
                     // load player into game
                     manager->loadPlayer(username, fileDescriptor);
-                    std::cout << "after loading player\n";
                     aPlayer = manager->getPlayerByFD(fileDescriptor);
                     aPlayer->activate(fileDescriptor);
-                    std::cout << "after activate\n";
 
                     // move player to current location
                     anArea = aPlayer->getLocation();
-                    std::cout << "after get location\n";
                     anArea->addCharacter(aPlayer);
-                    std::cout << "after addCharacter\n";
                     messagePlayer(aPlayer, anArea->getFullDescription(aPlayer));
                     message = "You see a player named " + aPlayer->getName() + " enter the area.";
                     messageAreaPlayers(aPlayer, message, anArea);
@@ -373,13 +367,9 @@ int GameLogic::validateStringNumber(std::string number, int min, int max){
 
 
 bool GameLogic::getValueFromUser(int FD, std::string outMessage, std::string &response){
-    std::cout << "inside getValueFromUser\n";
-    std::cout << "file descriptor = " + std::to_string(FD) + "\n";
-    std::cout << "message = " + outMessage + "\n";
     bool success;
 
     theServer->sendMsg(FD, outMessage);
-    std::cout << "after send message\n";
     success = theServer->receiveMsg(FD, response);
     if (!success){
         theServer->disconnectPlayer(FD);
@@ -467,10 +457,15 @@ bool GameLogic::updateCreatures(){
     std::vector<Creature*> allCreatures = manager->getCreatures();
     Area *location = nullptr;
     std::vector<Character*> characters;
-    std::vector<Character*> players;
+    std::vector<Player*> players;
     int spotCheck = 0;
     int hideCheck = 0;
+    int weaponChoice = -1;
     size_t index;
+    std::vector<Item*> weapons;
+    std::vector<EffectType> effects;
+    SpecialSkill *aSkill = nullptr;
+    std::string message = "";
 
     for (auto creature : allCreatures){
         // check cooldown
@@ -489,7 +484,7 @@ bool GameLogic::updateCreatures(){
                 characters = location->getCharacters();
                 for (auto character : characters){
                     if (character->getObjectType() == ObjectType::PLAYER){
-                        players.push_back(character);
+                        players.push_back(static_cast<Player*>(character));
                     }
                 }
 
@@ -499,15 +494,34 @@ bool GameLogic::updateCreatures(){
                         // if the player isn't already in combat
                         if (players[index]->getInCombat() == nullptr){
                             // creature rolls spot check and player rolls hide check
-                            spotCheck = rollDice(20, 1);
+                            spotCheck = rollDice(20, 1) + creature->getIntelligenceModifier();
+                            hideCheck = rollDice(20, 1) + players[index]->getDexterityModifier() + players[index]->getSizeModifier();
+
+                            if (spotCheck > hideCheck){
+                                // start combat
+                                startCombat(players[index], creature);
+                                inCombat = true;
+
+                                weapons = creature->getWeapons();
+                                if (weapons.size() != 0){
+                                    weaponChoice = rollDice(weapons.size() + 1, 1);
+                                    if (weaponChoice > weapons.size()){
+                                        // attack with special skill
+                                        aSkill = creature->getType()->getSpecialSkill();
+                                        message = aSkill->attack(players[index], nullptr, nullptr, creature, false, &effects);
+                                    } else {
+                                        // attack with specified weapon
+                                        message = weapons[weaponChoice - 1]->attack(players[index], nullptr, nullptr, creature, false, &effects);
+                                    }
+                                } else {
+                                    // attack with default attack
+                                    message = creature->attack(players[index], nullptr, nullptr, creature, false, &effects);
+                                }
+
+                                messagePlayer(players[index], message);
+                            } 
                         }
                     }
-
-                    // start combat
-
-                    // roll to see which attack is used
-
-                    // attack
                 } else {
                     // roll to see if leaves the area
 
@@ -3244,8 +3258,6 @@ CommandEnum GameLogic::getCommandEnumParameter(Player *aPlayer, std::string para
         choice = validateStringNumber(response, 1, 25);
     }
 
-std::cout << "choice = " << std::to_string(choice) << "\n";
-
     switch (choice){
         case 1:
             commandEnumParam = CommandEnum::LOOK;
@@ -3326,8 +3338,6 @@ std::cout << "choice = " << std::to_string(choice) << "\n";
             commandEnumParam = CommandEnum::INVALID;
             break;
     }
-
-std::cout << "commandEnumParam = " << commandEnumToString(commandEnumParam) << "\n";
 
     return commandEnumParam;
 }
@@ -3989,12 +3999,20 @@ void GameLogic::messageAreaPlayers(Player *aPlayer, std::string message, Area *a
 
 
 bool GameLogic::startCombat(Player* aPlayer, Creature *aCreature){
-    return false;
+    aPlayer->setInCombat(aCreature);
+    aCreature->setInCombat(aPlayer);
+    messagePlayer(aPlayer, "Entering combat...");
+
+    return true;
 }
 
 
 bool GameLogic::endCombat(Player *aPlayer, Creature *aCreature){
-    return false;
+    aPlayer->setInCombat(nullptr);
+    aCreature->setInCombat(nullptr);
+    messagePlayer(aPlayer, "Leaving combat...");
+
+    return true;
 }
 
 
@@ -5893,7 +5911,6 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::editModeCommand(Player *aPlayer){
-std::cout << "username = " << aPlayer->getUser() << "\n";
     if (accountManager->verifyAdmin(aPlayer->getUser())){
         if (aPlayer->isEditMode()){
             aPlayer->setEditMode(false);
@@ -5937,7 +5954,27 @@ bool GameLogic::warpCommand(Player *aPlayer, InteractiveNoun *param){
 
 
 bool GameLogic::copyCommand(Player *aPlayer, InteractiveNoun *directObj){
-    return false;
+    std::string message = "";
+    InteractiveNoun *newObject = nullptr;
+    bool success = false;
+
+    if ((aPlayer->isEditMode()) && (directObj != nullptr)){
+        newObject = directObj->copy();
+        if (newObject != nullptr){
+            manager->addObject(newObject, -1);
+            message = "The " + directObj->getName() + " was copied successfully.";
+            message += " The ID of the new object is [" + std::to_string(newObject->getID()) + "].";
+            success = true;
+        } else {
+            message = "The " + directObj->getName() + " could not be copied.";
+        }
+    } else {
+        message = "You must be in editmode to copy.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
 }
 
 

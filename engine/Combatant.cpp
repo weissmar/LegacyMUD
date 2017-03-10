@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.cpp
  *
@@ -11,11 +11,41 @@
 #include <cstdlib>
 #include "Combatant.hpp"
 #include "Area.hpp"
+#include "Item.hpp"
+#include "EquipmentSlot.hpp"
 
 namespace legacymud { namespace engine {
 
 const int BEGIN_MAX_HEALTH = 10;
 const int BEGIN_MAX_SPECIAL = 10;
+
+std::map<int, int> Combatant::skillModMap = {
+    {1, -5},
+    {2, -4},
+    {3, -4},
+    {4, -3},
+    {5, -3},
+    {6, -2},
+    {7, -2},
+    {8, -1},
+    {9, -1},
+    {10, 0},
+    {11, 0},
+    {12, 1},
+    {13, 1},
+    {14, 2},
+    {15, 2},
+    {16, 3},
+    {17, 3},
+    {18, 4},
+    {19, 4},
+    {20, 5},
+    {21, 5},
+    {22, 6},
+    {23, 6},
+    {24, 7},
+    {25, 7},
+};
 
 Combatant::Combatant()
 : Character()
@@ -154,22 +184,37 @@ Combatant* Combatant::getInCombat() const{
 
 
 int Combatant::getIntelligenceModifier() const{
+    int modifier = skillModMap.at(intelligence.load());
 
+    return modifier;
 }
 
 
 int Combatant::getStrengthModifier() const{
+    int modifier = skillModMap.at(strength.load());
 
+    return modifier;
 }
 
 
 int Combatant::getDexterityModifier() const{
+    int modifier = skillModMap.at(dexterity.load());
 
+    return modifier;
 }
 
 
-int Combatant::getSizeModifier() const{
-    
+std::vector<Item*> Combatant::getWeapons() const{
+    std::vector<std::pair<EquipmentSlot, Item*>> equipment = getEquipped();
+    std::vector<Item*> weapons;
+
+    for (auto item : equipment){
+        if (item.second->getType()->getObjectType() == ObjectType::WEAPON_TYPE){
+            weapons.push_back(item.second);
+        }
+    }
+
+    return weapons;
 }
 
 
