@@ -7,10 +7,10 @@
  
   \details This file contains the unit tests for the TextParser class.
 */
-#include "GlobalVerbs.hpp"
 
 #include <TextParser.hpp>
 #include <LexicalData.hpp>
+#include <GlobalVerbs.hpp>
 #include <Container.hpp>
 #include <SpecialSkill.hpp>
 #include <Item.hpp>
