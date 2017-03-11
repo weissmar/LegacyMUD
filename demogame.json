@@ -1,5 +1,5 @@
 {
-    "nextID": 26,
+    "nextID": 29,
     "startAreaId": 1,
     "AREA": [
         {
@@ -121,6 +121,21 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "AREA",
+            "name": "Outside of Briartown",
+            "short_description": "You are standing outside of Briartown.",
+            "long_description": "You are standing at the gates of a small township called Briartown.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 26,
+                "noun_aliases": [
+                    "area 26",
+                    "Outside of Briartown"
+                ],
+                "actions": []
+            }
         }
     ],
     "ARMOR_TYPE": [],
@@ -142,11 +157,43 @@
                     "exit 6",
                     "east",
                     "e",
-                    "entrance",
                     "town square",
                     "Briartown Town Square"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 6",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -163,12 +210,44 @@
                     "exit 7",
                     "west",
                     "w",
-                    "inn entrance",
                     "Briartown Inn",
                     "inn",
                     "the Briartown Inn"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 7",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -189,7 +268,40 @@
                     "Briartown Blacksmith",
                     "the Briartown Blacksmith"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 9",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "southwest",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "sw",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -205,10 +317,45 @@
                 "noun_aliases": [
                     "exit 10",
                     "a door leading to the town square",
+                    "door leading to town square",
+                    "town square",
                     "northeast",
                     "ne"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 10",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "ne",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "northeast",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -227,7 +374,40 @@
                     "se",
                     "the Briartown Armory"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 12",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "se",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "southeast",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -249,7 +429,40 @@
                     "door",
                     "door leading to town square"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 13",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "northwest",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "nw",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -269,7 +482,40 @@
                     "e",
                     "park"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 15",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -289,7 +535,40 @@
                     "w",
                     "town square"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 16",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -305,11 +584,46 @@
                 "noun_aliases": [
                     "exit 18",
                     "an alley leading behind the inn",
+                    "alley leading behind inn",
+                    "behind inn",
                     "northwest",
                     "nw",
                     "alley"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 18",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "northwest",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "nw",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -329,7 +643,40 @@
                     "se",
                     "town square"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 19",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "se",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "southeast",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -350,7 +697,40 @@
                     "town entrance",
                     "entrance"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 21",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -370,7 +750,40 @@
                     "the town square",
                     "town square"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 22",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -391,7 +804,40 @@
                     "guard tower",
                     "tower"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 24",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -412,7 +858,171 @@
                     "entrance",
                     "town entrance"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 25",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 20,
+            "connect_area_id": 26,
+            "is_conditional": false,
+            "description": "a gate that leads outside of town",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 27,
+                "noun_aliases": [
+                    "exit 27",
+                    "a gate that leads outside of town",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 27",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 26,
+            "connect_area_id": 20,
+            "is_conditional": false,
+            "description": "the entrance to Briartown",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 28,
+                "noun_aliases": [
+                    "exit 28",
+                    "the entrance to Briartown",
+                    "south",
+                    "s",
+                    "Briartown",
+                    "entrance",
+                    "entrance to briartown"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "briartown",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "entrance",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "entrance to briartown",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 28",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         }
     ],
