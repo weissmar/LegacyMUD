@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -16,6 +16,7 @@
 #include <ctime>
 #include <utility>
 #include <string>
+#include <map>
 #include <atomic>
 #include <mutex>
 #include "Character.hpp"
@@ -111,13 +112,11 @@ class Combatant: public Character {
          */
         Combatant* getInCombat() const;
 
-        int getIntelligenceModifier() const;
-
-        int getStrengthModifier() const;
-
-        int getDexterityModifier() const;
-
-        int getSizeModifier() const;
+        virtual int getIntelligenceModifier() const;
+        virtual int getStrengthModifier() const;
+        virtual int getDexterityModifier() const;
+        virtual int getSizeModifier() const { return 0; }
+        std::vector<Item*> getWeapons() const;
 
         /*!
          * \brief   Sets the cooldown in seconds for this combatant.
@@ -282,6 +281,7 @@ class Combatant: public Character {
         std::atomic<int> intelligence;
         Combatant* inCombat;
         mutable std::mutex inCombatMutex;
+        static std::map<int, int> skillModMap;
 };
 
 }}

@@ -51,7 +51,7 @@ InteractiveNoun::InteractiveNoun(const InteractiveNoun &otherNoun) : ID(nextID++
     std::unique_lock<std::mutex> aliasesLock(otherNoun.aliasesMutex, std::defer_lock);
     std::unique_lock<std::mutex> actionsLock(otherNoun.actionsMutex, std::defer_lock);
     std::lock(aliasesLock, actionsLock);
-    aliases = otherNoun.aliases;
+    //aliases = otherNoun.aliases;
     if (!otherNoun.actions.empty()){
         for (auto action : otherNoun.actions){
             actions.push_back(new Action(*action));
@@ -72,7 +72,7 @@ InteractiveNoun & InteractiveNoun::operator=(const InteractiveNoun &otherNoun){
         }
         actions.clear();
 
-        aliases = otherNoun.aliases;
+        //aliases = otherNoun.aliases;
         if (!otherNoun.actions.empty()){
             for (auto action : otherNoun.actions){
                 actions.push_back(new Action(*action));

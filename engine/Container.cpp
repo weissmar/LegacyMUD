@@ -48,11 +48,11 @@ Container::Container(int capacity, InteractiveNoun* location, ItemPosition posit
 { }
 
 
-/*Container::Container(const Container &otherContainer){ 
-
+Container::Container(const Container &otherContainer) : Item(otherContainer) { 
+    insideCapacity.store(otherContainer.getInsideCapacity());
 }
 
-
+/*
 Container & Container::operator=(const Container &otherContainer){
 
 }
@@ -628,7 +628,34 @@ std::string Container::search(Player *aPlayer, std::vector<EffectType> *effects)
 
 
 InteractiveNoun* Container::copy(){
-    return nullptr;
+    InteractiveNoun *location = nullptr;
+    Area *anArea = nullptr;
+    Character *aCharacter = nullptr;
+    Container *aContainer = nullptr;
+    Container *newContainer = new Container(*this);
+
+    location = newContainer->getLocation();
+    newContainer->setPosition(this->getPosition());
+
+    if (location->getObjectType() == ObjectType::AREA){
+        anArea = dynamic_cast<Area*>(location);
+        if (anArea != nullptr){
+            anArea->addItem(newContainer);
+        }
+    } else if (location->getObjectType() == ObjectType::CONTAINER){
+        aContainer = dynamic_cast<Container*>(location);
+        if (aContainer != nullptr){
+            aContainer->place(newContainer, newContainer->getPosition());
+        }
+    } else {
+        aCharacter = dynamic_cast<Character*>(location);
+        if (aCharacter != nullptr){
+            aCharacter->addToInventory(newContainer);
+            newContainer->setPosition(ItemPosition::INVENTORY);
+        }
+    }
+
+    return newContainer;
 }
 
 

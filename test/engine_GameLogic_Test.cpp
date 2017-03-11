@@ -2,7 +2,7 @@
   \file     engine_GameLogic_Test.cpp
   \author   David Rigert
   \created  02/27/2017
-  \modified 03/07/2017
+  \modified 03/09/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the unit tests for the GameLogic class.
@@ -24,6 +24,8 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 namespace {
 
 namespace engine = legacymud::engine;
@@ -44,13 +46,16 @@ public:
     }
 
     static void TearDownTestCase() {
+        // Clean up serialized data
+        remove("game.dat");
+        remove("game.dat.accounts");
     }
 
     virtual void SetUp() {
         logic = new engine::GameLogic();
         shim = new test::GameLogicShim(logic);
         server = new test::TestServer();
-        acct = new account::Account("");
+        acct = new account::Account("game.dat.accounts");
     }
 
     virtual void TearDown() {
@@ -69,7 +74,7 @@ public:
 
 // Verify startGame to start a new game
 TEST_F(GameLogicTest, StartNewGame) {
-    ASSERT_TRUE(logic->startGame(true, "", server, acct));
+    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
     EXPECT_EQ(acct, shim->getAccountSystem());
     EXPECT_EQ(server, shim->getTelnetServer());
     EXPECT_TRUE(shim->getGameObjectManager() != nullptr);
@@ -77,7 +82,7 @@ TEST_F(GameLogicTest, StartNewGame) {
 
 TEST_F(GameLogicTest, LoadAndHibernatePlayerTest) {
     // Start game and load minimum objects
-    ASSERT_TRUE(logic->startGame(true, "", server, acct));
+    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
     engine::Area *area = new engine::Area("Area", "Short description", "Long description", engine::AreaSize::SMALL);
     engine::SpecialSkill *skill = new engine::SpecialSkill("Fireball", 10, engine::DamageType::FIRE, 5, 10);
     engine::PlayerClass *playerClass = new engine::PlayerClass(1, "Mage", skill, 0, 0, engine::DamageType::FIRE, engine::DamageType::WATER, 0);
@@ -101,7 +106,7 @@ TEST_F(GameLogicTest, LoadAndHibernatePlayerTest) {
 
 TEST_F(GameLogicTest, GetPlayerMessageFromHandler) {
     // Start game and load minimum objects
-    ASSERT_TRUE(logic->startGame(true, "", server, acct));
+    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
     engine::Area *area = new engine::Area("Area", "Short description", "Long description", engine::AreaSize::SMALL);
     engine::SpecialSkill *skill = new engine::SpecialSkill("Fireball", 10, engine::DamageType::FIRE, 5, 10);
     engine::PlayerClass *playerClass = new engine::PlayerClass(1, "Mage", skill, 0, 0, engine::DamageType::FIRE, engine::DamageType::WATER, 0);
@@ -160,7 +165,7 @@ TEST_F(GameLogicTest, GetObjectType) {
 
 TEST_F(GameLogicTest, SendMessageToPlayer) {
     // Start game and load minimum objects
-    ASSERT_TRUE(logic->startGame(true, "", server, acct));
+    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
     engine::Area *area = new engine::Area("Area", "Short description", "Long description", engine::AreaSize::SMALL);
     engine::SpecialSkill *skill = new engine::SpecialSkill("Fireball", 10, engine::DamageType::FIRE, 5, 10);
     engine::PlayerClass *playerClass = new engine::PlayerClass(1, "Mage", skill, 0, 0, engine::DamageType::FIRE, engine::DamageType::WATER, 0);
@@ -182,7 +187,7 @@ TEST_F(GameLogicTest, SendMessageToPlayer) {
 
 TEST_F(GameLogicTest, GetValueFromUser) {
     // Start game and load minimum objects
-    ASSERT_TRUE(logic->startGame(true, "", server, acct));
+    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
     engine::Area *area = new engine::Area("Area", "Short description", "Long description", engine::AreaSize::SMALL);
     engine::SpecialSkill *skill = new engine::SpecialSkill("Fireball", 10, engine::DamageType::FIRE, 5, 10);
     engine::PlayerClass *playerClass = new engine::PlayerClass(1, "Mage", skill, 0, 0, engine::DamageType::FIRE, engine::DamageType::WATER, 0);
@@ -205,7 +210,7 @@ TEST_F(GameLogicTest, GetValueFromUser) {
 
 TEST_F(GameLogicTest, StartAndEndConversation) {
     // Start game and load minimum objects
-    ASSERT_TRUE(logic->startGame(true, "", server, acct));
+    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
     engine::Area *area = new engine::Area("Area", "Short description", "Long description", engine::AreaSize::SMALL);
     engine::SpecialSkill *skill = new engine::SpecialSkill("Fireball", 10, engine::DamageType::FIRE, 5, 10);
     engine::PlayerClass *playerClass = new engine::PlayerClass(1, "Mage", skill, 0, 0, engine::DamageType::FIRE, engine::DamageType::WATER, 0);
@@ -231,7 +236,7 @@ TEST_F(GameLogicTest, StartAndEndConversation) {
 
 TEST_F(GameLogicTest, ExecuteCommand) {
     // Start game and load minimum objects
-    ASSERT_TRUE(logic->startGame(true, "", server, acct));
+    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
     engine::Area *area = new engine::Area("Area", "Short description", "Long description", engine::AreaSize::SMALL);
     engine::SpecialSkill *skill = new engine::SpecialSkill("Fireball", 10, engine::DamageType::FIRE, 5, 10);
     engine::PlayerClass *playerClass = new engine::PlayerClass(1, "Mage", skill, 0, 0, engine::DamageType::FIRE, engine::DamageType::WATER, 0);

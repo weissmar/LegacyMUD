@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.cpp
  *
@@ -565,7 +565,12 @@ std::string NonCombatant::talk(Player *aPlayer, NonCombatant *aNPC, std::vector<
 
 
 InteractiveNoun* NonCombatant::copy(){
-    return nullptr;
+    Area *location = getLocation();
+    NonCombatant *aNonCombatant = new NonCombatant(*this);
+
+    location->addCharacter(aNonCombatant);
+
+    return aNonCombatant;
 }
 
 

@@ -17,6 +17,7 @@
 #include <ItemType.hpp>
 #include <Container.hpp>
 #include <Area.hpp>
+#include <SpecialSkill.hpp>
 
 #include <gtest/gtest.h>
 
@@ -70,11 +71,14 @@ TEST(PlayerTest, SetSizeTest) {
 
 // Verify that the PlayerClass is correctly set
 TEST(PlayerTest, SetPlayerClassTest) {
-    engine::Player player;
-    engine::PlayerClass playerClass;
-    EXPECT_EQ(nullptr, player.getPlayerClass());
-    EXPECT_TRUE(player.setPlayerClass(&playerClass));
-    EXPECT_EQ(&playerClass, player.getPlayerClass());
+    engine::Area area;
+    engine::SpecialSkill skill;
+    engine::PlayerClass playerClass1(1, "name", &skill, 1, 1, engine::DamageType::FIRE, engine::DamageType::WATER, 1.1);
+    engine::PlayerClass playerClass2(1, "name", &skill, 1, 1, engine::DamageType::FIRE, engine::DamageType::WATER, 1.1);
+    engine::Player player(engine::CharacterSize::TINY, &playerClass1, "username", 0, "name", "description", &area);
+    EXPECT_EQ(&playerClass1, player.getPlayerClass());
+    EXPECT_TRUE(player.setPlayerClass(&playerClass2));
+    EXPECT_EQ(&playerClass2, player.getPlayerClass());
 }
 
 // Verify that the active state is correctly set

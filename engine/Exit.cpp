@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -41,8 +41,11 @@ Exit::Exit(ExitDirection direction, Area *location, Area *connectArea, bool isCo
 , location(location)
 , connectArea(connectArea)
 {
+    std::map<std::string, parser::PrepositionType> prepositions;
     std::string idAlias = "exit " + std::to_string(getID());
     InteractiveNoun::addNounAlias(idAlias);
+    addAction(CommandEnum::GO, true, "", EffectType::NONE);
+    InteractiveNoun::addVerbAlias(CommandEnum::GO, idAlias, parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
     InteractiveNoun::addNounAlias(description);
     if (altDescription != ""){
         InteractiveNoun::addNounAlias(altDescription);
@@ -74,92 +77,134 @@ Exit::~Exit(){
 }*/
 
 void Exit::addInitialDirectionalAliases(ExitDirection direction){
+    std::map<std::string, parser::PrepositionType> prepositions;
     switch (direction){
         case ExitDirection::NORTH:
             InteractiveNoun::addNounAlias("north");
             InteractiveNoun::addNounAlias("n");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "north", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "n", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::SOUTH:
             InteractiveNoun::addNounAlias("south");
             InteractiveNoun::addNounAlias("s");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "south", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "s", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::EAST:
             InteractiveNoun::addNounAlias("east");
             InteractiveNoun::addNounAlias("e");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "east", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "e", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::WEST:
             InteractiveNoun::addNounAlias("west");
             InteractiveNoun::addNounAlias("w");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "west", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "w", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::NORTHEAST:
             InteractiveNoun::addNounAlias("northeast");
             InteractiveNoun::addNounAlias("ne");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "northeast", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "ne", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::NORTHWEST:
             InteractiveNoun::addNounAlias("northwest");
             InteractiveNoun::addNounAlias("nw");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "northwest", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "nw", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::SOUTHEAST:
             InteractiveNoun::addNounAlias("southeast");
             InteractiveNoun::addNounAlias("se");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "southeast", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "se", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::SOUTHWEST:
             InteractiveNoun::addNounAlias("southwest");
             InteractiveNoun::addNounAlias("sw");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "southwest", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "sw", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::UP:
             InteractiveNoun::addNounAlias("up");
             InteractiveNoun::addNounAlias("u");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "up", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "u", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::DOWN:
             InteractiveNoun::addNounAlias("down");
             InteractiveNoun::addNounAlias("d");
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "down", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
+            InteractiveNoun::addVerbAlias(CommandEnum::GO, "d", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
     }
 }
 
 
 void Exit::addDirectionalAliases(ExitDirection direction){
+    std::map<std::string, parser::PrepositionType> prepositions;
     switch (direction){
         case ExitDirection::NORTH:
             addNounAlias("north");
+            addVerbAlias(CommandEnum::GO, "north", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("n");
+            addVerbAlias(CommandEnum::GO, "n", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::SOUTH:
             addNounAlias("south");
+            addVerbAlias(CommandEnum::GO, "south", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("s");
+            addVerbAlias(CommandEnum::GO, "s", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::EAST:
             addNounAlias("east");
+            addVerbAlias(CommandEnum::GO, "east", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("e");
+            addVerbAlias(CommandEnum::GO, "e", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::WEST:
             addNounAlias("west");
+            addVerbAlias(CommandEnum::GO, "west", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("w");
+            addVerbAlias(CommandEnum::GO, "w", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::NORTHEAST:
             addNounAlias("northeast");
+            addVerbAlias(CommandEnum::GO, "northeast", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("ne");
+            addVerbAlias(CommandEnum::GO, "ne", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::NORTHWEST:
             addNounAlias("northwest");
+            addVerbAlias(CommandEnum::GO, "northwest", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("nw");
+            addVerbAlias(CommandEnum::GO, "nw", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::SOUTHEAST:
             addNounAlias("southeast");
+            addVerbAlias(CommandEnum::GO, "southeast", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("se");
+            addVerbAlias(CommandEnum::GO, "se", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::SOUTHWEST:
             addNounAlias("southwest");
+            addVerbAlias(CommandEnum::GO, "southwest", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("sw");
+            addVerbAlias(CommandEnum::GO, "sw", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::UP:
             addNounAlias("up");
+            addVerbAlias(CommandEnum::GO, "up", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("u");
+            addVerbAlias(CommandEnum::GO, "u", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
         case ExitDirection::DOWN:
             addNounAlias("down");
+            addVerbAlias(CommandEnum::GO, "down", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             addNounAlias("d");
+            addVerbAlias(CommandEnum::GO, "d", parser::Grammar::Support::YES, parser::Grammar::Support::NO, prepositions);
             break;
     }
 }
@@ -169,43 +214,63 @@ void Exit::removeDirectionalAliases(ExitDirection direction){
     switch (direction){
         case ExitDirection::NORTH:
             removeNounAlias("north");
+            removeVerbAlias(CommandEnum::GO, "north");
             removeNounAlias("n");
+            removeVerbAlias(CommandEnum::GO, "n");
             break;
         case ExitDirection::SOUTH:
             removeNounAlias("south");
+            removeVerbAlias(CommandEnum::GO, "south");
             removeNounAlias("s");
+            removeVerbAlias(CommandEnum::GO, "s");
             break;
         case ExitDirection::EAST:
             removeNounAlias("east");
+            removeVerbAlias(CommandEnum::GO, "east");
             removeNounAlias("e");
+            removeVerbAlias(CommandEnum::GO, "e");
             break;
         case ExitDirection::WEST:
             removeNounAlias("west");
+            removeVerbAlias(CommandEnum::GO, "west");
             removeNounAlias("w");
+            removeVerbAlias(CommandEnum::GO, "w");
             break;
         case ExitDirection::NORTHEAST:
             removeNounAlias("northeast");
+            removeVerbAlias(CommandEnum::GO, "northeast");
             removeNounAlias("ne");
+            removeVerbAlias(CommandEnum::GO, "ne");
             break;
         case ExitDirection::NORTHWEST:
             removeNounAlias("northwest");
+            removeVerbAlias(CommandEnum::GO, "northwest");
             removeNounAlias("nw");
+            removeVerbAlias(CommandEnum::GO, "nw");
             break;
         case ExitDirection::SOUTHEAST:
             removeNounAlias("southeast");
+            removeVerbAlias(CommandEnum::GO, "southeast");
             removeNounAlias("se");
+            removeVerbAlias(CommandEnum::GO, "se");
             break;
         case ExitDirection::SOUTHWEST:
             removeNounAlias("southwest");
+            removeVerbAlias(CommandEnum::GO, "southwest");
             removeNounAlias("sw");
+            removeVerbAlias(CommandEnum::GO, "sw");
             break;
         case ExitDirection::UP:
             removeNounAlias("up");
+            removeVerbAlias(CommandEnum::GO, "up");
             removeNounAlias("u");
+            removeVerbAlias(CommandEnum::GO, "u");
             break;
         case ExitDirection::DOWN:
             removeNounAlias("down");
+            removeVerbAlias(CommandEnum::GO, "down");
             removeNounAlias("d");
+            removeVerbAlias(CommandEnum::GO, "d");
             break;
     }
 }

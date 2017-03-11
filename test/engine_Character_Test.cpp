@@ -2,7 +2,7 @@
   \file     engine_Character_Test.cpp
   \author   David Rigert
   \created  02/24/2017
-  \modified 02/24/2017
+  \modified 03/09/2017
   \course   CS467, Winter 2017
  
   \details  This file contains the unit tests for the Character class.
@@ -148,36 +148,6 @@ TEST(CharacterTest, EquipInventoryItemTest) {
     EXPECT_STREQ("true", npc.equipItem(&item).c_str());
     ASSERT_EQ(1, npc.getEquipped().size());
     EXPECT_EQ(engine::EquipmentSlot::HEAD, npc.getEquipped()[0].first);
-}
-
-// Verify equipping and unequipping a wearable item on the ground
-TEST(CharacterTest, EquipGroundItemTest) {
-    engine::Area area;
-    engine::NonCombatant npc(nullptr, "name", "description", 10, &area, 100);
-    engine::ArmorType itemType(1, engine::DamageType::NONE, 1, engine::ItemRarity::COMMON, "a helmet", "helmet", 1, engine::EquipmentSlot::HEAD);
-    engine::Item item(&area, engine::ItemPosition::GROUND, "foo", &itemType);
-    EXPECT_EQ(0, npc.getInventory().size());
-    EXPECT_EQ(0, npc.getItemsInventory().size());
-    EXPECT_EQ(0, npc.getEquipped().size());
-    EXPECT_STREQ("true", npc.equipItem(&item).c_str());
-    ASSERT_EQ(1, npc.getEquipped().size());
-    ASSERT_EQ(1, npc.getInventory().size());
-    ASSERT_EQ(1, npc.getItemsInventory().size());
-    EXPECT_EQ(&item, npc.getItemsInventory()[0]);
-    EXPECT_EQ(engine::EquipmentSlot::HEAD, npc.getEquipped()[0].first);
-}
-
-// Verify equipping and unequipping a wearable item
-TEST(CharacterTest, UnequipItemTest) {
-    engine::Area area;
-    engine::NonCombatant npc(nullptr, "name", "description", 10, &area, 100);
-    engine::ArmorType itemType(1, engine::DamageType::NONE, 1, engine::ItemRarity::COMMON, "a helmet", "helmet", 1, engine::EquipmentSlot::HEAD);
-    engine::Item item(&area, engine::ItemPosition::GROUND, "foo", &itemType);
-    EXPECT_EQ(0, npc.getEquipped().size());
-    EXPECT_STREQ("true", npc.equipItem(&item).c_str());
-    ASSERT_EQ(1, npc.getEquipped().size());
-    EXPECT_TRUE(npc.unequipItem(&item));
-    EXPECT_EQ(0, npc.getEquipped().size());
 }
 
 }

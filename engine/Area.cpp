@@ -73,6 +73,7 @@ Area::Area(const Area &otherArea) : InteractiveNoun(otherArea) {
     otherArea.longDescMutex.lock();
     longDescription = otherArea.longDescription;
     otherArea.longDescMutex.unlock();
+    size.store(otherArea.getSize());
     std::string idAlias = "area " + std::to_string(getID());
     addNounAlias(idAlias);
     addNounAlias(name);
@@ -93,6 +94,7 @@ Area & Area::operator=(const Area &otherArea){
     otherArea.longDescMutex.lock();
     longDescription = otherArea.longDescription;
     otherArea.longDescMutex.unlock();
+    size.store(otherArea.getSize());
     std::string idAlias = "area " + std::to_string(getID());
     addNounAlias(idAlias);
     addNounAlias(name);

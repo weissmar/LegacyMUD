@@ -40,7 +40,7 @@ namespace {
    
 // create a GameObjectManager and DataManager 
 legacymud::gamedata::DataManager* dm = new legacymud::gamedata::DataManager();
-
+int startAreaId;
 
 /////////////////////////////////////////////////////////////////////////////////
 // Area - Unit test - serialize and deserialize
@@ -57,7 +57,7 @@ TEST(DataManagementTest, SerializeDeserializeArea) {
     
     // Serialize and Test
     std::string serializedJsonStr = area->serialize();   
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"AREA\",\"name\":\"name of area\",\"short_description\":\"short description of area\",\"long_description\":\"longer description\",\"area_size\":\"MEDIUM\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"area 1\",\"name of area\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"AREA\",\"name\":\"name of area\",\"short_description\":\"short description of area\",\"long_description\":\"longer description\",\"area_size\":\"MEDIUM\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Area needs for deserialize.  
@@ -95,7 +95,7 @@ TEST(DataManagementTest, SerializeDeserializeArmorType) {
    
     // Serialize and Test 
     std::string serializedJsonStr = armorType->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"ARMOR_TYPE\",\"armor_bonus\":4,\"resistant_to\":\"FIRE\",\"name\":\"a name\",\"weight\":50,\"rarity\":\"COMMON\",\"description\":\"a description\",\"cost\":2500,\"slot_type\":\"TORSO\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}}";    
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"ARMOR_TYPE\",\"armor_bonus\":4,\"resistant_to\":\"FIRE\",\"name\":\"a name\",\"weight\":50,\"rarity\":\"COMMON\",\"description\":\"a description\",\"cost\":2500,\"slot_type\":\"TORSO\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
 
     // Add objects to the GameObjectManager that armorType needs for deserialize. 
@@ -139,7 +139,7 @@ TEST(DataManagementTest, SerializeDeserializeContainer) {
                                                               
     // Serialize and Test
     std::string serializedJsonStr = container->serialize();      
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"CONTAINER\",\"capacity\":100,\"name\":\"name of container\",\"location\":1,\"position\":\"GROUND\",\"item_type_id\":2,\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"item 3\",\"name of container\"],\"actions\":[]}}}";   
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"CONTAINER\",\"capacity\":100,\"name\":\"name of container\",\"location\":1,\"position\":\"GROUND\",\"item_type_id\":2,\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[],\"actions\":[]}}}";   
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Container needs for deserialize. 
@@ -195,7 +195,7 @@ TEST(DataManagementTest, SerializeDeserializeCreature) {
     
     // Serialize and Test
     std::string serializedJsonStr = creature->serialize();   
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE\",\"creature_type_id\":2,\"ambulatory\":true,\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":50,\"dexterity\":70,\"strength\":80,\"intelligence\":90,\"name\":\"a name\",\"description\":\"a description\",\"money\":1500,\"location_area_id\":4,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE\",\"creature_type_id\":2,\"ambulatory\":true,\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":50,\"dexterity\":70,\"strength\":80,\"intelligence\":90,\"name\":\"a name\",\"description\":\"a description\",\"money\":1500,\"location_area_id\":4,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
@@ -242,7 +242,7 @@ TEST(DataManagementTest, SerializeDeserializeCreatureType) {
     
     // Serialize and Test
     std::string serializedJsonStr = creatureType->serialize();    
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE_TYPE\",\"size\":\"MEDIUM\",\"difficulty\":\"NORMAL\",\"name\":\"a name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"WATER\",\"weak_to\":\"FIRE\",\"heal_points\":10.300000190734864,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"combatant type 2\",\"a name\"],\"actions\":[]}}}"; 
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"CREATURE_TYPE\",\"size\":\"MEDIUM\",\"difficulty\":\"NORMAL\",\"name\":\"a name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"WATER\",\"weak_to\":\"FIRE\",\"heal_points\":10.300000190734864,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
@@ -263,7 +263,7 @@ TEST(DataManagementTest, SerializeDeserializeCreatureType) {
 /////////////////////////////////////////////////////////////////////////////////
 // Exit with conditional- Unit test - serialize and deserialize 
 /////////////////////////////////////////////////////////////////////////////////
-TEST(DataManagementTest, SerializeDeserializeExitConditionl) {
+TEST(DataManagementTest, SerializeDeserializeExitConditional) {
     legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager();
     
     // Initialize staticID    
@@ -288,7 +288,7 @@ TEST(DataManagementTest, SerializeDeserializeExitConditionl) {
                                                                             
     // Serialize and Test
     std::string serializedJsonStr = exit->serialize();       
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":true,\"condition_itemtype_id\":3,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"exit 4\",\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":true,\"condition_itemtype_id\":3,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
@@ -331,7 +331,7 @@ TEST(DataManagementTest, SerializeDeserializeExitNoConditional) {
                                                                             
     // Serialize and Test
     std::string serializedJsonStr = exit->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":false,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"exit 3\",\"some description\",\"an alt decription\",\"west\",\"w\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"EXIT\",\"exit_direction\":\"WEST\",\"location_id\":1,\"connect_area_id\":2,\"is_conditional\":false,\"description\":\"some description\",\"altdescription\":\"an alt decription\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
@@ -376,7 +376,7 @@ TEST(DataManagementTest, SerializeDeserializeFeatureConditional) {
                                                                 
     // Serialize and Test
     std::string serializedJsonStr = feature->serialize(); 
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":true,\"condition_itemtype_id\":2,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[\"feature 3\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":true,\"condition_itemtype_id\":2,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":3,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
@@ -416,7 +416,7 @@ TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
                                                                 
     // Serialize and Test
     std::string serializedJsonStr = feature->serialize();    
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":false,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"feature 2\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"FEATURE\",\"name\":\"a name\",\"placement\":\"a placement description\",\"location_id\":1,\"is_conditional\":false,\"description\":\"a description\",\"altdescription\":\"an alt description\",\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Exit needs for deserialize. 
@@ -462,7 +462,7 @@ TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
                                                                    
     // Serialize and Test
     std::string serializedJsonStr = item->serialize();         
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM\",\"name\":\"name of item\",\"location\":2,\"position\":\"INVENTORY\",\"item_type_id\":3,\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"item 4\",\"name of item\"],\"actions\":[]}}}";    
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM\",\"name\":\"name of item\",\"location\":2,\"position\":\"INVENTORY\",\"item_type_id\":3,\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Item needs for deserialize. 
@@ -498,7 +498,7 @@ TEST(DataManagementTest, SerializeDeserializeFeatureNoConditional) {
                                                                                                                                      
     // Serialize and Test
     std::string serializedJsonStr = itemType->serialize();    
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM_TYPE\",\"weight\":25,\"rarity\":\"COMMON\",\"description\":\"a description\",\"name\":\"a name\",\"cost\":2545,\"slot_type\":\"BELT\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"ITEM_TYPE\",\"weight\":25,\"rarity\":\"COMMON\",\"description\":\"a description\",\"name\":\"a name\",\"cost\":2545,\"slot_type\":\"BELT\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Item needs for deserialize. 
@@ -549,7 +549,7 @@ TEST(DataManagementTest, SerializeDeserializeNonCombatantWithQuest) {
     
     // Serialize and Test
     std::string serializedJsonStr = nonCombatant->serialize(); 
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":4,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":4,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
@@ -590,7 +590,7 @@ TEST(DataManagementTest, SerializeDeserializeNonCombatantWithOutQuest) {
     
     // Serialize and Test
     std::string serializedJsonStr = nonCombatant->serialize();  
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":-1,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"NON_COMBATANT\",\"quest_id\":-1,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":1,\"max_inventory_weight\":100,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that creature needs for deserialize. 
@@ -645,7 +645,7 @@ TEST(DataManagementTest, SerializePlayer) {
 
     // Serialize and Test
     std::string serializedJsonStr = player->serialize();         
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Clean-up. 
@@ -725,7 +725,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
 
    // Serialize and Test
     std::string serializedJsonStr = playerClass->serialize();            
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER_CLASS\",\"primary_stat\":45,\"name\":\"playerClass1 name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"FIRE\",\"weak_to\":\"WATER\",\"heal_points\":35.5,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[\"combatant type 2\",\"playerClass1 name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER_CLASS\",\"primary_stat\":45,\"name\":\"playerClass1 name\",\"special_skill_id\":1,\"attack_bonus\":10,\"armor_bonus\":20,\"resistant_to\":\"FIRE\",\"weak_to\":\"WATER\",\"heal_points\":35.5,\"interactive_noun_data\":{\"id\":2,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
    
     // Add objects to the GameObjectManager that player needs for deserialize. 
@@ -797,7 +797,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Serialize and Test
     std::string serializedJsonStr = quest->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":3,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"quest 4\",\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":3,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Quest needs for deserialize. 
@@ -874,7 +874,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Serialize and Test
     std::string serializedJsonStr = quest->serialize();    
-    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":-1,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[\"quest 4\",\"name of quest\"],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}}";
+    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST\",\"name\":\"name of quest\",\"description\":\"description of quest\",\"reward_money\":1000,\"reward_item_id\":-1,\"quest_steps\":[{\"step_count\":1,\"quest_step_id\":7},{\"step_count\":2,\"quest_step_id\":8}],\"interactive_noun_data\":{\"id\":4,\"noun_aliases\":[],\"actions\":[{\"command\":\"LOOK\",\"valid\":true,\"flavor_text\":\"some flavor text\",\"effect\":\"DROP_ALL_ITEMS\",\"aliases\":[{\"verb_alias\":\"vas far\",\"grammar\":{\"direct_object\":\"YES\",\"indirect_object\":\"NO\",\"preposition_map\":[{\"preposition\":\"above\",\"preposition_type\":\"ON\"}]}}]}]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Quest needs for deserialize. 
@@ -927,7 +927,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Serialize and Test
     std::string serializedJsonStr = step->serialize();   
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":4,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":4,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Quest needs for deserialize. 
@@ -975,7 +975,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Serialize and Test
     std::string serializedJsonStr = step->serialize();   
-    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":-1,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}}";
+    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":2,\"giver_id\":3,\"receiver_id\":-1,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Quest needs for deserialize. 
@@ -1019,7 +1019,7 @@ TEST(DataManagementTest, SerializeDeserializePlayerClass) {
     
     // Serialize and Test
     std::string serializedJsonStr = step->serialize();   
-    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":-1,\"giver_id\":-1,\"receiver_id\":3,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"quest step 5\",\"step 1\"],\"actions\":[]}}}";
+    std::string expectedJsonStr =  "{\"object\":{\"class\":\"QUEST_STEP\",\"ordinal_number\":1,\"description\":\"start\",\"fetch_item_type_id\":-1,\"giver_id\":-1,\"receiver_id\":3,\"completion_text\":\"go to step 2\",\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Add objects to the GameObjectManager that Quest needs for deserialize. 
@@ -1054,7 +1054,7 @@ TEST(DataManagementTest, SerializeDeserializeSpecialSkill) {
 
    // Serialize and Test
     std::string serializedJsonStr = skill->serialize();             
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"SPECIAL_SKILL\",\"name\":\"special skill name\",\"damage\":20,\"damage_type\":\"PIERCING\",\"cost\":10,\"cooldown\":2,\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"skill 1\",\"special skill name\"],\"actions\":[]}}}";   
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"SPECIAL_SKILL\",\"name\":\"special skill name\",\"damage\":20,\"damage_type\":\"PIERCING\",\"cost\":10,\"cooldown\":2,\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
    
     // Add objects to the GameObjectManager that player needs for deserialize. 
@@ -1090,7 +1090,7 @@ TEST(DataManagementTest, SerializeDeserializeWeaponType) {
                                                                                      
     // Serialize and Test
     std::string serializedJsonStr = weaponType->serialize();
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"WEAPON_TYPE\",\"damage\":25,\"damage_type\":\"CRUSHING\",\"range\":\"SMALL\",\"crit_multiplier\":2,\"name\":\"a name\",\"weight\":15,\"rarity\":\"LEGENDARY\",\"description\":\"a description\",\"cost\":1500,\"slot_type\":\"HANDS\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[\"item type 1\",\"a name\"],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"WEAPON_TYPE\",\"damage\":25,\"damage_type\":\"CRUSHING\",\"range\":\"SMALL\",\"crit_multiplier\":2,\"name\":\"a name\",\"weight\":15,\"rarity\":\"LEGENDARY\",\"description\":\"a description\",\"cost\":1500,\"slot_type\":\"HANDS\",\"interactive_noun_data\":{\"id\":1,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
 
     // Add objects to the GameObjectManager that weaponType needs for deserialize. 
@@ -1284,7 +1284,8 @@ TEST(DataManagementTest, SaveAllData) {
     EXPECT_TRUE(gom->addObject(armorType1,-1) );
     
     // save the game
-    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );   
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom, area1->getID()) );
+    startAreaId = area1->getID();
 
     delete gom;   
 }
@@ -1295,8 +1296,8 @@ TEST(DataManagementTest, LoadAllData) {
     legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
 
     // load the game followed by saving the game to a different file
-    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
-    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom, startAreaId) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom, startAreaId) );
 
     // load the two files and check for equality
     std::ifstream inFile1("gamedata1.txt");    
@@ -1361,7 +1362,7 @@ TEST(DataManagementTest, SaveDefaultDataFile) {
     EXPECT_TRUE(gom->addObject(playerClass,-1) );
     
     // save the game
-    EXPECT_TRUE(dm->saveGame("default_game_data.txt", gom) );   
+    EXPECT_TRUE(dm->saveGame("default_game_data.txt", gom, area->getID()) );   
 
     delete gom;   
 }
@@ -1374,7 +1375,7 @@ TEST(DataManagementTest, LoadDefaultDataFile) {
     legacymud::engine::GameObjectManager* gom = new legacymud::engine::GameObjectManager(); 
     
     // load the game
-    EXPECT_TRUE(dm->loadGame("default_game_data.txt", gom) );   
+    EXPECT_TRUE(dm->loadGame("default_game_data.txt", gom, startAreaId) );   
 
     delete gom;   
 }
@@ -1404,7 +1405,7 @@ TEST(DataManagementTest, SaveGameWithOneContainer) {
     EXPECT_TRUE(gom->addObject(container,-1) );   
     
     // save and load the game
-    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );     
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom, area->getID()) );     
 
     delete gom;   
 }
@@ -1417,8 +1418,8 @@ TEST(DataManagementTest, LoadGameWithContainerInContainer) {
     legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
 
     // load the game followed by saving the game to a different file
-    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
-    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom, startAreaId) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom, startAreaId) );
 
     // load the two files and check for equality
     std::ifstream inFile1("gamedata1.txt");    
@@ -1478,7 +1479,7 @@ TEST(DataManagementTest, SaveGameWithContainerInContainer) {
     EXPECT_TRUE(gom->addObject(container1,-1) );
     
     // save and load the game
-    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom) );     
+    EXPECT_TRUE(dm->saveGame("gamedata1.txt", gom, area->getID()) );     
 
     delete gom;   
 }
@@ -1491,8 +1492,8 @@ TEST(DataManagementTest, LoadGameWithOneContainer) {
     legacymud::engine::GameObjectManager* newGom = new legacymud::engine::GameObjectManager();   
 
     // load the game followed by saving the game to a different file
-    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom) );
-    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom) );
+    EXPECT_TRUE(dm->loadGame("gamedata1.txt", newGom, startAreaId) );
+    EXPECT_TRUE(dm->saveGame("gamedata2.txt", newGom, startAreaId) );
 
     // load the two files and check for equality
     std::ifstream inFile1("gamedata1.txt");    

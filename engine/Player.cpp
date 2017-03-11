@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -192,6 +192,32 @@ std::pair<int, bool> Player::getQuestCurrStep(Quest *aQuest) const{
 const parser::LexicalData& Player::getLexicalData() const{
     std::lock_guard<std::mutex> lexicalLock(lexicalMutex);
     return inventoryLexicalData;
+}
+
+
+int Player::getSizeModifier() const{
+    int modifier = 0;
+    CharacterSize aSize = getSize();
+
+    switch (aSize){
+        case CharacterSize::TINY:
+            modifier = 2;
+            break;
+        case CharacterSize::SMALL:
+            modifier = 1;
+            break;
+        case CharacterSize::MEDIUM:
+            modifier = 0;
+            break;
+        case CharacterSize::LARGE:
+            modifier = -1;
+            break;
+        case CharacterSize::HUGE:
+            modifier = -2;
+            break;
+    }
+
+    return modifier;
 }
 
 
