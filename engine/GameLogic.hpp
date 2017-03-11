@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -315,6 +315,8 @@ class GameLogic {
         Item* getItemParameter(Player *aPlayer, std::string paramName, bool canBeNull = false);
 
         NonCombatant* getNonCombatantParameter(Player *aPlayer, std::string paramName, Quest *aQuest = nullptr);
+
+        void creatureAttack(Creature *aCreature, Player *aPlayer);
 
         /*!
          * \brief   Gets the object type based on the input string.

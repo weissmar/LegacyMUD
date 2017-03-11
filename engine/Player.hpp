@@ -29,6 +29,7 @@
 #include "ObjectType.hpp"
 #include "EffectType.hpp"
 #include "GameObjectManager.hpp" 
+#include "ItemPosition.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -46,6 +47,8 @@ struct Command {
     CommandEnum commandE;
     InteractiveNoun *firstParam;
     InteractiveNoun *secondParam;
+    std::string stringParam;
+    ItemPosition aPosition;
 };
 
 /*!
@@ -247,7 +250,7 @@ class Player: public Combatant {
          *
          * \return  Returns a Command* with the command or nullptr if the queue is empty.
          */
-        Command* getNextCommand();
+        Command getNextCommand();
 
         /*!
          * \brief   Adds a command to the player's combat queue.
@@ -257,7 +260,7 @@ class Player: public Combatant {
          * \return  Returns a bool indicating whether or not the command was successfully 
          *          added.
          */
-        bool addCommand(Command *aCommand);
+        bool addCommand(Command aCommand);
 
         /*!
          * \brief   Sets whether or not the player is in edit mode.
@@ -683,7 +686,7 @@ class Player: public Combatant {
         mutable std::mutex usernameMutex;
         std::atomic<bool> active;
         std::atomic<int> fileDescriptor;
-        std::queue<Command*> combatQueue;
+        std::queue<Command> combatQueue;
         mutable std::mutex combatQueueMutex;
         std::atomic<bool> editMode;
         std::map<Quest*, std::pair<int, bool>> questList;

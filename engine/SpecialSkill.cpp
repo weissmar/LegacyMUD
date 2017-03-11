@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/09/2017
+ * \modified    03/10/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -12,6 +12,7 @@
 #include "SpecialSkill.hpp"
 #include "EffectType.hpp"
 #include "CommandEnum.hpp"
+#include "Player.hpp"
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
@@ -292,6 +293,8 @@ std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, Intera
                 if (anEffect != EffectType::NONE){
                     effects->push_back(anEffect);
                 }
+
+                aPlayer->setCooldown(getCooldown());
             }
         } else {
             message = "You can't use the " + getName() + " skill on " + character->getName() + ".";

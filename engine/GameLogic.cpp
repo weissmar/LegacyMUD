@@ -452,27 +452,29 @@ bool GameLogic::receivedMessageHandler(std::string message, int fileDescriptor){
 
 // check cooldown, move creatures, attack players (randomly), update health and special points
 bool GameLogic::updateCreatures(){
-    bool ready = false;
     bool inCombat = false;
+    Player *aPlayer = nullptr;
     std::vector<Creature*> allCreatures = manager->getCreatures();
     Area *location = nullptr;
+    Area *playerLocation = nullptr;
     std::vector<Character*> characters;
     std::vector<Player*> players;
+    std::vector<Exit*> exits;
     int spotCheck = 0;
     int hideCheck = 0;
-    int weaponChoice = -1;
     size_t index;
-    std::vector<Item*> weapons;
+    size_t exitChoice = 0;
     std::vector<EffectType> effects;
-    SpecialSkill *aSkill = nullptr;
     std::string message = "";
+    Exit *anExit = nullptr;
+    int cooldown = 0;
 
     for (auto creature : allCreatures){
         // check cooldown
-        ready = creature->cooldownIsZero();
-        if (ready){
+        if (creature->cooldownIsZero()){
             // check to see if already in combat
-            if (creature->getInCombat() != nullptr){
+            aPlayer = dynamic_cast<Player*>(creature->getInCombat());
+            if (aPlayer != nullptr){
                 inCombat = true;
             } else {
                 inCombat = false;
@@ -502,49 +504,131 @@ bool GameLogic::updateCreatures(){
                                 startCombat(players[index], creature);
                                 inCombat = true;
 
-                                weapons = creature->getWeapons();
-                                if (weapons.size() != 0){
-                                    weaponChoice = rollDice(weapons.size() + 1, 1);
-                                    if (weaponChoice > weapons.size()){
-                                        // attack with special skill
-                                        aSkill = creature->getType()->getSpecialSkill();
-                                        message = aSkill->attack(players[index], nullptr, nullptr, creature, false, &effects);
-                                    } else {
-                                        // attack with specified weapon
-                                        message = weapons[weaponChoice - 1]->attack(players[index], nullptr, nullptr, creature, false, &effects);
-                                    }
-                                } else {
-                                    // attack with default attack
-                                    message = creature->attack(players[index], nullptr, nullptr, creature, false, &effects);
-                                }
-
-                                messagePlayer(players[index], message);
+                                // attack
+                                creatureAttack(creature, players[index]);
                             } 
                         }
                     }
                 } else {
-                    // roll to see if leaves the area
+                    if (creature->getAmbulatory()){
+                        // roll to see if leaves the area and by which exit
+                        exits = location->getExits();
 
-                    // roll to see which exit to take
-
-                    // move creature
+                        if (exits.size() != 0){
+                            exitChoice = rollDice(exits.size(), 2);
+                            if (exitChoice <= exits.size()){
+                                // move creature
+                                exits[exitChoice - 1]->go(nullptr, nullptr, creature, &effects);
+                                messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "leaves the area.", location);
+                                messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "enters the area.", exits[exitChoice - 1]->getConnectArea());
+                            }
+                        }
+                    }
                 }
             } else {
-                // roll to see which attack is used
+                // check that the player is still in the area
+                playerLocation = aPlayer->getLocation();
+                if (playerLocation == location){
+                    // attack
+                    creatureAttack(creature, aPlayer);
+                } else if (creature->getAmbulatory()){
+                    // roll to see if the creature follows
+                    spotCheck = rollDice(20, 1) + creature->getIntelligenceModifier();
+                    hideCheck = rollDice(20, 1) + aPlayer->getDexterityModifier() + aPlayer->getSizeModifier();
 
-                // attack
+                    if (spotCheck > hideCheck){
+                        // see if any exit leads from creature location to player location
+                        exits = location->getExits();
+
+                        for (auto exit : exits){
+                            if (exit->getConnectArea() == playerLocation){
+                                anExit = exit;
+                            }
+                        }
+
+                        if (anExit != nullptr){
+                            // move creature
+                            anExit->go(nullptr, nullptr, creature, &effects);
+                            messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "leaves the area.", location);
+                            messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "enters the area.", anExit->getConnectArea());
+
+                            // add to cooldown
+                            cooldown = 5 - creature->getDexterityModifier();
+                            if (cooldown < 0){
+                                cooldown = 0;
+                            }
+                            creature->setCooldown(cooldown);
+                        }
+                    }
+                } else {
+                    // end combat
+                    endCombat(aPlayer, creature);
+                }
             }
         }
+        // update health and special points
+        // this implementation doesn't make use of healPoints ***************************************
+        creature->addToCurrentHealth(1);
+        creature->addToCurrentSpecialPts(1);
     }
-    
 
-    return false;
+    return true;
 }
 
 
+void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
+    size_t weaponChoice = 0;
+    std::vector<Item*> weapons;
+    std::vector<EffectType> effects;
+    SpecialSkill *aSkill = nullptr;
+    std::string message = "";
+
+    weapons = aCreature->getWeapons();
+    if (weapons.size() != 0){
+        weaponChoice = rollDice(weapons.size() + 1, 1);
+        if (weaponChoice > weapons.size()){
+            // attack with special skill
+            aSkill = aCreature->getType()->getSpecialSkill();
+            message = aSkill->attack(aPlayer, nullptr, nullptr, aCreature, false, &effects);
+        } else {
+            // attack with specified weapon
+            message = weapons[weaponChoice - 1]->attack(aPlayer, nullptr, nullptr, aCreature, false, &effects);
+        }
+    } else {
+        // attack with default attack
+        message = aCreature->attack(aPlayer, nullptr, nullptr, aCreature, false, &effects);
+    }
+    messagePlayer(aPlayer, message);
+}
+
+// check cooldown, check command queue, otherwise default attack, update health and special points
 bool GameLogic::updatePlayersInCombat(){
-    // check cooldown, check command queue, otherwise default attack, update health and special points
-    return false;
+    std::vector<Player*> allPlayers = manager->getPlayersPtrs();
+    Creature *aCreature = nullptr;
+    bool inCombat;
+
+    for (auto player : allPlayers){
+        // check cooldown
+        if (player->cooldownIsZero()){
+            // see if player is in combat
+            aCreature = dynamic_cast<Creature*>(player->getInCombat());
+            if (aCreature == nullptr){
+                inCombat = false;
+            } else {
+                inCombat = true;
+            }
+
+            if (inCombat){
+                // *************************************
+            }
+        } 
+        // update health and special points
+        // this implementation doesn't make use of healPoints ***************************************
+        player->addToCurrentHealth(1);
+        player->addToCurrentSpecialPts(1);
+    }
+
+    return true;
 }
 
 
@@ -4457,6 +4541,12 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *param = nullptr;
     InteractiveNoun *directObj = nullptr;
     InteractiveNoun *indirectObj = nullptr;
+    bool ready = true;
+    Command aCommand;
+
+    if ((aPlayer->getInCombat() != nullptr) && (!aPlayer->cooldownIsZero())){
+        ready = false;
+    } 
 
     printParseResult(result);
 
@@ -4483,22 +4573,52 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             directObj = clarifyDirect(aPlayer, result);
             // clarify indirect
             indirectObj = clarifyIndirect(aPlayer, result);
-            // Puts the specified item into inventory.
-            success = takeCommand(aPlayer, directObj, indirectObj);
+            if (ready){
+                // Puts the specified item into inventory.
+                success = takeCommand(aPlayer, directObj, indirectObj);
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::TAKE;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = indirectObj;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::PUT:  
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);
             // clarify indirect
-            indirectObj = clarifyIndirect(aPlayer, result);         
-            // Puts the specified item in, on, or under the specified container.
-            success = putCommand(aPlayer, directObj, indirectObj, result.position);
+            indirectObj = clarifyIndirect(aPlayer, result);      
+            if (ready){   
+                // Puts the specified item in, on, or under the specified container.
+                success = putCommand(aPlayer, directObj, indirectObj, result.position);
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::PUT;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = indirectObj;
+                aCommand.stringParam = "";
+                aCommand.aPosition = result.position;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::DROP:       
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);
-            // Drops the specified item onto the ground.
-            success = dropCommand(aPlayer, directObj);
+            if (ready){
+                // Drops the specified item onto the ground.
+                success = dropCommand(aPlayer, directObj);
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::DROP;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::INVENTORY:      
             // Displays the player's inventory and equipped items.
@@ -4516,23 +4636,53 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             break;
         case CommandEnum::EQUIP:    
             // clarify direct 
-            directObj = clarifyDirect(aPlayer, result);    
-            // Equips the specified item.
-            success = equipCommand(aPlayer, directObj);
+            directObj = clarifyDirect(aPlayer, result);  
+            if (ready){ 
+                // Equips the specified item.
+                success = equipCommand(aPlayer, directObj);
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::EQUIP;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::UNEQUIP:  
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);     
-            // Unequips the specified item.
-            success = unequipCommand(aPlayer, directObj);
+            if (ready){
+                // Unequips the specified item.
+                success = unequipCommand(aPlayer, directObj);
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::UNEQUIP;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::TRANSFER:
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);
             // clarify indirect
             indirectObj = clarifyIndirect(aPlayer, result); 
-            // Gives the specified item to the specified character.
-            success = transferCommand(aPlayer, directObj, indirectObj);
+            if (ready){
+                // Gives the specified item to the specified character.
+                success = transferCommand(aPlayer, directObj, indirectObj);
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::TRANSFER;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = indirectObj;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::SPEAK:          
             // Says the specified text to all players in the current area.
@@ -4557,14 +4707,34 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             if (param == nullptr){
                 param = clarifyIndirect(aPlayer, result);
             }
-            // Moves the player to the specified area.
-            success = goCommand(aPlayer, param);
+            if (ready){
+                // Moves the player to the specified area.
+                success = goCommand(aPlayer, param);
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::GO;
+                aCommand.firstParam = param;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::MOVE:     
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);      
-            // Moves the specified item.
-            success = moveCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);     
+            if (ready){ 
+                // Moves the specified item.
+                success = moveCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::MOVE;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::STATS:          
             // Displays the player's stats.
@@ -4582,9 +4752,19 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             // clarify direct 
             directObj = clarifyDirect(aPlayer, result);
             // clarify indirect
-            indirectObj = clarifyIndirect(aPlayer, result);     
-            // Initiates or continues combat with the specified combatant, using either the default attack or the specified attack skill.
-            success = attackCommand(aPlayer, directObj, indirectObj);    
+            indirectObj = clarifyIndirect(aPlayer, result);    
+            if (ready){ 
+                // Initiates or continues combat with the specified combatant, using either the default attack or the specified attack skill.
+                success = attackCommand(aPlayer, directObj, indirectObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::ATTACK;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = indirectObj;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::TALK:        
             // clarify who is being talked to
@@ -4592,85 +4772,225 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             if (param == nullptr){
                 param = clarifyIndirect(aPlayer, result);
             } 
-            // Initiates a conversation with the specified non-combatant.
-            success = talkCommand(aPlayer, param);    
+            if (ready){
+                // Initiates a conversation with the specified non-combatant.
+                success = talkCommand(aPlayer, param);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::TALK;
+                aCommand.firstParam = param;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::SHOP:           
-            // Lists any items the non-combatant the player is talking to has for sale.
-            success = shopCommand(aPlayer);    
+            if (ready){
+                // Lists any items the non-combatant the player is talking to has for sale.
+                success = shopCommand(aPlayer);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::SHOP;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = indirectObj;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::BUY:    
             // clarify direct
             directObj = clarifyDirect(aPlayer, result);
-            // Purchases the specified item from the non-combatant the player is talking to.
-            success = buyCommand(aPlayer, directObj);    
+            if (ready){
+                // Purchases the specified item from the non-combatant the player is talking to.
+                success = buyCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::BUY;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::SELL:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);           
-            // Sells the specified item to the non-combatant the player is speaking to.
-            success = sellCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result); 
+            if (ready){          
+                // Sells the specified item to the non-combatant the player is speaking to.
+                success = sellCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::SELL;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::SEARCH:  
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);       
-            // Lists any items in the specified container.
-            success = searchCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);  
+            if (ready){     
+                // Lists any items in the specified container.
+                success = searchCommand(aPlayer, directObj);   
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::SEARCH;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            } 
             break;
         case CommandEnum::USE_SKILL:  
             // clarify direct and indirect
             directObj = clarifyDirect(aPlayer, result);
-            indirectObj = clarifyIndirect(aPlayer, result);    
-            // Activates the specified skill.
-            success = useSkillCommand(aPlayer, directObj, indirectObj);    
+            indirectObj = clarifyIndirect(aPlayer, result);   
+            if (ready){
+                // Activates the specified skill.
+                success = useSkillCommand(aPlayer, directObj, indirectObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::TAKE;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = indirectObj;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::READ:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);           
-            // Reads the specified item.
-            success = readCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){        
+                // Reads the specified item.
+                success = readCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::READ;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::BREAK:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);          
-            // Breaks the specified item.
-            success = breakCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){       
+                // Breaks the specified item.
+                success = breakCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::BREAK;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::CLIMB:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);          
-            // Climbs the specified item.
-            success = climbCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){       
+                // Climbs the specified item.
+                success = climbCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::CLIMB;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::TURN:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);           
-            // Turns the specified item.
-            success = turnCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){        
+                // Turns the specified item.
+                success = turnCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::TURN;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::PUSH:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);           
-            // Pushes the specified item.
-            success = pushCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){        
+                // Pushes the specified item.
+                success = pushCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::PUSH;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::PULL:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);           
-            // Pulls the specified item.
-            success = pullCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){        
+                // Pulls the specified item.
+                success = pullCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::PULL;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::EAT:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);            
-            // Eats the specified item.
-            success = eatCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){         
+                // Eats the specified item.
+                success = eatCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::EAT;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::DRINK:
             // clarify direct
-            directObj = clarifyDirect(aPlayer, result);          
-            // Drinks the specified item.
-            success = drinkCommand(aPlayer, directObj);    
+            directObj = clarifyDirect(aPlayer, result);   
+            if (ready){       
+                // Drinks the specified item.
+                success = drinkCommand(aPlayer, directObj);    
+            } else {
+                // add the command to the command queue
+                aCommand.commandE = CommandEnum::DRINK;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = nullptr;
+                aCommand.stringParam = "";
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
             break;
         case CommandEnum::EDIT_MODE:      
             // Toggles between edit mode and normal mode.
@@ -4931,6 +5251,7 @@ bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, Interac
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
     
     return success;
@@ -4969,6 +5290,7 @@ bool GameLogic::putCommand(Player *aPlayer, InteractiveNoun *directObj, Interact
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -4997,6 +5319,7 @@ bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5165,6 +5488,7 @@ bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5192,6 +5516,7 @@ bool GameLogic::unequipCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5229,6 +5554,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
                 messagePlayer(otherPlayer, message);
             }
         }  
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5311,6 +5637,11 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
     bool success = false;
     Area *newArea = nullptr;
     Area *currLocation = aPlayer->getLocation();
+    int cooldown = 5 - aPlayer->getSizeModifier();
+
+    if (cooldown < 0){
+        cooldown = 1;
+    }
 
     if (param != nullptr){
         message = param->go(aPlayer, nullptr, nullptr, &effects);
@@ -5330,7 +5661,9 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(cooldown);
     }
+
     return success;
 }
 
@@ -5356,6 +5689,7 @@ bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5534,6 +5868,7 @@ bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *param){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5575,6 +5910,7 @@ bool GameLogic::shopCommand(Player *aPlayer){
             }
             message += std::to_string(anItemType->getCost()) + " money\015\012";
         }
+        aPlayer->setCooldown(1);
     } else {
         message = "You need to talk to someone before you can shop.";
     }
@@ -5605,6 +5941,7 @@ bool GameLogic::buyCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5631,6 +5968,7 @@ bool GameLogic::sellCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5657,6 +5995,7 @@ bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5715,6 +6054,7 @@ bool GameLogic::readCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5742,6 +6082,7 @@ bool GameLogic::breakCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5769,6 +6110,7 @@ bool GameLogic::climbCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5796,6 +6138,7 @@ bool GameLogic::turnCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5823,6 +6166,7 @@ bool GameLogic::pushCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5850,6 +6194,7 @@ bool GameLogic::pullCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5877,6 +6222,7 @@ bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5904,6 +6250,7 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -5911,17 +6258,25 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 
 bool GameLogic::editModeCommand(Player *aPlayer){
-    if (accountManager->verifyAdmin(aPlayer->getUser())){
-        if (aPlayer->isEditMode()){
-            aPlayer->setEditMode(false);
-            messagePlayer(aPlayer, "Leaving edit mode...");
+    std::string message = "";
+
+    if (aPlayer->getInCombat() == nullptr){
+        if (accountManager->verifyAdmin(aPlayer->getUser())){
+            if (aPlayer->isEditMode()){
+                aPlayer->setEditMode(false);
+                message = "Leaving edit mode...";
+            } else {
+                aPlayer->setEditMode(true);
+                message = "Entering edit mode...";
+            }
         } else {
-            aPlayer->setEditMode(true);
-            messagePlayer(aPlayer, "Entering edit mode...");
+            message = "You need to be an administrator to enter edit mode.";
         }
     } else {
-        messagePlayer(aPlayer, "You need to be an administrator to enter edit mode.");
+        message = "You can't enter editmode while in combat.";
     }
+
+    messagePlayer(aPlayer, message);
 
     return true;
 } 

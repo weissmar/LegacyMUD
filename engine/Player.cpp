@@ -283,9 +283,9 @@ bool Player::setInConversation(NonCombatant *anNPC){
 }
 
 
-Command* Player::getNextCommand(){
+Command Player::getNextCommand(){
     std::lock_guard<std::mutex> combatQueueLock(combatQueueMutex);
-    Command *nextCommand = nullptr;
+    Command nextCommand;
     if (!combatQueue.empty()){
         nextCommand = combatQueue.front();
         combatQueue.pop();
@@ -295,7 +295,7 @@ Command* Player::getNextCommand(){
 }
 
 
-bool Player::addCommand(Command *aCommand){
+bool Player::addCommand(Command aCommand){
     std::lock_guard<std::mutex> combatQueueLock(combatQueueMutex);
     combatQueue.push(aCommand);
 
