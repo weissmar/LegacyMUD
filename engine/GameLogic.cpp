@@ -605,7 +605,10 @@ void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
 bool GameLogic::updatePlayersInCombat(){
     std::vector<Player*> allPlayers = manager->getPlayersPtrs();
     Creature *aCreature = nullptr;
+    std::vector<EffectType> effects;
     bool inCombat;
+    Command aCommand;
+    std::string message = "";
 
     for (auto player : allPlayers){
         // check cooldown
@@ -619,7 +622,16 @@ bool GameLogic::updatePlayersInCombat(){
             }
 
             if (inCombat){
-                // *************************************
+                // check command queue
+                if (!player->queueIsEmpty()){
+                    // execute next command
+                    aCommand = player->getNextCommand();
+                    executeCombatCommand(player, aCommand);
+                } else {
+                    // execute default attack
+                    message = player->attack(player, nullptr, nullptr, aCreature, true, &effects);
+                    messagePlayer(player, message);
+                }
             }
         } 
         // update health and special points
@@ -4581,7 +4593,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::TAKE;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = indirectObj;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4599,7 +4610,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::PUT;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = indirectObj;
-                aCommand.stringParam = "";
                 aCommand.aPosition = result.position;
                 aPlayer->addCommand(aCommand);
             }
@@ -4615,7 +4625,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::DROP;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4645,7 +4654,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::EQUIP;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4661,7 +4669,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::UNEQUIP;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4679,7 +4686,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::TRANSFER;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = indirectObj;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4715,7 +4721,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::GO;
                 aCommand.firstParam = param;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4731,7 +4736,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::MOVE;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4761,7 +4765,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::ATTACK;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = indirectObj;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4780,7 +4783,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::TALK;
                 aCommand.firstParam = param;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4794,7 +4796,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::SHOP;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = indirectObj;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4810,7 +4811,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::BUY;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4826,7 +4826,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::SELL;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4842,7 +4841,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::SEARCH;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             } 
@@ -4859,7 +4857,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::TAKE;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = indirectObj;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4875,7 +4872,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::READ;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4891,7 +4887,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::BREAK;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4907,7 +4902,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::CLIMB;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4923,7 +4917,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::TURN;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4939,7 +4932,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::PUSH;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4955,7 +4947,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::PULL;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4971,7 +4962,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::EAT;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -4987,7 +4977,6 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 aCommand.commandE = CommandEnum::DRINK;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = nullptr;
-                aCommand.stringParam = "";
                 aCommand.aPosition = ItemPosition::NONE;
                 aPlayer->addCommand(aCommand);
             }
@@ -5043,6 +5032,118 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
             break;
         case CommandEnum::INVALID:
             std::cout << "DEBUG: executeCommand received an INVALID command.\n";
+            break;
+    }
+    return success;
+}
+
+// this version is for processing commands from combat queue
+bool GameLogic::executeCombatCommand(Player *aPlayer, Command aCommand){
+    // Wait for saving to complete before executing any commands
+    if (!waitForSaveOrTimeout()) {
+        messagePlayer(aPlayer, "Timed out while waiting for game to save.");
+        return false;
+    }
+
+    bool success = false;
+
+    switch (aCommand.commandE) {
+        case CommandEnum::TAKE:
+            // Puts the specified item into inventory.
+            success = takeCommand(aPlayer, aCommand.firstParam, aCommand.secondParam);
+            break;
+        case CommandEnum::PUT:  
+            // Puts the specified item in, on, or under the specified container.
+            success = putCommand(aPlayer, aCommand.firstParam, aCommand.secondParam, aCommand.aPosition);
+            break;
+        case CommandEnum::DROP:    
+            // Drops the specified item onto the ground.
+            success = dropCommand(aPlayer, aCommand.firstParam);
+            break;
+        case CommandEnum::EQUIP:    
+            // Equips the specified item.
+            success = equipCommand(aPlayer, aCommand.firstParam);
+            break;
+        case CommandEnum::UNEQUIP:  
+            // Unequips the specified item.
+            success = unequipCommand(aPlayer, aCommand.firstParam);
+            break;
+        case CommandEnum::TRANSFER:
+            // Gives the specified item to the specified character.
+            success = transferCommand(aPlayer, aCommand.firstParam, aCommand.secondParam);
+            break;
+        case CommandEnum::GO:             
+            // Moves the player to the specified area.
+            success = goCommand(aPlayer, aCommand.firstParam);
+            break;
+        case CommandEnum::MOVE:     
+            // Moves the specified item.
+            success = moveCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::ATTACK:    
+            // Initiates or continues combat with the specified combatant, using either the default attack or the specified attack skill.
+            success = attackCommand(aPlayer, aCommand.firstParam, aCommand.secondParam);    
+            break;
+        case CommandEnum::TALK:     
+            // Initiates a conversation with the specified non-combatant.
+            success = talkCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::SHOP:  
+            // Lists any items the non-combatant the player is talking to has for sale.
+            success = shopCommand(aPlayer);   
+            break;
+        case CommandEnum::BUY:    
+            // Purchases the specified item from the non-combatant the player is talking to.
+            success = buyCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::SELL:
+            // Sells the specified item to the non-combatant the player is speaking to.
+            success = sellCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::SEARCH:  
+            // Lists any items in the specified container.
+            success = searchCommand(aPlayer, aCommand.firstParam);   
+            break;
+        case CommandEnum::USE_SKILL:  
+            // Activates the specified skill.
+            success = useSkillCommand(aPlayer, aCommand.firstParam, aCommand.secondParam);    
+            break;
+        case CommandEnum::READ:
+            // Reads the specified item.
+            success = readCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::BREAK:
+            // Breaks the specified item.
+            success = breakCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::CLIMB:
+            // Climbs the specified item.
+            success = climbCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::TURN:
+            // Turns the specified item.
+            success = turnCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::PUSH:
+            // Pushes the specified item.
+            success = pushCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::PULL:
+            // Pulls the specified item.
+            success = pullCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::EAT:
+            // Eats the specified item.
+            success = eatCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::DRINK:
+            // Drinks the specified item.
+            success = drinkCommand(aPlayer, aCommand.firstParam);    
+            break;
+        case CommandEnum::INVALID:
+            std::cout << "DEBUG: ombat version of executeCommand received an INVALID command.\n";
+        default:
+            std::cout << "DEBUG: combat version of executeCommand reached default.\n";
             break;
     }
     return success;

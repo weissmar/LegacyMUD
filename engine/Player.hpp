@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/10/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -47,7 +47,6 @@ struct Command {
     CommandEnum commandE;
     InteractiveNoun *firstParam;
     InteractiveNoun *secondParam;
-    std::string stringParam;
     ItemPosition aPosition;
 };
 
@@ -248,7 +247,7 @@ class Player: public Combatant {
         /*!
          * \brief   Gets the next command in the player's combat queue.
          *
-         * \return  Returns a Command* with the command or nullptr if the queue is empty.
+         * \return  Returns a Command with the command or empty command if the queue is empty.
          */
         Command getNextCommand();
 

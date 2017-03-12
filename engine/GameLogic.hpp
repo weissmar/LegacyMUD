@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/10/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -27,6 +27,7 @@
 #include "ItemRarity.hpp"
 #include "EquipmentSlot.hpp"
 #include "CharacterSize.hpp"
+#include "Player.hpp"
 
 namespace legacymud { namespace parser {
     struct ParseResult;
@@ -48,7 +49,6 @@ namespace legacymud { namespace engine {
 
 class GameObjectManager;
 class InteractiveNoun;
-class Player;
 class Creature;
 class NonCombatant;
 class ItemType;
@@ -504,6 +504,19 @@ class GameLogic {
          *          was successful.
          */
         bool executeCommand(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Executes the specified command.
+         * 
+         * \note    This version is for use with the player's combat queue only.
+         * 
+         * \param[in] aPlayer   Specifies the player entering the command.
+         * \param[in] aCommand  Specifies the command to execute
+         *
+         * \return  Returns a bool indicating whether or not executing the command
+         *          was successful.
+         */
+        bool executeCombatCommand(Player *aPlayer, Command aCommand);
 
         /*!
          * \brief   Clarifies the direct object to use.
