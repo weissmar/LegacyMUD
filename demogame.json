@@ -1,5 +1,5 @@
 {
-    "nextID": 29,
+    "nextID": 69,
     "startAreaId": 1,
     "AREA": [
         {
@@ -133,6 +133,216 @@
                 "noun_aliases": [
                     "area 26",
                     "Outside of Briartown"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Path Through Farmland",
+            "short_description": "You are on a path that cuts between pastures and fields.",
+            "long_description": "You are standing on a path that cuts between pastures and fields. You can make out a town nearby.",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 29,
+                "noun_aliases": [
+                    "area 29",
+                    "Path Through Farmland"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Somerset Farm",
+            "short_description": "You are at Somerset Farm.",
+            "long_description": "You are standing at Somerset Farm, just off of the main path leading into town.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 32,
+                "noun_aliases": [
+                    "area 32",
+                    "Somerset Farm"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Path Through Fields",
+            "short_description": "You are on a path leading through some fields.",
+            "long_description": "You are on a path that leads through some fields. You notice the number of trees increasing toward the north.",
+            "area_size": "LARGE",
+            "interactive_noun_data": {
+                "id": 35,
+                "noun_aliases": [
+                    "area 35",
+                    "Path Through Fields"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Outside the Woods",
+            "short_description": "You are on a path that leads into a densely wooded area.",
+            "long_description": "You are on a path that leads into a densely wooded area.",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 38,
+                "noun_aliases": [
+                    "area 38",
+                    "Outside the Woods"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Murky Woods Entrance",
+            "short_description": "You are standing in a densely wooded area.",
+            "long_description": "You are standing in a densely wooded area. You think you are on the path...",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 41,
+                "noun_aliases": [
+                    "area 41",
+                    "Murky Woods Entrance"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Ogre Hut",
+            "short_description": "You are standing in a small hut in the woods.",
+            "long_description": "You are standing in a small hut in the woods.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 44,
+                "noun_aliases": [
+                    "area 44",
+                    "Ogre Hut"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Murky Woods 16",
+            "short_description": "You are standing in a densely wooded area.",
+            "long_description": "You are standing in a densely wooded area. You think you are on the path...",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 47,
+                "noun_aliases": [
+                    "area 47",
+                    "Murky Woods 16"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Murky Woods 17",
+            "short_description": "You are standing in a densely wooded area.",
+            "long_description": "You are standing in a densely wooded area. You think you are on the path...",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 49,
+                "noun_aliases": [
+                    "area 49",
+                    "Murky Woods 17"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Murky Woods 18",
+            "short_description": "You are standing in a densely wooded area.",
+            "long_description": "You are standing in a densely wooded area. You think you are on the path...",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 50,
+                "noun_aliases": [
+                    "area 50",
+                    "Murky Woods 18"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Murky Woods 19",
+            "short_description": "You are standing in a densely wooded area.",
+            "long_description": "You are standing in a densely wooded area. You think you are on the path...",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 51,
+                "noun_aliases": [
+                    "area 51",
+                    "Murky Woods 19"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Murky Woods 20",
+            "short_description": "You are standing in a densely wooded area.",
+            "long_description": "You are standing in a densely wooded area. You think you are on the path...",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 52,
+                "noun_aliases": [
+                    "area 52",
+                    "Murky Woods 20"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Murky Woods Exit",
+            "short_description": "You are standing in a densely wooded area.",
+            "long_description": "You are standing in a densely wooded area. You think you are on the path...",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 53,
+                "noun_aliases": [
+                    "area 53",
+                    "Murky Woods Exit"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Outside a Cave",
+            "short_description": "You are standing outside the entrance to a dark cave.",
+            "long_description": "You are standing outside the entrance to a dark cave.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 63,
+                "noun_aliases": [
+                    "area 63",
+                    "Outside a Cave"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Cave Entrance",
+            "short_description": "You are standing in the entrance of a dark cave.",
+            "long_description": "You are standing in the entrance of a dark cave.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 66,
+                "noun_aliases": [
+                    "area 66",
+                    "Cave Entrance"
                 ],
                 "actions": []
             }
@@ -1024,6 +1234,1358 @@
                     }
                 ]
             }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 26,
+            "connect_area_id": 29,
+            "is_conditional": false,
+            "description": "a path leading into the farmlands",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 30,
+                "noun_aliases": [
+                    "exit 30",
+                    "a path leading into the farmlands",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 30",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 29,
+            "connect_area_id": 26,
+            "is_conditional": false,
+            "description": "a path leading to the gates of town",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 31,
+                "noun_aliases": [
+                    "exit 31",
+                    "a path leading to the gates of town",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 31",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 29,
+            "connect_area_id": 32,
+            "is_conditional": false,
+            "description": "a farmhouse",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 33,
+                "noun_aliases": [
+                    "exit 33",
+                    "a farmhouse",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 33",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 32,
+            "connect_area_id": 29,
+            "is_conditional": false,
+            "description": "a north-south path",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 34,
+                "noun_aliases": [
+                    "exit 34",
+                    "a north-south path",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 34",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 29,
+            "connect_area_id": 35,
+            "is_conditional": false,
+            "description": "a path through some fields",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 36,
+                "noun_aliases": [
+                    "exit 36",
+                    "a path through some fields",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 36",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 35,
+            "connect_area_id": 29,
+            "is_conditional": false,
+            "description": "a path through farmland",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 37,
+                "noun_aliases": [
+                    "exit 37",
+                    "a path through farmland",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 37",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 35,
+            "connect_area_id": 38,
+            "is_conditional": false,
+            "description": "a path to a wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 39,
+                "noun_aliases": [
+                    "exit 39",
+                    "a path to a wooded area",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 39",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 38,
+            "connect_area_id": 41,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 40,
+                "noun_aliases": [
+                    "exit 40",
+                    "a densely wooded area",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 40",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 38,
+            "connect_area_id": 35,
+            "is_conditional": false,
+            "description": "a path leading through some fields",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 42,
+                "noun_aliases": [
+                    "exit 42",
+                    "a path leading through some fields",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 42",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 41,
+            "connect_area_id": 38,
+            "is_conditional": false,
+            "description": "a slight clearing in the woods",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 43,
+                "noun_aliases": [
+                    "exit 43",
+                    "a slight clearing in the woods",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 43",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 41,
+            "connect_area_id": 44,
+            "is_conditional": false,
+            "description": "a small hut",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 45,
+                "noun_aliases": [
+                    "exit 45",
+                    "a small hut",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 45",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 44,
+            "connect_area_id": 41,
+            "is_conditional": false,
+            "description": "the front door of the hut",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 46,
+                "noun_aliases": [
+                    "exit 46",
+                    "the front door of the hut",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 46",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 41,
+            "connect_area_id": 47,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 48,
+                "noun_aliases": [
+                    "exit 48",
+                    "a densely wooded area",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 48",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 47,
+            "connect_area_id": 52,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 54,
+                "noun_aliases": [
+                    "exit 54",
+                    "a densely wooded area",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 54",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 52,
+            "connect_area_id": 41,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 55,
+                "noun_aliases": [
+                    "exit 55",
+                    "a densely wooded area",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 55",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 47,
+            "connect_area_id": 51,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 56,
+                "noun_aliases": [
+                    "exit 56",
+                    "a densely wooded area",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 56",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 51,
+            "connect_area_id": 52,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 57,
+                "noun_aliases": [
+                    "exit 57",
+                    "a densely wooded area",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 57",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 51,
+            "connect_area_id": 50,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 58,
+                "noun_aliases": [
+                    "exit 58",
+                    "a densely wooded area",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 58",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 50,
+            "connect_area_id": 49,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 59,
+                "noun_aliases": [
+                    "exit 59",
+                    "a densely wooded area",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 59",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 49,
+            "connect_area_id": 47,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 60,
+                "noun_aliases": [
+                    "exit 60",
+                    "a densely wooded area",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 60",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 49,
+            "connect_area_id": 53,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 61,
+                "noun_aliases": [
+                    "exit 61",
+                    "a densely wooded area",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 61",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 53,
+            "connect_area_id": 50,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 62,
+                "noun_aliases": [
+                    "exit 62",
+                    "a densely wooded area",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 62",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 53,
+            "connect_area_id": 63,
+            "is_conditional": false,
+            "description": "the entrance to a cave",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 64,
+                "noun_aliases": [
+                    "exit 64",
+                    "the entrance to a cave",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 64",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 63,
+            "connect_area_id": 53,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 65,
+                "noun_aliases": [
+                    "exit 65",
+                    "a densely wooded area",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 65",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 63,
+            "connect_area_id": 66,
+            "is_conditional": false,
+            "description": "a dark cave",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 67,
+                "noun_aliases": [
+                    "exit 67",
+                    "a dark cave",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 67",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 66,
+            "connect_area_id": 63,
+            "is_conditional": false,
+            "description": "some trees outside the cave",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 68,
+                "noun_aliases": [
+                    "exit 68",
+                    "some trees outside the cave",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 68",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ],
     "FEATURE": [],
@@ -1048,7 +2610,7 @@
             "name": "Admin",
             "description": "an administrator",
             "money": 10,
-            "location_area_id": 20,
+            "location_area_id": 66,
             "max_inventory_weight": 30,
             "interactive_noun_data": {
                 "id": 4,
