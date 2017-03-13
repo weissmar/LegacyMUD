@@ -12,6 +12,7 @@
 #include "Feature.hpp"
 #include "Area.hpp"
 #include "ItemType.hpp"
+#include "Player.hpp"
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
@@ -279,7 +280,39 @@ Feature* Feature::deserialize(std::string jsonStr, GameObjectManager* gom){
 
 
 std::string Feature::look(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMsg = "";
+    ItemType *condItemType = nullptr;
+    EffectType anEffect = EffectType::NONE;
+
+    message += "You see ";
+    if (isConditional()){
+        condItemType = getConditionItem();
+        if ((condItemType != nullptr) && (aPlayer->hasItem(condItemType))){
+            message += getAltDescription();
+        } else {
+            message += getDescription();
+        }
+    } else {
+        message += getDescription();
+    }
+    message += " ";
+    message += getPlacement();
+    if (aPlayer->isEditMode()){
+        message += " [feature " + std::to_string(getID()) + "]";
+    }
+    message += ".";
+
+    // get results of look for this object
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 }  
 
 
