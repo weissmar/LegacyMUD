@@ -8,6 +8,7 @@
  * \details     Implementation file for Combatant base class. 
  ************************************************************************/
 
+#include <iostream>
 #include <cstdlib>
 #include "Combatant.hpp"
 #include "Area.hpp"
@@ -54,6 +55,7 @@ Combatant::Combatant()
 , spawnLocation(nullptr)
 , specialPoints(std::make_pair(BEGIN_MAX_SPECIAL, BEGIN_MAX_SPECIAL))
 , inCombat(nullptr) 
+, regenTime(0)
 {
     rollStats();
 }
@@ -66,6 +68,7 @@ Combatant::Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, std:
 , spawnLocation(spawnLocation)
 , specialPoints(std::make_pair(maxSpecialPts, maxSpecialPts))
 , inCombat(nullptr) 
+, regenTime(0)
 {
     rollStats();
 }
@@ -81,6 +84,7 @@ Combatant::Combatant(int maxHealth, Area *spawnLocation, int maxSpecialPts, int 
 , strength(strength)
 , intelligence(intelligence)
 , inCombat(nullptr) 
+, regenTime(0)
 { }
 
 Combatant::Combatant(const Combatant &otherCombatant) : Character(otherCombatant) {
@@ -97,6 +101,7 @@ Combatant::Combatant(const Combatant &otherCombatant) : Character(otherCombatant
     dexterity.store(otherCombatant.dexterity.load());
     strength.store(otherCombatant.strength.load());
     intelligence.store(otherCombatant.intelligence.load());
+    regenTime.store(0);
 }
 
 
@@ -117,6 +122,7 @@ Combatant & Combatant::operator=(const Combatant &otherCombatant){
     dexterity.store(otherCombatant.dexterity.load());
     strength.store(otherCombatant.strength.load());
     intelligence.store(otherCombatant.intelligence.load());
+    regenTime.store(0);
 
     return *this;
 }
@@ -231,18 +237,22 @@ bool Combatant::decrementCooldown(){
 
 
 bool Combatant::setInCombat(Combatant *aCombatant){
-    if (aCombatant != nullptr){
-        std::lock_guard<std::mutex> inCombatLock(inCombatMutex);
-        inCombat = aCombatant;
-        return true;
-    }
-    return false;
+    std::lock_guard<std::mutex> inCombatLock(inCombatMutex);
+    inCombat = aCombatant;
+    return true;
 }
 
 
 bool Combatant::setMaxHealth(int maxHealth){
     std::lock_guard<std::mutex> healthLock(healthMutex);
     health.second = maxHealth;
+    return true;
+}
+
+
+bool Combatant::addToMaxHealth(int healthPts){
+    std::lock_guard<std::mutex> healthLock(healthMutex);
+    health.second += healthPts;
     return true;
 }
 
@@ -255,6 +265,15 @@ int Combatant::addToCurrentHealth(int healing){
         health.first = health.second;
     }
     return health.first;
+}
+
+
+void Combatant::regen(){
+    if (regenTime.load() <= std::time(nullptr)){
+        addToCurrentHealth(1);
+        addToCurrentSpecialPts(1);
+        regenTime.store(std::time(nullptr) + 5);
+    }
 }
 
 
@@ -281,6 +300,13 @@ bool Combatant::setSpawnLocation(Area *spawnLocation){
 bool Combatant::setMaxSpecialPts(int maxSpecialPts){
     std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
     specialPoints.second = maxSpecialPts;
+    return true;
+}
+
+
+bool Combatant::addToMaxSpecialPts(int specialPts){
+    std::lock_guard<std::mutex> specialPointsLock(specialPointsMutex);
+    specialPoints.second += specialPts;
     return true;
 }
 
@@ -322,7 +348,11 @@ bool Combatant::rollStats(){
 
 
 bool Combatant::respawn(){
-    return this->setLocation(spawnLocation);
+    setLocation(spawnLocation);
+    addToCurrentHealth(getMaxHealth());
+    addToCurrentSpecialPts(getMaxSpecialPts());
+
+    return true;
 }
 
 

@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/08/2017
- * \modified    03/09/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -251,6 +251,26 @@ std::string Area::getFullDescription(Player *aPlayer) const{
     }
 
     return message;
+}
+
+
+bool Area::isBiggerThanOrEqual(AreaSize aSize) const{
+    bool biggerOrEqual = false;
+    AreaSize areaSize = getSize();
+
+    if (areaSize == AreaSize::LARGE){
+        biggerOrEqual = true;
+    } else if (areaSize == AreaSize::MEDIUM){
+        if ((aSize == AreaSize::SMALL) || (aSize == AreaSize::MEDIUM)){
+            biggerOrEqual = true;
+        }
+    } else if (areaSize == AreaSize::SMALL){
+        if (aSize == AreaSize::SMALL){
+            biggerOrEqual = true;
+        }
+    }
+
+    return biggerOrEqual;
 }
 
 

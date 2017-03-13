@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/09/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        CombatantType.cpp
  *
@@ -82,13 +82,21 @@ SpecialSkill* CombatantType::getSpecialSkill() const{
 }
 
 
-int CombatantType::getAttackBonus() const{
-    return attackBonus.load();
+int CombatantType::getAttackBonus(int level) const{
+    return attackBonus.load() + level;
 }
 
 
-int CombatantType::getArmorBonus() const{
-    return armorBonus.load();
+int CombatantType::getArmorBonus(int level) const{
+    int bonus = 0;
+
+    if ((level % 2) == 0){
+        bonus = level / 2;
+    } else if (level > 2){
+        bonus = (level - 1) / 2;
+    }
+
+    return armorBonus.load() + bonus;
 }
 
 

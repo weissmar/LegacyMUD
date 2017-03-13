@@ -53,18 +53,23 @@ class CombatantType: public InteractiveNoun {
 
         /*!
          * \brief   Gets the attack bonus of this combatant type.
+         * 
+         * \param[in] level     Specifies the level of the combatant.
          *
-         * \return  Returns an int with the attack bonus of this combatant type.
+         * \return  Returns an int with the attack bonus of this combatant type
+         *          for the given level.
          */
-        int getAttackBonus() const;
+        int getAttackBonus(int level = 0) const;
 
         /*!
          * \brief   Gets the armor bonus of this combatant type.
+         * 
+         * \param[in] level     Specifies the level of the combatant.
          *
          * \return  Returns an int indicating the armor bonus of this combatant 
-         *          type.
+         *          type for the given level.
          */
-        int getArmorBonus() const;
+        int getArmorBonus(int level = 0) const;
 
         /*!
          * \brief   Gets the damage type that this combatant type is resistant to.

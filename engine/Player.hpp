@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/11/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -166,23 +166,26 @@ class Player: public Combatant {
 
         virtual int getSizeModifier() const;
 
+        virtual int getArmorBonus() const;
+
         /*!
          * \brief   Adds the specified points to the experience points of 
          *          this player.
          *          
          * \param[in] gainedXP  Specifies the points to add.
          *
-         * \return  Returns an int with the new total of experience points.
+         * \return  Returns a std::string with a message about the new total of 
+         *          experience points.
          */
-        int addToExperiencePts(int gainedXP);
+        std::string addToExperiencePts(int gainedXP);
 
         /*!
          * \brief   Levels up this player.
          *
-         * \return  Returns a bool indicating whether or not the player was
-         *          successfully leveled up.
+         * \return  Returns a std::string with a message about the player leveling
+         *          up, or empty string if the player couldn't level.
          */
-        bool levelUp();
+        std::string levelUp();
 
         /*!
          * \brief   Sets the size of this player.
@@ -673,6 +676,7 @@ class Player: public Combatant {
     private:
         void addAllLexicalData(InteractiveNoun *anObject);
         void removeAllLexicalData(InteractiveNoun *anObject);
+        int getAttackDamage(Creature *aCreature, int critMultiplier, int attackDamage, DamageType damageType, AreaSize range);
         
         std::atomic<int> experiencePoints;
         std::atomic<int> level;
@@ -692,6 +696,7 @@ class Player: public Combatant {
         mutable std::mutex questListMutex;
         parser::LexicalData inventoryLexicalData;
         mutable std::mutex lexicalMutex;
+        static std::map<int, int> xpLevelMap;
 };
 
 }}

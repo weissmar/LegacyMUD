@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serializeJustInteractiveNoun function) 
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -283,6 +283,9 @@ std::string InteractiveNoun::getTextAndEffect(CommandEnum aCommand, EffectType &
     if (anAction != nullptr){
         if (anAction->getValid()){
             message = anAction->getFlavorText();
+            if (!message.empty()){
+                message += "\015\012";
+            }
             anEffect = anAction->getEffect();
         } 
     }

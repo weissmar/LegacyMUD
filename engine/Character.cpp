@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/09/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -11,6 +11,7 @@
 #include "Character.hpp"
 #include "Area.hpp"
 #include "Item.hpp"
+#include "GameLogic.hpp"
 #include <iostream>
 
 namespace legacymud { namespace engine {
@@ -142,6 +143,20 @@ std::vector<std::pair<EquipmentSlot, Item*>> Character::getEquipped() const{
 
 int Character::getMaxInventoryWeight() const{
     return maxInventoryWeight.load();
+}
+
+
+int Character::getArmorBonus() const{
+    std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
+    int armorBonus = 0;
+
+    for (auto item : inventory){
+        if ((item.first != EquipmentSlot::NONE) && (item.second->getType()->getObjectType() == ObjectType::ARMOR_TYPE)){
+            armorBonus += item.second->getType()->getArmorBonus();
+        }
+    }
+
+    return armorBonus;
 }
 
 
@@ -311,13 +326,39 @@ std::string Character::serialize(){
 }
 
 
+// no current way to not remove quest items ***************************************
 bool Character::removeAllFromInventory(){
-    return false;
+    Area *location = getLocation();
+    std::vector<std::pair<EquipmentSlot, Item*>> allItems = getInventory();
+
+    for (auto item : allItems){
+        removeFromInventory(item.second);
+        item.second->setLocation(location);
+        item.second->setPosition(ItemPosition::GROUND);
+        location->addItem(item.second);
+    }
+
+    return true;
 }
 
 
+// no current way to not remove quest items ***************************************
 Item* Character::removeRandomFromInventory(){
-    return nullptr;
+    std::vector<std::pair<EquipmentSlot, Item*>> allItems = getInventory();
+    int itemToRemove  = -1;
+    Item *anItem = nullptr;
+    Area *location = getLocation();
+
+    if (allItems.size() != 0){
+        itemToRemove = GameLogic::rollDice(allItems.size(), 1);
+        anItem = allItems[itemToRemove - 1].second;
+        removeFromInventory(anItem);
+        anItem->setLocation(location);
+        anItem->setPosition(ItemPosition::GROUND);
+        location->addItem(anItem);
+    }
+
+    return anItem;
 }
 
 

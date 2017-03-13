@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/10/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -13,6 +13,9 @@
 #include "EffectType.hpp"
 #include "CommandEnum.hpp"
 #include "Player.hpp"
+#include "PlayerClass.hpp"
+#include "Creature.hpp"
+#include "CreatureType.hpp"
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
@@ -265,8 +268,45 @@ std::string SpecialSkill::more(Player *aPlayer){
 } 
 
 
-std::string SpecialSkill::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
-    return "";
+std::string SpecialSkill::attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *creature, bool playerAttacker, std::vector<EffectType> *effects){
+    std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    bool skillAvailable = false;
+    Creature *aCreature = dynamic_cast<Creature*>(creature);
+
+    if (getDamageType() != DamageType::HEAL){
+        // check that attacker has skill available
+        if (playerAttacker){
+            if (aPlayer->getPlayerClass()->getSpecialSkill() == this){
+                skillAvailable = true;
+           } else {
+                message = "You can't use that skill.";
+           }
+        } else {
+            if (aCreature->getType()->getSpecialSkill() == this){
+                skillAvailable = true;
+            }
+        }
+
+        if (skillAvailable){
+            // get results of attack for this skill
+            message = getTextAndEffect(CommandEnum::ATTACK, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+
+            // call this function on attacker
+            if (playerAttacker){
+                message = aPlayer->attack(aPlayer, nullptr, this, aCreature, true, effects);
+            } else {
+                message = aCreature->attack(aPlayer, nullptr, this, aCreature, false, effects);
+            }
+        }
+    } else if (playerAttacker){
+        message = "You can't use that skill as an attack.";
+    }
+
+    return message;
 }
 
 

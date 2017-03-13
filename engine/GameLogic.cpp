@@ -470,8 +470,15 @@ bool GameLogic::updateCreatures(){
     int cooldown = 0;
 
     for (auto creature : allCreatures){
-        // check cooldown
-        if (creature->cooldownIsZero()){
+        location = creature->getLocation();
+
+        if (creature->getCurrentHealth() == 0){
+            // check for respawn
+            if (creature->readyRespawn()){
+                respawn(nullptr, creature);
+                creature->setCooldown(10);
+            }
+        } else if (creature->cooldownIsZero()){ // check cooldown
             // check to see if already in combat
             aPlayer = dynamic_cast<Player*>(creature->getInCombat());
             if (aPlayer != nullptr){
@@ -482,7 +489,6 @@ bool GameLogic::updateCreatures(){
 
             if (!inCombat){
                 // check if there are players in this location
-                location = creature->getLocation();
                 characters = location->getCharacters();
                 for (auto character : characters){
                     if (character->getObjectType() == ObjectType::PLAYER){
@@ -566,10 +572,12 @@ bool GameLogic::updateCreatures(){
                 }
             }
         }
-        // update health and special points
-        // this implementation doesn't make use of healPoints ***************************************
-        creature->addToCurrentHealth(1);
-        creature->addToCurrentSpecialPts(1);
+
+        if (creature->getCurrentHealth() != 0){
+            // update health and special points
+            // this implementation doesn't make use of healPoints ***************************************
+            creature->regen();
+        }
     }
 
     return true;
@@ -577,6 +585,7 @@ bool GameLogic::updateCreatures(){
 
 
 void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
+std::cout << "inside creature attack\n";
     size_t weaponChoice = 0;
     std::vector<Item*> weapons;
     std::vector<EffectType> effects;
@@ -599,6 +608,7 @@ void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
         message = aCreature->attack(aPlayer, nullptr, nullptr, aCreature, false, &effects);
     }
     messagePlayer(aPlayer, message);
+    checkEndCombat(aPlayer, aCreature);
 }
 
 // check cooldown, check command queue, otherwise default attack, update health and special points
@@ -631,13 +641,14 @@ bool GameLogic::updatePlayersInCombat(){
                     // execute default attack
                     message = player->attack(player, nullptr, nullptr, aCreature, true, &effects);
                     messagePlayer(player, message);
+                    checkEndCombat(player, aCreature);
                 }
             }
         } 
         // update health and special points
         // this implementation doesn't make use of healPoints ***************************************
-        player->addToCurrentHealth(1);
-        player->addToCurrentSpecialPts(1);
+std::cout << "before regen for player\n";
+        player->regen();
     }
 
     return true;
@@ -4053,6 +4064,7 @@ ObjectType GameLogic::getObjectType(std::string input){
 
 
 void GameLogic::messagePlayer(Player *aPlayer, std::string message){
+std::cout << "inside message player\n";
     theServer->sendMsg(aPlayer->getFileDescriptor(), message);
 }
 
@@ -4095,6 +4107,7 @@ void GameLogic::messageAreaPlayers(Player *aPlayer, std::string message, Area *a
 
 
 bool GameLogic::startCombat(Player* aPlayer, Creature *aCreature){
+std::cout << "inside startCombat\n";
     aPlayer->setInCombat(aCreature);
     aCreature->setInCombat(aPlayer);
     messagePlayer(aPlayer, "Entering combat...");
@@ -4104,6 +4117,7 @@ bool GameLogic::startCombat(Player* aPlayer, Creature *aCreature){
 
 
 bool GameLogic::endCombat(Player *aPlayer, Creature *aCreature){
+std::cout << "inside endCombat\n";
     aPlayer->setInCombat(nullptr);
     aCreature->setInCombat(nullptr);
     messagePlayer(aPlayer, "Leaving combat...");
@@ -4112,14 +4126,98 @@ bool GameLogic::endCombat(Player *aPlayer, Creature *aCreature){
 }
 
 
-bool GameLogic::startConversation(Player *aPlayer, NonCombatant *aNPC){
+void GameLogic::checkEndCombat(Player *aPlayer, Creature *aCreature){
+std::cout << "inside checkEndCombat\n";
+    bool creatureDies = false;
+    bool playerDies = false;
+    std::string message = "";
+    int xp = 0;
+    Area *deathLocation = nullptr;
+
+    if (aCreature->getCurrentHealth() == 0){
+        // creture dies
+        creatureDies = true;
+    } else if (aPlayer->getCurrentHealth() == 0){
+        //player dies
+        playerDies = true;
+    }
+
+    if ((creatureDies) || (playerDies)){
+        endCombat(aPlayer, aCreature);
+    }
+
+    if (creatureDies){
+        message = "\015\012You defeated the creature!\015\012";
+
+        // give player XP
+        xp = aCreature->getXP();
+        message += aPlayer->addToExperiencePts(xp);
+
+        // message player
+        messagePlayer(aPlayer, message);
+
+        // remove all items from creature
+        aCreature->removeAllFromInventory();
+
+        // remove creature from area
+        deathLocation = aCreature->getLocation();
+        deathLocation->removeCharacter(aCreature);
+        messageAreaPlayers(nullptr, "A creature named " + aCreature->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
+    
+        // set respawn clock
+        aCreature->setRespawn();
+    }
+
+    if (playerDies){
+        messagePlayer(aPlayer, "You died...");
+
+        // remove all items from player
+        aPlayer->removeAllFromInventory();
+
+        // remove player from area
+        deathLocation = aPlayer->getLocation();
+        deathLocation->removeCharacter(aPlayer);
+        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
+
+        // respawn player
+        respawn(aPlayer, nullptr);
+    }
+}
+
+
+void GameLogic::respawn(Player* aPlayer, Creature *aCreature){
+std::cout << "inside respawn\n";
+    Area *spawnLocation = nullptr;
+
+    if (aPlayer != nullptr){
+        // move player to respawn location
+        spawnLocation = aPlayer->getSpawnLocation();
+        spawnLocation->addCharacter(aPlayer);
+        aPlayer->respawn();
+
+        // message players
+        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " appears freshly reborn in front of you. They look a little confused.", spawnLocation);
+        messagePlayer(aPlayer, "You wake up disoriented and confused. You don't have any of your things. You look around.\015\012" + spawnLocation->getFullDescription(aPlayer));
+    } else if (aCreature != nullptr){
+        // move creature to respawn location
+        spawnLocation = aCreature->getSpawnLocation();
+        spawnLocation->addCharacter(aCreature);
+        aCreature->respawn();
+
+        // message players
+        messageAreaPlayers(nullptr, "A creature named " + aCreature->getName() + " appears freshly reborn in front of you. They look a little confused.", spawnLocation);
+    }
+}
+
+
+/*bool GameLogic::startConversation(Player *aPlayer, NonCombatant *aNPC){
     return false;
 }
 
 
 bool GameLogic::endConversation(Player *aPlayer){
     return false;
-}
+}*/
 
 void GameLogic::handleParseError(Player *aPlayer, parser::ParseResult result){
     printParseResult(result);
@@ -5733,7 +5831,7 @@ bool GameLogic::quitCommand(Player *aPlayer){
 
 
 bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
-    std:: string message;
+    std::string message;
     std::vector<EffectType> effects;
     bool success = false;
     Area *newArea = nullptr;
@@ -5771,7 +5869,7 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
 
 bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
     std::vector<EffectType> effects;
-    std:: string message, resultMessage;
+    std::string message, resultMessage;
     bool success = false;
 
     if (directObj != nullptr){
@@ -5807,8 +5905,8 @@ bool GameLogic::statsCommand(Player *aPlayer){
     message += "Strength: " + std::to_string(aPlayer->getStrength()) + "\015\012";
     message += "Dexterity: " + std::to_string(aPlayer->getDexterity()) + "\015\012";
     message += "Intelligence: " + std::to_string(aPlayer->getIntelligence()) + "\015\012";
-    message += "Attack Bonus: " + std::to_string(aPlayer->getPlayerClass()->getAttackBonus()) + "\015\012";
-    message += "Armor Bonus: " + std::to_string(aPlayer->getPlayerClass()->getArmorBonus()) + "\015\012";
+    message += "Attack Bonus: " + std::to_string(aPlayer->getPlayerClass()->getAttackBonus(aPlayer->getLevel())) + "\015\012";
+    message += "Armor Bonus: " + std::to_string(aPlayer->getArmorBonus()) + "\015\012";
 
     messagePlayer(aPlayer, message);
 
@@ -5887,64 +5985,73 @@ bool GameLogic::skillsCommand(Player *aPlayer){
 
 
 bool GameLogic::attackCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
+std::cout << "inside attackCommand\n";
+    std::vector<EffectType> effects;
+    std::string message;
+    bool sendMessage = false;
+    Combatant *opponent = aPlayer->getInCombat();
+    Command aCommand;
+    Creature *aCreature = dynamic_cast<Creature*>(directObj);
+
     // if player is in combat
-        // if player is in combat with specified character and player cooldown == 0 and combat queue is empty
-            // if indirectObj is not null
-                // if indirectObj is a skill
-                    // get damage from skill
-                    // get damage type from skill
-                    // get cost from skill
-                    // get cooldown from skill
-
-                    // check if player has enough special points to execute the skill
-
-                    // check attack bonus of player
-
-                    // check armor bonus, resistance, weakness, etc of character
-                    // roll for attack success
-                    // roll for attack damage + crit if relevant
-
-                    // subtract damage from creature health
-                    // subtract cost from player special points
-                    // add skill cooldown to cooldown
-                    // send message to player
-                // if indirectObj is a weapon
-                    // get damage from weapon
-                    // get damage type from weapon
-
-                    // check if weapon range is <= area size
-
-                    // check attack bonus of player
-
-                    // check armor bonus, resistance, weakness, etc of character
-                    // roll for attack success
-                    // roll for attack damage + crit if relevant
-
-                    // subtract damage from creature health
-                    // add weapon cooldown to cooldown
-                    // send message to player
-            // else
-                // get default attack damage
-
-                // check attack bonus of player
-
-                // check armor bonus, resistance, weakness, etc of character
-                // roll for attack success
-                // roll for attack damage + crit if relevant
-
-                // subtract damage from creature health
-                // add default cooldown to cooldown
-                // send message to player
-        // if player is in combat with specified character, but player cooldown > 0 or combat queue is not empty
-            // add command to combat queue  
-        // else player is in combat with another character
+    if (opponent != nullptr){
+        // if player is in combat with specified character 
+        if ((directObj != nullptr) && (directObj->getID() == opponent->getID())){
+            // if player cooldown == 0 and combat queue is empty
+            if ((aPlayer->cooldownIsZero()) && (aPlayer->queueIsEmpty())){ 
+                // if indirectObj is not null
+                if (indirectObj != nullptr){
+                    // attack with indirectObj
+                    message = indirectObj->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
+                    sendMessage = true;
+                } else {
+                    // default attack
+                    message = aPlayer->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
+                    sendMessage = true;
+                }
+            } else {
+                // add command to combat queue  
+                aCommand.commandE = CommandEnum::ATTACK;
+                aCommand.firstParam = directObj;
+                aCommand.secondParam = indirectObj;
+                aCommand.aPosition = ItemPosition::NONE;
+                aPlayer->addCommand(aCommand);
+            }
+        } else {
             // send message to player (can't attack someone else while in combat)
-    // else player is not yet in combat
+            message = "You can't attack a different creature while in combat.";
+            sendMessage = true;
+        }
+    } else {
         // start combat with specified attack
+        if ((directObj != nullptr) && (directObj->getObjectType() == ObjectType::CREATURE)){
+            startCombat(aPlayer, static_cast<Creature*>(directObj));
+            // if indirectObj is not null
+            if (indirectObj != nullptr){
+                // attack with indirectObj
+                message = indirectObj->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
+                sendMessage = true;
+            } else {
+                // default attack
+                message = aPlayer->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
 
-    // check if combat is over
+                sendMessage = true;
+            }
+        } else {
+            message = "You can only attack creatures.";
+            sendMessage = true;
+        }
+    }
 
-    return false;
+    if (sendMessage){ 
+        message += " ";
+        message += handleEffects(aPlayer, effects);
+        messagePlayer(aPlayer, message);
+        checkEndCombat(aPlayer, aCreature);
+        aPlayer->setCooldown(1);
+    }
+
+    return true;
 }
 
 

@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/11/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -137,6 +137,19 @@ class GameLogic {
          *          was successful.
          */
         bool updatePlayersInCombat();
+
+        /*!
+         * \brief   Rolls the specifed number of the specified sided dice.
+         * 
+         * This function "rolls" dice using a random number generator.
+         * 
+         * \param[in] numSides      Specifies the number of sides each die has.
+         * \param[in] numDice       Specifies the number of dice to roll.
+         *
+         * \return  Returns an int with the results of the roll (the total value of
+         *          all the dice rolled).
+         */
+        static int rollDice(int numSides, int numDice);
         
     private:
 
@@ -167,19 +180,6 @@ class GameLogic {
          *          was successful.
          */
         bool hibernatePlayer(Player *aPlayer);
-
-        /*!
-         * \brief   Rolls the specifed number of the specified sided dice.
-         * 
-         * This function "rolls" dice using a random number generator.
-         * 
-         * \param[in] numSides      Specifies the number of sides each die has.
-         * \param[in] numDice       Specifies the number of dice to roll.
-         *
-         * \return  Returns an int with the results of the roll (the total value of
-         *          all the dice rolled).
-         */
-        int rollDice(int numSides, int numDice);
 
         /*!
          * \brief   Creates a new instance of the specified object type.
@@ -396,6 +396,9 @@ class GameLogic {
          */
         bool endCombat(Player *aPlayer, Creature *aCreature);
 
+        void checkEndCombat(Player *aPlayer, Creature *aCreature);
+        void respawn(Player* aPlayer, Creature *aCreature);
+
         /*!
          * \brief   Starts a conversation between the specfied player and the 
          *          specified non-combatant.
@@ -406,7 +409,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not starting a conversation
          *          was successful.
          */
-        bool startConversation(Player *aPlayer, NonCombatant *aNPC);
+        //bool startConversation(Player *aPlayer, NonCombatant *aNPC);
 
         /*!
          * \brief   Ends the conversation the specfied player is currently engaged in.
@@ -416,7 +419,7 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not ending the conversation
          *          was successful.
          */
-        bool endConversation(Player *aPlayer);
+        //bool endConversation(Player *aPlayer);
 
         /*!
          * \brief   Handles a parse error that has one result.

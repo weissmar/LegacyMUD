@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/10/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        Combatant.hpp
  *
@@ -160,6 +160,17 @@ class Combatant: public Character {
         bool setMaxHealth(int maxHealth);
 
         /*!
+         * \brief   Adds the specified amount to the maximum health for this combatant.
+         *
+         * \param[in] healthPts     Specifies the amount to add to the maximum health 
+         *                          for this combatant.
+         *
+         * \return  Returns a bool indicating whether or not the maximum health was 
+         *          set successfully.
+         */
+        bool addToMaxHealth(int healthPts);
+
+        /*!
          * \brief   Adds to the current health for this combatant.
          *
          * \param[in] healing   Specifies the amount to add to the current health.
@@ -167,6 +178,8 @@ class Combatant: public Character {
          * \return  Returns an int with the updated current health.
          */
         int addToCurrentHealth(int healing);
+
+        void regen();
 
         /*!
          * \brief   Subtracts from the current health for this combatant.
@@ -197,6 +210,18 @@ class Combatant: public Character {
          *          points for this combatant was set successfully.
          */
         bool setMaxSpecialPts(int maxSpecialPts);
+
+        /*!
+         * \brief   Adds the specified number to the maximum special points for 
+         *          this combatant.
+         *
+         * \param[in] specialPts    Specifies the amount to add to the maximum 
+         *                          special points.
+         *
+         * \return  Returns a bool indicating whether or not the maximum special
+         *          points for this combatant was set successfully.
+         */
+        bool addToMaxSpecialPts(int specialPts);
 
         /*!
          * \brief   Adds to the current special points for this combatant.
@@ -282,6 +307,7 @@ class Combatant: public Character {
         Combatant* inCombat;
         mutable std::mutex inCombatMutex;
         static std::map<int, int> skillModMap;
+        std::atomic<time_t> regenTime; 
 };
 
 }}
