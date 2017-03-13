@@ -656,7 +656,6 @@ bool GameLogic::updatePlayersInCombat(){
         } 
         // update health and special points
         // this implementation doesn't make use of healPoints ***************************************
-std::cout << "before regen for player\n";
         player->regen();
     }
 
@@ -1443,7 +1442,7 @@ std::string GameLogic::editActionAttribute(Player *aPlayer, InteractiveNoun *obj
             if (actionChoice == 0){
                 messagePlayer(aPlayer, "Aborting Edit Action Wizard...");
             } else if (actionChoice != -1){
-                anAction = allActions[actionChoice];
+                anAction = allActions[actionChoice - 1];
                 messagePlayer(aPlayer, anAction->getToString());
                 messagePlayer(aPlayer, "Which action attribute would you like to edit? Your options are: [1] valid, [2] flavor text, or [3] effect. Please enter the number that corresponds to your choice.");
                 response = blockingGetMsg(aPlayer);
@@ -1503,7 +1502,7 @@ std::string GameLogic::editActionAttribute(Player *aPlayer, InteractiveNoun *obj
             if (actionChoice == 0){
                 messagePlayer(aPlayer, "Aborting Action Removal Wizard...");
             } else if (actionChoice != -1){
-                anAction = allActions[actionChoice];
+                anAction = allActions[actionChoice - 1];
                 objectToEdit->removeAction(anAction->getCommand());
                 message = "The action has been successfully removed.";
             }
@@ -5389,7 +5388,7 @@ std::string GameLogic::handleEffects(Player *aPlayer, std::vector<EffectType> ef
                 break;
         }
         allMessages += message;
-        allMessages += " ";
+        allMessages += "\015\012";
     }
     return allMessages;
 }
@@ -5860,14 +5859,14 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
         message = "You can't go that way.";
     } else {
         newArea = aPlayer->getLocation();
+        message += " ";
+        message += handleEffects(aPlayer, effects);
         message += newArea->getFullDescription(aPlayer);
         messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
         messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
     }
 
     if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
         aPlayer->setCooldown(cooldown);
     }
