@@ -371,7 +371,12 @@ std::string Creature::look(Player *aPlayer, std::vector<EffectType> *effects){
     std::string resultMsg = "";
     EffectType anEffect = EffectType::NONE;
 
-    message = getName() + " is " + getDescription() + ".";
+    message = getName() + " is " + getDescription();
+
+    if (aPlayer->isEditMode()){
+        message += " [character " + std::to_string(getID()) + "]";
+    }
+    message += ".";
 
     // get results of look for this object
     resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);

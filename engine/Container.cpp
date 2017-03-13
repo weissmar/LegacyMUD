@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/09/2017
- * \modified    03/09/2017
+ * \modified    03/13/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -362,6 +362,10 @@ std::string Container::look(Player *aPlayer, std::vector<EffectType> *effects){
         message += " It looks like it might contain something.";
     }
 
+    if (aPlayer->isEditMode()){
+        message += " [item " + std::to_string(getID()) + "].";
+    }
+
     // get results of look for this object
     resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
     if (resultMsg.compare("false") != 0){
@@ -444,52 +448,69 @@ std::string Container::put(Player *aPlayer, Item *anItem, InteractiveNoun *conta
     std::string message = "";
     std::string resultMsg;
     EffectType anEffect;
+    Container *aContainer = nullptr;
 
     if (anItem != nullptr){
         // this is the containing item
+        location = getLocation();
+        while (location->getObjectType() == ObjectType::CONTAINER){
+            if (location->getID() == anItem->getID()){
+                return "false";
+            }
+            aContainer = static_cast<Container*>(location);
+            location = aContainer->getLocation();
+        }
         place(anItem, position);
     } else {
         // this is the item being placed
         location = getLocation();
         currPosition = getPosition();
 
-        // check if this item is contained within a container
-        if ((currPosition == ItemPosition::IN) || (currPosition == ItemPosition::ON) || (currPosition == ItemPosition::UNDER)){
-            return "false";
-        } else if (currPosition == ItemPosition::GROUND) {
-            // location is an area
-            anArea = dynamic_cast<Area*>(location);
-            if (anArea != nullptr){
-                // remove item from area
-                anArea->removeItem(this);
-            } else {
-                return "false";
-            }
-        } else if ((currPosition == ItemPosition::INVENTORY) || (currPosition == ItemPosition::EQUIPPED)){
-            // location is a character
-            if (location->getID() == aPlayer->getID()){
-                aPlayer->removeFromInventory(this);
+        // call this function on containingNoun
+        if (containingNoun != nullptr){
+            resultMsg = containingNoun->put(aPlayer, this, nullptr, position, effects);
+            if (resultMsg.compare("false") != 0){
+                message += resultMsg;
+                setLocation(containingNoun);
+
+                // check if this item is contained within a container
+                if ((currPosition == ItemPosition::IN) || (currPosition == ItemPosition::ON) || (currPosition == ItemPosition::UNDER)){
+                    return "false";
+                } else if (currPosition == ItemPosition::GROUND) {
+                    // location is an area
+                    anArea = dynamic_cast<Area*>(location);
+                    if (anArea != nullptr){
+                        // remove item from area
+                        anArea->removeItem(this);
+                    } else {
+                        return "false";
+                    }
+                } else if ((currPosition == ItemPosition::INVENTORY) || (currPosition == ItemPosition::EQUIPPED)){
+                    // location is a character
+                    if (location->getID() == aPlayer->getID()){
+                        aPlayer->removeFromInventory(this);
+                    } else {
+                        return "false";
+                    }
+                } else {
+                    return "false";
+                }
+
+                setPosition(position);
+                // get results of put for this object
+                resultMsg = getTextAndEffect(CommandEnum::PUT, anEffect);
+                if (resultMsg.compare("false") != 0){
+                    message += resultMsg;
+                }
+                if (anEffect != EffectType::NONE){
+                    effects->push_back(anEffect);
+                }
             } else {
                 return "false";
             }
         } else {
             return "false";
         }
-
-        setPosition(position);
-        // get results of put for this object
-        resultMsg = getTextAndEffect(CommandEnum::PUT, anEffect);
-        if (resultMsg.compare("false") != 0){
-            message += resultMsg;
-        }
-        if (anEffect != EffectType::NONE){
-            effects->push_back(anEffect);
-        }
-        // call this function on containingNoun
-        if (containingNoun != nullptr){
-            setLocation(containingNoun);
-            message += containingNoun->put(aPlayer, this, nullptr, position, effects);
-        } 
     }
 
     return message;

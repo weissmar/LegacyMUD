@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/11/2017
+ * \modified    03/13/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -534,11 +534,25 @@ Item* Item::deserialize(std::string jsonStr, GameObjectManager* gom){
 
 
 std::string Item::look(Player *aPlayer, std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
+    EffectType anEffect = EffectType::NONE;
     ItemType *aType = getType();
 
     message = "The " + getName() + " is ";
     message += aType->getDescription() + ".";
+
+    if (aPlayer->isEditMode()){
+        message += " [item " + std::to_string(getID()) + "].";
+    }
+
+     // get results of look for this object
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
 
     return message;
 }  

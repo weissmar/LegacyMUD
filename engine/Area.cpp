@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/08/2017
- * \modified    03/11/2017
+ * \modified    03/13/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -667,7 +667,9 @@ std::string Area::look(Player *aPlayer, std::vector<EffectType> *effects){
     std::string resultMsg = "";
     EffectType anEffect = EffectType::NONE;
 
-    message += " ";
+    if (aPlayer->isEditMode()){
+        message += " [area " + std::to_string(getID()) + "].";
+    }
 
     resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
     if (resultMsg.compare("false") != 0){

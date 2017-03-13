@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/10/2017
+ * \modified    03/13/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -508,8 +508,8 @@ bool GameLogic::updateCreatures(){
                 if (players.size() != 0){
                     index = 0;
                     while ((!inCombat) && (index < players.size())){
-                        // if the player isn't already in combat
-                        if (players[index]->getInCombat() == nullptr){
+                        // if the player isn't already in combat and isn't in editmode
+                        if ((players[index]->getInCombat() == nullptr) && (!players[index]->isEditMode())){
                             // creature rolls spot check and player rolls hide check
                             spotCheck = rollDice(20, 1) + creature->getIntelligenceModifier();
                             hideCheck = rollDice(20, 1) + players[index]->getDexterityModifier() + players[index]->getSizeModifier();
@@ -523,6 +523,7 @@ bool GameLogic::updateCreatures(){
                                 creatureAttack(creature, players[index]);
                             } 
                         }
+                        index++;
                     }
                 } else {
                     if (creature->getAmbulatory()){
@@ -594,7 +595,6 @@ bool GameLogic::updateCreatures(){
 
 
 void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
-std::cout << "inside creature attack\n";
     size_t weaponChoice = 0;
     std::vector<Item*> weapons;
     std::vector<EffectType> effects;
@@ -4072,7 +4072,6 @@ ObjectType GameLogic::getObjectType(std::string input){
 
 
 void GameLogic::messagePlayer(Player *aPlayer, std::string message){
-std::cout << "inside message player\n";
     theServer->sendMsg(aPlayer->getFileDescriptor(), message);
 }
 
@@ -4115,7 +4114,6 @@ void GameLogic::messageAreaPlayers(Player *aPlayer, std::string message, Area *a
 
 
 bool GameLogic::startCombat(Player* aPlayer, Creature *aCreature){
-std::cout << "inside startCombat\n";
     aPlayer->setInCombat(aCreature);
     aCreature->setInCombat(aPlayer);
     messagePlayer(aPlayer, "Entering combat...");
@@ -4125,7 +4123,6 @@ std::cout << "inside startCombat\n";
 
 
 bool GameLogic::endCombat(Player *aPlayer, Creature *aCreature){
-std::cout << "inside endCombat\n";
     aPlayer->setInCombat(nullptr);
     aCreature->setInCombat(nullptr);
     messagePlayer(aPlayer, "Leaving combat...");
@@ -4135,66 +4132,66 @@ std::cout << "inside endCombat\n";
 
 
 void GameLogic::checkEndCombat(Player *aPlayer, Creature *aCreature){
-std::cout << "inside checkEndCombat\n";
     bool creatureDies = false;
     bool playerDies = false;
     std::string message = "";
     int xp = 0;
     Area *deathLocation = nullptr;
 
-    if (aCreature->getCurrentHealth() == 0){
-        // creture dies
-        creatureDies = true;
-    } else if (aPlayer->getCurrentHealth() == 0){
-        //player dies
-        playerDies = true;
-    }
+    if ((aPlayer != nullptr) && (aCreature != nullptr)){
+        if (aCreature->getCurrentHealth() == 0){
+            // creture dies
+            creatureDies = true;
+        } else if (aPlayer->getCurrentHealth() == 0){
+            //player dies
+            playerDies = true;
+        }
 
-    if ((creatureDies) || (playerDies)){
-        endCombat(aPlayer, aCreature);
-    }
+        if ((creatureDies) || (playerDies)){
+            endCombat(aPlayer, aCreature);
+        }
 
-    if (creatureDies){
-        message = "\015\012You defeated the creature!\015\012";
+        if (creatureDies){
+            message = "\015\012You defeated the creature!\015\012";
 
-        // give player XP
-        xp = aCreature->getXP();
-        message += aPlayer->addToExperiencePts(xp);
+            // give player XP
+            xp = aCreature->getXP();
+            message += aPlayer->addToExperiencePts(xp);
 
-        // message player
-        messagePlayer(aPlayer, message);
+            // message player
+            messagePlayer(aPlayer, message);
 
-        // remove all items from creature
-        aCreature->removeAllFromInventory();
+            // remove all items from creature
+            aCreature->removeAllFromInventory();
 
-        // remove creature from area
-        deathLocation = aCreature->getLocation();
-        deathLocation->removeCharacter(aCreature);
-        messageAreaPlayers(nullptr, "A creature named " + aCreature->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
-    
-        // set respawn clock
-        aCreature->setRespawn();
-    }
+            // remove creature from area
+            deathLocation = aCreature->getLocation();
+            deathLocation->removeCharacter(aCreature);
+            messageAreaPlayers(nullptr, "A creature named " + aCreature->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
+        
+            // set respawn clock
+            aCreature->setRespawn();
+        }
 
-    if (playerDies){
-        messagePlayer(aPlayer, "You died...");
+        if (playerDies){
+            messagePlayer(aPlayer, "You died...");
 
-        // remove all items from player
-        aPlayer->removeAllFromInventory();
+            // remove all items from player
+            aPlayer->removeAllFromInventory();
 
-        // remove player from area
-        deathLocation = aPlayer->getLocation();
-        deathLocation->removeCharacter(aPlayer);
-        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
+            // remove player from area
+            deathLocation = aPlayer->getLocation();
+            deathLocation->removeCharacter(aPlayer);
+            messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
 
-        // respawn player
-        respawn(aPlayer, nullptr);
+            // respawn player
+            respawn(aPlayer, nullptr);
+        }
     }
 }
 
 
 void GameLogic::respawn(Player* aPlayer, Creature *aCreature){
-std::cout << "inside respawn\n";
     Area *spawnLocation = nullptr;
 
     if (aPlayer != nullptr){
@@ -5247,7 +5244,7 @@ bool GameLogic::executeCombatCommand(Player *aPlayer, Command aCommand){
             success = drinkCommand(aPlayer, aCommand.firstParam);    
             break;
         case CommandEnum::INVALID:
-            std::cout << "DEBUG: ombat version of executeCommand received an INVALID command.\n";
+            std::cout << "DEBUG: combat version of executeCommand received an INVALID command.\n";
         default:
             std::cout << "DEBUG: combat version of executeCommand reached default.\n";
             break;
@@ -5339,13 +5336,13 @@ std::string GameLogic::handleEffects(Player *aPlayer, std::vector<EffectType> ef
                 break;
             case EffectType::FALL:
                 health = aPlayer->subtractFromCurrentHealth(5);
-                message = "You fall a short distance and loose 5 health, leaving you with ";
+                message = "You fall a short distance and lose 5 health, leaving you with ";
                 message += std::to_string(health);
                 message += " health.";
                 break;
             case EffectType::LONG_FALL:
                 health = aPlayer->subtractFromCurrentHealth(10);
-                message = "You fall a long distance and loose 10 health, leaving you with ";
+                message = "You fall a long distance and lose 10 health, leaving you with ";
                 message += std::to_string(health);
                 message += " health.";
                 break;
@@ -5856,10 +5853,9 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
     }
     
     if (message.compare("false") == 0){
-        message = "You can't go that way.";
+        message = "You can't go that way. ";
     } else {
         newArea = aPlayer->getLocation();
-        message += " ";
         message += handleEffects(aPlayer, effects);
         message += newArea->getFullDescription(aPlayer);
         messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
@@ -5993,7 +5989,6 @@ bool GameLogic::skillsCommand(Player *aPlayer){
 
 
 bool GameLogic::attackCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
-std::cout << "inside attackCommand\n";
     std::vector<EffectType> effects;
     std::string message;
     bool sendMessage = false;
@@ -6645,6 +6640,7 @@ bool GameLogic::editAttributeCommand(Player *aPlayer, InteractiveNoun *directObj
 
 
 bool GameLogic::editWizardCommand(Player *aPlayer, InteractiveNoun *directObj){
+    messagePlayer(aPlayer, "That feature is not yet implemented. Please use the \"edit <attribute> of <object name>\" syntax to edit objects.");
     return false;
 }
 
