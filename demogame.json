@@ -1,5 +1,5 @@
 {
-    "nextID": 97,
+    "nextID": 121,
     "startAreaId": 1,
     "AREA": [
         {
@@ -433,6 +433,96 @@
                 "noun_aliases": [
                     "area 93",
                     "Bottom of Cliff in Cave"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Flat Area in Cave",
+            "short_description": "You are standing on a flat area deep in a cave.",
+            "long_description": "You are standing on an unnaturally smooth and flat area deep in a cave.",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 97,
+                "noun_aliases": [
+                    "area 97",
+                    "Flat Area in Cave"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Troll Den",
+            "short_description": "You are standing in what looks like a troll den.",
+            "long_description": "You are standing in what looks like a troll den.",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 101,
+                "noun_aliases": [
+                    "area 101",
+                    "Troll Den"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Cramped Hole",
+            "short_description": "You are in a cramped hole.",
+            "long_description": "You are in a cramped hole that is barely big enough for you to squeeze through.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 105,
+                "noun_aliases": [
+                    "area 105",
+                    "Cramped Hole"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Unused Dungeon Cell",
+            "short_description": "You are in an unused dungeon cell.",
+            "long_description": "You are standing in an unused dungeon cell.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 108,
+                "noun_aliases": [
+                    "area 108",
+                    "Unused Dungeon Cell"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Dungeon Entrance",
+            "short_description": "You are standing in the entrance to the dungeon below the guard tower.",
+            "long_description": "You are standing in the entrance to the dungeon below the guard tower.",
+            "area_size": "MEDIUM",
+            "interactive_noun_data": {
+                "id": 111,
+                "noun_aliases": [
+                    "area 111",
+                    "Dungeon Entrance"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "AREA",
+            "name": "Occupied Dungeon Cell",
+            "short_description": "You are in an occupied dungeon cell.",
+            "long_description": "You are in an occupied dungeon cell below the guard tower.",
+            "area_size": "SMALL",
+            "interactive_noun_data": {
+                "id": 114,
+                "noun_aliases": [
+                    "area 114",
+                    "Occupied Dungeon Cell"
                 ],
                 "actions": []
             }
@@ -3279,22 +3369,6 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "entrance to cave",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "entrance",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "cave",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -3312,6 +3386,22 @@
                             },
                             {
                                 "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "entrance",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "entrance to cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3365,14 +3455,6 @@
                                 }
                             },
                             {
-                                "verb_alias": "wooded area",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "exit 65",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -3390,6 +3472,14 @@
                             },
                             {
                                 "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "wooded area",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3427,7 +3517,7 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "dark cave",
+                                "verb_alias": "cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3435,7 +3525,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "cave",
+                                "verb_alias": "dark cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3500,46 +3590,6 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "some trees outside cave",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "trees outside cave",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "trees outside",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "outside cave",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "outside",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "exit 68",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -3557,6 +3607,46 @@
                             },
                             {
                                 "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "outside",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "outside cave",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "some trees outside cave",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "trees outside",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "trees outside cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3594,7 +3684,7 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "bend in cave",
+                                "verb_alias": "bend",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3602,7 +3692,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "bend",
+                                "verb_alias": "bend in cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3664,7 +3754,7 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "entrance of cave",
+                                "verb_alias": "entrance",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3672,7 +3762,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "entrance",
+                                "verb_alias": "entrance of cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3738,46 +3828,6 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "narrow ledge across wide crevice",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "narrow ledge",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "ledge across wide crevice",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "ledge across crevice",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "ledge",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "e",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -3795,6 +3845,46 @@
                             },
                             {
                                 "verb_alias": "exit 75",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "ledge",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "ledge across crevice",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "ledge across wide crevice",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "narrow ledge",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "narrow ledge across wide crevice",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3833,14 +3923,6 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "wide crevice",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "crevice",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -3866,6 +3948,14 @@
                             },
                             {
                                 "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "wide crevice",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3905,22 +3995,6 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "another bend in cave",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "bend in cave",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "another bend",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -3929,7 +4003,23 @@
                                 }
                             },
                             {
+                                "verb_alias": "another bend in cave",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
                                 "verb_alias": "bend",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "bend in cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3991,7 +4081,7 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "bend in cave",
+                                "verb_alias": "bend",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -3999,7 +4089,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "bend",
+                                "verb_alias": "bend in cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4065,6 +4155,14 @@
                         "effect": "NONE",
                         "aliases": [
                             {
+                                "verb_alias": "dark path",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
                                 "verb_alias": "dark path deeper into cave",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -4081,7 +4179,15 @@
                                 }
                             },
                             {
-                                "verb_alias": "dark path",
+                                "verb_alias": "exit 87",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "path",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4098,22 +4204,6 @@
                             },
                             {
                                 "verb_alias": "path into cave",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "path",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "exit 87",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4172,14 +4262,6 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "dark and narrow stairway leading down",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "dark and narrow stairway",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -4188,15 +4270,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "narrow stairway",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "stairway",
+                                "verb_alias": "dark and narrow stairway leading down",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4221,6 +4295,22 @@
                             },
                             {
                                 "verb_alias": "exit 89",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "narrow stairway",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairway",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4258,7 +4348,7 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "bend in cave",
+                                "verb_alias": "bend",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4266,7 +4356,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "bend",
+                                "verb_alias": "bend in cave",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4330,7 +4420,7 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "dark path on edge of cliff",
+                                "verb_alias": "cliff",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4346,7 +4436,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "edge of cliff",
+                                "verb_alias": "dark path on edge of cliff",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4354,7 +4444,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "cliff",
+                                "verb_alias": "edge of cliff",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4417,7 +4507,15 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "flat area at bottom of cliff",
+                                "verb_alias": "bottom of cliff",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 94",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4433,15 +4531,7 @@
                                 }
                             },
                             {
-                                "verb_alias": "bottom of cliff",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "exit 94",
+                                "verb_alias": "flat area at bottom of cliff",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4497,38 +4587,6 @@
                         "effect": "NONE",
                         "aliases": [
                             {
-                                "verb_alias": "narrow stairway leading up cliff",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "narrow stairway",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "stairway leading up cliff",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
-                                "verb_alias": "stairway",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "exit 95",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -4545,7 +4603,39 @@
                                 }
                             },
                             {
+                                "verb_alias": "narrow stairway",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "narrow stairway leading up cliff",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
                                 "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairway",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairway leading up cliff",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4585,7 +4675,100 @@
                         "effect": "FALL",
                         "aliases": [
                             {
+                                "verb_alias": "dark downward slope",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "dark slope",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "downward slope",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
                                 "verb_alias": "exit 96",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "slope",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 93,
+            "connect_area_id": 97,
+            "is_conditional": false,
+            "description": "a flat area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 98,
+                "noun_aliases": [
+                    "exit 98",
+                    "a flat area",
+                    "flat area",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 98",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "flat area",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -4612,9 +4795,1070 @@
                     }
                 ]
             }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 97,
+            "connect_area_id": 93,
+            "is_conditional": false,
+            "description": "a cliff rising up above the flat area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 99,
+                "noun_aliases": [
+                    "exit 99",
+                    "a cliff rising up above the flat area",
+                    "cliff rising up above flat area",
+                    "cliff",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "cliff",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "cliff rising up above flat area",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 99",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 97,
+            "connect_area_id": 101,
+            "is_conditional": false,
+            "description": "a cluttered corner",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 102,
+                "noun_aliases": [
+                    "exit 102",
+                    "a cluttered corner",
+                    "cluttered corner",
+                    "corner",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "cluttered corner",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "corner",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 102",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 101,
+            "connect_area_id": 97,
+            "is_conditional": false,
+            "description": "a wide-open flat area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 104,
+                "noun_aliases": [
+                    "exit 104",
+                    "a wide-open flat area",
+                    "wide-open flat area",
+                    "flat area",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 104",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "flat area",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "wide-open flat area",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 101,
+            "connect_area_id": 105,
+            "is_conditional": true,
+            "condition_itemtype_id": 73,
+            "description": "a small alcove",
+            "altdescription": "a small opening that might be big enough to fit through",
+            "interactive_noun_data": {
+                "id": 106,
+                "noun_aliases": [
+                    "exit 106",
+                    "a small alcove",
+                    "a small opening that might be big enough to fit through",
+                    "small opening that might be big enough to fit through",
+                    "small alcove",
+                    "small opening",
+                    "alcove",
+                    "opening",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "alcove",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 106",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "opening",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "small alcove",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "small opening",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "small opening that might be big enough to fit through",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTH",
+            "location_id": 105,
+            "connect_area_id": 101,
+            "is_conditional": false,
+            "description": "a cluttered area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 107,
+                "noun_aliases": [
+                    "exit 107",
+                    "a cluttered area",
+                    "cluttered area",
+                    "north",
+                    "n"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "cluttered area",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 107",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "n",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "north",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 105,
+            "connect_area_id": 108,
+            "is_conditional": false,
+            "description": "an opening covered by something",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 109,
+                "noun_aliases": [
+                    "exit 109",
+                    "an opening covered by something",
+                    "opening covered by something",
+                    "opening",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 109",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "opening",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "opening covered by something",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 108,
+            "connect_area_id": 105,
+            "is_conditional": false,
+            "description": "a tapestry hanging on the wall",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 110,
+                "noun_aliases": [
+                    "exit 110",
+                    "a tapestry hanging on the wall",
+                    "tapestry hanging on wall",
+                    "tapestry",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 110",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "command": "PUSH",
+                        "valid": true,
+                        "flavor_text": "You found an opening hidden under the tapestry.",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "push",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "command": "PULL",
+                        "valid": true,
+                        "flavor_text": "You found an opening hidden under the tapestry.",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "pull",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTHWEST",
+            "location_id": 108,
+            "connect_area_id": 111,
+            "is_conditional": false,
+            "description": "the open cell door",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 112,
+                "noun_aliases": [
+                    "exit 112",
+                    "the open cell door",
+                    "open cell door",
+                    "open door",
+                    "door",
+                    "cell door",
+                    "southwest",
+                    "sw"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "cell door",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "door",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 112",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "open cell door",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "open door",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "southwest",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "sw",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "NORTHEAST",
+            "location_id": 111,
+            "connect_area_id": 108,
+            "is_conditional": false,
+            "description": "an open cell",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 113,
+                "noun_aliases": [
+                    "exit 113",
+                    "an open cell",
+                    "open cell",
+                    "northeast",
+                    "ne"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 113",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "ne",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "northeast",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "open cell",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 111,
+            "connect_area_id": 114,
+            "is_conditional": true,
+            "condition_itemtype_id": 116,
+            "description": "a locked cell",
+            "altdescription": "a locked cell",
+            "interactive_noun_data": {
+                "id": 115,
+                "noun_aliases": [
+                    "exit 115",
+                    "a locked cell",
+                    "locked cell",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 115",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "locked cell",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "WEST",
+            "location_id": 114,
+            "connect_area_id": 111,
+            "is_conditional": true,
+            "condition_itemtype_id": 116,
+            "description": "the locked cell door",
+            "altdescription": "the locked cell door",
+            "interactive_noun_data": {
+                "id": 117,
+                "noun_aliases": [
+                    "exit 117",
+                    "the locked cell door",
+                    "locked cell door",
+                    "cell door",
+                    "door",
+                    "west",
+                    "w"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "cell door",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "door",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 117",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "locked cell door",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "w",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "west",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "UP",
+            "location_id": 111,
+            "connect_area_id": 23,
+            "is_conditional": false,
+            "description": "stairs leading up to the guard tower",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 119,
+                "noun_aliases": [
+                    "exit 119",
+                    "stairs leading up to the guard tower",
+                    "stairs leading up to guard tower",
+                    "stairs leading up",
+                    "stairs to guard tower",
+                    "stairs",
+                    "guard tower",
+                    "up",
+                    "u"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "exit 119",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "guard tower",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairs",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairs leading up",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairs leading up to guard tower",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairs to guard tower",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "u",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "up",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "DOWN",
+            "location_id": 23,
+            "connect_area_id": 111,
+            "is_conditional": false,
+            "description": "stairs leading down into the dungeon",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 120,
+                "noun_aliases": [
+                    "exit 120",
+                    "stairs leading down into the dungeon",
+                    "stairs leading down into dungeon",
+                    "stairs leading down",
+                    "dungeon",
+                    "stairs",
+                    "down",
+                    "d"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "d",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "down",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "dungeon",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 120",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairs",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairs leading down",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "stairs leading down into dungeon",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ],
-    "FEATURE": [],
+    "FEATURE": [
+        {
+            "class": "FEATURE",
+            "name": "bunch of glowing mushrooms",
+            "placement": "on the walls",
+            "location_id": 97,
+            "is_conditional": true,
+            "condition_itemtype_id": 73,
+            "description": "The mushroom gives off a bluish light.",
+            "altdescription": "You see an oddly-shaped mushroom with iridescent colors.",
+            "interactive_noun_data": {
+                "id": 100,
+                "noun_aliases": [
+                    "feature 100",
+                    "bunch of glowing mushrooms",
+                    "mushrooms",
+                    "mushroom",
+                    "glowing mushrooms",
+                    "glowing mushroom"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "crude bed made from bones and leaves",
+            "placement": "on the ground",
+            "location_id": 101,
+            "is_conditional": false,
+            "description": "The frame of this bed looks like it was made from a mix of human and animal bones.",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 103,
+                "noun_aliases": [
+                    "feature 103",
+                    "crude bed made from bones and leaves",
+                    "crude bed",
+                    "bed"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "tapestry",
+            "placement": "on the wall",
+            "location_id": 114,
+            "is_conditional": false,
+            "description": "This tapestry depicts a guard holding an axe behind a kneeling prisoner.",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 118,
+                "noun_aliases": [
+                    "feature 118",
+                    "tapestry"
+                ],
+                "actions": []
+            }
+        }
+    ],
     "ITEM": [
         {
             "class": "ITEM",
@@ -4735,6 +5979,7 @@
                 "id": 69,
                 "noun_aliases": [
                     "item type 69",
+                    "coil of rope",
                     "rope"
                 ],
                 "actions": []
@@ -4744,7 +5989,7 @@
             "class": "ITEM_TYPE",
             "weight": 3,
             "rarity": "COMMON",
-            "description": "A common torch for lighting dark areas.",
+            "description": "a common torch for lighting dark areas",
             "name": "torch",
             "cost": 5,
             "slot_type": "LEFT_HAND",
@@ -4752,7 +5997,26 @@
                 "id": 73,
                 "noun_aliases": [
                     "item type 73",
+                    "common torch",
                     "torch"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "UNCOMMON",
+            "description": "a key to the cell doors in the dungeon below the guard tower",
+            "name": "dungeon key",
+            "cost": 100,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 116,
+                "noun_aliases": [
+                    "item type 116",
+                    "key",
+                    "dungeon key"
                 ],
                 "actions": []
             }
@@ -4777,7 +6041,7 @@
             "name": "Admin",
             "description": "an administrator",
             "money": 10,
-            "location_area_id": 86,
+            "location_area_id": 1,
             "max_inventory_weight": 30,
             "interactive_noun_data": {
                 "id": 4,
