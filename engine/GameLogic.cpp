@@ -138,24 +138,33 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
 
         // Create the objects                                                                     
         // Starting Area (name, short desciption, long description, area size)    
-        startArea = new legacymud::engine::Area("default area name", "short description of area", "longer description of area", 
-                                                                    legacymud::engine::AreaSize::LARGE);   
+        startArea = new Area("default area name", "short description of area", "longer description of area", AreaSize::LARGE);   
                                                                     
         // SpecialSkill(name, damage, damageType, cost, cooldown);
-        legacymud::engine::SpecialSkill* skill = new legacymud::engine::SpecialSkill("default special skill name", 20, 
-                                                                                    legacymud::engine::DamageType::PIERCING, 
-                                                                                    10,2);
+        SpecialSkill* skill = new SpecialSkill("default special skill name", 20, DamageType::PIERCING, 10,2);
 
         // PlayerClass (primaryStat, name, special skill, attackBonus, armorBonus, resistantTo, weakTo, float healPoints);
-        legacymud::engine::PlayerClass* playerClass = new legacymud::engine::PlayerClass(45, "playerClass name", skill, 10, 20, 
-                                                                                    legacymud::engine::DamageType::FIRE,
-                                                                                    legacymud::engine::DamageType::WATER,
-                                                                                    35.5); 
+        PlayerClass* playerClass = new PlayerClass(45, "playerClass name", skill, 10, 20, DamageType::FIRE, DamageType::WATER, 35.5);
+
+        // CreatureType (size, difficulty, name, skill, attackBonus, armorBonus, resistantTo, weakTo, healPoints)
+        CreatureType* creatureType = new CreatureType(CharacterSize::TINY, XPTier::TRIVIAL, "creatureType name", skill, 1, 2, DamageType::WATER, DamageType::FIRE, 1.1);
+
+        // NonCombatant (aQuest, name, description, money, aLocation, maxInventoryWeight)
+        NonCombatant* nonCombatant = new NonCombatant(nullptr, "NonCombatant name", "NonCombatant description", 10, startArea, 30);
+
+        // ItemType (int weight, ItemRarity rarity, std::string description, std::string name, int cost, EquipmentSlot slotType)
+        ItemType* itemType = new ItemType(1, ItemRarity::COMMON, "itemType description", "itemType name", 5, EquipmentSlot::NONE);
 
         // put the objects in the GameObjectManager
         manager->addObject(startArea, -1); 
         manager->addObject(skill, -1);
         manager->addObject(playerClass, -1);
+        manager->addObject(creatureType, -1);
+        manager->addObject(itemType, -1);
+        manager->addObject(nonCombatant, -1);
+
+        // Add NonCombatant to start area
+        startArea->addCharacter(nonCombatant);
 
         success = dm.saveGame(fileName, manager, startArea->getID());
         // save account data file as well
