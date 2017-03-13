@@ -768,6 +768,10 @@ std::string Player::look(Player *aPlayer, std::vector<EffectType> *effects){
     std::string resultMsg;
     EffectType anEffect = EffectType::NONE;
 
+    if (aPlayer->isEditMode()){
+        message += " [character " + std::to_string(getID()) + "].";
+    }
+
     resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
     if (resultMsg.compare("false") != 0){
         message += resultMsg;

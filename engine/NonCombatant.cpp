@@ -351,6 +351,10 @@ std::string NonCombatant::look(Player *aPlayer, std::vector<EffectType> *effects
 
     message = getName() + " is " + getDescription() + ".";
 
+    if (aPlayer->isEditMode()){
+        message += " [character " + std::to_string(getID()) + "].";
+    }
+
     // get results of look for this object
     resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
     if (resultMsg.compare("false") != 0){
