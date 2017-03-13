@@ -5339,13 +5339,13 @@ std::string GameLogic::handleEffects(Player *aPlayer, std::vector<EffectType> ef
                 break;
             case EffectType::FALL:
                 health = aPlayer->subtractFromCurrentHealth(5);
-                message = "You fall a short distance and loose 5 health, leaving you with ";
+                message = "You fall a short distance and lose 5 health, leaving you with ";
                 message += std::to_string(health);
                 message += " health.";
                 break;
             case EffectType::LONG_FALL:
                 health = aPlayer->subtractFromCurrentHealth(10);
-                message = "You fall a long distance and loose 10 health, leaving you with ";
+                message = "You fall a long distance and lose 10 health, leaving you with ";
                 message += std::to_string(health);
                 message += " health.";
                 break;
