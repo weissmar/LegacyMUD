@@ -5828,7 +5828,7 @@
             "placement": "on the ground",
             "location_id": 101,
             "is_conditional": false,
-            "description": "The frame of this bed looks like it was made from a mix of human and animal bones.",
+            "description": "a bed with a frame that looks like it was made from a mix of human and animal bones",
             "altdescription": "",
             "interactive_noun_data": {
                 "id": 103,
@@ -5847,7 +5847,7 @@
             "placement": "on the wall",
             "location_id": 114,
             "is_conditional": false,
-            "description": "This tapestry depicts a guard holding an axe behind a kneeling prisoner.",
+            "description": "a depiction of a guard holding an axe behind a kneeling prisoner",
             "altdescription": "",
             "interactive_noun_data": {
                 "id": 118,
@@ -6041,7 +6041,7 @@
             "name": "Admin",
             "description": "an administrator",
             "money": 10,
-            "location_area_id": 1,
+            "location_area_id": 114,
             "max_inventory_weight": 30,
             "interactive_noun_data": {
                 "id": 4,
