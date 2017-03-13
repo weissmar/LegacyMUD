@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/10/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -126,6 +126,32 @@ std::string Item::getName() const{
 ItemType* Item::getType() const{
     std::lock_guard<std::mutex> typeLock(typeMutex);
     return type;
+}
+
+
+int Item::getCooldown() const{
+    std::lock_guard<std::mutex> typeLock(typeMutex);
+    int cooldown = 0;
+    int weight = 0;
+    if (type->getObjectType() == ObjectType::WEAPON_TYPE){
+        weight = type->getWeight();
+
+        if (weight < 5){
+            cooldown = 1;
+        } else if (weight < 10){
+            cooldown = 2;
+        } else if (weight < 20){
+            cooldown = 3;
+        } else if (weight < 40){
+            cooldown = 4;
+        } else if (weight < 80){
+            cooldown = 5;
+        } else {
+            cooldown = 6;
+        }
+    }
+
+    return cooldown;
 }
 
 
@@ -1012,8 +1038,44 @@ std::string Item::move(Player *aPlayer, std::vector<EffectType> *effects){
 } 
 
 
-std::string Item::attack(Player *aPlayer, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+std::string Item::attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *aCreature, bool playerAttacker, std::vector<EffectType> *effects){
     std::string message = "";
+    EffectType anEffect = EffectType::NONE;
+    ItemType *anItemType = getType();
+    bool itemEquipped = false;
+
+    // check that item is a weapon (and doesn't heal)
+    if ((anItemType->getObjectType() == ObjectType::WEAPON_TYPE) && (anItemType->getDamageType() != DamageType::HEAL)){
+        // check that the attacker has this item equipped
+        if (playerAttacker){
+            if ((getLocation()->getID() == aPlayer->getID()) && (getPosition() == ItemPosition::EQUIPPED)){
+                itemEquipped = true;
+            } else {
+                message = "You must have the weapon equipped to use it in an attack.";
+            }
+        } else {
+            if ((getLocation()->getID() == aCreature->getID()) && (getPosition() == ItemPosition::EQUIPPED)){
+                itemEquipped = true;
+            }
+        }
+
+        if (itemEquipped){
+            // get results of attack for this item
+            message = getTextAndEffect(CommandEnum::ATTACK, anEffect);
+            if (anEffect != EffectType::NONE){
+                effects->push_back(anEffect);
+            }
+
+            // call this function on attacker
+            if (playerAttacker){
+                message = aPlayer->attack(aPlayer, this, nullptr, aCreature, true, effects);
+            } else {
+                message = aCreature->attack(aPlayer, this, nullptr, aCreature, false, effects);
+            }
+        }
+    } else if (playerAttacker){
+        message = "You can't attack with that.";
+    }
 
     return message;
 }

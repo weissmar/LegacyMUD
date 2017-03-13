@@ -2,18 +2,23 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/09/2017
- * \modified    03/10/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
  * \details     Implementation file for Creature class. 
  ************************************************************************/
 
+#include <iostream>
 #include "Creature.hpp"
 #include "Area.hpp"
 #include "CreatureType.hpp"
 #include "SpecialSkill.hpp"
 #include "CharacterSize.hpp"
+#include "Player.hpp"
+#include "Item.hpp"
+#include "GameLogic.hpp"
+#include "PlayerClass.hpp"
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
@@ -26,10 +31,13 @@
 
 namespace legacymud { namespace engine {
 
+const int RESPAWN_TIME = 60;
+
 Creature::Creature()
 : Combatant()
 , type(nullptr)
 , ambulatory (false)
+, respawnClock(0)
 { }
 
 
@@ -37,6 +45,7 @@ Creature::Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *sp
 : Combatant(maxHealth, spawnLocation, maxSpecialPts, name, description, money, aLocation, maxInventoryWeight)
 , type(aType)
 , ambulatory (ambulatory)
+, respawnClock(0)
 { }
 
 
@@ -44,6 +53,7 @@ Creature::Creature(CreatureType *aType, bool ambulatory, int maxHealth, Area *sp
 : Combatant(maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID)
 , type(aType)
 , ambulatory (ambulatory)
+, respawnClock(0)
 { }
 
 
@@ -52,6 +62,7 @@ Creature::Creature(const Creature &otherCreature) : Combatant(otherCreature) {
     type = otherCreature.type;
     otherCreature.typeMutex.unlock();
     ambulatory.store(false);
+    respawnClock.store(0);
 }
 
 
@@ -63,6 +74,7 @@ Creature & Creature::operator=(const Creature &otherCreature){
     type = otherCreature.type;
     otherCreature.typeMutex.unlock();
     ambulatory.store(false);
+    respawnClock.store(0);
 
     return *this;
 } 
@@ -107,6 +119,43 @@ int Creature::getSizeModifier() const{
     }
 
     return modifier;
+}
+
+
+int Creature::getXP() const{
+    XPTier xpTier = getType()->getDifficulty();
+    int xp = 0;
+
+    switch(xpTier){
+        case XPTier::TRIVIAL:
+            xp = 100;
+            break;
+        case XPTier::EASY:
+            xp = 200;
+            break;
+        case XPTier::NORMAL:
+            xp = 400;
+            break;
+        case XPTier::HARD:
+            xp = 800;
+            break;
+        case XPTier::LEGENDARY:
+            xp = 1600;
+            break;
+    }
+
+    return xp;
+}
+
+
+bool Creature::setRespawn(){
+    respawnClock.store(std::time(nullptr) + RESPAWN_TIME);
+    return true;
+}
+
+
+bool Creature::readyRespawn() const{
+    return respawnClock.load() <= std::time(nullptr);
 }
 
 
@@ -454,8 +503,179 @@ std::string Creature::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *a
 }
 
 
-std::string Creature::attack(Player*, Item*, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
-    return "";
+std::string Creature::attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *aCreature, bool playerAttacker, std::vector<EffectType> *effects){
+    int attackDamage = 0;
+    DamageType damageType = DamageType::NONE;
+    int cost = 0;
+    int cooldown = 0;
+    int totalDamage = 0;
+    int critMultiplier = 1;
+    int currHealth = 0;
+    AreaSize range = AreaSize::NONE;
+    Area *location = getLocation();
+    std::string message = "";
+
+    if (aSkill != nullptr){
+        // get damage, damage type, cost, and cooldown from skill
+        attackDamage = aSkill->getDamage();
+        damageType = aSkill->getDamageType();
+        cost = aSkill->getCost();
+        cooldown = aSkill->getCooldown();
+
+        // check if creature has enough special points to execute the skill
+        if (getCurrentSpecialPts() > cost){   
+            // get attack damage (if attack succeeds)
+            totalDamage = getAttackDamage(aPlayer, 2, attackDamage, damageType, AreaSize::NONE);
+
+            // if attack hit
+            if (totalDamage != 0){
+                // subtract damage from player health
+                currHealth = aPlayer->subtractFromCurrentHealth(totalDamage);
+
+                // subtract cost from creature special points
+                subtractFromCurrSpecialPts(cost);
+
+                // add skill cooldown to cooldown
+                setCooldown(cooldown);
+
+                // message player
+                message = "A creature named " + getName() + " attacks you with " + aSkill->getName() + " and does ";
+                message += std::to_string(totalDamage) + " damage. You now have " + std::to_string(currHealth) + " health.";
+            } else {
+                message = "A creature named " + getName() + " tries to attack you, but misses.";
+            }
+        } else {
+            message = "A creature named " + getName() + " tries to attack you, but they just don't quite have it in them right now.";
+        }
+    } else if (anItem != nullptr){
+        // get damage, damage type, cooldown, range, crit multiplier from weapon
+        attackDamage = anItem->getType()->getDamage();
+        damageType = anItem->getType()->getDamageType();
+        cooldown = anItem->getCooldown();
+        range = anItem->getType()->getRange();
+        critMultiplier = anItem->getType()->getCritMultiplier();
+
+        // check if weapon range is <= area size
+        if (location->isBiggerThanOrEqual(range)){
+            // get attack damage (if attack succeeds)
+            totalDamage = getAttackDamage(aPlayer, critMultiplier, attackDamage, damageType, range);
+
+            if (totalDamage != 0){
+                // subtract damage from player health
+                currHealth = aPlayer->subtractFromCurrentHealth(totalDamage);
+
+                // add weapon cooldown to cooldown
+                setCooldown(cooldown);
+
+                // message player
+                message = "A creature named " + getName() + " attacks you with " + anItem->getName() + " and does ";
+                message += std::to_string(totalDamage) + " damage. You now have " + std::to_string(currHealth) + " health.";
+            } else {
+                message = "A creature named " + getName() + " tries to attack you, but misses.";
+            }
+        } else {
+            message = "A creature named " + getName() + " tries to attack you, but they don't have enough room to manuever.";
+        }
+    } else {
+        // default attack (unarmed)
+        totalDamage = getAttackDamage(aPlayer, 2, 3, DamageType::NONE, AreaSize::SMALL);
+
+        if (totalDamage != 0){
+            // subtract damage from player health
+            currHealth = aPlayer->subtractFromCurrentHealth(totalDamage);
+
+            // add unarmed cooldown to cooldown
+            setCooldown(1);
+
+            // message player
+            message = "A creature named " + getName() + " hits you and does ";
+            message += std::to_string(totalDamage) + " damage. You now have " + std::to_string(currHealth) + " health.";
+        } else {
+            message = "A creatue named " + getName() + " tries to hit you, but misses.";
+        }
+    }
+
+    return message;
+}
+
+
+int Creature::getAttackDamage(Player *aPlayer, int critMultiplier, int attackDamage, DamageType damageType, AreaSize range){
+    int attackBonus = 0;
+    int armorClass = 0;
+    int attackRoll = 0;
+    bool hit = false;
+    bool possibleCrit = false;
+    PlayerClass *playerClass = aPlayer->getPlayerClass();
+    int totalDamage = 0;
+
+    // check attack bonus of creature 
+    attackBonus = getType()->getAttackBonus(0) + getSizeModifier();
+    if (range == AreaSize::NONE){
+        // skill attack - add intelligence modifier to attack bonus
+        attackBonus += getIntelligenceModifier();
+    } else if (range == AreaSize::SMALL){
+        // close-range weapon/unarmed attack - add strength modifier to attack bonus
+        attackBonus += getStrengthModifier();
+    } else {
+        // long-range weapon attack - add dexterity modifier to attack bonus
+        attackBonus += getDexterityModifier();
+    }
+
+    // check armor class of player
+    armorClass = 10 + aPlayer->getArmorBonus() + aPlayer->getDexterityModifier() + aPlayer->getSizeModifier();
+
+    // roll for attack success
+    attackRoll = GameLogic::rollDice(20, 1);
+
+    if (attackRoll == 20){
+        // natural 20
+        hit = true;
+        possibleCrit = true;
+    } else if (attackRoll == 1){
+        // natural 1
+        hit = false;
+    } else {
+        attackRoll += attackBonus;
+
+        if (attackRoll > armorClass){
+            hit = true;
+        }
+    }
+
+    // roll attack again to see if crit
+    if (possibleCrit){
+        attackRoll = GameLogic::rollDice(20, 1) + attackBonus;
+        if (attackRoll <= armorClass){
+            // no crit
+            critMultiplier = 1;
+        }
+    } else {
+        critMultiplier = 1;
+    }
+
+    if (hit){
+        // roll for attack damage + crit if relevant
+        totalDamage = GameLogic::rollDice(attackDamage, critMultiplier);
+        if (range == AreaSize::SMALL){
+            // add strength modifier to damage if short-range
+            totalDamage += getStrengthModifier() * critMultiplier;
+        }
+
+        // check resistance and weakness of player
+        if (playerClass->getResistantTo() == damageType){
+            // reduce damage by 1d3 (but not less than 1)
+            totalDamage -= GameLogic::rollDice(3, 1);
+        } else if (playerClass->getWeakTo() == damageType){
+            // increase damage by 1d3 
+            totalDamage += GameLogic::rollDice(3, 1);
+        }
+    }
+
+    if (totalDamage < 1){
+        totalDamage = 1;
+    }
+
+    return totalDamage;
 }
 
 

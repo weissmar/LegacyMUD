@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/10/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -61,6 +61,9 @@ class Creature: public Combatant {
         bool getAmbulatory() const;
 
         virtual int getSizeModifier() const;
+        int getXP() const;
+        bool setRespawn();
+        bool readyRespawn() const;
 
         /*!
          * \brief   Sets the type of this creature.
@@ -346,9 +349,11 @@ class Creature: public Combatant {
          */
         static std::map<std::string, DataType> getAttributeSignature();
     private:
+        int getAttackDamage(Player *aPlayer, int critMultiplier, int attackDamage, DamageType damageType, AreaSize range);
         CreatureType *type;
         mutable std::mutex typeMutex;
         std::atomic<bool> ambulatory;
+        std::atomic<time_t> respawnClock;
 };
 
 }}

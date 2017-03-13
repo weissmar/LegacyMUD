@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/10/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -20,6 +20,9 @@
 #include "SpecialSkill.hpp"
 #include "Item.hpp"
 #include "Container.hpp"
+#include "GameLogic.hpp"
+#include "CreatureType.hpp"
+#include "Creature.hpp"
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
@@ -38,6 +41,29 @@ const int START_HEALTH = 10;
 const int START_SPECIAL_PTS = 10;
 const int START_MONEY = 10;
 const int MAX_INVENTORY_WEIGHT = 30;
+
+std::map<int, int> Player::xpLevelMap = {
+    {1, 0},
+    {2, 1000},
+    {3, 3000},
+    {4, 6000},
+    {5, 10000},
+    {6, 15000},
+    {7, 21000},
+    {8, 28000},
+    {9, 36000},
+    {10, 45000},
+    {11, 55000},
+    {12, 66000},
+    {13, 78000},
+    {14, 91000},
+    {15, 105000},
+    {16, 120000},
+    {17, 136000},
+    {18, 153000},
+    {19, 171000},
+    {20, 190000},
+};
 
 Player::Player()
 : Combatant()
@@ -221,16 +247,81 @@ int Player::getSizeModifier() const{
 }
 
 
-int Player::addToExperiencePts(int gainedXP){
-    int newXP = experiencePoints.load() + gainedXP;
-    experiencePoints.store(newXP);
+int Player::getArmorBonus() const{
+    int armorBonus = Character::getArmorBonus();
 
-    return experiencePoints.load();
+    armorBonus += getPlayerClass()->getArmorBonus(getLevel());
+
+    return armorBonus;
 }
 
 
-bool Player::levelUp(){
-    return false;
+std::string Player::addToExperiencePts(int gainedXP){
+    std::string message = "";
+    int newXP = experiencePoints.load() + gainedXP;
+    experiencePoints.store(newXP);
+    int nextLevel = level.load() + 1;
+    int nextLevelXP = xpLevelMap.at(nextLevel);
+
+    message = "You gained " + std::to_string(gainedXP) + " experience points!";
+
+    if (newXP >= nextLevelXP){
+        message += levelUp();
+    } else {
+        message += "\015\012";
+    }
+
+    return message;
+}
+
+
+std::string Player::levelUp(){
+    std::string message = "";
+    int nextLevel = getLevel() + 1;
+    int healthPointsToGain = 0;
+    int specialPtsToGain = 0;
+    int primaryStat = getPlayerClass()->getPrimaryStat();
+
+    if (experiencePoints.load() >= xpLevelMap.at(nextLevel)){
+        message = "\015\012You gain a level!";
+
+        // gain health to max health based on 1d8 + strength modifier
+        healthPointsToGain = GameLogic::rollDice(8, 1) + getStrengthModifier();
+        addToMaxHealth(healthPointsToGain);
+        message += "\015\012You gain " + std::to_string(healthPointsToGain) + " to your maximum health.";
+
+        // gain special points to max special points based on 1d8 + intelligence modifier
+        specialPtsToGain = GameLogic::rollDice(8, 1) + getIntelligenceModifier();
+        addToMaxSpecialPts(specialPtsToGain);
+        message += "\015\012You gain " + std::to_string(specialPtsToGain) + " to your maximum special points.";
+
+        // gain a point to primary stat every fourth level
+        if ((nextLevel % 4) == 0){
+            message += "\015\012You gain 1 point to your ";
+            if (primaryStat == 0){
+                increaseDexterity(1);
+                message += "dexterity.";
+            } else if (primaryStat == 1){
+                increaseIntelligence(1);
+                message += "intelligence.";
+            } else if (primaryStat == 2){
+                increaseStrength(1);
+                message += "strength.";
+            }
+        }
+
+        // base attack increase by 1 (calculated in player class)
+        message += "\015\012Your attack power has increased.";
+
+        // base armor class increase by 1 every other level (calculated in player class)
+        if ((nextLevel % 2) == 0){
+            message += "\015\012Your defense has increased.";
+        }
+
+        message += "\015\012Congratulations!!!\015\012";
+    }
+
+    return message;
 }
 
 
@@ -283,9 +374,9 @@ bool Player::setInConversation(NonCombatant *anNPC){
 }
 
 
-Command* Player::getNextCommand(){
+Command Player::getNextCommand(){
     std::lock_guard<std::mutex> combatQueueLock(combatQueueMutex);
-    Command *nextCommand = nullptr;
+    Command nextCommand;
     if (!combatQueue.empty()){
         nextCommand = combatQueue.front();
         combatQueue.pop();
@@ -295,7 +386,7 @@ Command* Player::getNextCommand(){
 }
 
 
-bool Player::addCommand(Command *aCommand){
+bool Player::addCommand(Command aCommand){
     std::lock_guard<std::mutex> combatQueueLock(combatQueueMutex);
     combatQueue.push(aCommand);
 
@@ -825,10 +916,184 @@ std::string Player::go(Player *aPlayer, Area *anArea, InteractiveNoun *character
 }
 
 
-std::string Player::attack(Player *aPlayer, Item *anItem, SpecialSkill*, InteractiveNoun*, bool, std::vector<EffectType> *effects){
+// would be better without dynamic_cast ***************************************************************
+std::string Player::attack(Player *aPlayer, Item *anItem, SpecialSkill *aSkill, InteractiveNoun *creature, bool playerAttacker, std::vector<EffectType> *effects){
+    int attackDamage = 0;
+    DamageType damageType = DamageType::NONE;
+    int cost = 0;
+    int cooldown = 0;
+    int totalDamage = 0;
+    int critMultiplier = 1;
+    int currHealth = 0;
+    AreaSize range = AreaSize::NONE;
+    Area *location = getLocation();
+    Creature *aCreature = dynamic_cast<Creature*>(creature);
     std::string message = "";
 
+    if (aCreature != nullptr){
+        if (aSkill != nullptr){
+            // get damage, damage type, cost, and cooldown from skill
+            attackDamage = aSkill->getDamage();
+            damageType = aSkill->getDamageType();
+            cost = aSkill->getCost();
+            cooldown = aSkill->getCooldown();
+
+            // check if player has enough special points to execute the skill
+            if (getCurrentSpecialPts() > cost){   
+                // get attack damage (if attack succeeds)
+                totalDamage = getAttackDamage(aCreature, 2, attackDamage, damageType, AreaSize::NONE);
+
+                // if attack hit
+                if (totalDamage != 0){
+                    // subtract damage from creature health
+                    currHealth = aCreature->subtractFromCurrentHealth(totalDamage);
+
+                    // subtract cost from player special points
+                    subtractFromCurrSpecialPts(cost);
+
+                    // add skill cooldown to cooldown
+                    setCooldown(cooldown);
+
+                    // message player
+                    message = "You attack a creature named " + aCreature->getName() + " with " + aSkill->getName() + " and do ";
+                    message += std::to_string(totalDamage) + " damage. The creature now has " + std::to_string(currHealth) + " health.";
+                } else {
+                    message = "You try to attack a creature named " + aCreature->getName() + ", but you miss.";
+                }
+            } else {
+                message = "You try to attack a creature named " + aCreature->getName() + ", but you don't have enough special points right now.";
+            }
+        } else if (anItem != nullptr){
+            // get damage, damage type, cooldown, range, crit multiplier from weapon
+            attackDamage = anItem->getType()->getDamage();
+            damageType = anItem->getType()->getDamageType();
+            cooldown = anItem->getCooldown();
+            range = anItem->getType()->getRange();
+            critMultiplier = anItem->getType()->getCritMultiplier();
+
+            // check if weapon range is <= area size
+            if (location->isBiggerThanOrEqual(range)){
+                // get attack damage (if attack succeeds)
+                totalDamage = getAttackDamage(aCreature, critMultiplier, attackDamage, damageType, range);
+
+                if (totalDamage != 0){
+                    // subtract damage from creature health
+                    currHealth = aCreature->subtractFromCurrentHealth(totalDamage);
+
+                    // add weapon cooldown to cooldown
+                    setCooldown(cooldown);
+
+                    // message player
+                    message = "You attack a creature named " + aCreature->getName() + " with " + anItem->getName() + " and do ";
+                    message += std::to_string(totalDamage) + " damage. The creature now has " + std::to_string(currHealth) + " health.";
+                } else {
+                    message = "You try to attack a creature named " + aCreature->getName() + ", but you miss.";
+                }
+            } else {
+                message = "You try to attack a creature named " + aCreature->getName() + ", but you don't have enough room to manuever.";
+            }
+        } else {
+            // default attack (unarmed)
+            totalDamage = getAttackDamage(aCreature, 2, 3, DamageType::NONE, AreaSize::SMALL);
+
+            if (totalDamage != 0){
+                // subtract damage from creature health
+                currHealth = aCreature->subtractFromCurrentHealth(totalDamage);
+
+                // add unarmed cooldown to cooldown
+                setCooldown(1);
+
+                // message player
+                message = "You hit a creature named " + aCreature->getName() + " and do ";
+                message += std::to_string(totalDamage) + " damage. The creature now has " + std::to_string(currHealth) + " health.";
+            } else {
+                message = "You try to hit a creature named " + aCreature->getName() + ", but you miss.";
+            }
+        }
+    } else {
+        message = "You can only attack creatures.";
+    }
+
     return message;
+}
+
+
+int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackDamage, DamageType damageType, AreaSize range){
+    int attackBonus = 0;
+    int armorClass = 0;
+    int attackRoll = 0;
+    bool hit = false;
+    bool possibleCrit = false;
+    CreatureType *creatureType = aCreature->getType();
+    int totalDamage = 0;
+
+    // check attack bonus of player
+    attackBonus = getPlayerClass()->getAttackBonus(getLevel()) + getSizeModifier();
+    if (range == AreaSize::NONE){
+        // skill attack - add intelligence modifier to attack bonus
+        attackBonus += getIntelligenceModifier();
+    } else if (range == AreaSize::SMALL){
+        // close-range weapon/unarmed attack - add strength modifier to attack bonus
+        attackBonus += getStrengthModifier();
+    } else {
+        // long-range weapon attack - add dexterity modifier to attack bonus
+        attackBonus += getDexterityModifier();
+    }
+
+    // check armor class of creature
+    armorClass = 10 + aCreature->getArmorBonus() + aCreature->getDexterityModifier() + aCreature->getSizeModifier();
+
+    // roll for attack success
+    attackRoll = GameLogic::rollDice(20, 1);
+
+    if (attackRoll == 20){
+        // natural 20
+        hit = true;
+        possibleCrit = true;
+    } else if (attackRoll == 1){
+        // natural 1
+        hit = false;
+    } else {
+        attackRoll += attackBonus;
+
+        if (attackRoll > armorClass){
+            hit = true;
+        }
+    }
+
+    // roll attack again to see if crit
+    if (possibleCrit){
+        attackRoll = GameLogic::rollDice(20, 1) + attackBonus;
+        if (attackRoll <= armorClass){
+            // no crit
+            critMultiplier = 1;
+        }
+    } else {
+        critMultiplier = 1;
+    }
+
+    if (hit){
+        // roll for attack damage + crit if relevant
+        totalDamage = GameLogic::rollDice(attackDamage, critMultiplier);
+        if (range == AreaSize::SMALL){
+            // add strength modifier to damage if short-range
+            totalDamage += getStrengthModifier() * critMultiplier;
+        }
+
+        // check resistance and weakness of creature
+        if (creatureType->getResistantTo() == damageType){
+            // reduce damage by 1d3 (but not less than 1)
+            totalDamage -= GameLogic::rollDice(3, 1);
+            if (totalDamage < 1){
+                totalDamage = 1;
+            }
+        } else if (creatureType->getWeakTo() == damageType){
+            // increase damage by 1d3 
+            totalDamage += GameLogic::rollDice(3, 1);
+        }
+    }
+
+    return totalDamage;
 }
 
 

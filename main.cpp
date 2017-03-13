@@ -70,6 +70,8 @@ int main(int argc, char *argv[]) {
     
     while (true) {
         logic.processInput(1);
+        logic.updateCreatures();
+        logic.updatePlayersInCombat();
     }
 
     return 0;

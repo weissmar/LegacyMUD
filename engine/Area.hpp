@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        Area.hpp
  *
@@ -145,6 +145,17 @@ class Area: public InteractiveNoun {
          * \return  Returns a std::string with the full description.
          */
         std::string getFullDescription(Player *aPlayer) const;
+
+        /*!
+         * \brief   Gets whether or not the area is bigger than or equal to
+         *          the size passed in.
+         *          
+         * \param[in] aSize     Specifies size to compare.
+         * 
+         * \return  Returns a bool indicating whether or not the area is 
+         *          bigger than or equal to the size passed in.
+         */
+        bool isBiggerThanOrEqual(AreaSize aSize) const;
 
         /*!
          * \brief   Sets the name of this area.

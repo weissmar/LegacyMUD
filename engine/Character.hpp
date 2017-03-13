@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/09/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -126,6 +126,7 @@ class Character: public InteractiveNoun {
         virtual int getStrengthModifier() const { return 0; }
         virtual int getDexterityModifier() const { return 0; }
         virtual int getSizeModifier() const { return 0; }
+        virtual int getArmorBonus() const;
 
         /*!
          * \brief   Gets whether or not the character currently has an item in 

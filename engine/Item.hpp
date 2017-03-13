@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/11/2017
  * \course      CS467, Winter 2017
  * \file        Item.hpp
  *
@@ -69,6 +69,14 @@ class Item: public InteractiveNoun {
          * \return  Returns an ItemType* with the type of the item.
          */
         ItemType* getType() const;
+
+        /*!
+         * \brief   Gets the cooldown of the item.
+         *
+         * \return  Returns an int with the cooldown of the item, if it is
+         *          a weapon, otherwise 0.
+         */
+        int getCooldown() const;
 
         /*!
          * \brief   Sets the location of the item.

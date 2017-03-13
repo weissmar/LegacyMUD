@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/10/2017
+ * \modified    03/12/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -29,6 +29,7 @@
 #include "ObjectType.hpp"
 #include "EffectType.hpp"
 #include "GameObjectManager.hpp" 
+#include "ItemPosition.hpp"
 
 namespace legacymud { namespace engine {
 
@@ -46,6 +47,7 @@ struct Command {
     CommandEnum commandE;
     InteractiveNoun *firstParam;
     InteractiveNoun *secondParam;
+    ItemPosition aPosition;
 };
 
 /*!
@@ -164,23 +166,26 @@ class Player: public Combatant {
 
         virtual int getSizeModifier() const;
 
+        virtual int getArmorBonus() const;
+
         /*!
          * \brief   Adds the specified points to the experience points of 
          *          this player.
          *          
          * \param[in] gainedXP  Specifies the points to add.
          *
-         * \return  Returns an int with the new total of experience points.
+         * \return  Returns a std::string with a message about the new total of 
+         *          experience points.
          */
-        int addToExperiencePts(int gainedXP);
+        std::string addToExperiencePts(int gainedXP);
 
         /*!
          * \brief   Levels up this player.
          *
-         * \return  Returns a bool indicating whether or not the player was
-         *          successfully leveled up.
+         * \return  Returns a std::string with a message about the player leveling
+         *          up, or empty string if the player couldn't level.
          */
-        bool levelUp();
+        std::string levelUp();
 
         /*!
          * \brief   Sets the size of this player.
@@ -245,9 +250,9 @@ class Player: public Combatant {
         /*!
          * \brief   Gets the next command in the player's combat queue.
          *
-         * \return  Returns a Command* with the command or nullptr if the queue is empty.
+         * \return  Returns a Command with the command or empty command if the queue is empty.
          */
-        Command* getNextCommand();
+        Command getNextCommand();
 
         /*!
          * \brief   Adds a command to the player's combat queue.
@@ -257,7 +262,7 @@ class Player: public Combatant {
          * \return  Returns a bool indicating whether or not the command was successfully 
          *          added.
          */
-        bool addCommand(Command *aCommand);
+        bool addCommand(Command aCommand);
 
         /*!
          * \brief   Sets whether or not the player is in edit mode.
@@ -671,6 +676,7 @@ class Player: public Combatant {
     private:
         void addAllLexicalData(InteractiveNoun *anObject);
         void removeAllLexicalData(InteractiveNoun *anObject);
+        int getAttackDamage(Creature *aCreature, int critMultiplier, int attackDamage, DamageType damageType, AreaSize range);
         
         std::atomic<int> experiencePoints;
         std::atomic<int> level;
@@ -683,13 +689,14 @@ class Player: public Combatant {
         mutable std::mutex usernameMutex;
         std::atomic<bool> active;
         std::atomic<int> fileDescriptor;
-        std::queue<Command*> combatQueue;
+        std::queue<Command> combatQueue;
         mutable std::mutex combatQueueMutex;
         std::atomic<bool> editMode;
         std::map<Quest*, std::pair<int, bool>> questList;
         mutable std::mutex questListMutex;
         parser::LexicalData inventoryLexicalData;
         mutable std::mutex lexicalMutex;
+        static std::map<int, int> xpLevelMap;
 };
 
 }}
