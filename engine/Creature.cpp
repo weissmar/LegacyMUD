@@ -367,7 +367,22 @@ Creature* Creature::deserialize(std::string jsonStr, GameObjectManager* gom){
 
 
 std::string Creature::look(Player *aPlayer, std::vector<EffectType> *effects){
-    return "";
+    std::string message = "";
+    std::string resultMsg = "";
+    EffectType anEffect = EffectType::NONE;
+
+    message = getName() + " is " + getDescription() + ".";
+
+    // get results of look for this object
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 }  
 
 

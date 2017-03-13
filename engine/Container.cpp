@@ -352,13 +352,23 @@ Container* Container::deserialize(std::string jsonStr, GameObjectManager* gom){
 
 
 std::string Container::look(Player *aPlayer, std::vector<EffectType> *effects){
-    std::string message;
+    std::string message, resultMsg;
     ItemType *aType = getType();
+    EffectType anEffect = EffectType::NONE;
 
     message = "The " + getName() + " is ";
     message += aType->getDescription() + ".";
     if (!isEmpty()){
         message += " It looks like it might contain something.";
+    }
+
+    // get results of look for this object
+    resultMsg = getTextAndEffect(CommandEnum::LOOK, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message += resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
     }
 
     return message;
