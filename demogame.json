@@ -3919,7 +3919,7 @@
                     {
                         "command": "GO",
                         "valid": true,
-                        "flavor_text": "",
+                        "flavor_text": "You use your rope to swing across the crevice.",
                         "effect": "NONE",
                         "aliases": [
                             {
