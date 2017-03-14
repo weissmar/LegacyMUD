@@ -189,6 +189,8 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
     Player *newPlayer = nullptr;
     Player *aPlayer = nullptr;
     Area *anArea = nullptr;
+    int strength, dexterity, intelligence, reroll;
+    int numReRoll = 0;
 
     while (!validUser){
         // get username
@@ -288,6 +290,36 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
             // create player
             newPlayer = new Player(static_cast<CharacterSize>(playerSize - 1), pClasses[pClassNumber - 1], username, fileDescriptor, playerName, pDescription, startArea);
             
+            // check stats
+            dexterity = newPlayer->getDexterity();
+            strength = newPlayer->getStrength();
+            intelligence = newPlayer->getIntelligence();
+            message = "Your auto-generated stats are: \015\012dexterity = " + std::to_string(dexterity);
+            message += "\015\012strength = " + std::to_string(strength) + "\015\012intelligence = " + std::to_string(intelligence) + "\015\012";
+            messagePlayer(newPlayer, message);
+            success = getValueFromUser(fileDescriptor, "Would you like to re-roll your stats? (You can do this up to three times.) Please enter [1] for yes or [2] for no.", number);
+            if (!success){
+                return false;
+            }
+            reroll = validateStringNumber(number, 1, 2);
+            while ((reroll == 1) && (numReRoll < 3)){
+                newPlayer->rollStats();
+                dexterity = newPlayer->getDexterity();
+                strength = newPlayer->getStrength();
+                intelligence = newPlayer->getIntelligence();
+                message = "Your newly auto-generated stats are: \015\012dexterity = " + std::to_string(dexterity);
+                message += "\015\012strength = " + std::to_string(strength) + "\015\012intelligence = " + std::to_string(intelligence) + "\015\012";
+                messagePlayer(newPlayer, message);
+                if (numReRoll < 2){
+                    success = getValueFromUser(fileDescriptor, "Would you like to re-roll your stats? (You can do this up to three times.) Please enter [1] for yes or [2] for no.", number);
+                    if (!success){
+                        return false;
+                    }
+                    reroll = validateStringNumber(number, 1, 2);
+                }
+                numReRoll++;
+            }
+
             // Wait until not saving before adding object
             if (!waitForSaveOrTimeout()) {
                 messagePlayer(newPlayer, "Timed out while waiting for game to save.");
@@ -477,6 +509,7 @@ bool GameLogic::updateCreatures(){
     std::string message = "";
     Exit *anExit = nullptr;
     int cooldown = 0;
+    bool moved = false;
 
     for (auto creature : allCreatures){
         location = creature->getLocation();
@@ -538,20 +571,24 @@ bool GameLogic::updateCreatures(){
                         exits = location->getExits();
 
                         if (exits.size() != 0){
-                            exitChoice = rollDice(exits.size(), 2);
+                            exitChoice = rollDice(exits.size() * 2, 1);
+
                             if (exitChoice <= exits.size()){
                                 // move creature
+                                moved = true;
                                 exits[exitChoice - 1]->go(nullptr, nullptr, creature, &effects);
                                 messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "leaves the area.", location);
                                 messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "enters the area.", exits[exitChoice - 1]->getConnectArea());
-
-                                // add to cooldown
-                                cooldown = 5 - creature->getDexterityModifier();
-                                if (cooldown < 0){
-                                    cooldown = 1;
-                                }
-                                creature->setCooldown(cooldown);
                             }
+                            // add to cooldown
+                            cooldown = 5 - creature->getDexterityModifier();
+                            if (cooldown < 0){
+                                cooldown = 1;
+                            }
+                            if (moved){
+                                cooldown *= 2;
+                            }
+                            creature->setCooldown(cooldown);
                         }
                     }
                 }
