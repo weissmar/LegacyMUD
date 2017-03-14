@@ -394,10 +394,10 @@ class GameLogic {
          * \return  Returns a bool indicating whether or not ending combat
          *          was successful.
          */
-        bool endCombat(Player *aPlayer, Creature *aCreature);
+        bool endCombat(Player *aPlayer, Combatant *aCreature);
 
         void checkEndCombat(Player *aPlayer, Creature *aCreature);
-        void checkPlayerDeath(Player *aPlayer);
+        bool checkPlayerDeath(Player *aPlayer);
         void respawn(Player* aPlayer, Creature *aCreature);
 
         /*!

@@ -4136,12 +4136,17 @@ bool GameLogic::startCombat(Player* aPlayer, Creature *aCreature){
 }
 
 
-bool GameLogic::endCombat(Player *aPlayer, Creature *aCreature){
-    aPlayer->setInCombat(nullptr);
-    aCreature->setInCombat(nullptr);
-    messagePlayer(aPlayer, "Leaving combat...");
+bool GameLogic::endCombat(Player *aPlayer, Combatant *aCreature){
+    bool success = false;
 
-    return true;
+    if ((aPlayer != nullptr) && (aCreature != nullptr)){
+        aPlayer->setInCombat(nullptr);
+        aCreature->setInCombat(nullptr);
+        messagePlayer(aPlayer, "Leaving combat...");
+        success = true;
+    } 
+
+    return success;
 }
 
 
@@ -4194,7 +4199,8 @@ void GameLogic::checkEndCombat(Player *aPlayer, Creature *aCreature){
 }
 
 
-void GameLogic::checkPlayerDeath(Player *aPlayer){
+bool GameLogic::checkPlayerDeath(Player *aPlayer){
+    bool died = false;
     Area *deathLocation = nullptr;
 
     if (aPlayer->getCurrentHealth() == 0){
@@ -4211,7 +4217,11 @@ void GameLogic::checkPlayerDeath(Player *aPlayer){
 
         // respawn player
         respawn(aPlayer, nullptr);
+
+        died = true;
     }
+
+    return died;
 }
 
 
@@ -5411,6 +5421,7 @@ std::string GameLogic::handleEffects(Player *aPlayer, std::vector<EffectType> ef
         allMessages += message;
         allMessages += "\015\012";
     }
+
     return allMessages;
 }
 
@@ -5431,6 +5442,7 @@ bool GameLogic::lookCommand(Player *aPlayer, InteractiveNoun *param){
     message += handleEffects(aPlayer, effects);
 
     messagePlayer(aPlayer, message);
+    checkPlayerDeath(aPlayer);
 
     return true;
 }
@@ -5448,6 +5460,7 @@ bool GameLogic::listenCommand(Player *aPlayer){
     message += handleEffects(aPlayer, effects);
 
     messagePlayer(aPlayer, message);
+    checkPlayerDeath(aPlayer);
 
     return true;
 }
@@ -5479,6 +5492,7 @@ bool GameLogic::takeCommand(Player *aPlayer, InteractiveNoun *directObj, Interac
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
     
@@ -5518,6 +5532,7 @@ bool GameLogic::putCommand(Player *aPlayer, InteractiveNoun *directObj, Interact
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -5547,6 +5562,7 @@ bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -5716,6 +5732,7 @@ bool GameLogic::equipCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -5744,6 +5761,7 @@ bool GameLogic::unequipCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -5774,6 +5792,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
 
         if (indirectObj->getObjectType() == ObjectType::PLAYER){
             otherPlayer = dynamic_cast<Player*>(indirectObj);
@@ -5851,6 +5870,7 @@ bool GameLogic::whisperCommand(Player *aPlayer, InteractiveNoun *indirectObj, co
 bool GameLogic::quitCommand(Player *aPlayer){
     std::string message = "A player named " + aPlayer->getName() + " leaves the area.";
     int FD = aPlayer->getFileDescriptor();
+    endCombat(aPlayer, aPlayer->getInCombat());
     messagePlayer(aPlayer, "Logging you out...");
     messageAreaPlayers(aPlayer, message, aPlayer->getLocation());
     hibernatePlayer(aPlayer);
@@ -5866,6 +5886,8 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
     Area *newArea = nullptr;
     Area *currLocation = aPlayer->getLocation();
     int cooldown = 5 - aPlayer->getSizeModifier();
+    bool canGo = false;
+    bool dead = false;
 
     if (cooldown < 0){
         cooldown = 1;
@@ -5879,15 +5901,19 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
     if (message.compare("false") == 0){
         message = "You can't go that way. ";
     } else {
+        canGo = true;
         newArea = aPlayer->getLocation();
         message += handleEffects(aPlayer, effects);
-        message += newArea->getFullDescription(aPlayer);
         messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " leaves the area.", currLocation);
         messageAreaPlayers(aPlayer, "You see a player named " + aPlayer->getName() + " enter the area.", newArea);
     }
 
     if (success){ 
         messagePlayer(aPlayer, message);
+        dead = checkPlayerDeath(aPlayer);
+        if ((canGo) && (!dead)){
+            messagePlayer(aPlayer, newArea->getFullDescription(aPlayer));
+        }
         aPlayer->setCooldown(cooldown);
     }
 
@@ -5916,6 +5942,7 @@ bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6103,6 +6130,7 @@ bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *param){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6176,6 +6204,7 @@ bool GameLogic::buyCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6203,6 +6232,7 @@ bool GameLogic::sellCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6230,6 +6260,7 @@ bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6262,6 +6293,7 @@ bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, Int
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
     }
 
     return success;
@@ -6289,6 +6321,7 @@ bool GameLogic::readCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6317,6 +6350,7 @@ bool GameLogic::breakCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6345,6 +6379,7 @@ bool GameLogic::climbCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6373,6 +6408,7 @@ bool GameLogic::turnCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6401,6 +6437,7 @@ bool GameLogic::pushCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6429,6 +6466,7 @@ bool GameLogic::pullCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6457,6 +6495,7 @@ bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 
@@ -6485,6 +6524,7 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        checkPlayerDeath(aPlayer);
         aPlayer->setCooldown(1);
     }
 

@@ -1043,12 +1043,15 @@ int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackD
         // long-range weapon attack - add dexterity modifier to attack bonus
         attackBonus += getDexterityModifier();
     }
+//std::cout << "player attack bonus = " << std::to_string(attackBonus) << "\n";
 
     // check armor class of creature
     armorClass = 10 + aCreature->getArmorBonus() + aCreature->getDexterityModifier() + aCreature->getSizeModifier();
+//std::cout << "creature armor class = " << std::to_string(armorClass) << "\n";
 
     // roll for attack success
     attackRoll = GameLogic::rollDice(20, 1);
+//std::cout << "player attack roll = " << std::to_string(attackRoll) << "\n";
 
     if (attackRoll == 20){
         // natural 20
@@ -1068,6 +1071,7 @@ int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackD
     // roll attack again to see if crit
     if (possibleCrit){
         attackRoll = GameLogic::rollDice(20, 1) + attackBonus;
+//std::cout << "player crit roll = " << std::to_string(attackRoll) << "\n";
         if (attackRoll <= armorClass){
             // no crit
             critMultiplier = 1;
@@ -1092,6 +1096,7 @@ int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackD
             totalDamage += GameLogic::rollDice(3, 1);
         }
     }
+//std::cout << "player totalDamage = " << std::to_string(totalDamage) << "\n";
 
     if (totalDamage < 1){
         totalDamage = 1;
