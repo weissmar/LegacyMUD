@@ -1,5 +1,5 @@
 {
-    "nextID": 121,
+    "nextID": 122,
     "startAreaId": 1,
     "AREA": [
         {
@@ -5857,6 +5857,72 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "FEATURE",
+            "name": "cot",
+            "placement": "in the corner",
+            "location_id": 1,
+            "is_conditional": false,
+            "description": "a comfortable-looking cot made from cow hide stretched over a wood frame",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 121,
+                "noun_aliases": [
+                    "feature 121",
+                    "cot"
+                ],
+                "actions": [
+                    {
+                        "command": "CLIMB",
+                        "valid": true,
+                        "flavor_text": "You take a quick nap.",
+                        "effect": "HEAL",
+                        "aliases": [
+                            {
+                                "verb_alias": "use",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "lie down on",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "lie on",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "sleep",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "sleep on",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ],
     "ITEM": [
@@ -6041,7 +6107,7 @@
             "name": "Admin",
             "description": "an administrator",
             "money": 10,
-            "location_area_id": 114,
+            "location_area_id": 1,
             "max_inventory_weight": 30,
             "interactive_noun_data": {
                 "id": 4,
