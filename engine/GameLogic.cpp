@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/13/2017
+ * \modified    03/14/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -521,7 +521,14 @@ bool GameLogic::updateCreatures(){
 
                                 // attack
                                 creatureAttack(creature, players[index]);
-                            } 
+                            } else {
+                                // add to cooldown
+                                cooldown = 5 - creature->getDexterityModifier();
+                                if (cooldown < 0){
+                                    cooldown = 1;
+                                }
+                                creature->setCooldown(cooldown);
+                            }
                         }
                         index++;
                     }
@@ -537,6 +544,13 @@ bool GameLogic::updateCreatures(){
                                 exits[exitChoice - 1]->go(nullptr, nullptr, creature, &effects);
                                 messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "leaves the area.", location);
                                 messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "enters the area.", exits[exitChoice - 1]->getConnectArea());
+
+                                // add to cooldown
+                                cooldown = 5 - creature->getDexterityModifier();
+                                if (cooldown < 0){
+                                    cooldown = 1;
+                                }
+                                creature->setCooldown(cooldown);
                             }
                         }
                     }
@@ -571,7 +585,7 @@ bool GameLogic::updateCreatures(){
                             // add to cooldown
                             cooldown = 5 - creature->getDexterityModifier();
                             if (cooldown < 0){
-                                cooldown = 0;
+                                cooldown = 1;
                             }
                             creature->setCooldown(cooldown);
                         }
@@ -4174,19 +4188,29 @@ void GameLogic::checkEndCombat(Player *aPlayer, Creature *aCreature){
         }
 
         if (playerDies){
-            messagePlayer(aPlayer, "You died...");
-
-            // remove all items from player
-            aPlayer->removeAllFromInventory();
-
-            // remove player from area
-            deathLocation = aPlayer->getLocation();
-            deathLocation->removeCharacter(aPlayer);
-            messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
-
-            // respawn player
-            respawn(aPlayer, nullptr);
+            checkPlayerDeath(aPlayer);
         }
+    }
+}
+
+
+void GameLogic::checkPlayerDeath(Player *aPlayer){
+    Area *deathLocation = nullptr;
+
+    if (aPlayer->getCurrentHealth() == 0){
+        //player dies
+        messagePlayer(aPlayer, "You died...");
+
+        // remove all items from player
+        aPlayer->removeAllFromInventory();
+
+        // remove player from area
+        deathLocation = aPlayer->getLocation();
+        deathLocation->removeCharacter(aPlayer);
+        messageAreaPlayers(aPlayer, "A player named " + aPlayer->getName() + " dies in front of you. As their corpse disintegrates, you can see the items they left behind.", deathLocation);
+
+        // respawn player
+        respawn(aPlayer, nullptr);
     }
 }
 
@@ -6749,6 +6773,7 @@ bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
 
 
 bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
+    //items, containers, creatures, features, and exits.
     return false;
 }
 

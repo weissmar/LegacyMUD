@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/12/2017
+ * \modified    03/14/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -1083,18 +1083,18 @@ int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackD
             // add strength modifier to damage if short-range
             totalDamage += getStrengthModifier() * critMultiplier;
         }
-
         // check resistance and weakness of creature
         if (creatureType->getResistantTo() == damageType){
             // reduce damage by 1d3 (but not less than 1)
             totalDamage -= GameLogic::rollDice(3, 1);
-            if (totalDamage < 1){
-                totalDamage = 1;
-            }
         } else if (creatureType->getWeakTo() == damageType){
             // increase damage by 1d3 
             totalDamage += GameLogic::rollDice(3, 1);
         }
+    }
+
+    if (totalDamage < 1){
+        totalDamage = 1;
     }
 
     return totalDamage;

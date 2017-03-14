@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/12/2017
+ * \modified    03/14/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -397,6 +397,7 @@ class GameLogic {
         bool endCombat(Player *aPlayer, Creature *aCreature);
 
         void checkEndCombat(Player *aPlayer, Creature *aCreature);
+        void checkPlayerDeath(Player *aPlayer);
         void respawn(Player* aPlayer, Creature *aCreature);
 
         /*!
