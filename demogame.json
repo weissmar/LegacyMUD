@@ -1,5 +1,5 @@
 {
-    "nextID": 134,
+    "nextID": 136,
     "startAreaId": 1,
     "AREA": [
         {
@@ -5170,7 +5170,7 @@
             "class": "EXIT",
             "exit_direction": "WEST",
             "location_id": 105,
-            "connect_area_id": 108,
+            "connect_area_id": 114,
             "is_conditional": false,
             "description": "an opening covered by something",
             "altdescription": "",
@@ -5239,7 +5239,7 @@
         {
             "class": "EXIT",
             "exit_direction": "EAST",
-            "location_id": 108,
+            "location_id": 114,
             "connect_area_id": 105,
             "is_conditional": false,
             "description": "a tapestry hanging on the wall",
@@ -5849,6 +5849,76 @@
                     }
                 ]
             }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "SOUTH",
+            "location_id": 47,
+            "connect_area_id": 41,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 135,
+                "noun_aliases": [
+                    "exit 135",
+                    "a densely wooded area",
+                    "densely wooded area",
+                    "wooded area",
+                    "south",
+                    "s"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "densely wooded area",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "wooded area",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 135",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "s",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ],
     "FEATURE": [
@@ -5897,7 +5967,7 @@
             "class": "FEATURE",
             "name": "tapestry",
             "placement": "on the wall",
-            "location_id": 114,
+            "location_id": 108,
             "is_conditional": false,
             "description": "a depiction of a guard holding an axe behind a kneeling prisoner",
             "altdescription": "",
@@ -6299,6 +6369,21 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "ITEM",
+            "name": "dungeon key",
+            "location": 23,
+            "position": "GROUND",
+            "item_type_id": 116,
+            "interactive_noun_data": {
+                "id": 134,
+                "noun_aliases": [
+                    "item 134",
+                    "dungeon key"
+                ],
+                "actions": []
+            }
         }
     ],
     "ITEM_TYPE": [
@@ -6341,7 +6426,7 @@
         {
             "class": "ITEM_TYPE",
             "weight": 1,
-            "rarity": "UNCOMMON",
+            "rarity": "QUEST",
             "description": "a key to the cell doors in the dungeon below the guard tower",
             "name": "dungeon key",
             "cost": 100,
@@ -6410,7 +6495,7 @@
             "name": "Admin",
             "description": "an administrator",
             "money": 40,
-            "location_area_id": 66,
+            "location_area_id": 1,
             "max_inventory_weight": 30,
             "interactive_noun_data": {
                 "id": 4,
