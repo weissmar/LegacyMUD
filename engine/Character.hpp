@@ -218,9 +218,8 @@ class Character: public InteractiveNoun {
          *
          * \param[in] anItem    Specifies the item to equip.
          *
-         * \note    The item is must already be in inventory. If another item is 
-         *          already equipped in the slot that the specified item will take,
-         *          the first item is unequipped.
+         * \note    If another item is already equipped in the slot that the specified 
+         *          item will take, the first item is unequipped.
          *
          * \return  Returns the name of the item that was unequipped (if applicable),
          *          or "true" if successful. Otherwise, "false".

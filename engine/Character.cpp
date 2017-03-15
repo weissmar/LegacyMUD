@@ -239,10 +239,10 @@ bool Character::addToInventory(Item *anItem){
 
 std::string Character::equipItem(Item *anItem){
     std::string success = "false";
+    EquipmentSlot slot = anItem->getType()->getSlotType();
 
-    if (anItem != nullptr){
+    if ((anItem != nullptr) && (slot != EquipmentSlot::NONE)){
         std::lock_guard<std::mutex> inventoryLock(inventoryMutex);
-        EquipmentSlot slot = anItem->getType()->getSlotType();
         size_t index = 100000000;
         size_t currItemInSlot = 100000000;
 
@@ -255,17 +255,20 @@ std::string Character::equipItem(Item *anItem){
             }
         }
 
-        if ((index != 100000000) && (slot != EquipmentSlot::NONE)){
-            if (currItemInSlot != 100000000){
-                // unequip item that was in that slot
-                inventory[currItemInSlot].first = EquipmentSlot::NONE;
-                success = inventory[currItemInSlot].second->getName();
-            } else {
-                success = "true";
-            }
+
+        if (currItemInSlot != 100000000){
+            // unequip item that was in that slot
+            inventory[currItemInSlot].first = EquipmentSlot::NONE;
+            success = inventory[currItemInSlot].second->getName();
+        } else {
+            success = "true";
+        }
+        if (index != 100000000){
             // equip item
             inventory[index].first = slot;
-        } 
+        } else {
+            inventory.push_back(std::make_pair(slot, anItem));
+        }
     }
     return success;
 }
