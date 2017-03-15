@@ -287,6 +287,7 @@ std::string Player::levelUp(){
 
     if (experiencePoints.load() >= xpLevelMap.at(nextLevel)){
         message = "\015\012You gain a level!";
+        level.store(nextLevel);
 
         // gain health to max health based on 1d8 + strength modifier
         healthPointsToGain = GameLogic::rollDice(8, 1) + getStrengthModifier();

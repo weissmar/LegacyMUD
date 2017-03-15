@@ -522,7 +522,10 @@ bool GameLogic::updateCreatures(){
             }
         } else if (creature->cooldownIsZero()){ // check cooldown
             // check to see if already in combat
-            aPlayer = dynamic_cast<Player*>(creature->getInCombat());
+            aPlayer = nullptr;
+            if (creature->getInCombat() != nullptr){
+                aPlayer = dynamic_cast<Player*>(creature->getInCombat());
+            }
             if (aPlayer != nullptr){
                 inCombat = true;
             } else {
@@ -530,6 +533,7 @@ bool GameLogic::updateCreatures(){
             }
 
             if (!inCombat){
+
                 // check if there are players in this location
                 characters = location->getCharacters();
                 for (auto character : characters){
@@ -543,11 +547,14 @@ bool GameLogic::updateCreatures(){
                     while ((!inCombat) && (index < players.size())){
                         // if the player isn't already in combat and isn't in editmode
                         if ((players[index]->getInCombat() == nullptr) && (!players[index]->isEditMode())){
+std::cout << "player not in combat id = " << std::to_string(players[index]->getID()) << "\n";
+std::cout << "creature not in combat id = " << std::to_string(creature->getID()) << "\n";
                             // creature rolls spot check and player rolls hide check
                             spotCheck = rollDice(20, 1) + creature->getIntelligenceModifier();
                             hideCheck = rollDice(20, 1) + players[index]->getDexterityModifier() + players[index]->getSizeModifier();
 
                             if (spotCheck > hideCheck){
+std::cout << "spotCheck > hideCheck\n";
                                 // start combat
                                 startCombat(players[index], creature);
                                 inCombat = true;
@@ -645,6 +652,7 @@ bool GameLogic::updateCreatures(){
 
 
 void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
+std::cout << "creatureAttack id = " << std::to_string(aCreature->getID()) << "\n";
     size_t weaponChoice = 0;
     std::vector<Item*> weapons;
     std::vector<EffectType> effects;
@@ -4246,6 +4254,7 @@ void GameLogic::messageAreaPlayers(Player *aPlayer, std::string message, Area *a
 
 
 bool GameLogic::startCombat(Player* aPlayer, Creature *aCreature){
+std::cout << "inside startCombat\n";
     aPlayer->setInCombat(aCreature);
     aCreature->setInCombat(aPlayer);
     messagePlayer(aPlayer, "Entering combat...");
@@ -6933,7 +6942,63 @@ bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
 
 bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
     //items, containers, creatures, features, and exits.
-    return false;
+    std::string message = "";
+    bool success = false;
+    ObjectType anObjectType, locationType;
+    std::vector<Quest*> allQuests;
+    Item *anItem = nullptr;
+    InteractiveNoun *location = nullptr;
+    Area *anArea = nullptr;
+    Character *aCharacter = nullptr;
+    Container *aContainer = nullptr;
+
+    if ((aPlayer->isEditMode()) && (directObj != nullptr)){
+        anObjectType = directObj->getObjectType();
+        if ((anObjectType == ObjectType::ITEM) || (anObjectType == ObjectType::CONTAINER)){
+            // rmeove all references to the item in quests
+            allQuests = manager->getGameQuests();
+            for (auto quest : allQuests){
+                if (quest->getRewardItem()->getID() == directObj->getID()){
+                    quest->setRewardItem(nullptr);
+                }
+            }
+
+            // remove from containing object
+            anItem = static_cast<Item*>(directObj);
+            location = anItem->getLocation();
+            locationType = location->getObjectType();
+            if (locationType == ObjectType::AREA){
+                anArea = static_cast<Area*>(location);
+                anArea->removeItem(anItem);
+            } else if (locationType == ObjectType::CONTAINER){
+                aContainer = static_cast<Container*>(location);
+                aContainer->remove(anItem);
+            } else {
+                aCharacter = static_cast<Character*>(location);
+                aCharacter->removeFromInventory(anItem);
+            }
+
+            // remove any contained objects
+            if (anObjectType == ObjectType::CONTAINER){
+                //**************************************************
+            }
+
+        } else if (anObjectType == ObjectType::CREATURE){
+
+        } else if (anObjectType == ObjectType::FEATURE){
+
+        } else if (anObjectType == ObjectType::EXIT){
+
+        } else {
+            message = "You can't delete that.";
+        }
+    } else {
+        message = "You must be in editmode to create.";
+    }
+
+    messagePlayer(aPlayer, message);
+
+    return success;
 }
 
 }}

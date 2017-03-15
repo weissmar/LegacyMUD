@@ -101,6 +101,7 @@ Combatant::Combatant(const Combatant &otherCombatant) : Character(otherCombatant
     dexterity.store(otherCombatant.dexterity.load());
     strength.store(otherCombatant.strength.load());
     intelligence.store(otherCombatant.intelligence.load());
+    inCombat = nullptr;
     regenTime.store(0);
 }
 
@@ -122,6 +123,7 @@ Combatant & Combatant::operator=(const Combatant &otherCombatant){
     dexterity.store(otherCombatant.dexterity.load());
     strength.store(otherCombatant.strength.load());
     intelligence.store(otherCombatant.intelligence.load());
+    inCombat = nullptr;
     regenTime.store(0);
 
     return *this;
