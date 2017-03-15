@@ -1,5 +1,5 @@
 {
-    "nextID": 122,
+    "nextID": 134,
     "startAreaId": 1,
     "AREA": [
         {
@@ -321,7 +321,7 @@
             "class": "AREA",
             "name": "Outside a Cave",
             "short_description": "You are standing outside the entrance to a dark cave.",
-            "long_description": "You are standing outside the entrance to a dark cave.",
+            "long_description": "You are standing outside the entrance to a dark cave. A foul smell emanates from the opening.",
             "area_size": "SMALL",
             "interactive_noun_data": {
                 "id": 63,
@@ -4672,7 +4672,7 @@
                         "command": "GO",
                         "valid": true,
                         "flavor_text": "You fall off the edge of a cliff!",
-                        "effect": "FALL",
+                        "effect": "LONG_FALL",
                         "aliases": [
                             {
                                 "verb_alias": "dark downward slope",
@@ -5797,6 +5797,58 @@
                     }
                 ]
             }
+        },
+        {
+            "class": "EXIT",
+            "exit_direction": "EAST",
+            "location_id": 47,
+            "connect_area_id": 52,
+            "is_conditional": false,
+            "description": "a densely wooded area",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 133,
+                "noun_aliases": [
+                    "exit 133",
+                    "a densely wooded area",
+                    "east",
+                    "e"
+                ],
+                "actions": [
+                    {
+                        "command": "GO",
+                        "valid": true,
+                        "flavor_text": "",
+                        "effect": "NONE",
+                        "aliases": [
+                            {
+                                "verb_alias": "e",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "east",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "exit 133",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ],
     "FEATURE": [
@@ -5880,14 +5932,6 @@
                         "effect": "HEAL",
                         "aliases": [
                             {
-                                "verb_alias": "use",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "lie down on",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -5913,6 +5957,182 @@
                             },
                             {
                                 "verb_alias": "sleep on",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "use",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "stone fountain",
+            "placement": "in the middle of the park",
+            "location_id": 14,
+            "is_conditional": false,
+            "description": "a fountain carved from flagstone",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 122,
+                "noun_aliases": [
+                    "feature 122",
+                    "stone fountain"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "wooden bench",
+            "placement": "next to the fountain",
+            "location_id": 14,
+            "is_conditional": false,
+            "description": "a bench made from wood",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 123,
+                "noun_aliases": [
+                    "feature 123",
+                    "wooden bench",
+                    "bench"
+                ],
+                "actions": [
+                    {
+                        "command": "PULL",
+                        "valid": true,
+                        "flavor_text": "You pull the bench to the side and find some money!",
+                        "effect": "GAIN_MONEY",
+                        "aliases": [
+                            {
+                                "verb_alias": "move",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "pull",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "makeshift produce stand",
+            "placement": "by the entrance to the farm",
+            "location_id": 32,
+            "is_conditional": false,
+            "description": "a wooden box with a crude \"Fresh Produce\" sign tied to it",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 126,
+                "noun_aliases": [
+                    "feature 126",
+                    "makeshift produce stand",
+                    "produce stand",
+                    "stand"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "pumpkin patch",
+            "placement": "on the west side of the path",
+            "location_id": 29,
+            "is_conditional": false,
+            "description": "a field full of bright orange pumpkins",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 127,
+                "noun_aliases": [
+                    "feature 127",
+                    "pumpkin patch"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "wheat field",
+            "placement": "on the west side of the path",
+            "location_id": 35,
+            "is_conditional": false,
+            "description": "a field full of golden wheat plants ready to be harvested",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 128,
+                "noun_aliases": [
+                    "feature 128",
+                    "wheat field",
+                    "field",
+                    "wheat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "green pasture",
+            "placement": "on the east side of the path",
+            "location_id": 35,
+            "is_conditional": false,
+            "description": "a pasture full of luscious green grass",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 129,
+                "noun_aliases": [
+                    "feature 129",
+                    "green pasture",
+                    "pasture"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "tall tree",
+            "placement": "off the side of the path",
+            "location_id": 38,
+            "is_conditional": false,
+            "description": "a spruce tree that looks like it is hundreds of years old",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 130,
+                "noun_aliases": [
+                    "feature 130",
+                    "tall tree",
+                    "tree"
+                ],
+                "actions": [
+                    {
+                        "command": "CLIMB",
+                        "valid": true,
+                        "flavor_text": "When you are halfway up, the branch you are standing on breaks off!",
+                        "effect": "FALL",
+                        "aliases": [
+                            {
+                                "verb_alias": "climb",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -6030,6 +6250,55 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "ITEM",
+            "name": "mysterious vial",
+            "location": 17,
+            "position": "GROUND",
+            "item_type_id": 124,
+            "interactive_noun_data": {
+                "id": 125,
+                "noun_aliases": [
+                    "item 125",
+                    "mysterious vial",
+                    "vial"
+                ],
+                "actions": [
+                    {
+                        "command": "DRINK",
+                        "valid": true,
+                        "flavor_text": "You choke down the bitter liquid. Suddenly, you feel very light headed. Everything goes dark. When you wake up, you find yourself lying on the ground with all of your items strewn about.",
+                        "effect": "DROP_ALL_ITEMS",
+                        "aliases": [
+                            {
+                                "verb_alias": "drink",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "small piece of paper",
+            "location": 44,
+            "position": "GROUND",
+            "item_type_id": 131,
+            "interactive_noun_data": {
+                "id": 132,
+                "noun_aliases": [
+                    "item 132",
+                    "small piece of paper",
+                    "paper"
+                ],
+                "actions": []
+            }
         }
     ],
     "ITEM_TYPE": [
@@ -6086,6 +6355,40 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "UNCOMMON",
+            "description": "a small vial with a foul-smelling liquid inside",
+            "name": "harmful potion",
+            "cost": 100,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 124,
+                "noun_aliases": [
+                    "item type 124",
+                    "harmful potion"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "COMMON",
+            "description": "a note with some directions scribbled on it. You can make out east, east, north, east, south, east, east",
+            "name": "path through woods",
+            "cost": 1,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 131,
+                "noun_aliases": [
+                    "item type 131",
+                    "path through woods"
+                ],
+                "actions": []
+            }
         }
     ],
     "NON_COMBATANT": [],
@@ -6106,8 +6409,8 @@
             "intelligence": 15,
             "name": "Admin",
             "description": "an administrator",
-            "money": 10,
-            "location_area_id": 1,
+            "money": 40,
+            "location_area_id": 66,
             "max_inventory_weight": 30,
             "interactive_noun_data": {
                 "id": 4,
