@@ -230,7 +230,6 @@ bool Character::addToInventory(Item *anItem){
 
         if (index == 100000000){
             inventory.push_back(std::make_pair(EquipmentSlot::NONE, anItem));
-std::cout << "add to inventory: " << std::to_string(anItem->getID()) << "\n";
             return true;
         } 
     }

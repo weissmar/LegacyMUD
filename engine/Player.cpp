@@ -124,7 +124,10 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 , active(false)
 , fileDescriptor(FD)
 , editMode(false)
-{ }
+{ 
+    addAllLexicalData(aClass); 
+    addAllLexicalData(aClass->getSpecialSkill());
+}
 
 
 /*Player::Player(const Player &otherPlayer){
@@ -287,11 +290,17 @@ std::string Player::levelUp(){
 
         // gain health to max health based on 1d8 + strength modifier
         healthPointsToGain = GameLogic::rollDice(8, 1) + getStrengthModifier();
+        if (healthPointsToGain < 1){
+            healthPointsToGain = 1;
+        }
         addToMaxHealth(healthPointsToGain);
         message += "\015\012You gain " + std::to_string(healthPointsToGain) + " to your maximum health.";
 
         // gain special points to max special points based on 1d8 + intelligence modifier
         specialPtsToGain = GameLogic::rollDice(8, 1) + getIntelligenceModifier();
+        if (specialPtsToGain < 1){
+            specialPtsToGain = 1;
+        }
         addToMaxSpecialPts(specialPtsToGain);
         message += "\015\012You gain " + std::to_string(specialPtsToGain) + " to your maximum special points.";
 

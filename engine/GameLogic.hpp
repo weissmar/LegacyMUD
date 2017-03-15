@@ -263,6 +263,8 @@ class GameLogic {
 
         bool editAttributeOfWeaponType(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute);
 
+        void updateLexicalDataPlayer(Quest *aQuest, SpecialSkill *aSkill, PlayerClass *aClass, std::string oldAlias, std::string newAlias);
+
         template <class aType>
         int getPointerParameter(Player *aPlayer, std::string paramName, std::vector<aType> possibleVals, bool canBeNull = false, std::string question = "");
         

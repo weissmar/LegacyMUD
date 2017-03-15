@@ -577,8 +577,8 @@ bool GameLogic::updateCreatures(){
                                 // move creature
                                 moved = true;
                                 exits[exitChoice - 1]->go(nullptr, nullptr, creature, &effects);
-                                messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "leaves the area.", location);
-                                messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "enters the area.", exits[exitChoice - 1]->getConnectArea());
+                                messageAreaPlayers(nullptr, "A creature named " + creature->getName() + " leaves the area.", location);
+                                messageAreaPlayers(nullptr, "A creature named " + creature->getName() + " enters the area.", exits[exitChoice - 1]->getConnectArea());
                             }
                             // add to cooldown
                             cooldown = 5 - creature->getDexterityModifier();
@@ -616,8 +616,8 @@ bool GameLogic::updateCreatures(){
                         if (anExit != nullptr){
                             // move creature
                             anExit->go(nullptr, nullptr, creature, &effects);
-                            messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "leaves the area.", location);
-                            messageAreaPlayers(nullptr, "A creature named " + creature->getName() + "enters the area.", anExit->getConnectArea());
+                            messageAreaPlayers(nullptr, "A creature named " + creature->getName() + " leaves the area.", location);
+                            messageAreaPlayers(nullptr, "A creature named " + creature->getName() + " enters the area.", anExit->getConnectArea());
 
                             // add to cooldown
                             cooldown = 5 - creature->getDexterityModifier();
@@ -636,7 +636,6 @@ bool GameLogic::updateCreatures(){
 
         if (creature->getCurrentHealth() != 0){
             // update health and special points
-            // this implementation doesn't make use of healPoints ***************************************
             creature->regen();
         }
     }
@@ -671,6 +670,7 @@ void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
     checkEndCombat(aPlayer, aCreature);
 }
 
+
 // check cooldown, check command queue, otherwise default attack, update health and special points
 bool GameLogic::updatePlayersInCombat(){
     std::vector<Player*> allPlayers = manager->getPlayersPtrs();
@@ -679,6 +679,9 @@ bool GameLogic::updatePlayersInCombat(){
     bool inCombat;
     Command aCommand;
     std::string message = "";
+    std::vector<Item*> weapons;
+    SpecialSkill *aSkill = nullptr;
+    size_t weaponChoice;
 
     for (auto player : allPlayers){
         // check cooldown
@@ -698,15 +701,32 @@ bool GameLogic::updatePlayersInCombat(){
                     aCommand = player->getNextCommand();
                     executeCombatCommand(player, aCommand);
                 } else {
-                    // execute default attack
-                    message = player->attack(player, nullptr, nullptr, aCreature, true, &effects);
+                    weapons = player->getWeapons();
+
+                    // execute random attack
+                    if (weapons.size() != 0){
+                        weaponChoice = rollDice(weapons.size() + 1, 1);
+                        if (weaponChoice > weapons.size()){
+                            // attack with special skill
+                            aSkill = player->getPlayerClass()->getSpecialSkill();
+                            message = aSkill->attack(player, nullptr, nullptr, aCreature, true, &effects);
+std::cout << "attacking with skill\n";
+                        } else {
+                            // attack with specified weapon
+                            message = weapons[weaponChoice - 1]->attack(player, nullptr, nullptr, aCreature, true, &effects);
+std::cout << "attacking with weapon\n";
+                        }
+                    } else {
+                        // attack with default attack
+                        message = player->attack(player, nullptr, nullptr, aCreature, true, &effects);
+std::cout << "attacking with default\n";
+                    }
                     messagePlayer(player, message);
                     checkEndCombat(player, aCreature);
                 }
             }
         } 
         // update health and special points
-        // this implementation doesn't make use of healPoints ***************************************
         player->regen();
     }
 
@@ -1580,6 +1600,19 @@ std::string GameLogic::editAliasAttribute(Player *aPlayer, InteractiveNoun *obje
     bool complete = false;
     std::string prepAlias;
     parser::PrepositionType prepType;
+    std::vector<std::string> nounAliases = objectToEdit->getNounAliases();
+    std::vector<std::string> verbAliases = objectToEdit->getVerbAliases();
+
+    message = "Noun aliases: ";
+    for (auto alias : nounAliases){
+        message += alias + ", ";
+    }
+    message += "\015\012Verb aliases: ";
+    for (auto alias : verbAliases){
+        message += alias + ", ";
+    }
+    messagePlayer(aPlayer, message);
+    message = "";
 
     messagePlayer(aPlayer, "What kind of alias would you like to edit? Your options are: [1] noun alias or [2] verb alias. Please enter the number that corresponds to your choice.");
     response = blockingGetMsg(aPlayer);
@@ -2645,7 +2678,7 @@ bool GameLogic::editAttributeOfPlayerClass(Player *aPlayer, InteractiveNoun *obj
     std::string message = "";
     bool success = false;
     int primaryStat;
-    std::string name;
+    std::string name, oldName;
     SpecialSkill* skill = nullptr;
     int attackBonus;
     int armorBonus;
@@ -2661,9 +2694,11 @@ bool GameLogic::editAttributeOfPlayerClass(Player *aPlayer, InteractiveNoun *obj
         messagePlayer(aPlayer, "\015\012Starting PLayer Class Attribute Editing Wizard...");
 
         if (attribute.compare("name") == 0){
+            oldName = aPlayerClass->getName();
             name = getStringParameter(aPlayer, "name");
             aPlayerClass->setName(name);
             message = "The name of the player class is now " + name + ".";
+            updateLexicalDataPlayer(nullptr, nullptr, aPlayerClass, oldName, name);
             success = true;
         } else if (attribute.compare("primary stat") == 0){
             primaryStat = getIntParameter(aPlayer, "primary stat (enter [0] for dexterity, [1] for intelligence, or [2] for strength)", 2);
@@ -2678,9 +2713,12 @@ bool GameLogic::editAttributeOfPlayerClass(Player *aPlayer, InteractiveNoun *obj
             }
             success = true;
         } else if (attribute.compare("special skill") == 0){
+            oldName = aPlayerClass->getSpecialSkill()->getName();
             skill = getSpecialSkillParameter(aPlayer, "special skill");
             aPlayerClass->setSpecialSkill(skill);
-            message = "The special skill of the player class is now " + skill->getName() + ".";
+            name = skill->getName();
+            message = "The special skill of the player class is now " + name + ".";
+            updateLexicalDataPlayer(nullptr, skill, nullptr, oldName, name);
             success = true;
         } else if (attribute.compare("attack bonus") == 0){
             attackBonus = getIntParameter(aPlayer, "attack bonus");
@@ -2738,7 +2776,7 @@ bool GameLogic::editAttributeOfPlayerClass(Player *aPlayer, InteractiveNoun *obj
 bool GameLogic::editAttributeOfQuest(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
     std::string message = "";
     bool success = false;
-    std::string name;
+    std::string name, oldName;
     std::string description;
     int rewardMoney;
     Item *rewardItem = nullptr;
@@ -2751,9 +2789,11 @@ bool GameLogic::editAttributeOfQuest(Player *aPlayer, InteractiveNoun *objectToE
         messagePlayer(aPlayer, "\015\012Starting Quest Attribute Editing Wizard...");
 
         if (attribute.compare("name") == 0){
+            oldName = aQuest->getName();
             name = getStringParameter(aPlayer, "name");
             aQuest->setName(name);
             message = "The name of the quest is now " + name + ".";
+            updateLexicalDataPlayer(aQuest, nullptr, nullptr, oldName, name);
             success = true;
         } else if (attribute.compare("description") == 0){
             description = getStringParameter(aPlayer, "description");
@@ -2806,7 +2846,6 @@ bool GameLogic::editAttributeOfQuest(Player *aPlayer, InteractiveNoun *objectToE
 bool GameLogic::editAttributeOfQuestStep(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
     std::string message = "";
     bool success = false;
-    int ordinalNumber;
     std::string description;
     ItemType *anItemType = nullptr;
     NonCombatant *giver = nullptr;
@@ -2824,10 +2863,11 @@ bool GameLogic::editAttributeOfQuestStep(Player *aPlayer, InteractiveNoun *objec
         messagePlayer(aPlayer, "\015\012Starting Quest Step Attribute Editing Wizard...");
 
         if (attribute.compare("ordinal number") == 0){
-            ordinalNumber = getIntParameter(aPlayer, "ordinal number");
+            message = "You can't edit the ordinal number of the quest step.";
+            /*ordinalNumber = getIntParameter(aPlayer, "ordinal number");
             aQuestStep->setOrdinalNumber(ordinalNumber);
             message = "The ordinal number of the quest step is now " + std::to_string(ordinalNumber) + ".";
-            success = true;
+            success = true;*/
         } else if (attribute.compare("description") == 0){
             description = getStringParameter(aPlayer, "description");
             aQuestStep->setDescription(description);
@@ -2892,7 +2932,7 @@ bool GameLogic::editAttributeOfQuestStep(Player *aPlayer, InteractiveNoun *objec
 bool GameLogic::editAttributeOfSpecialSkill(Player *aPlayer, InteractiveNoun *objectToEdit, std::string attribute){
     std::string message = "";
     bool success = false;
-    std::string name;
+    std::string name, oldName;
     int damage;
     DamageType type;
     int cost;
@@ -2906,9 +2946,11 @@ bool GameLogic::editAttributeOfSpecialSkill(Player *aPlayer, InteractiveNoun *ob
         messagePlayer(aPlayer, "\015\012Starting Special Skill Attribute Editing Wizard...");
 
         if (attribute.compare("name") == 0){
+            oldName = aSpecialSkill->getName();
             name = getStringParameter(aPlayer, "name");
             aSpecialSkill->setName(name);
             message = "The name of the special skill is now " + name + ".";
+            updateLexicalDataPlayer(nullptr, aSpecialSkill, nullptr, oldName, name);
             success = true;
         } else if (attribute.compare("damage") == 0){
             damage = getIntParameter(aPlayer, "damage");
@@ -3053,6 +3095,45 @@ bool GameLogic::editAttributeOfWeaponType(Player *aPlayer, InteractiveNoun *obje
     messagePlayer(aPlayer, message);
 
     return success;
+}
+
+
+void GameLogic::updateLexicalDataPlayer(Quest *aQuest, SpecialSkill *aSkill, PlayerClass *aClass, std::string oldAlias, std::string newAlias){
+    std::vector<Player*> allPlayers = manager->getGamePlayers();
+    std::vector<Player*> affectedPlayers;
+    InteractiveNoun *anObject = nullptr;
+
+    if (aQuest != nullptr){
+        anObject = aQuest;
+
+        // find all players with this quest
+        for (auto player : allPlayers){
+            if (player->getQuestCurrStep(aQuest).first != -1)
+                affectedPlayers.push_back(player);
+        }
+    } else if (aSkill != nullptr){
+        anObject = aSkill;
+
+        // find all players with this skill
+        for (auto player : allPlayers){
+            if (player->getPlayerClass()->getSpecialSkill() == aSkill)
+                affectedPlayers.push_back(player);
+        }
+    } else if (aClass != nullptr){
+        anObject = aClass;
+
+        // find all players with this class
+        for (auto player : allPlayers){
+            if (player->getPlayerClass() == aClass){
+                affectedPlayers.push_back(player);
+            }
+        }
+    }
+
+    for (auto player : affectedPlayers){
+        player->unregisterAlias(false, oldAlias, anObject);
+        player->registerAlias(false, newAlias, anObject);
+    }
 }
 
 
@@ -5028,7 +5109,7 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
                 success = useSkillCommand(aPlayer, directObj, indirectObj);    
             } else {
                 // add the command to the command queue
-                aCommand.commandE = CommandEnum::TAKE;
+                aCommand.commandE = CommandEnum::USE_SKILL;
                 aCommand.firstParam = directObj;
                 aCommand.secondParam = indirectObj;
                 aCommand.aPosition = ItemPosition::NONE;
@@ -5213,6 +5294,7 @@ bool GameLogic::executeCommand(Player *aPlayer, parser::ParseResult result){
 
 // this version is for processing commands from combat queue
 bool GameLogic::executeCombatCommand(Player *aPlayer, Command aCommand){
+std::cout << "inside executeCombatCommand\n";
     // Wait for saving to complete before executing any commands
     if (!waitForSaveOrTimeout()) {
         messagePlayer(aPlayer, "Timed out while waiting for game to save.");
