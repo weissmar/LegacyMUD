@@ -196,14 +196,14 @@ bool Character::setMoney(int money){
 int Character::addMoney(int money){
     this->money += money;
 
-    return money;
+    return this->money;
 }
 
 
 int Character::subtractMoney(int money){
     this->money -= money;
 
-    return money;
+    return this->money;
 }
 
 
