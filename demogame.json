@@ -1,5 +1,5 @@
 {
-    "nextID": 136,
+    "nextID": 137,
     "startAreaId": 1,
     "AREA": [
         {
@@ -5884,14 +5884,6 @@
                                 }
                             },
                             {
-                                "verb_alias": "wooded area",
-                                "grammar": {
-                                    "direct_object": "YES",
-                                    "indirect_object": "NO",
-                                    "preposition_map": []
-                                }
-                            },
-                            {
                                 "verb_alias": "exit 135",
                                 "grammar": {
                                     "direct_object": "YES",
@@ -5909,6 +5901,14 @@
                             },
                             {
                                 "verb_alias": "south",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "wooded area",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
@@ -6203,6 +6203,57 @@
                         "aliases": [
                             {
                                 "verb_alias": "climb",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "class": "FEATURE",
+            "name": "bed",
+            "placement": "in the back of the tower",
+            "location_id": 23,
+            "is_conditional": false,
+            "description": "a firm but comfortable looking bed",
+            "altdescription": "",
+            "interactive_noun_data": {
+                "id": 136,
+                "noun_aliases": [
+                    "feature 136",
+                    "bed",
+                    "guard's bed"
+                ],
+                "actions": [
+                    {
+                        "command": "CLIMB",
+                        "valid": true,
+                        "flavor_text": "You lie down on the guard's bed, but the guard immediately throws you off!",
+                        "effect": "DAMAGE",
+                        "aliases": [
+                            {
+                                "verb_alias": "lie down on",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "sleep on",
+                                "grammar": {
+                                    "direct_object": "YES",
+                                    "indirect_object": "NO",
+                                    "preposition_map": []
+                                }
+                            },
+                            {
+                                "verb_alias": "use",
                                 "grammar": {
                                     "direct_object": "YES",
                                     "indirect_object": "NO",
