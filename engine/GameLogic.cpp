@@ -5500,29 +5500,30 @@ bool GameLogic::helpCommand(Player *aPlayer){
     if (aPlayer != nullptr){
         if (aPlayer->isEditMode()){
             message = "Available Edit Mode Commands:\015\012";
-            message += "EDIT_MODE\015\012";
-            message += "WARP to [an area]\015\012";
-            message += "COPY [an object]\015\012";
-            message += "CREATE [ObjectType]\015\012";
-            message += "EDIT_ATTRIBUTE [an attribute] of [an object]\015\012";
-            message += "EDIT_WIZARD [an object]\015\012";
-            message += "SAVE [a file name]\015\012";
-            message += "LOAD [a file name]\015\012";
-            message += "DELETE [an object]\015\012";
+            message += "editmode                      Toggle edit mode\015\012";
+            message += "warp to [area id]             Warp to a specific area\015\012";
+            message += "copy [object]                 Create a copy of an object\015\012";
+            message += "create [object type]          Create a new object\015\012";
+            message += "edit [attribute] of [object]  Edit the attribute of an object\015\012";
+            message += "delete [object]               Remove an object from the game\015\012";
+            message += "save [filename]               Save the current state of the game\015\012";
         } else {
             message = "Some Available Commands:\015\012";
-            message += "look\015\012";
-            message += "listen\015\012";
-            message += "take\015\012";
-            message += "drop\015\012";
-            message += "inventory\015\012";
-            message += "equipment\015\012";
-            message += "speak\015\012";
-            message += "go\015\012";
-            message += "stats\015\012";
-            message += "skills\015\012";
-            message += "equip\015\012";
-            message += "unequip\015\012";
+            message += "look            See what is around you\015\012";
+            message += "look (at) [obj] Look at a specific object\015\012";
+            message += "take            Take an object\015\012";
+            message += "drop            Drop an object in your inventory\015\012";
+            message += "inv             View the objects in your inventory\015\012";
+            message += "equipment, eq   See what you are wearing\015\012";
+            message += "say [message]   Say something to people in the same area\015\012";
+            message += "go [direction]  Travel in the specified direction\015\012";
+            message += "                Directions: n, ne, e, se, s, sw, w, nw, u, d\015\012";
+            message += "stats           View your player stats\015\012";
+            message += "skills          View your special skill\015\012";
+            message += "equip           Put on a wearable item\015\012";
+            message += "unequip         Take off a wearable item\015\012";
+            message += "attack          Attack a creature and begin combat mode\015\012";
+            message += "use [skill]     Use your special skill\015\012";
         }
         messagePlayer(aPlayer, message);
         return true;
