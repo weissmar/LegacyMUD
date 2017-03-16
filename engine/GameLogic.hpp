@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/14/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -543,6 +543,15 @@ class GameLogic {
          * \return  Returns a pointer to the chosen interactive noun.
          */
         InteractiveNoun* clarifyIndirect(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Consolidates the options to a unique set.
+         * 
+         * \param[in] allOptions    Specifies the vector of options to consolidate.
+         *
+         * \return  Returns a vector with only a unique set of options.
+         */
+        std::vector<InteractiveNoun*> consolidateOptions(std::vector<InteractiveNoun*> allOptions);
 
         /*!
          * \brief   Executes the help command.

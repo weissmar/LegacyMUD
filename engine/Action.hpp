@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Action.hpp
  *
@@ -45,6 +45,7 @@ class Action {
         Action(CommandEnum command, bool valid, std::string flavorText, EffectType effect);
         Action(const Action &otherAction);
         Action & operator=(const Action &otherAction);
+        bool operator==(const Action &otherAction) const;
         virtual ~Action();
 
         /*!

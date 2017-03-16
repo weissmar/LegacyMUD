@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/09/2017
- * \modified    03/13/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -52,6 +52,16 @@ Container::Container(const Container &otherContainer) : Item(otherContainer) {
     insideCapacity.store(otherContainer.getInsideCapacity());
 }
 
+bool Container::operator==(const Container &otherContainer) const{
+    bool equal = Item::operator==(otherContainer);
+
+    if (this->insideCapacity.load() != otherContainer.insideCapacity.load()){
+        equal = false;
+    }
+
+    return equal;
+}
+
 /*
 Container & Container::operator=(const Container &otherContainer){
 
@@ -61,6 +71,15 @@ Container & Container::operator=(const Container &otherContainer){
 Container::~Container(){
 
 }*/
+
+
+bool Container::compareObjects(const InteractiveNoun &otherObject) const{
+    if (getID() == otherObject.getID()){
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 bool Container::isEmpty() const{

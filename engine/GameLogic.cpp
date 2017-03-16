@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/14/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -5417,11 +5417,12 @@ std::cout << "inside executeCombatCommand\n";
 
 InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *directObj = nullptr;
+    std::vector<InteractiveNoun*> consolidatedOptions = consolidateOptions(result.direct);
 
-    if (result.direct.size() == 1){
-        directObj = result.direct[0];
-    } else if (result.direct.size() > 0){
-        directObj = clarifyChoice(aPlayer, result.direct);
+    if (consolidatedOptions.size() == 1){
+        directObj = consolidatedOptions[0];
+    } else if (consolidatedOptions.size() > 0){
+        directObj = clarifyChoice(aPlayer, consolidatedOptions);
     }
 
     return directObj;
@@ -5430,14 +5431,28 @@ InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult r
 
 InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *indirectObj = nullptr;
+    std::vector<InteractiveNoun*> consolidatedOptions = consolidateOptions(result.indirect);
 
-    if (result.indirect.size() == 1){
-        indirectObj = result.indirect[0];
-    } else if (result.indirect.size() > 0){
-        indirectObj = clarifyChoice(aPlayer, result.indirect);
+    if (consolidatedOptions.size() == 1){
+        indirectObj = consolidatedOptions[0];
+    } else if (consolidatedOptions.size() > 0){
+        indirectObj = clarifyChoice(aPlayer, consolidatedOptions);
     }
 
     return indirectObj;
+}
+
+
+std::vector<InteractiveNoun*> GameLogic::consolidateOptions(std::vector<InteractiveNoun*> allOptions){
+    std::vector<InteractiveNoun*> consolidatedOptions;
+
+    for (size_t i = 0; i < allOptions.size(); i++){
+        if (std::find_if(consolidatedOptions.begin(), consolidatedOptions.end(), [=](InteractiveNoun* obj){ return *obj == *allOptions[i]; }) == consolidatedOptions.end()){
+            consolidatedOptions.push_back(allOptions[i]);
+        }
+    }
+
+    return consolidatedOptions;
 }
 
 

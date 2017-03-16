@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/10/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -40,8 +40,11 @@ class Container: public Item {
         Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type);
         Container(int capacity, InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type, int anID);
         Container(const Container &otherContainer);
+        bool operator==(const Container &otherContainer) const;
         /*Container & operator=(const Container &otherContainer);
         virtual ~Container();*/
+
+        virtual bool compareObjects(const InteractiveNoun &otherObject) const;
 
         /*!
          * \brief   Gets whether or not this container is empty

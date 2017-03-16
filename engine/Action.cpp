@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/08/2017
- * \modified    03/08/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Action.cpp
  *
@@ -70,6 +70,26 @@ Action & Action::operator=(const Action &otherAction){
     }
 
     return *this;
+}
+
+
+bool Action::operator==(const Action &otherAction) const{
+    bool equal = true;
+
+
+    if (this->getCommand() != otherAction.getCommand()){
+        equal = false;
+    } else if (this->getValid() != otherAction.getValid()){
+        equal = false;
+    } else if (this->getFlavorText().compare(otherAction.getFlavorText()) != 0){
+        equal = false;
+    } else if (this->getEffect() != otherAction.getEffect()){
+        equal = false;
+    } else if (this->getAliasesAndGrammar() != otherAction.getAliasesAndGrammar()){
+        equal = false;
+    }
+
+    return equal;
 }
 
 
