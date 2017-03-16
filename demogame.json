@@ -1,5 +1,5 @@
 {
-    "nextID": 137,
+    "nextID": 155,
     "startAreaId": 1,
     "AREA": [
         {
@@ -528,7 +528,46 @@
             }
         }
     ],
-    "ARMOR_TYPE": [],
+    "ARMOR_TYPE": [
+        {
+            "class": "ARMOR_TYPE",
+            "armor_bonus": 3,
+            "resistant_to": "PIERCING",
+            "name": "vest",
+            "weight": 2,
+            "rarity": "COMMON",
+            "description": "a protective vest",
+            "cost": 5,
+            "slot_type": "TORSO",
+            "interactive_noun_data": {
+                "id": 142,
+                "noun_aliases": [
+                    "item type 142",
+                    "vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ARMOR_TYPE",
+            "armor_bonus": 3,
+            "resistant_to": "CRUSHING",
+            "name": "helmet",
+            "weight": 2,
+            "rarity": "COMMON",
+            "description": "a protective helmet",
+            "cost": 5,
+            "slot_type": "HEAD",
+            "interactive_noun_data": {
+                "id": 143,
+                "noun_aliases": [
+                    "item type 143",
+                    "helmet"
+                ],
+                "actions": []
+            }
+        }
+    ],
     "CONTAINER": [],
     "CREATURE": [],
     "CREATURE_TYPE": [],
@@ -6525,9 +6564,163 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "COMMON",
+            "description": "a sweet and crisp fruit",
+            "name": "apple",
+            "cost": 2,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 146,
+                "noun_aliases": [
+                    "item type 146",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 3,
+            "rarity": "COMMON",
+            "description": "a crusty loaf of bread",
+            "name": "bread",
+            "cost": 3,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 147,
+                "noun_aliases": [
+                    "item type 147",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 5,
+            "rarity": "UNCOMMON",
+            "description": "a refreshing bubbly mead",
+            "name": "mead",
+            "cost": 4,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 148,
+                "noun_aliases": [
+                    "item type 148",
+                    "mead"
+                ],
+                "actions": []
+            }
         }
     ],
-    "NON_COMBATANT": [],
+    "NON_COMBATANT": [
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": -1,
+            "name": "Armory shopkeep",
+            "description": "a friendly man",
+            "money": 100,
+            "location_area_id": 11,
+            "max_inventory_weight": 1000,
+            "interactive_noun_data": {
+                "id": 149,
+                "noun_aliases": [
+                    "character 149",
+                    "Armory shopkeep"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": -1,
+            "name": "Blacksmith",
+            "description": "a woman of few words",
+            "money": 100,
+            "location_area_id": 8,
+            "max_inventory_weight": 1000,
+            "interactive_noun_data": {
+                "id": 150,
+                "noun_aliases": [
+                    "character 150",
+                    "Blacksmith"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": -1,
+            "name": "Innkeeper",
+            "description": "a jolly fellow",
+            "money": 10,
+            "location_area_id": 1,
+            "max_inventory_weight": 10,
+            "interactive_noun_data": {
+                "id": 151,
+                "noun_aliases": [
+                    "character 151",
+                    "Innkeeper"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": -1,
+            "name": "Gerald the Town Guard",
+            "description": "a stern man",
+            "money": 0,
+            "location_area_id": 20,
+            "max_inventory_weight": 100,
+            "interactive_noun_data": {
+                "id": 152,
+                "noun_aliases": [
+                    "character 152",
+                    "Gerald the Town Guard"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": -1,
+            "name": "Brin",
+            "description": "a stern woman",
+            "money": 0,
+            "location_area_id": 23,
+            "max_inventory_weight": 100,
+            "interactive_noun_data": {
+                "id": 153,
+                "noun_aliases": [
+                    "character 153",
+                    "Brin"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": -1,
+            "name": "Farmer",
+            "description": "a man who takes good care of his tools",
+            "money": 100,
+            "location_area_id": 32,
+            "max_inventory_weight": 1000,
+            "interactive_noun_data": {
+                "id": 154,
+                "noun_aliases": [
+                    "character 154",
+                    "Farmer"
+                ],
+                "actions": []
+            }
+        }
+    ],
     "PLAYER": [
         {
             "class": "PLAYER",
@@ -6556,6 +6749,34 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "PLAYER",
+            "character_size": "TINY",
+            "player_class_id": 3,
+            "username": "weissmar@oregonstate.edu",
+            "experience_points": 0,
+            "level": 1,
+            "quest_list": [],
+            "max_health": 10,
+            "spawn_location_id": 1,
+            "max_special_points": 10,
+            "dexterity": 6,
+            "strength": 17,
+            "intelligence": 13,
+            "name": "Rachel",
+            "description": "a reasonably cool person",
+            "money": 10,
+            "location_area_id": 1,
+            "max_inventory_weight": 30,
+            "interactive_noun_data": {
+                "id": 137,
+                "noun_aliases": [
+                    "character 137",
+                    "Rachel"
+                ],
+                "actions": []
+            }
         }
     ],
     "PLAYER_CLASS": [
@@ -6574,6 +6795,44 @@
                 "noun_aliases": [
                     "combatant type 3",
                     "playerClass name"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "PLAYER_CLASS",
+            "primary_stat": 1,
+            "name": "Healing Wizard",
+            "special_skill_id": 138,
+            "attack_bonus": 3,
+            "armor_bonus": 4,
+            "resistant_to": "WATER",
+            "weak_to": "ELECTRIC",
+            "heal_points": 0.30000001192092898,
+            "interactive_noun_data": {
+                "id": 140,
+                "noun_aliases": [
+                    "combatant type 140",
+                    "Healing Wizard"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "PLAYER_CLASS",
+            "primary_stat": 0,
+            "name": "Fire Mage",
+            "special_skill_id": 139,
+            "attack_bonus": 5,
+            "armor_bonus": 2,
+            "resistant_to": "FIRE",
+            "weak_to": "WATER",
+            "heal_points": 0.30000001192092898,
+            "interactive_noun_data": {
+                "id": 141,
+                "noun_aliases": [
+                    "combatant type 141",
+                    "Fire Mage"
                 ],
                 "actions": []
             }
@@ -6597,7 +6856,82 @@
                 ],
                 "actions": []
             }
+        },
+        {
+            "class": "SPECIAL_SKILL",
+            "name": "Wondrous Healing",
+            "damage": 10,
+            "damage_type": "HEAL",
+            "cost": 2,
+            "cooldown": 2,
+            "interactive_noun_data": {
+                "id": 138,
+                "noun_aliases": [
+                    "skill 138",
+                    "Wondrous Healing"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "SPECIAL_SKILL",
+            "name": "Fire Ball",
+            "damage": 75,
+            "damage_type": "FIRE",
+            "cost": 3,
+            "cooldown": 3,
+            "interactive_noun_data": {
+                "id": 139,
+                "noun_aliases": [
+                    "skill 139",
+                    "Fire Ball"
+                ],
+                "actions": []
+            }
         }
     ],
-    "WEAPON_TYPE": []
+    "WEAPON_TYPE": [
+        {
+            "class": "WEAPON_TYPE",
+            "damage": 30,
+            "damage_type": "PIERCING",
+            "range": "SMALL",
+            "crit_multiplier": 2,
+            "name": "sword",
+            "weight": 3,
+            "rarity": "UNCOMMON",
+            "description": "a pretty sharp sword",
+            "cost": 4,
+            "slot_type": "RIGHT_HAND",
+            "interactive_noun_data": {
+                "id": 144,
+                "noun_aliases": [
+                    "item type 144",
+                    "sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "WEAPON_TYPE",
+            "damage": 50,
+            "damage_type": "WIND",
+            "range": "MEDIUM",
+            "crit_multiplier": 3,
+            "name": "crossbow",
+            "weight": 5,
+            "rarity": "RARE",
+            "description": "a scary-looking crossbow",
+            "cost": 7,
+            "slot_type": "HANDS",
+            "interactive_noun_data": {
+                "id": 145,
+                "noun_aliases": [
+                    "item type 145",
+                    "crossbow"
+                ],
+                "actions": []
+            }
+        }
+    ]
 }
