@@ -4070,7 +4070,7 @@ InteractiveNoun* GameLogic::getInteractiveNounParameter(Player *aPlayer, std::st
     } else if (unsignChoice <= (playerOffset + allPlayers.size())){
         param = allPlayers[unsignChoice - playerOffset - 1];
     } else if (unsignChoice <= (creatureOffset + allCreatures.size())){
-        param = allPlayers[unsignChoice - creatureOffset - 1];
+        param = allCreatures[unsignChoice - creatureOffset - 1];
     } else if (unsignChoice <= (npcOffset + allNPCs.size())){
         param = allNPCs[unsignChoice -  npcOffset - 1];
     } else if (unsignChoice <= (containerOffset + allContainers.size())){
