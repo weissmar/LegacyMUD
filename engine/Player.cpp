@@ -436,7 +436,6 @@ bool Player::addOrUpdateQuest(Quest *aQuest, int step, bool complete){
 
 
 bool Player::addToInventory(Item *anItem){
-std::cout << "inside addToInventory\n";
     bool success = false; 
     Container *aContainer = nullptr;
     std::vector<Item*> contents;
@@ -833,7 +832,7 @@ std::string Player::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
             message = "false";
         } else {
             success = true;
-            message = "Unequipped the " + strSuccess + ". ";
+            message = " Unequipped the " + strSuccess + ". ";
         }
     }
 

@@ -5417,7 +5417,7 @@ std::cout << "inside executeCombatCommand\n";
 
 InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *directObj = nullptr;
-    std::vector<InteractiveNoun*> consolidatedOptions = consolidateOptions(result.direct);
+    std::vector<InteractiveNoun*> consolidatedOptions = consolidateOptions<InteractiveNoun*>(result.direct);
 
     if (consolidatedOptions.size() == 1){
         directObj = consolidatedOptions[0];
@@ -5431,7 +5431,7 @@ InteractiveNoun* GameLogic::clarifyDirect(Player *aPlayer, parser::ParseResult r
 
 InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult result){
     InteractiveNoun *indirectObj = nullptr;
-    std::vector<InteractiveNoun*> consolidatedOptions = consolidateOptions(result.indirect);
+    std::vector<InteractiveNoun*> consolidatedOptions = consolidateOptions<InteractiveNoun*>(result.indirect);
 
     if (consolidatedOptions.size() == 1){
         indirectObj = consolidatedOptions[0];
@@ -5443,16 +5443,35 @@ InteractiveNoun* GameLogic::clarifyIndirect(Player *aPlayer, parser::ParseResult
 }
 
 
-std::vector<InteractiveNoun*> GameLogic::consolidateOptions(std::vector<InteractiveNoun*> allOptions){
-    std::vector<InteractiveNoun*> consolidatedOptions;
+template <class aType>
+std::vector<aType> GameLogic::consolidateOptions(std::vector<aType> allOptions){
+    std::vector<aType> consolidatedOptions;
 
     for (size_t i = 0; i < allOptions.size(); i++){
-        if (std::find_if(consolidatedOptions.begin(), consolidatedOptions.end(), [=](InteractiveNoun* obj){ return *obj == *allOptions[i]; }) == consolidatedOptions.end()){
+        if (std::find_if(consolidatedOptions.begin(), consolidatedOptions.end(), [=](aType obj){ return *obj == *allOptions[i]; }) == consolidatedOptions.end()){
             consolidatedOptions.push_back(allOptions[i]);
         }
     }
 
     return consolidatedOptions;
+}
+
+
+template <class aType>
+std::vector<std::pair<aType, int>> GameLogic::consolidateAndCountOptions(std::vector<aType> allOptions){
+    std::vector<std::pair<aType, int>> countedOptions;
+    typename std::vector<std::pair<aType, int>>::iterator it;
+
+    for (size_t i = 0; i < allOptions.size(); i++){
+        it = std::find_if(countedOptions.begin(), countedOptions.end(), [=](std::pair<aType, int> obj){ return *(obj.first) == *allOptions[i]; });
+        if (it == countedOptions.end()){
+            countedOptions.push_back(std::make_pair(allOptions[i], 1));
+        } else {
+            it->second++;
+        }
+    }
+
+    return countedOptions;
 }
 
 
@@ -5715,15 +5734,18 @@ bool GameLogic::dropCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 bool GameLogic::inventoryCommand(Player *aPlayer){
     std::string message;
-    std::vector<Item*> inventory = aPlayer->getItemsInventory();
+    std::vector<std::pair<Item*, int>> inventory = consolidateAndCountOptions<Item*>(aPlayer->getItemsInventory());
     std::vector<std::pair<EquipmentSlot, Item*>> equipment = aPlayer->getEquipped();
 
     message = "Your Inventory:\015\012";
     for (auto item : inventory){
+        if (item.second > 1){
+            message += std::to_string(item.second) + "x ";
+        }
         if (aPlayer->isEditMode()){
-            message += item->getName() + " [" + std::to_string(item->getID()) + "] \015\012";
+            message += item.first->getName() + " [" + std::to_string(item.first->getID()) + "] \015\012";
         } else {
-            message += item->getName() + "\015\012";
+            message += item.first->getName() + "\015\012";
         }
     }
     message += std::to_string(aPlayer->getMoney()) + " money\015\012";
@@ -6284,19 +6306,22 @@ bool GameLogic::talkCommand(Player *aPlayer, InteractiveNoun *param){
 bool GameLogic::shopCommand(Player *aPlayer){
     std::string message = "";
     NonCombatant *aNPC = aPlayer->getInConversation();
-    std::vector<Item*> inventory;
+    std::vector<std::pair<Item*, int>> inventory;
     ItemType *anItemType;
 
     if (aNPC != nullptr){
-        inventory = aNPC->getItemsInventory();
+        inventory = consolidateAndCountOptions<Item*>(aNPC->getItemsInventory());
         message = aNPC->getName() + "\'s Available Items:\015\012";
         if (inventory.size() == 0){
             message += "Nothing available for purchase right now.";
         }
         for (auto item : inventory){
             // should some items not be available for sale? ***********************************************************
-            anItemType = item->getType();
-            message += item->getName() + ", ";
+            anItemType = item.first->getType();
+            if (item.second > 1){
+                message += std::to_string(item.second) + "x ";
+            }
+            message += item.first->getName() + ", ";
             switch (anItemType->getRarity()){
                 case ItemRarity::COMMON:
                     message += "common, ";

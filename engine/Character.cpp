@@ -173,8 +173,8 @@ bool Character::hasItem(ItemType *anItemType) const{
 
 bool Character::setName(std::string name){
     std::lock_guard<std::mutex> nameLock(nameMutex);
-    InteractiveNoun::removeNounAlias(this->name);
-    InteractiveNoun::addNounAlias(name);
+    removeNounAlias(this->name);
+    addNounAlias(name);
     this->name = name;
     return true;
 }
@@ -259,6 +259,7 @@ std::string Character::equipItem(Item *anItem){
         if (currItemInSlot != 100000000){
             // unequip item that was in that slot
             inventory[currItemInSlot].first = EquipmentSlot::NONE;
+            inventory[currItemInSlot].second->setPosition(ItemPosition::INVENTORY);
             success = inventory[currItemInSlot].second->getName();
         } else {
             success = "true";
