@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/15/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -114,7 +114,9 @@ bool Item::operator==(const Item &otherItem) const{
         equal = false;
     } else if (thisType->getID() != otherType->getID()){
         equal = false;
-    } 
+    } else if (!compareActionsAndAliases(otherItem)){
+        equal = false;
+    }
 
     return equal;
 }
@@ -1089,7 +1091,11 @@ std::string Item::move(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->move(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1223,7 +1229,11 @@ std::string Item::read(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->read(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1244,7 +1254,11 @@ std::string Item::breakIt(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->breakIt(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1265,7 +1279,11 @@ std::string Item::climb(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->climb(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1286,7 +1304,11 @@ std::string Item::turn(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->turn(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1307,7 +1329,11 @@ std::string Item::push(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->push(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1328,7 +1354,11 @@ std::string Item::pull(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->pull(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1349,7 +1379,11 @@ std::string Item::eat(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->eat(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;
@@ -1370,7 +1404,11 @@ std::string Item::drink(Player *aPlayer, std::vector<EffectType> *effects){
     resultMessage = getType()->drink(aPlayer, effects);
 
     if (resultMessage.compare("false") != 0){
-        message += resultMessage;
+        if (message.compare("false") != 0){
+            message += " " + resultMessage;
+        } else {
+            message = resultMessage;
+        }
     }
 
     return message;

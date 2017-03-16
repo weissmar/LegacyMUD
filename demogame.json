@@ -7385,14 +7385,15 @@
         {
             "class": "ITEM",
             "name": "dungeon key",
-            "location": 23,
-            "position": "GROUND",
+            "location": 361,
+            "position": "INVENTORY",
             "item_type_id": 116,
             "interactive_noun_data": {
                 "id": 134,
                 "noun_aliases": [
                     "item 134",
-                    "dungeon key"
+                    "dungeon key",
+                    "key"
                 ],
                 "actions": []
             }
@@ -10475,7 +10476,7 @@
             "class": "QUEST_STEP",
             "ordinal_number": 2,
             "description": "Find the locket.",
-            "fetch_item_type_id": 142,
+            "fetch_item_type_id": 365,
             "giver_id": 360,
             "receiver_id": 361,
             "completion_text": "Eustacia says, \"Just don't tell anyone you got that from me!\", and glares at you until you go away.",

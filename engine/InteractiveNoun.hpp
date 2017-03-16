@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/15/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -55,6 +55,7 @@ class InteractiveNoun {
         bool operator==(const InteractiveNoun &otherNoun) const;
         virtual ~InteractiveNoun();
 
+        bool compareActionsAndAliases(const InteractiveNoun &otherObject) const;
         virtual bool compareObjects(const InteractiveNoun &otherObject) const;
 
         /*!

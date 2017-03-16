@@ -428,7 +428,7 @@ std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNou
                             playerStepProgress = aPlayer->getQuestCurrStep(aQuest);
                             if ((playerStepProgress.first != -1) && (!playerStepProgress.second) && (aQuest->getStep(playerStepProgress.first) == aStep)){
                                 // player is on this step and hasn't completed it yet
-                                message = getName() + " says\"";
+                                message = getName() + " says, \"";
                                 message += "Thanks for the " + questItemType->getName() + ". I really needed that.";
 
                                 // update the quest for the player
@@ -450,12 +450,12 @@ std::string NonCombatant::transfer(Player *aPlayer, Item *anItem, InteractiveNou
                                     }
                                     message += aStep->getCompletionText();
                                 } else {
-                                    message += aStep->getCompletionText();
+                                    message += "\"\015\012" + aStep->getCompletionText();
                                     nextStep = aQuest->getNextStep(aStep->getOrdinalNumber());
                                     if (nextStep != nullptr){
                                         aNPC = nextStep->getGiver();
                                         if (aNPC != nullptr){
-                                            message += "To get the next part of the quest, go talk to " + aNPC->getName();
+                                            message += "\015\012To get the next part of the quest, go talk to " + aNPC->getName();
                                             message += " in the " + aNPC->getLocation()->getName() + ".\015\012";
                                         }
                                     }

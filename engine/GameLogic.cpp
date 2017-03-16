@@ -5959,6 +5959,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
     std::vector<EffectType> effects;
     std:: string message, resultMessage;
     bool success = false;
+    bool transferComplete = true;
     Player *otherPlayer = nullptr;
 
     if ((directObj != nullptr) && (indirectObj != nullptr)){
@@ -5969,6 +5970,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
 
     if (resultMessage.compare("false") == 0){
         message = "You can't give the " + directObj->getName() + " to " + indirectObj->getName() + ".";
+        transferComplete = false;
     } else {
         message += "\015\012" + resultMessage;
     }
@@ -5981,7 +5983,7 @@ bool GameLogic::transferCommand(Player *aPlayer, InteractiveNoun *directObj, Int
 
         if (indirectObj->getObjectType() == ObjectType::PLAYER){
             otherPlayer = dynamic_cast<Player*>(indirectObj);
-            if (otherPlayer != nullptr){
+            if ((otherPlayer != nullptr) && (transferComplete)){
                 message = "You receive a " + directObj->getName() + " from " + aPlayer->getName() + ".";
                 messagePlayer(otherPlayer, message);
             }
@@ -6070,7 +6072,7 @@ bool GameLogic::goCommand(Player *aPlayer, InteractiveNoun *param){
     bool success = false;
     Area *newArea = nullptr;
     Area *currLocation = aPlayer->getLocation();
-    int cooldown = 5 - aPlayer->getSizeModifier();
+    int cooldown = 1;
     bool canGo = false;
     bool dead = false;
 
@@ -6328,38 +6330,42 @@ bool GameLogic::shopCommand(Player *aPlayer){
     NonCombatant *aNPC = aPlayer->getInConversation();
     std::vector<std::pair<Item*, int>> inventory;
     ItemType *anItemType;
+    size_t questItemCount = 0;
 
     if (aNPC != nullptr){
         inventory = consolidateAndCountOptions<Item*>(aNPC->getItemsInventory());
         message = aNPC->getName() + "\'s Available Items:\015\012";
-        if (inventory.size() == 0){
-            message += "Nothing available for purchase right now.";
-        }
         for (auto item : inventory){
-            // should some items not be available for sale? ***********************************************************
             anItemType = item.first->getType();
-            if (item.second > 1){
-                message += std::to_string(item.second) + "x ";
+            if (anItemType->getRarity() == ItemRarity::QUEST){
+                questItemCount++;
+            } else {
+                if (item.second > 1){
+                    message += std::to_string(item.second) + "x ";
+                }
+                message += item.first->getName() + ", ";
+                switch (anItemType->getRarity()){
+                    case ItemRarity::COMMON:
+                        message += "common, ";
+                        break;
+                    case ItemRarity::UNCOMMON:
+                        message += "uncommon, ";
+                        break;
+                    case ItemRarity::RARE:
+                        message += "rare, ";
+                        break;
+                    case ItemRarity::LEGENDARY:
+                        message += "legendary, ";
+                        break;
+                    case ItemRarity::QUEST:
+                        message += "quest, ";
+                        break;
+                }
+                message += std::to_string(anItemType->getCost()) + " money\015\012";
             }
-            message += item.first->getName() + ", ";
-            switch (anItemType->getRarity()){
-                case ItemRarity::COMMON:
-                    message += "common, ";
-                    break;
-                case ItemRarity::UNCOMMON:
-                    message += "uncommon, ";
-                    break;
-                case ItemRarity::RARE:
-                    message += "rare, ";
-                    break;
-                case ItemRarity::LEGENDARY:
-                    message += "legendary, ";
-                    break;
-                case ItemRarity::QUEST:
-                    message += "quest, ";
-                    break;
-            }
-            message += std::to_string(anItemType->getCost()) + " money\015\012";
+        }
+        if ((inventory.size() == 0) || (inventory.size() == questItemCount)){
+            message += "Nothing available for purchase right now.";
         }
         aPlayer->setCooldown(1);
     } else {
