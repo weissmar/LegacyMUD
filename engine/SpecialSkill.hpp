@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.hpp
  *
@@ -192,10 +192,12 @@ class SpecialSkill: public InteractiveNoun {
          * \param[in] character     Specifies the character receiving the skill.
          * \param[in] aRecipient    Specifies the recipient of the skill.
          * \param[out] effects      Specifies the effects of the action.
+         * \param[out] otherMessage Specifies a message to send to the recipient of
+         *                          the skill.
          *
          * \return  Returns a std::string with the results of the skill.
          */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects);
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects, std::string &otherMessage);
 
         /*!
          * \brief   Creates a copy of this object.

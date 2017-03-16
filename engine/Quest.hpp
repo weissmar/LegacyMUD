@@ -206,6 +206,8 @@ class Quest: public InteractiveNoun {
          */
         bool removeStep(QuestStep *aStep);
 
+        void registerObjectManager(GameObjectManager *manager);
+
         /*!
          * \brief   Gets the object type.
          *
@@ -304,6 +306,7 @@ class Quest: public InteractiveNoun {
         mutable std::mutex rewardItemMutex;
         std::map<int, QuestStep*> steps;
         mutable std::mutex stepsMutex;
+        GameObjectManager *manager;
 };
 
 }}

@@ -163,6 +163,7 @@ class GameLogic {
         static std::vector<std::pair<aType, int>> consolidateAndCountOptions(std::vector<aType> allOptions);
         
     private:
+        void registerQuestsGOM();
 
         /*!
          * \brief   Loads the specified player into the game.

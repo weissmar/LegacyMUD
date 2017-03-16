@@ -99,12 +99,12 @@ Item* Quest::getRewardItem() const{
 }
 
 
-// how to add object to manager from here or pass back to logic*********************************************************************
 Item* Quest::getUniqueRewardItem() const{
     std::lock_guard<std::mutex> rewardItemLock(rewardItemMutex);
-    //Item *anItem = new Item(rewardItem);
+    Item *anItem = new Item(*rewardItem);
+    manager->addObject(anItem, -1);
 
-    return nullptr;
+    return anItem;
 }
 
 
@@ -241,6 +241,11 @@ bool Quest::removeStep(QuestStep *aStep){
         }
     }
     return false;
+}
+
+
+void Quest::registerObjectManager(GameObjectManager *manager){
+    this->manager = manager;
 }
 
 

@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/11/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        SpecialSkill.cpp
  *
@@ -310,13 +310,13 @@ std::string SpecialSkill::attack(Player *aPlayer, Item *anItem, SpecialSkill *aS
 }
 
 
-std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects){
+std::string SpecialSkill::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects, std::string &otherMessage){
     std::string message, resultMessage;
     EffectType anEffect = EffectType::NONE;
 
     if (getDamageType() == DamageType::HEAL){
         // call this function on character
-        resultMessage = character->useSkill(aPlayer, this, nullptr, nullptr, effects);
+        resultMessage = character->useSkill(aPlayer, this, nullptr, nullptr, effects, otherMessage);
         if (resultMessage.compare("false") != 0){
             if (resultMessage.front() == 'f'){
                 // skill can't be used

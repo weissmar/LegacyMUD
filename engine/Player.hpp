@@ -604,10 +604,12 @@ class Player: public Combatant {
          * \param[in] character     Ignored in this case.
          * \param[in] aRecipient    Specifies the recipient of the skill.
          * \param[out] effects      Specifies the effects of the action.
+         * \param[out] otherMessage Specifies a message to send to the recipient
+         *                          of the skill.
          *
          * \return  Returns a std::string with the results of the skill.
          */
-        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects); 
+        virtual std::string useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects, std::string &otherMessage); 
 
         /*!
          * \brief   Moves the specified player to this area. 

@@ -173,7 +173,19 @@ bool GameLogic::startGame(bool newGame, const std::string &fileName, telnet::Ser
             accountManager->saveToDisk();
         }
     }
+
+    registerQuestsGOM();
+
     return success;
+}
+
+
+void GameLogic::registerQuestsGOM(){
+    std::vector<Quest*> allQuests = manager->getGameQuests();
+
+    for (auto quest : allQuests){
+        quest->registerObjectManager(manager);
+    }
 }
 
 
@@ -506,12 +518,14 @@ bool GameLogic::updateCreatures(){
     size_t index;
     size_t exitChoice = 0;
     std::vector<EffectType> effects;
-    std::string message = "";
     Exit *anExit = nullptr;
     int cooldown = 0;
     bool moved = false;
 
     for (auto creature : allCreatures){
+        players.clear();
+        characters.clear();
+        exits.clear();
         location = creature->getLocation();
 
         if (creature->getCurrentHealth() == 0){
@@ -547,14 +561,12 @@ bool GameLogic::updateCreatures(){
                     while ((!inCombat) && (index < players.size())){
                         // if the player isn't already in combat and isn't in editmode
                         if ((players[index]->getInCombat() == nullptr) && (!players[index]->isEditMode())){
-std::cout << "player not in combat id = " << std::to_string(players[index]->getID()) << "\n";
-std::cout << "creature not in combat id = " << std::to_string(creature->getID()) << "\n";
+
                             // creature rolls spot check and player rolls hide check
                             spotCheck = rollDice(20, 1) + creature->getIntelligenceModifier();
                             hideCheck = rollDice(20, 1) + players[index]->getDexterityModifier() + players[index]->getSizeModifier();
 
                             if (spotCheck > hideCheck){
-std::cout << "spotCheck > hideCheck\n";
                                 // start combat
                                 startCombat(players[index], creature);
                                 inCombat = true;
@@ -586,6 +598,8 @@ std::cout << "spotCheck > hideCheck\n";
                                 exits[exitChoice - 1]->go(nullptr, nullptr, creature, &effects);
                                 messageAreaPlayers(nullptr, "A creature named " + creature->getName() + " leaves the area.", location);
                                 messageAreaPlayers(nullptr, "A creature named " + creature->getName() + " enters the area.", exits[exitChoice - 1]->getConnectArea());
+                            } else {
+                                moved = false;
                             }
                             // add to cooldown
                             cooldown = 5 - creature->getDexterityModifier();
@@ -614,6 +628,7 @@ std::cout << "spotCheck > hideCheck\n";
                         // see if any exit leads from creature location to player location
                         exits = location->getExits();
 
+                        anExit = nullptr;
                         for (auto exit : exits){
                             if (exit->getConnectArea() == playerLocation){
                                 anExit = exit;
@@ -652,7 +667,6 @@ std::cout << "spotCheck > hideCheck\n";
 
 
 void GameLogic::creatureAttack(Creature *aCreature, Player *aPlayer){
-std::cout << "creatureAttack id = " << std::to_string(aCreature->getID()) << "\n";
     size_t weaponChoice = 0;
     std::vector<Item*> weapons;
     std::vector<EffectType> effects;
@@ -692,6 +706,9 @@ bool GameLogic::updatePlayersInCombat(){
     size_t weaponChoice;
 
     for (auto player : allPlayers){
+        aCreature = nullptr;
+        weapons.clear();
+
         // check cooldown
         if (player->cooldownIsZero()){
             // see if player is in combat
@@ -718,16 +735,13 @@ bool GameLogic::updatePlayersInCombat(){
                             // attack with special skill
                             aSkill = player->getPlayerClass()->getSpecialSkill();
                             message = aSkill->attack(player, nullptr, nullptr, aCreature, true, &effects);
-std::cout << "attacking with skill\n";
                         } else {
                             // attack with specified weapon
                             message = weapons[weaponChoice - 1]->attack(player, nullptr, nullptr, aCreature, true, &effects);
-std::cout << "attacking with weapon\n";
                         }
                     } else {
                         // attack with default attack
                         message = player->attack(player, nullptr, nullptr, aCreature, true, &effects);
-std::cout << "attacking with default\n";
                     }
                     messagePlayer(player, message);
                     checkEndCombat(player, aCreature);
@@ -6443,15 +6457,15 @@ bool GameLogic::searchCommand(Player *aPlayer, InteractiveNoun *directObj){
 
 // send message to affected other player? *********************************************************************
 bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, InteractiveNoun *indirectObj){
-    std::string message, resultMessage;
+    std::string message, resultMessage, otherMessage;
     std::vector<EffectType> effects;
     bool success = false;
 
     if (directObj != nullptr){
         if (indirectObj != nullptr){
-            resultMessage = directObj->useSkill(aPlayer, nullptr, indirectObj, nullptr, &effects);
+            resultMessage = directObj->useSkill(aPlayer, nullptr, indirectObj, nullptr, &effects, otherMessage);
         } else {
-            resultMessage = directObj->useSkill(aPlayer, nullptr, aPlayer, nullptr, &effects);
+            resultMessage = directObj->useSkill(aPlayer, nullptr, aPlayer, nullptr, &effects, otherMessage);
         }
         success = true;
     }
@@ -6466,6 +6480,9 @@ bool GameLogic::useSkillCommand(Player *aPlayer, InteractiveNoun *directObj, Int
         message += " ";
         message += handleEffects(aPlayer, effects);
         messagePlayer(aPlayer, message);
+        if ((!otherMessage.empty()) && (indirectObj->getObjectType() == ObjectType::PLAYER)){
+            messagePlayer(dynamic_cast<Player*>(indirectObj), otherMessage);
+        }
         checkPlayerDeath(aPlayer);
     }
 

@@ -1222,7 +1222,7 @@ std::string Player::sell(Player *aPlayer, Item *anItem, std::vector<EffectType> 
 }
 
 
-std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects){
+std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveNoun *character, Player *aRecipient, std::vector<EffectType> *effects, std::string &otherMessage){
     std::string message, resultMsg;
     EffectType anEffect = EffectType::NONE;
     int healAmount = aSkill->getDamage();
@@ -1241,6 +1241,8 @@ std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveN
                     message += "yourself.\015\012You gained ";
                 } else {
                     message += aRecipient->getName() + ". They gained ";
+                    otherMessage = getName() + " used the " + aSkill->getName() + " skill on you. You gained ";
+                    otherMessage += std::to_string(healAmount) + " health.";
                 }
                 message += std::to_string(healAmount) + " health.";
 
@@ -1261,7 +1263,7 @@ std::string Player::useSkill(Player *aPlayer, SpecialSkill *aSkill, InteractiveN
         }
     } else {
         // this is the recipient of the skill
-        message = aPlayer->useSkill(aPlayer, aSkill, nullptr, this, effects);
+        message = aPlayer->useSkill(aPlayer, aSkill, nullptr, this, effects, otherMessage);
     }
 
     return message;
