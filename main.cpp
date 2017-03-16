@@ -16,6 +16,8 @@
 
 #include <iostream>
 #include <thread>
+#include <cstdlib>
+#include <ctime>
 
 namespace parser = legacymud::parser;
 namespace engine = legacymud::engine;
@@ -30,6 +32,9 @@ int main(int argc, char *argv[]) {
     legacymud::engine::GameLogic logic;
     int serverPort;
     std::string file = "";
+
+    // seed random number genrator
+    std::srand(std::time(0));
 
     // Validate command line entry. 
     if (argc != 3) {

@@ -10332,19 +10332,19 @@
     "PLAYER_CLASS": [
         {
             "class": "PLAYER_CLASS",
-            "primary_stat": 45,
-            "name": "playerClass name",
+            "primary_stat": 3,
+            "name": "Adventurer",
             "special_skill_id": 2,
-            "attack_bonus": 10,
-            "armor_bonus": 20,
-            "resistant_to": "FIRE",
-            "weak_to": "WATER",
-            "heal_points": 35.5,
+            "attack_bonus": 5,
+            "armor_bonus": 5,
+            "resistant_to": "WIND",
+            "weak_to": "EARTH",
+            "heal_points": 0.5,
             "interactive_noun_data": {
                 "id": 3,
                 "noun_aliases": [
                     "combatant type 3",
-                    "playerClass name"
+                    "Adventurer"
                 ],
                 "actions": []
             }
@@ -10492,16 +10492,16 @@
     "SPECIAL_SKILL": [
         {
             "class": "SPECIAL_SKILL",
-            "name": "default special skill name",
+            "name": "Piercing Attack",
             "damage": 20,
             "damage_type": "PIERCING",
-            "cost": 10,
+            "cost": 2,
             "cooldown": 2,
             "interactive_noun_data": {
                 "id": 2,
                 "noun_aliases": [
                     "skill 2",
-                    "default special skill name"
+                    "Piercing Attack"
                 ],
                 "actions": []
             }
