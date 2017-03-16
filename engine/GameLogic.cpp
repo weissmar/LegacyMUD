@@ -229,7 +229,7 @@ bool GameLogic::newPlayerHandler(int fileDescriptor){
 
             // get password
             theServer->setPlayerEcho(fileDescriptor, false);
-            success = getValueFromUser(fileDescriptor, "Please enter a password. (Note: This is not a secure connection. Please use a password that you don't mind others potentially seeing.", password);
+            success = getValueFromUser(fileDescriptor, "Please enter a password. (Note: This is not a secure connection. Please use a password that you don't mind others potentially seeing.)", password);
             if (!success)
                 return false;
             // check if admin password was entered
