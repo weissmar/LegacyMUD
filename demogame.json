@@ -1,5 +1,5 @@
 {
-    "nextID": 155,
+    "nextID": 374,
     "startAreaId": 1,
     "AREA": [
         {
@@ -29,7 +29,15 @@
                     "area 5",
                     "Briartown Town Square"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You hear people talking, children laughing, and chickens squawking in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -568,9 +576,923 @@
             }
         }
     ],
-    "CONTAINER": [],
-    "CREATURE": [],
-    "CREATURE_TYPE": [],
+    "CONTAINER": [
+        {
+            "class": "CONTAINER",
+            "capacity": 20,
+            "name": "small wooden box",
+            "location": 1,
+            "position": "GROUND",
+            "item_type_id": 367,
+            "interactive_noun_data": {
+                "id": 368,
+                "noun_aliases": [
+                    "item 368",
+                    "small wooden box",
+                    "box",
+                    "wooden box",
+                    "small box"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "CREATURE": [
+        {
+            "class": "CREATURE",
+            "creature_type_id": 312,
+            "ambulatory": false,
+            "max_health": 15,
+            "spawn_location_id": 44,
+            "max_special_points": 5,
+            "dexterity": 18,
+            "strength": 3,
+            "intelligence": 15,
+            "name": "Ogre",
+            "description": "a monstrous beast that might eat you if you stay still for too long",
+            "money": 0,
+            "location_area_id": 44,
+            "max_inventory_weight": 500,
+            "interactive_noun_data": {
+                "id": 313,
+                "noun_aliases": [
+                    "character 313",
+                    "Ogre"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 70,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 70,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 316,
+                "noun_aliases": [
+                    "character 316",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 70,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 70,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 317,
+                "noun_aliases": [
+                    "character 317",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 70,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 70,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 318,
+                "noun_aliases": [
+                    "character 318",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 70,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 70,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 319,
+                "noun_aliases": [
+                    "character 319",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 70,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 70,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 320,
+                "noun_aliases": [
+                    "character 320",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 321,
+                "noun_aliases": [
+                    "character 321",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 322,
+                "noun_aliases": [
+                    "character 322",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 323,
+                "noun_aliases": [
+                    "character 323",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 324,
+                "noun_aliases": [
+                    "character 324",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 325,
+                "noun_aliases": [
+                    "character 325",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 326,
+                "noun_aliases": [
+                    "character 326",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 327,
+                "noun_aliases": [
+                    "character 327",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 328,
+                "noun_aliases": [
+                    "character 328",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 329,
+                "noun_aliases": [
+                    "character 329",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 330,
+                "noun_aliases": [
+                    "character 330",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 83,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 83,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 331,
+                "noun_aliases": [
+                    "character 331",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 332,
+                "noun_aliases": [
+                    "character 332",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 333,
+                "noun_aliases": [
+                    "character 333",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 334,
+                "noun_aliases": [
+                    "character 334",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 335,
+                "noun_aliases": [
+                    "character 335",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 336,
+                "noun_aliases": [
+                    "character 336",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 337,
+                "noun_aliases": [
+                    "character 337",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 338,
+                "noun_aliases": [
+                    "character 338",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 339,
+                "noun_aliases": [
+                    "character 339",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 340,
+                "noun_aliases": [
+                    "character 340",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 341,
+                "noun_aliases": [
+                    "character 341",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 342,
+                "noun_aliases": [
+                    "character 342",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 343,
+                "noun_aliases": [
+                    "character 343",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 315,
+            "ambulatory": false,
+            "max_health": 5,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 10,
+            "strength": 10,
+            "intelligence": 16,
+            "name": "Rat",
+            "description": "a darting blur of fur and sharp teeth",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 344,
+                "noun_aliases": [
+                    "character 344",
+                    "Rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 314,
+            "ambulatory": false,
+            "max_health": 3,
+            "spawn_location_id": 86,
+            "max_special_points": 0,
+            "dexterity": 14,
+            "strength": 9,
+            "intelligence": 13,
+            "name": "Bat",
+            "description": "a startling creature, more a rat with wings than other bats you've seen",
+            "money": 0,
+            "location_area_id": 86,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 345,
+                "noun_aliases": [
+                    "character 345",
+                    "Bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 346,
+            "ambulatory": false,
+            "max_health": 100,
+            "spawn_location_id": 52,
+            "max_special_points": 0,
+            "dexterity": 13,
+            "strength": 14,
+            "intelligence": 9,
+            "name": "Wild Boar",
+            "description": "a surprisingly large swine with long, sharp tusks",
+            "money": 0,
+            "location_area_id": 52,
+            "max_inventory_weight": 0,
+            "interactive_noun_data": {
+                "id": 347,
+                "noun_aliases": [
+                    "character 347",
+                    "Wild Boar"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE",
+            "creature_type_id": 348,
+            "ambulatory": false,
+            "max_health": 200,
+            "spawn_location_id": 97,
+            "max_special_points": 30,
+            "dexterity": 3,
+            "strength": 18,
+            "intelligence": 15,
+            "name": "Troll",
+            "description": "a large, scar-covered beast with raggedy hair",
+            "money": 0,
+            "location_area_id": 97,
+            "max_inventory_weight": 300,
+            "interactive_noun_data": {
+                "id": 349,
+                "noun_aliases": [
+                    "character 349",
+                    "Troll"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "CREATURE_TYPE": [
+        {
+            "class": "CREATURE_TYPE",
+            "size": "MEDIUM",
+            "difficulty": "NORMAL",
+            "name": "ogre",
+            "special_skill_id": 2,
+            "attack_bonus": 4,
+            "armor_bonus": 4,
+            "resistant_to": "EARTH",
+            "weak_to": "WIND",
+            "heal_points": 0.8999999761581421,
+            "interactive_noun_data": {
+                "id": 312,
+                "noun_aliases": [
+                    "combatant type 312",
+                    "ogre"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE_TYPE",
+            "size": "MEDIUM",
+            "difficulty": "NORMAL",
+            "name": "bat",
+            "special_skill_id": 2,
+            "attack_bonus": 2,
+            "armor_bonus": 1,
+            "resistant_to": "CRUSHING",
+            "weak_to": "PIERCING",
+            "heal_points": 0.4000000059604645,
+            "interactive_noun_data": {
+                "id": 314,
+                "noun_aliases": [
+                    "combatant type 314",
+                    "bat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE_TYPE",
+            "size": "MEDIUM",
+            "difficulty": "NORMAL",
+            "name": "rat",
+            "special_skill_id": 2,
+            "attack_bonus": 3,
+            "armor_bonus": 3,
+            "resistant_to": "WIND",
+            "weak_to": "CRUSHING",
+            "heal_points": 0.5,
+            "interactive_noun_data": {
+                "id": 315,
+                "noun_aliases": [
+                    "combatant type 315",
+                    "rat"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE_TYPE",
+            "size": "MEDIUM",
+            "difficulty": "NORMAL",
+            "name": "wild boar",
+            "special_skill_id": 2,
+            "attack_bonus": 10,
+            "armor_bonus": 10,
+            "resistant_to": "WATER",
+            "weak_to": "NONE",
+            "heal_points": 0.8999999761581421,
+            "interactive_noun_data": {
+                "id": 346,
+                "noun_aliases": [
+                    "combatant type 346",
+                    "wild boar"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "CREATURE_TYPE",
+            "size": "MEDIUM",
+            "difficulty": "NORMAL",
+            "name": "troll",
+            "special_skill_id": 2,
+            "attack_bonus": 15,
+            "armor_bonus": 7,
+            "resistant_to": "EARTH",
+            "weak_to": "FIRE",
+            "heal_points": 0.800000011920929,
+            "interactive_noun_data": {
+                "id": 348,
+                "noun_aliases": [
+                    "combatant type 348",
+                    "troll"
+                ],
+                "actions": []
+            }
+        }
+    ],
     "EXIT": [
         {
             "class": "EXIT",
@@ -6447,8 +7369,8 @@
         {
             "class": "ITEM",
             "name": "small piece of paper",
-            "location": 44,
-            "position": "GROUND",
+            "location": 313,
+            "position": "INVENTORY",
             "item_type_id": 131,
             "interactive_noun_data": {
                 "id": 132,
@@ -6471,6 +7393,2406 @@
                 "noun_aliases": [
                     "item 134",
                     "dungeon key"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 4,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 155,
+                "noun_aliases": [
+                    "item 155",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 156,
+                "noun_aliases": [
+                    "item 156",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 158,
+                "noun_aliases": [
+                    "item 158",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 159,
+                "noun_aliases": [
+                    "item 159",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 160,
+                "noun_aliases": [
+                    "item 160",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 161,
+                "noun_aliases": [
+                    "item 161",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 162,
+                "noun_aliases": [
+                    "item 162",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 163,
+                "noun_aliases": [
+                    "item 163",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 164,
+                "noun_aliases": [
+                    "item 164",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 165,
+                "noun_aliases": [
+                    "item 165",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 166,
+                "noun_aliases": [
+                    "item 166",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 167,
+                "noun_aliases": [
+                    "item 167",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 168,
+                "noun_aliases": [
+                    "item 168",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 169,
+                "noun_aliases": [
+                    "item 169",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 170,
+                "noun_aliases": [
+                    "item 170",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 171,
+                "noun_aliases": [
+                    "item 171",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 172,
+                "noun_aliases": [
+                    "item 172",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 173,
+                "noun_aliases": [
+                    "item 173",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 174,
+                "noun_aliases": [
+                    "item 174",
+                    "jug of mead",
+                    "mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 175,
+                "noun_aliases": [
+                    "item 175",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 176,
+                "noun_aliases": [
+                    "item 176",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 177,
+                "noun_aliases": [
+                    "item 177",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 178,
+                "noun_aliases": [
+                    "item 178",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 179,
+                "noun_aliases": [
+                    "item 179",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 180,
+                "noun_aliases": [
+                    "item 180",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 181,
+                "noun_aliases": [
+                    "item 181",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 182,
+                "noun_aliases": [
+                    "item 182",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 183,
+                "noun_aliases": [
+                    "item 183",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 184,
+                "noun_aliases": [
+                    "item 184",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 185,
+                "noun_aliases": [
+                    "item 185",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 186,
+                "noun_aliases": [
+                    "item 186",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 187,
+                "noun_aliases": [
+                    "item 187",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 188,
+                "noun_aliases": [
+                    "item 188",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 189,
+                "noun_aliases": [
+                    "item 189",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 190,
+                "noun_aliases": [
+                    "item 190",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 191,
+                "noun_aliases": [
+                    "item 191",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 192,
+                "noun_aliases": [
+                    "item 192",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 193,
+                "noun_aliases": [
+                    "item 193",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 194,
+                "noun_aliases": [
+                    "item 194",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 195,
+                "noun_aliases": [
+                    "item 195",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 196,
+                "noun_aliases": [
+                    "item 196",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 197,
+                "noun_aliases": [
+                    "item 197",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 198,
+                "noun_aliases": [
+                    "item 198",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 199,
+                "noun_aliases": [
+                    "item 199",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 200,
+                "noun_aliases": [
+                    "item 200",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 201,
+                "noun_aliases": [
+                    "item 201",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 202,
+                "noun_aliases": [
+                    "item 202",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 203,
+                "noun_aliases": [
+                    "item 203",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 204,
+                "noun_aliases": [
+                    "item 204",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 205,
+                "noun_aliases": [
+                    "item 205",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 206,
+                "noun_aliases": [
+                    "item 206",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 207,
+                "noun_aliases": [
+                    "item 207",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 208,
+                "noun_aliases": [
+                    "item 208",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 209,
+                "noun_aliases": [
+                    "item 209",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 210,
+                "noun_aliases": [
+                    "item 210",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 211,
+                "noun_aliases": [
+                    "item 211",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 212,
+                "noun_aliases": [
+                    "item 212",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 213,
+                "noun_aliases": [
+                    "item 213",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 214,
+                "noun_aliases": [
+                    "item 214",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 215,
+                "noun_aliases": [
+                    "item 215",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "jug of mead",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 148,
+            "interactive_noun_data": {
+                "id": 216,
+                "noun_aliases": [
+                    "item 216",
+                    "jug of mead"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 217,
+                "noun_aliases": [
+                    "item 217",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 218,
+                "noun_aliases": [
+                    "item 218",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 219,
+                "noun_aliases": [
+                    "item 219",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 220,
+                "noun_aliases": [
+                    "item 220",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "rope",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 69,
+            "interactive_noun_data": {
+                "id": 221,
+                "noun_aliases": [
+                    "item 221",
+                    "rope"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 222,
+                "noun_aliases": [
+                    "item 222",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 223,
+                "noun_aliases": [
+                    "item 223",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 224,
+                "noun_aliases": [
+                    "item 224",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 225,
+                "noun_aliases": [
+                    "item 225",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bread",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 147,
+            "interactive_noun_data": {
+                "id": 226,
+                "noun_aliases": [
+                    "item 226",
+                    "bread"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 227,
+                "noun_aliases": [
+                    "item 227",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 228,
+                "noun_aliases": [
+                    "item 228",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 229,
+                "noun_aliases": [
+                    "item 229",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 230,
+                "noun_aliases": [
+                    "item 230",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "apple",
+            "location": 151,
+            "position": "INVENTORY",
+            "item_type_id": 146,
+            "interactive_noun_data": {
+                "id": 231,
+                "noun_aliases": [
+                    "item 231",
+                    "apple"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 232,
+                "noun_aliases": [
+                    "item 232",
+                    "leather vest",
+                    "vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 234,
+                "noun_aliases": [
+                    "item 234",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 235,
+                "noun_aliases": [
+                    "item 235",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 236,
+                "noun_aliases": [
+                    "item 236",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 237,
+                "noun_aliases": [
+                    "item 237",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 238,
+                "noun_aliases": [
+                    "item 238",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 239,
+                "noun_aliases": [
+                    "item 239",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 240,
+                "noun_aliases": [
+                    "item 240",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 241,
+                "noun_aliases": [
+                    "item 241",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 242,
+                "noun_aliases": [
+                    "item 242",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 243,
+                "noun_aliases": [
+                    "item 243",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 244,
+                "noun_aliases": [
+                    "item 244",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 245,
+                "noun_aliases": [
+                    "item 245",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 246,
+                "noun_aliases": [
+                    "item 246",
+                    "leather helmet",
+                    "helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 247,
+                "noun_aliases": [
+                    "item 247",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 248,
+                "noun_aliases": [
+                    "item 248",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 249,
+                "noun_aliases": [
+                    "item 249",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 250,
+                "noun_aliases": [
+                    "item 250",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 251,
+                "noun_aliases": [
+                    "item 251",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 252,
+                "noun_aliases": [
+                    "item 252",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 253,
+                "noun_aliases": [
+                    "item 253",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 254,
+                "noun_aliases": [
+                    "item 254",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 255,
+                "noun_aliases": [
+                    "item 255",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 256,
+                "noun_aliases": [
+                    "item 256",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 257,
+                "noun_aliases": [
+                    "item 257",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 258,
+                "noun_aliases": [
+                    "item 258",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 259,
+                "noun_aliases": [
+                    "item 259",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather helmet",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 143,
+            "interactive_noun_data": {
+                "id": 260,
+                "noun_aliases": [
+                    "item 260",
+                    "leather helmet"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 261,
+                "noun_aliases": [
+                    "item 261",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "leather vest",
+            "location": 149,
+            "position": "INVENTORY",
+            "item_type_id": 142,
+            "interactive_noun_data": {
+                "id": 262,
+                "noun_aliases": [
+                    "item 262",
+                    "leather vest"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 263,
+                "noun_aliases": [
+                    "item 263",
+                    "short sword",
+                    "sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 265,
+                "noun_aliases": [
+                    "item 265",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 266,
+                "noun_aliases": [
+                    "item 266",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 267,
+                "noun_aliases": [
+                    "item 267",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 268,
+                "noun_aliases": [
+                    "item 268",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 269,
+                "noun_aliases": [
+                    "item 269",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 270,
+                "noun_aliases": [
+                    "item 270",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 271,
+                "noun_aliases": [
+                    "item 271",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 272,
+                "noun_aliases": [
+                    "item 272",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "short sword",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 144,
+            "interactive_noun_data": {
+                "id": 273,
+                "noun_aliases": [
+                    "item 273",
+                    "short sword"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "crossbow",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 145,
+            "interactive_noun_data": {
+                "id": 274,
+                "noun_aliases": [
+                    "item 274",
+                    "crossbow"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "crossbow",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 145,
+            "interactive_noun_data": {
+                "id": 275,
+                "noun_aliases": [
+                    "item 275",
+                    "crossbow"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "crossbow",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 145,
+            "interactive_noun_data": {
+                "id": 276,
+                "noun_aliases": [
+                    "item 276",
+                    "crossbow"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "crossbow",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 145,
+            "interactive_noun_data": {
+                "id": 277,
+                "noun_aliases": [
+                    "item 277",
+                    "crossbow"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "crossbow",
+            "location": 150,
+            "position": "INVENTORY",
+            "item_type_id": 145,
+            "interactive_noun_data": {
+                "id": 278,
+                "noun_aliases": [
+                    "item 278",
+                    "crossbow"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 280,
+                "noun_aliases": [
+                    "item 280",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 282,
+                "noun_aliases": [
+                    "item 282",
+                    "sugar snap peas",
+                    "peas",
+                    "snap peas",
+                    "sugar peas",
+                    "pea"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 284,
+                "noun_aliases": [
+                    "item 284",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 285,
+                "noun_aliases": [
+                    "item 285",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 286,
+                "noun_aliases": [
+                    "item 286",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 287,
+                "noun_aliases": [
+                    "item 287",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 288,
+                "noun_aliases": [
+                    "item 288",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 289,
+                "noun_aliases": [
+                    "item 289",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 290,
+                "noun_aliases": [
+                    "item 290",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 291,
+                "noun_aliases": [
+                    "item 291",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 292,
+                "noun_aliases": [
+                    "item 292",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 293,
+                "noun_aliases": [
+                    "item 293",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 294,
+                "noun_aliases": [
+                    "item 294",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 295,
+                "noun_aliases": [
+                    "item 295",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 296,
+                "noun_aliases": [
+                    "item 296",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 297,
+                "noun_aliases": [
+                    "item 297",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 298,
+                "noun_aliases": [
+                    "item 298",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 299,
+                "noun_aliases": [
+                    "item 299",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 300,
+                "noun_aliases": [
+                    "item 300",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 301,
+                "noun_aliases": [
+                    "item 301",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "carrot",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 279,
+            "interactive_noun_data": {
+                "id": 302,
+                "noun_aliases": [
+                    "item 302",
+                    "carrot"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 303,
+                "noun_aliases": [
+                    "item 303",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 304,
+                "noun_aliases": [
+                    "item 304",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 305,
+                "noun_aliases": [
+                    "item 305",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 306,
+                "noun_aliases": [
+                    "item 306",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 307,
+                "noun_aliases": [
+                    "item 307",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 308,
+                "noun_aliases": [
+                    "item 308",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 309,
+                "noun_aliases": [
+                    "item 309",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 310,
+                "noun_aliases": [
+                    "item 310",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "sugar snap peas",
+            "location": 154,
+            "position": "INVENTORY",
+            "item_type_id": 281,
+            "interactive_noun_data": {
+                "id": 311,
+                "noun_aliases": [
+                    "item 311",
+                    "sugar snap peas"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "huge club",
+            "location": 349,
+            "position": "EQUIPPED",
+            "item_type_id": 350,
+            "interactive_noun_data": {
+                "id": 351,
+                "noun_aliases": [
+                    "item 351",
+                    "huge club"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "head of a troll",
+            "location": 349,
+            "position": "INVENTORY",
+            "item_type_id": 352,
+            "interactive_noun_data": {
+                "id": 353,
+                "noun_aliases": [
+                    "item 353",
+                    "head of a troll",
+                    "head"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "Key to the City",
+            "location": 153,
+            "position": "INVENTORY",
+            "item_type_id": 354,
+            "interactive_noun_data": {
+                "id": 355,
+                "noun_aliases": [
+                    "item 355",
+                    "Key to the City"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "silver locket",
+            "location": 368,
+            "position": "IN",
+            "item_type_id": 365,
+            "interactive_noun_data": {
+                "id": 366,
+                "noun_aliases": [
+                    "item 366",
+                    "locket",
+                    "silver locket"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "titanium locket",
+            "location": 368,
+            "position": "IN",
+            "item_type_id": 365,
+            "interactive_noun_data": {
+                "id": 369,
+                "noun_aliases": [
+                    "item 369",
+                    "titanium locket",
+                    "locket"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "white gold locket",
+            "location": 368,
+            "position": "IN",
+            "item_type_id": 365,
+            "interactive_noun_data": {
+                "id": 370,
+                "noun_aliases": [
+                    "item 370",
+                    "white gold locket",
+                    "locket",
+                    "gold locket"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "bronze locket",
+            "location": 368,
+            "position": "IN",
+            "item_type_id": 365,
+            "interactive_noun_data": {
+                "id": 371,
+                "noun_aliases": [
+                    "item 371",
+                    "bronze locket",
+                    "locket"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM",
+            "name": "gold locket",
+            "location": 368,
+            "position": "IN",
+            "item_type_id": 365,
+            "interactive_noun_data": {
+                "id": 372,
+                "noun_aliases": [
+                    "item 372",
+                    "gold locket",
+                    "locket"
                 ],
                 "actions": []
             }
@@ -6579,7 +9901,15 @@
                     "item type 146",
                     "apple"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "EAT",
+                        "valid": true,
+                        "flavor_text": "As you bite into the fruit, you start to feel a sense of wellbeing.",
+                        "effect": "HEAL",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -6596,7 +9926,15 @@
                     "item type 147",
                     "bread"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "EAT",
+                        "valid": true,
+                        "flavor_text": "The bread is fresh and tender and makes you feel more powerful.",
+                        "effect": "GET_SPECIAL_POINTS",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -6612,6 +9950,132 @@
                 "noun_aliases": [
                     "item type 148",
                     "mead"
+                ],
+                "actions": [
+                    {
+                        "command": "DRINK",
+                        "valid": true,
+                        "flavor_text": "The mead is cool and refreshing, although it makes you a little light-headed.",
+                        "effect": "GET_SPECIAL_POINTS",
+                        "aliases": []
+                    }
+                ]
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "COMMON",
+            "description": "a crunchy snack",
+            "name": "carrot",
+            "cost": 2,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 279,
+                "noun_aliases": [
+                    "item type 279",
+                    "carrot"
+                ],
+                "actions": [
+                    {
+                        "command": "EAT",
+                        "valid": true,
+                        "flavor_text": "Crunching on the carrot, you feel stronger and ready to face whatever comes next.",
+                        "effect": "HEAL",
+                        "aliases": []
+                    }
+                ]
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "UNCOMMON",
+            "description": "a handful of delicious, fresh peas",
+            "name": "sugar snap peas",
+            "cost": 5,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 281,
+                "noun_aliases": [
+                    "item type 281",
+                    "sugar snap peas"
+                ],
+                "actions": [
+                    {
+                        "command": "EAT",
+                        "valid": true,
+                        "flavor_text": "With each pea, you feel rejuvenated and empowered.",
+                        "effect": "GET_SPECIAL_POINTS",
+                        "aliases": []
+                    }
+                ]
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 10,
+            "rarity": "QUEST",
+            "description": "the nasty-looking head of a troll who has seen better days",
+            "name": "troll head",
+            "cost": 10000,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 352,
+                "noun_aliases": [
+                    "item type 352",
+                    "troll head"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "QUEST",
+            "description": "a golden key that you're pretty sure doesn't open anything, but looks shiny",
+            "name": "key to the city",
+            "cost": 10000,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 354,
+                "noun_aliases": [
+                    "item type 354",
+                    "key to the city"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 1,
+            "rarity": "RARE",
+            "description": "a locket that goes on a necklace",
+            "name": "locket",
+            "cost": 100,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 365,
+                "noun_aliases": [
+                    "item type 365",
+                    "locket"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "ITEM_TYPE",
+            "weight": 5,
+            "rarity": "COMMON",
+            "description": "a diminutive container",
+            "name": "small box",
+            "cost": 10,
+            "slot_type": "NONE",
+            "interactive_noun_data": {
+                "id": 367,
+                "noun_aliases": [
+                    "item type 367",
+                    "small box"
                 ],
                 "actions": []
             }
@@ -6630,7 +10094,8 @@
                 "id": 149,
                 "noun_aliases": [
                     "character 149",
-                    "Armory shopkeep"
+                    "Armory shopkeep",
+                    "shopkeep"
                 ],
                 "actions": []
             }
@@ -6655,7 +10120,7 @@
         {
             "class": "NON_COMBATANT",
             "quest_id": -1,
-            "name": "Innkeeper",
+            "name": "Bradley the Innkeeper",
             "description": "a jolly fellow",
             "money": 10,
             "location_area_id": 1,
@@ -6664,14 +10129,25 @@
                 "id": 151,
                 "noun_aliases": [
                     "character 151",
-                    "Innkeeper"
+                    "Bradley the Innkeeper",
+                    "Bradley",
+                    "innkeeper",
+                    "Brad"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "TALK",
+                        "valid": true,
+                        "flavor_text": "The innkeeper smiles at you and says, \"Welcome to the Briartown Inn. I hope you enjoy your stay!\"",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
             "class": "NON_COMBATANT",
-            "quest_id": -1,
+            "quest_id": 356,
             "name": "Gerald the Town Guard",
             "description": "a stern man",
             "money": 0,
@@ -6681,15 +10157,18 @@
                 "id": 152,
                 "noun_aliases": [
                     "character 152",
-                    "Gerald the Town Guard"
+                    "Gerald the Town Guard",
+                    "Gerald",
+                    "town guard",
+                    "guard"
                 ],
                 "actions": []
             }
         },
         {
             "class": "NON_COMBATANT",
-            "quest_id": -1,
-            "name": "Brin",
+            "quest_id": 356,
+            "name": "Brin the Town Guard",
             "description": "a stern woman",
             "money": 0,
             "location_area_id": 23,
@@ -6698,7 +10177,10 @@
                 "id": 153,
                 "noun_aliases": [
                     "character 153",
-                    "Brin"
+                    "Brin the Town Guard",
+                    "Brin",
+                    "town guard",
+                    "guard"
                 ],
                 "actions": []
             }
@@ -6716,6 +10198,74 @@
                 "noun_aliases": [
                     "character 154",
                     "Farmer"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": 362,
+            "name": "Julianne",
+            "description": "busy shopping and talking to neighbors",
+            "money": 5,
+            "location_area_id": 5,
+            "max_inventory_weight": 10,
+            "interactive_noun_data": {
+                "id": 358,
+                "noun_aliases": [
+                    "character 358",
+                    "Julianne"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": 362,
+            "name": "Geoff",
+            "description": "a happy-looking man reading a book",
+            "money": 10,
+            "location_area_id": 14,
+            "max_inventory_weight": 10,
+            "interactive_noun_data": {
+                "id": 359,
+                "noun_aliases": [
+                    "character 359",
+                    "Geoff"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": 362,
+            "name": "Percy",
+            "description": "a small boy playing with a ball",
+            "money": 0,
+            "location_area_id": 20,
+            "max_inventory_weight": 10,
+            "interactive_noun_data": {
+                "id": 360,
+                "noun_aliases": [
+                    "character 360",
+                    "Percy"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "NON_COMBATANT",
+            "quest_id": 362,
+            "name": "Eustacia",
+            "description": "a hard-looking woman who eyes you suspiciously",
+            "money": 10,
+            "location_area_id": 17,
+            "max_inventory_weight": 10,
+            "interactive_noun_data": {
+                "id": 361,
+                "noun_aliases": [
+                    "character 361",
+                    "Eustacia"
                 ],
                 "actions": []
             }
@@ -6767,7 +10317,7 @@
             "name": "Rachel",
             "description": "a reasonably cool person",
             "money": 10,
-            "location_area_id": 1,
+            "location_area_id": 5,
             "max_inventory_weight": 30,
             "interactive_noun_data": {
                 "id": 137,
@@ -6838,8 +10388,107 @@
             }
         }
     ],
-    "QUEST": [],
-    "QUEST_STEP": [],
+    "QUEST": [
+        {
+            "class": "QUEST",
+            "name": "Slay the Troll",
+            "description": "Take care of the troll problem.",
+            "reward_money": 150,
+            "reward_item_id": 355,
+            "quest_steps": [
+                {
+                    "step_count": 1,
+                    "quest_step_id": 357
+                }
+            ],
+            "interactive_noun_data": {
+                "id": 356,
+                "noun_aliases": [
+                    "quest 356",
+                    "Slay the Troll"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "QUEST",
+            "name": "Search for a Key to the Dungeon",
+            "description": "Get the key to the dungeon.",
+            "reward_money": 15,
+            "reward_item_id": 134,
+            "quest_steps": [
+                {
+                    "step_count": 1,
+                    "quest_step_id": 363
+                },
+                {
+                    "step_count": 2,
+                    "quest_step_id": 364
+                }
+            ],
+            "interactive_noun_data": {
+                "id": 362,
+                "noun_aliases": [
+                    "quest 362",
+                    "Search for a Key to the Dungeon"
+                ],
+                "actions": []
+            }
+        }
+    ],
+    "QUEST_STEP": [
+        {
+            "class": "QUEST_STEP",
+            "ordinal_number": 1,
+            "description": "Bring back the troll's head as proof you killed it.",
+            "fetch_item_type_id": 352,
+            "giver_id": 152,
+            "receiver_id": 153,
+            "completion_text": "You have proven yourself a brave and worthy adventurer. Congratulations!",
+            "interactive_noun_data": {
+                "id": 357,
+                "noun_aliases": [
+                    "quest step 357",
+                    "step 1"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "QUEST_STEP",
+            "ordinal_number": 1,
+            "description": "Retrieve the peas.",
+            "fetch_item_type_id": 281,
+            "giver_id": 358,
+            "receiver_id": 359,
+            "completion_text": "Geoff munches happily on the peas.",
+            "interactive_noun_data": {
+                "id": 363,
+                "noun_aliases": [
+                    "quest step 363",
+                    "step 1"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "QUEST_STEP",
+            "ordinal_number": 2,
+            "description": "Find the locket.",
+            "fetch_item_type_id": 142,
+            "giver_id": 360,
+            "receiver_id": 361,
+            "completion_text": "Eustacia says, \"Just don't tell anyone you got that from me!\", and glares at you until you go away.",
+            "interactive_noun_data": {
+                "id": 364,
+                "noun_aliases": [
+                    "quest step 364",
+                    "step 2"
+                ],
+                "actions": []
+            }
+        }
+    ],
     "SPECIAL_SKILL": [
         {
             "class": "SPECIAL_SKILL",
@@ -6929,6 +10578,27 @@
                 "noun_aliases": [
                     "item type 145",
                     "crossbow"
+                ],
+                "actions": []
+            }
+        },
+        {
+            "class": "WEAPON_TYPE",
+            "damage": 40,
+            "damage_type": "CRUSHING",
+            "range": "SMALL",
+            "crit_multiplier": 2,
+            "name": "club",
+            "weight": 50,
+            "rarity": "LEGENDARY",
+            "description": "a large, heavy piece of wood with a knob on one end",
+            "cost": 100,
+            "slot_type": "HANDS",
+            "interactive_noun_data": {
+                "id": 350,
+                "noun_aliases": [
+                    "item type 350",
+                    "club"
                 ],
                 "actions": []
             }
