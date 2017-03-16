@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/14/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -150,6 +150,17 @@ class GameLogic {
          *          all the dice rolled).
          */
         static int rollDice(int numSides, int numDice);
+
+        /*!
+         * \brief   Consolidates the options to a unique set, with a counter of the number
+         *          of times each option appeared in the original vector.
+         * 
+         * \param[in] allOptions    Specifies the vector of options to consolidate.
+         *
+         * \return  Returns a vector with only a unique set of options, and a count for each.
+         */
+        template <class aType>
+        static std::vector<std::pair<aType, int>> consolidateAndCountOptions(std::vector<aType> allOptions);
         
     private:
 
@@ -543,6 +554,16 @@ class GameLogic {
          * \return  Returns a pointer to the chosen interactive noun.
          */
         InteractiveNoun* clarifyIndirect(Player *aPlayer, parser::ParseResult result);
+
+        /*!
+         * \brief   Consolidates the options to a unique set.
+         * 
+         * \param[in] allOptions    Specifies the vector of options to consolidate.
+         *
+         * \return  Returns a vector with only a unique set of options.
+         */
+        template <class aType>
+        std::vector<aType> consolidateOptions(std::vector<aType> allOptions);
 
         /*!
          * \brief   Executes the help command.

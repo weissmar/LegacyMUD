@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/09/2017
- * \modified    03/12/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -93,6 +93,11 @@ CreatureType* Creature::getType() const{
 
 bool Creature::getAmbulatory() const{
     return ambulatory.load();
+}
+
+
+InteractiveNoun* Creature::getObjectLocation() const{
+    return getLocation();
 }
 
 

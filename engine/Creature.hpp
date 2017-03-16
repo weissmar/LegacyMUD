@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/12/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -60,6 +60,7 @@ class Creature: public Combatant {
          */
         bool getAmbulatory() const;
 
+        virtual InteractiveNoun* getObjectLocation() const;
         virtual int getSizeModifier() const;
         int getXP() const;
         bool setRespawn();

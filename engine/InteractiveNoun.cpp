@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serializeJustInteractiveNoun function) 
  * \created     02/01/2017
- * \modified    03/12/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.cpp
  *
@@ -84,11 +84,47 @@ InteractiveNoun & InteractiveNoun::operator=(const InteractiveNoun &otherNoun){
 }
 
 
+bool InteractiveNoun::operator==(const InteractiveNoun &otherNoun) const{
+    bool equal = true;
+    std::vector<Action*> allActions = this->getAllActions();
+    std::vector<Action*> allOtherActions = otherNoun.getAllActions();
+    std::vector<std::string> allNounAliases = this->getNounAliases();
+    std::vector<std::string> allOtherNounAliases = otherNoun.getNounAliases();
+
+    if (this->getObjectType() != otherNoun.getObjectType()){
+        equal = false;
+    } else if (!this->compareObjects(otherNoun)){
+        equal = false;
+    } else if (allActions != allOtherActions){
+        equal = false;
+    } else if (allNounAliases.size() != allOtherNounAliases.size()){
+        equal = false;
+    } else {
+        for (size_t i = 1; i < allNounAliases.size(); i++){
+            if (allNounAliases[i] != allOtherNounAliases[1]){
+                equal = false;
+            }
+        }
+    }
+
+    return equal;
+}
+
+
 InteractiveNoun::~InteractiveNoun(){
     for (auto action : actions){
         delete action;
     }
     actions.clear();
+}
+
+
+bool InteractiveNoun::compareObjects(const InteractiveNoun &otherObject) const{
+    if (getID() == otherObject.getID()){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 

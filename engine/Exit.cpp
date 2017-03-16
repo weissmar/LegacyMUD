@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/10/2017
- * \modified    03/10/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Exit.cpp
  *
@@ -327,6 +327,11 @@ Area* Exit::getLocation() const{
     std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
 }
+
+
+InteractiveNoun* Exit::getObjectLocation() const{
+    return getLocation();
+}  
 
 
 Area* Exit::getConnectArea() const{

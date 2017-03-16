@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        InteractiveNoun.hpp
  *
@@ -52,7 +52,10 @@ class InteractiveNoun {
         InteractiveNoun(int anID = nextID++);
         InteractiveNoun(const InteractiveNoun &otherNoun);
         InteractiveNoun & operator=(const InteractiveNoun &otherNoun);
+        bool operator==(const InteractiveNoun &otherNoun) const;
         virtual ~InteractiveNoun();
+
+        virtual bool compareObjects(const InteractiveNoun &otherObject) const;
 
         /*!
          * \brief   Gets the ID of this noun.
@@ -272,6 +275,12 @@ class InteractiveNoun {
          *          interactive noun.
          */
         virtual std::string getName() const = 0;
+
+        /*!
+         * \brief   Gets the location. This is a pure virtual function for
+         *          interactive noun.
+         */
+        virtual InteractiveNoun* getObjectLocation() const { return nullptr; }
         
         /*!
          * \brief   Gets the object type. This is a pure virtual function for

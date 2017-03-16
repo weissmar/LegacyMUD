@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/13/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Item.cpp
  *
@@ -100,15 +100,59 @@ Item & Item::operator=(const Item &otherItem){
     return *this;
 }
 
+
+bool Item::operator==(const Item &otherItem) const{
+    bool equal = true;
+    ItemType *thisType = this->getType();
+    ItemType *otherType = otherItem.getType();
+
+    if (this->getName().compare(otherItem.getName()) != 0){
+        equal = false;
+    } else if (this->getLocation()->getID() != otherItem.getLocation()->getID()) {
+        equal = false;
+    } else if (this->getPosition() != otherItem.getPosition()) {
+        equal = false;
+    } else if (thisType->getID() != otherType->getID()){
+        equal = false;
+    } 
+
+    return equal;
+}
+
+
 /*
 Item::~Item(){
 
 }*/
 
 
+bool Item::compareObjects(const InteractiveNoun &otherObject) const{
+    Item const *otherItem;
+    ObjectType otherObjectType;
+    bool equal = false;
+
+    otherObjectType = otherObject.getObjectType();
+
+    if (otherObjectType == ObjectType::ITEM){
+        otherItem = dynamic_cast<Item const*>(&otherObject);
+
+        if (*this == *otherItem){
+            equal = true;
+        }
+    }
+
+    return equal;
+}
+
+
 InteractiveNoun* Item::getLocation() const{
     std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
+}
+
+
+InteractiveNoun* Item::getObjectLocation() const{
+    return getLocation();
 }
 
 

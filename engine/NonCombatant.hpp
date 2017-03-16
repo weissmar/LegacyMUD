@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        NonCombatant.hpp
  *
@@ -60,6 +60,8 @@ class NonCombatant: public Character {
          * \return  Returns a Quest* with the quest of this non-combatant.
          */
         Quest* getQuest() const;
+
+        virtual InteractiveNoun* getObjectLocation() const;
 
         /*!
          * \brief   Sets the quest.

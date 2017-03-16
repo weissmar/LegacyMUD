@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/08/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Exit.hpp
  *
@@ -68,6 +68,8 @@ class Exit: public ConditionalElement {
          * \return  Returns an Area* with the location of this exit.
          */
         Area* getLocation() const;
+
+        virtual InteractiveNoun* getObjectLocation() const;
 
         /*!
          * \brief   Sets the direction of this exit.

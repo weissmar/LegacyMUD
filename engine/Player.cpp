@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/14/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -259,6 +259,11 @@ int Player::getArmorBonus() const{
 }
 
 
+InteractiveNoun* Player::getObjectLocation() const {
+    return getLocation();
+}
+
+
 std::string Player::addToExperiencePts(int gainedXP){
     std::string message = "";
     int newXP = experiencePoints.load() + gainedXP;
@@ -436,7 +441,6 @@ bool Player::addOrUpdateQuest(Quest *aQuest, int step, bool complete){
 
 
 bool Player::addToInventory(Item *anItem){
-std::cout << "inside addToInventory\n";
     bool success = false; 
     Container *aContainer = nullptr;
     std::vector<Item*> contents;
@@ -833,7 +837,7 @@ std::string Player::equip(Player *aPlayer, Item *anItem, InteractiveNoun *aChara
             message = "false";
         } else {
             success = true;
-            message = "Unequipped the " + strSuccess + ". ";
+            message = " Unequipped the " + strSuccess + ". ";
         }
     }
 

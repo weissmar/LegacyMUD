@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/11/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Item.hpp
  *
@@ -40,7 +40,10 @@ class Item: public InteractiveNoun {
         Item(InteractiveNoun* location, ItemPosition position, std::string name, ItemType *type, int anID);
         Item(const Item &otherItem);
         Item & operator=(const Item &otherItem);
+        bool operator==(const Item &otherItem) const;
         //virtual ~Item();
+
+        virtual bool compareObjects(const InteractiveNoun &otherObject) const;
 
         /*!
          * \brief   Gets the location of the item.
@@ -48,6 +51,8 @@ class Item: public InteractiveNoun {
          * \return  Returns an InteractiveNoun* with the location of the item.
          */
         InteractiveNoun* getLocation() const;
+
+        virtual InteractiveNoun* getObjectLocation() const;
 
         /*!
          * \brief   Gets the position of the item.
