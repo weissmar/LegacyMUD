@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/12/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -167,6 +167,8 @@ class Player: public Combatant {
         virtual int getSizeModifier() const;
 
         virtual int getArmorBonus() const;
+
+        virtual InteractiveNoun* getObjectLocation() const;
 
         /*!
          * \brief   Adds the specified points to the experience points of 

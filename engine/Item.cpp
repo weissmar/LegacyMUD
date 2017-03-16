@@ -151,6 +151,11 @@ InteractiveNoun* Item::getLocation() const{
 }
 
 
+InteractiveNoun* Item::getObjectLocation() const{
+    return getLocation();
+}
+
+
 ItemPosition Item::getPosition() const{
     return position.load();
 }

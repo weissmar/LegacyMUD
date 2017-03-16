@@ -275,6 +275,12 @@ class InteractiveNoun {
          *          interactive noun.
          */
         virtual std::string getName() const = 0;
+
+        /*!
+         * \brief   Gets the location. This is a pure virtual function for
+         *          interactive noun.
+         */
+        virtual InteractiveNoun* getObjectLocation() const { return nullptr; }
         
         /*!
          * \brief   Gets the object type. This is a pure virtual function for

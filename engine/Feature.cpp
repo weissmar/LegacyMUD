@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/09/2017
+ * \modified    03/15/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -68,6 +68,11 @@ std::string Feature::getPlacement() const{
 Area* Feature::getLocation() const{
     std::lock_guard<std::mutex> locationLock(locationMutex);
     return location;
+}
+
+
+InteractiveNoun* Feature::getObjectLocation() const{
+    return getLocation();
 }
 
 

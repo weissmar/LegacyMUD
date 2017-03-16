@@ -4698,6 +4698,7 @@ void GameLogic::handleParseErrorMult(Player *aPlayer, std::vector<parser::ParseR
 
 void GameLogic::sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun*> optionsVector){
     std::string message;
+    InteractiveNoun *location = nullptr;
 
     message = "Did you mean ";
     for (size_t i = 0; i < optionsVector.size(); i++){
@@ -4705,6 +4706,10 @@ void GameLogic::sendClarifyingQuery(Player *aPlayer, std::vector<InteractiveNoun
         message += std::to_string(i + 1);
         message += "] ";
         message += optionsVector[i]->getName();
+        location = optionsVector[i]->getObjectLocation();
+        if (location != nullptr){
+            message += " in " + location->getName();
+        }
         if (i < (optionsVector.size() - 1)){
             message += ", ";
         }

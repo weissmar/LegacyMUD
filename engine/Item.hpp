@@ -52,6 +52,8 @@ class Item: public InteractiveNoun {
          */
         InteractiveNoun* getLocation() const;
 
+        virtual InteractiveNoun* getObjectLocation() const;
+
         /*!
          * \brief   Gets the position of the item.
          *
