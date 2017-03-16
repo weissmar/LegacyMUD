@@ -150,6 +150,17 @@ class GameLogic {
          *          all the dice rolled).
          */
         static int rollDice(int numSides, int numDice);
+
+        /*!
+         * \brief   Consolidates the options to a unique set, with a counter of the number
+         *          of times each option appeared in the original vector.
+         * 
+         * \param[in] allOptions    Specifies the vector of options to consolidate.
+         *
+         * \return  Returns a vector with only a unique set of options, and a count for each.
+         */
+        template <class aType>
+        static std::vector<std::pair<aType, int>> consolidateAndCountOptions(std::vector<aType> allOptions);
         
     private:
 
@@ -553,17 +564,6 @@ class GameLogic {
          */
         template <class aType>
         std::vector<aType> consolidateOptions(std::vector<aType> allOptions);
-
-        /*!
-         * \brief   Consolidates the options to a unique set, with a counter of the number
-         *          of times each option appeared in the original vector.
-         * 
-         * \param[in] allOptions    Specifies the vector of options to consolidate.
-         *
-         * \return  Returns a vector with only a unique set of options, and a count for each.
-         */
-        template <class aType>
-        std::vector<std::pair<aType, int>> consolidateAndCountOptions(std::vector<aType> allOptions);
 
         /*!
          * \brief   Executes the help command.

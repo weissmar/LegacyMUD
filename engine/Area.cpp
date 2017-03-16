@@ -18,6 +18,7 @@
 #include "Action.hpp"
 #include "Container.hpp"
 #include "Player.hpp"
+#include "GameLogic.hpp"
 #include <iostream>
 #include <algorithm>
 #include <rapidjson/writer.h>
@@ -164,7 +165,7 @@ const parser::LexicalData& Area::getLexicalData() const{
 std::string Area::getFullDescription(Player *aPlayer) const{
     bool editMode = aPlayer->isEditMode();
     std::string message = getLongDesc();
-    std::vector<Item*> allItems = getItems();
+    std::vector<std::pair<Item*, int>> allItems = GameLogic::consolidateAndCountOptions<Item*>(getItems());
     std::vector<Character*> allCharacters = getCharacters();
     std::vector<Feature*> allFeatures = getFeatures();
     std::vector<Exit*> allExits = getExits();
@@ -208,25 +209,35 @@ std::string Area::getFullDescription(Player *aPlayer) const{
     }
 
     if (allItems.size() == 1){
-        message += "You see a ";
-        message += allItems[0]->getName();
+        message += "You see ";
+        if (allItems[0].second > 1){
+            message += std::to_string(allItems[0].second) + "x ";
+        } else {
+            message += "a ";
+        }
+        message += allItems[0].first->getName();
         message += " on the ground.";
         if (editMode){
-            message += " [item " + std::to_string(allItems[0]->getID()) + "]";
+            message += " [item " + std::to_string(allItems[0].first->getID()) + "]";
         }
     } else if (allItems.size() > 1){
-        message += "Around you, you see a ";
+        message += "Around you, you see ";
         for (size_t i = 0; i < allItems.size(); i++){
-            message += allItems[i]->getName();
+            if (allItems[i].second > 1){
+                message += std::to_string(allItems[i].second) + "x ";
+            } else {
+                message += "a ";
+            }
+            message += allItems[i].first->getName();
             if (editMode){
-                message += " [item " + std::to_string(allItems[i]->getID()) + "]";
+                message += " [item " + std::to_string(allItems[i].first->getID()) + "]";
             }
             if (i == (allItems.size() - 2)){
-                message += " and a ";
+                message += " and ";
             } else if (i == (allItems.size() - 1)){
                 message += ".";
             } else {
-                message += ", a ";    
+                message += ", ";    
             }
         }
     }
