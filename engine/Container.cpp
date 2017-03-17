@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/09/2017
- * \modified    03/15/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Container.cpp
  *
@@ -19,6 +19,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/document.h>
 #include <map>
+#include <iostream>
 #include <Grammar.hpp>   
 #include <ItemPosition_Data.hpp> 
 #include <CommandEnum_Data.hpp>  
@@ -52,6 +53,7 @@ Container::Container(const Container &otherContainer) : Item(otherContainer) {
     insideCapacity.store(otherContainer.getInsideCapacity());
 }
 
+
 bool Container::operator==(const Container &otherContainer) const{
     bool equal = Item::operator==(otherContainer);
 
@@ -61,6 +63,7 @@ bool Container::operator==(const Container &otherContainer) const{
 
     return equal;
 }
+
 
 /*
 Container & Container::operator=(const Container &otherContainer){
@@ -91,6 +94,7 @@ bool Container::isEmpty() const{
     return under.empty() && inside.empty() && onTopOf.empty();
 }
 
+
 bool Container::isContained(Item *anItem) const{
     if (anItem != nullptr){
         std::unique_lock<std::mutex> underLock(underMutex, std::defer_lock);
@@ -116,6 +120,7 @@ bool Container::isContained(Item *anItem) const{
     }
     return false;
 }
+
 
 bool Container::remove(Item *anItem){
     bool success = false; 
@@ -164,6 +169,51 @@ bool Container::remove(Item *anItem){
 
     return success;
 }
+
+
+bool Container::removeAll(){
+    bool success = false;
+    InteractiveNoun *location = getLocation();
+    ObjectType locationType = location->getObjectType();
+    std::vector<Item*> allContents = getAllContents();
+    Container *aContainer = nullptr;
+    Character *aCharacter = nullptr;
+    Area *anArea = nullptr;
+
+    for (auto item : allContents){
+        remove(item);
+        item->setLocation(location);
+
+        switch (locationType){
+            case ObjectType::CONTAINER:
+                aContainer = dynamic_cast<Container*>(location);
+                aContainer->place(item, item->getPosition());
+                break;
+            case ObjectType::PLAYER:
+            case ObjectType::CREATURE:
+            case ObjectType::NON_COMBATANT:
+                item->setPosition(ItemPosition::INVENTORY);
+                aCharacter = dynamic_cast<Character*>(location);
+                aCharacter->addToInventory(item);
+                break;
+            case ObjectType::AREA:
+                item->setPosition(ItemPosition::GROUND);
+                anArea = dynamic_cast<Area*>(location);
+                anArea->addItem(item);
+                break;
+            default:
+                std::cout << "DEBUG: Reached default case in Container::removeAll\n";
+                break;
+        }
+    }
+
+    if (isEmpty()){
+        success = true;
+    }
+
+    return success;
+}
+
 
 // would be best to remove dynamic casts ***********************************************************
 // should check capacity ****************************************

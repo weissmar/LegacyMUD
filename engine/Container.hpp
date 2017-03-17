@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/15/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Container.hpp
  *
@@ -74,6 +74,15 @@ class Container: public Item {
          *          item was successful.
          */
         bool remove(Item *anItem);
+
+        /*!
+         * \brief   Removes all items from this container and places them
+         *          in the location of this item.
+         *
+         * \return  Returns a bool indicating whether or not removing the 
+         *          items was successful.
+         */
+        bool removeAll();
 
         /*!
          * \brief   Removes the speficied item in the specified position 

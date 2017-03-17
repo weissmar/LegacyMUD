@@ -6116,21 +6116,22 @@ bool GameLogic::moveCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You move the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->move(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't move the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't move the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6505,21 +6506,22 @@ bool GameLogic::readCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You read the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->read(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't read the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't read the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6534,21 +6536,23 @@ bool GameLogic::breakCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You break the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->breakIt(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't break the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't break the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+            deleteCommand(nullptr, directObj);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6563,21 +6567,22 @@ bool GameLogic::climbCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You climb the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->climb(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't climb the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't climb the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6592,21 +6597,22 @@ bool GameLogic::turnCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You turn the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->turn(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't turn the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't turn the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6621,21 +6627,22 @@ bool GameLogic::pushCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You push the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->push(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't push the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't push the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6650,21 +6657,22 @@ bool GameLogic::pullCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You pull the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->pull(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't pull the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't pull the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6679,21 +6687,23 @@ bool GameLogic::eatCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You eat the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->eat(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't eat the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't eat the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+            deleteCommand(nullptr, directObj);
+        } 
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -6708,21 +6718,23 @@ bool GameLogic::drinkCommand(Player *aPlayer, InteractiveNoun *directObj){
     if (directObj != nullptr){
         message = "You drink the " + directObj->getName() + ".\015\012";
         resultMessage = directObj->drink(aPlayer, &effects);
-        success = true;
-    }
 
-    if (resultMessage.compare("false") == 0){
-        message = "You can't drink the " + directObj->getName() + ".";
-    } else {
-        message += resultMessage;
-    }
+        if (resultMessage.compare("false") == 0){
+            message = "You can't drink the " + directObj->getName() + ".";
+        } else {
+            message += resultMessage;
+            success = true;
+        }
 
-    if (success){ 
-        message += " ";
-        message += handleEffects(aPlayer, effects);
+        if (success){ 
+            message += " ";
+            message += handleEffects(aPlayer, effects);
+            aPlayer->setCooldown(1);
+            deleteCommand(nullptr, directObj);
+        }
+
         messagePlayer(aPlayer, message);
         checkPlayerDeath(aPlayer);
-        aPlayer->setCooldown(1);
     }
 
     return success;
@@ -7020,8 +7032,11 @@ bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
     Area *anArea = nullptr;
     Character *aCharacter = nullptr;
     Container *aContainer = nullptr;
+    Creature *aCreature = nullptr;
+    Feature *aFeature = nullptr;
+    Exit *anExit = nullptr;
 
-    if ((aPlayer->isEditMode()) && (directObj != nullptr)){
+    if (((aPlayer == nullptr) || (aPlayer->isEditMode())) && (directObj != nullptr)){
         anObjectType = directObj->getObjectType();
         if ((anObjectType == ObjectType::ITEM) || (anObjectType == ObjectType::CONTAINER)){
             // rmeove all references to the item in quests
@@ -7049,23 +7064,51 @@ bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
 
             // remove any contained objects
             if (anObjectType == ObjectType::CONTAINER){
-                //**************************************************
+                aContainer = static_cast<Container*>(directObj);
+                aContainer->removeAll();
             }
 
+            success = true;
         } else if (anObjectType == ObjectType::CREATURE){
+            // remove from area
+            aCreature = static_cast<Creature*>(directObj);
+            anArea = aCreature->getLocation();
+            anArea->removeCharacter(aCreature);
 
+            // remove from inCombat
+            if (aCreature->getInCombat() != nullptr){
+                endCombat(dynamic_cast<Player*>(aCreature->getInCombat()), aCreature);
+            }
+
+            success = true;
         } else if (anObjectType == ObjectType::FEATURE){
+            // remove from area
+            aFeature = static_cast<Feature*>(directObj);
+            anArea = aFeature->getLocation();
+            anArea->removeFeature(aFeature);
 
+            success = true;
         } else if (anObjectType == ObjectType::EXIT){
+            // remove from area
+            anExit = static_cast<Exit*>(directObj);
+            anArea = anExit->getLocation();
+            anArea->removeExit(anExit);
 
+            success = true;
         } else {
             message = "You can't delete that.";
+        }
+
+        if (success){
+            manager->removeObject(directObj, -1);
         }
     } else {
         message = "You must be in editmode to create.";
     }
 
-    messagePlayer(aPlayer, message);
+    if ((!success) && (aPlayer != nullptr)){
+        messagePlayer(aPlayer, message);
+    }
 
     return success;
 }
