@@ -722,7 +722,9 @@ Player* Player::deserialize(std::string jsonStr, GameObjectManager* gom){
     
     // Construct a new Player object, getting all the data needed to do so from the objectDoc. 
     const int NO_FILE_DESCRIPTOR = -1;
-    Player *newPlayer = new Player(gamedata::CharacterSize_Data::stringToEnum(objectDoc["character_size"].GetString()),
+    Player *newPlayer = new Player(objectDoc["experience_points"].GetInt(),
+                                   objectDoc["level"].GetInt(), 
+                                   gamedata::CharacterSize_Data::stringToEnum(objectDoc["character_size"].GetString()),
                                    static_cast<PlayerClass*>(gom->getPointer(objectDoc["player_class_id"].GetInt())),  
                                    objectDoc["username"].GetString(),
                                    NO_FILE_DESCRIPTOR,      
