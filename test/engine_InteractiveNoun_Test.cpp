@@ -122,7 +122,7 @@ TEST_F(InteractiveNounTest, GetTextAndEffectTest) {
     ASSERT_EQ(1, in->getActions("climb").size());
     EXPECT_TRUE(in->checkAction(engine::CommandEnum::CLIMB));
     EXPECT_EQ(act, in->getAction(engine::CommandEnum::CLIMB));
-    EXPECT_STREQ("The step breaks and you fall to your doom.", in->getTextAndEffect(engine::CommandEnum::CLIMB, effect).c_str());
+    EXPECT_STREQ("The step breaks and you fall to your doom.\015\012", in->getTextAndEffect(engine::CommandEnum::CLIMB, effect).c_str());
     EXPECT_EQ(engine::EffectType::FALL, effect);
 }
 

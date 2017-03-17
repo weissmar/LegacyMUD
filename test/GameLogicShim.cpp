@@ -60,16 +60,8 @@ bool GameLogicShim::startCombat(engine::Player* aPlayer, engine::Creature *aCrea
     return _logic->startCombat(aPlayer, aCreature);
 }
 
-bool GameLogicShim::endCombat(engine::Player *aPlayer, engine::Creature *aCreature){
+bool GameLogicShim::endCombat(engine::Player *aPlayer, engine::Combatant *aCreature){
     return _logic->endCombat(aPlayer, aCreature);
-}
-
-bool GameLogicShim::startConversation(engine::Player *aPlayer, engine::NonCombatant *aNPC){
-    return _logic->startConversation(aPlayer, aNPC);
-}
-
-bool GameLogicShim::endConversation(engine::Player *aPlayer){
-    return _logic->endConversation(aPlayer);
 }
 
 void GameLogicShim::handleParseError(engine::Player *aPlayer, parser::ParseResult result){
