@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/16/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -64,6 +64,22 @@ std::map<int, int> Player::xpLevelMap = {
     {19, 171000},
     {20, 190000},
 };
+
+bool Command::operator==(const Command &otherCommand) const{
+    bool success = true;
+
+    if (commandE != otherCommand.commandE){
+        success = false;
+    } else if (firstParam != otherCommand.firstParam){
+        success = false;
+    } else if (secondParam != otherCommand.secondParam){
+        success = false;
+    } else if (aPosition != otherCommand.aPosition){
+        success = false;
+    }
+
+    return success;
+}
 
 Player::Player()
 : Combatant()

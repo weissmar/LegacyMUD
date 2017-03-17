@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/15/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        Feature.cpp
  *
@@ -322,7 +322,19 @@ std::string Feature::look(Player *aPlayer, std::vector<EffectType> *effects){
 
 
 std::string Feature::listen(std::vector<EffectType> *effects){
-    return "";
+    std::string message, resultMsg;
+    EffectType anEffect = EffectType::NONE;
+
+    // get results of look for this object
+    resultMsg = getTextAndEffect(CommandEnum::LISTEN, anEffect);
+    if (resultMsg.compare("false") != 0){
+        message = resultMsg;
+    }
+    if (anEffect != EffectType::NONE){
+        effects->push_back(anEffect);
+    }
+
+    return message;
 } 
 
 

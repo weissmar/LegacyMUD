@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/15/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        Player.hpp
  *
@@ -48,6 +48,8 @@ struct Command {
     InteractiveNoun *firstParam;
     InteractiveNoun *secondParam;
     ItemPosition aPosition;
+
+    bool operator==(const Command &otherCommand) const;
 };
 
 /*!

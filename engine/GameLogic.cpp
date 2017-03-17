@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/10/2017
- * \modified    03/16/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.cpp
  *
@@ -5638,7 +5638,7 @@ bool GameLogic::listenCommand(Player *aPlayer){
     std::vector<EffectType> effects;
     std::string message = aPlayer->getLocation()->listen(&effects);
 
-    if (message.compare("") == 0){
+    if ((message.compare(" ") == 0) || (message.empty())){
         message = "You don't hear anything.";
     }
 
@@ -7112,12 +7112,13 @@ bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
 
         if (success){
             manager->removeObject(directObj, -1);
+            message = "You deleted the " + directObj->getName() + ".";
         }
     } else {
         message = "You must be in editmode to delete.";
     }
 
-    if ((!success) && (aPlayer != nullptr)){
+    if (aPlayer != nullptr){
         messagePlayer(aPlayer, message);
     }
 

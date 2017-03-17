@@ -14,7 +14,15 @@
                     "area 1",
                     "Briartown Inn"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet in the inn, with only the faint sounds of people talking coming from outside.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -52,7 +60,15 @@
                     "area 8",
                     "Briartown Blacksmith"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "The shop itself is quiet, with the sounds of hammering coming from the forge nearby.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -67,7 +83,15 @@
                     "area 11",
                     "Briartown Armory"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear the clinking of armor as the shopkeep polishes and cleans his wares.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -82,7 +106,15 @@
                     "area 14",
                     "Briartown Park"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "The park is pleasantly noisy, with ducks quacking, neighbors chatting, and children playing.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -97,7 +129,15 @@
                     "area 17",
                     "Behind Briartown Inn"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It's oddly quiet here.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -112,7 +152,15 @@
                     "area 20",
                     "Briartown Town Entrance"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear the bustle of town life coming from the town square.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -127,7 +175,15 @@
                     "area 23",
                     "Briartown Guard Tower"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "The tower is silent, except for the sounds of the guard cleaning her weapons.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -142,7 +198,15 @@
                     "area 26",
                     "Outside of Briartown"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is peaceful here. You can hear the sounds of town life in the distance, but mostly you hear the bees buzzing and the wind rustling through the fields.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -157,7 +221,15 @@
                     "area 29",
                     "Path Through Farmland"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You hear birds chirping, animals rustling through the fields, and the sound of a plow in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -172,7 +244,15 @@
                     "area 32",
                     "Somerset Farm"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear the farmer humming quietly to himself as he goes about the daily business of the farm.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -187,7 +267,15 @@
                     "area 35",
                     "Path Through Fields"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "The sounds of birds chattering and the creaking of trees in the wind reach you from the north.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -202,7 +290,15 @@
                     "area 38",
                     "Outside the Woods"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear the sounds of birds calling to one another and the pitter-patter of squirrels climbing the branches of the trees.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -217,7 +313,15 @@
                     "area 41",
                     "Murky Woods Entrance"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "The woods are quieter here and you can hear a strange clattering coming from the direction of the hut.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -232,7 +336,15 @@
                     "area 44",
                     "Ogre Hut"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear the cracking of the fire in the tiny fireplace.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -247,7 +359,15 @@
                     "area 47",
                     "Murky Woods 16"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, except for the scrabbling of animals in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -262,7 +382,15 @@
                     "area 49",
                     "Murky Woods 17"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, except for the scrabbling of animals in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -277,7 +405,15 @@
                     "area 50",
                     "Murky Woods 18"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, except for the scrabbling of animals in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -292,7 +428,15 @@
                     "area 51",
                     "Murky Woods 19"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, except for the scrabbling of animals in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -307,7 +451,15 @@
                     "area 52",
                     "Murky Woods 20"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, except for the scrabbling of animals in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -322,7 +474,15 @@
                     "area 53",
                     "Murky Woods Exit"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, except for the scrabbling of animals in the distance.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -337,7 +497,15 @@
                     "area 63",
                     "Outside a Cave"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, but you can hear rustling coming from within the cave.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -352,7 +520,15 @@
                     "area 66",
                     "Cave Entrance"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You hear the echo of wings flapping and an odd scratching sound coming from deeper within the cave.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -367,7 +543,15 @@
                     "area 70",
                     "Bend in Cave"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can't pinpoint the direction it's coming from, but the sounds of wings flapping and rodents squeaking are all around you.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -382,7 +566,15 @@
                     "area 74",
                     "Narrow Ledge"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is quiet here, but you can hear a vague rustling sound coming from all around you.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -397,7 +589,15 @@
                     "area 83",
                     "Dark Bend in Cave"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can't pinpoint the direction it's coming from, but the sounds of wings flapping and rodents squeaking are all around you.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -412,7 +612,15 @@
                     "area 86",
                     "Dark Cave with Ledge"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can't pinpoint the direction it's coming from, but the sounds of wings flapping and rodents squeaking are all around you.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -427,7 +635,15 @@
                     "area 88",
                     "Narrow Stairway in Cave"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You hear a vague rustling in the distance and a strange thumping coming from the south.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -442,7 +658,15 @@
                     "area 93",
                     "Bottom of Cliff in Cave"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It's oddly quiet here, except for the strange thumping coming from the south.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -457,7 +681,15 @@
                     "area 97",
                     "Flat Area in Cave"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It is silent here, except for the sound of your breathing.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -472,7 +704,15 @@
                     "area 101",
                     "Troll Den"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "It's oddly quiet here, except for the strange thumping coming from the west.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -487,7 +727,15 @@
                     "area 105",
                     "Cramped Hole"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear distorted sounds coming from the ends of the hole, but can't make out what they might be.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -502,7 +750,15 @@
                     "area 108",
                     "Unused Dungeon Cell"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear footsteps above you.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -517,7 +773,15 @@
                     "area 111",
                     "Dungeon Entrance"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear footsteps above you and the snoring of a prisoner coming from the east.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         },
         {
@@ -532,7 +796,15 @@
                     "area 114",
                     "Occupied Dungeon Cell"
                 ],
-                "actions": []
+                "actions": [
+                    {
+                        "command": "LISTEN",
+                        "valid": true,
+                        "flavor_text": "You can hear the snoring of the prisoner in the cell. There's also a strange noise coming from the east.",
+                        "effect": "NONE",
+                        "aliases": []
+                    }
+                ]
             }
         }
     ],
@@ -10082,7 +10354,7 @@
             "weight": 1,
             "rarity": "UNCOMMON",
             "description": "a handful of delicious, fresh peas",
-            "name": "sugar snap peas",
+            "name": "handful of sugar snap peas",
             "cost": 5,
             "slot_type": "NONE",
             "interactive_noun_data": {

@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/08/2017
- * \modified    03/13/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        Area.cpp
  *
@@ -713,12 +713,18 @@ std::string Area::listen(std::vector<EffectType> *effects){
     std::lock(featContentLock, exitContentLock);
 
     for (auto feature : featureContents){
-        message += feature->listen(effects);
-        message += " ";
+        resultMsg = feature->listen(effects);
+        if (!resultMsg.empty()){
+            message += resultMsg;
+            message += " ";
+        }
     }
     for (auto exit : exitContents){
-        message += exit->listen(effects);
-        message += " ";
+        resultMsg = exit->listen(effects);
+        if (!resultMsg.empty()){
+            message += resultMsg;
+            message += " ";
+        }
     }
 
     return message;
