@@ -1122,6 +1122,7 @@ class GameLogic {
         telnet::Server* theServer;
         Area *startArea;
         std::string currentFilename;
+        display::Display displayModule;
 };
 
 }}
