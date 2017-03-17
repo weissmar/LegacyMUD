@@ -208,32 +208,6 @@ TEST_F(GameLogicTest, GetValueFromUser) {
     EXPECT_STREQ("foo prompt", server->tryGetToPlayerMsg().c_str());
 }
 
-TEST_F(GameLogicTest, StartAndEndConversation) {
-    // Start game and load minimum objects
-    ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));
-    engine::Area *area = new engine::Area("Area", "Short description", "Long description", engine::AreaSize::SMALL);
-    engine::SpecialSkill *skill = new engine::SpecialSkill("Fireball", 10, engine::DamageType::FIRE, 5, 10);
-    engine::PlayerClass *playerClass = new engine::PlayerClass(1, "Mage", skill, 0, 0, engine::DamageType::FIRE, engine::DamageType::WATER, 0);
-    engine::Player *player = new engine::Player(engine::CharacterSize::TINY, playerClass, "Username", 0, 20, area, 20, "Character name", "Character description", 100, area, 30);
-    engine::NonCombatant *npc = new engine::NonCombatant();
-    player->setActive(false);
-    shim->getGameObjectManager()->addObject(area, -1);
-    shim->getGameObjectManager()->addObject(skill, -1);
-    shim->getGameObjectManager()->addObject(playerClass, -1);
-    shim->getGameObjectManager()->addObject(player, -1);
-    shim->getGameObjectManager()->addObject(npc, -1);
-
-    // Attempt to load the player
-    ASSERT_TRUE(shim->loadPlayer(player, 0));
-    // Player should now be active
-    EXPECT_TRUE(player->isActive());
-    EXPECT_EQ(nullptr, player->getInConversation());
-    EXPECT_TRUE(shim->startConversation(player, npc));
-    EXPECT_EQ(npc, player->getInConversation());
-    EXPECT_TRUE(shim->endConversation(player));
-    EXPECT_EQ(nullptr, player->getInConversation());
-}
-
 TEST_F(GameLogicTest, ExecuteCommand) {
     // Start game and load minimum objects
     ASSERT_TRUE(logic->startGame(true, "game.dat", server, acct));

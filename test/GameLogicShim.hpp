@@ -153,29 +153,7 @@ class GameLogicShim {
          * \return  Returns a bool indicating whether or not ending combat
          *          was successful.
          */
-        bool endCombat(engine::Player *aPlayer, engine::Creature *aCreature);
-
-        /*!
-         * \brief   Starts a conversation between the specfied player and the 
-         *          specified non-combatant.
-         * 
-         * \param[in] aPlayer   Specifies the player entering a conversation.
-         * \param[in] aNPC      Specifies the non-combatant entering a conversation.
-         *
-         * \return  Returns a bool indicating whether or not starting a conversation
-         *          was successful.
-         */
-        bool startConversation(engine::Player *aPlayer, engine::NonCombatant *aNPC);
-
-        /*!
-         * \brief   Ends the conversation the specfied player is currently engaged in.
-         * 
-         * \param[in] aPlayer   Specifies the player leaving the conversation.
-         *
-         * \return  Returns a bool indicating whether or not ending the conversation
-         *          was successful.
-         */
-        bool endConversation(engine::Player *aPlayer);
+        bool endCombat(engine::Player *aPlayer, engine::Combatant *aCreature);
 
         /*!
          * \brief   Handles a parse error that has one result.
