@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/12/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -329,8 +329,24 @@ std::string Character::serialize(){
 }
 
 
-// no current way to not remove quest items ***************************************
 bool Character::removeAllFromInventory(){
+    Area *location = getLocation();
+    std::vector<std::pair<EquipmentSlot, Item*>> allItems = getInventory();
+
+    for (auto item : allItems){
+        if (item.second->getType()->getRarity() != ItemRarity::QUEST){
+            removeFromInventory(item.second);
+            item.second->setLocation(location);
+            item.second->setPosition(ItemPosition::GROUND);
+            location->addItem(item.second);
+        }
+    }
+
+    return true;
+}
+
+
+bool Character::removeAll(){
     Area *location = getLocation();
     std::vector<std::pair<EquipmentSlot, Item*>> allItems = getInventory();
 
@@ -345,16 +361,22 @@ bool Character::removeAllFromInventory(){
 }
 
 
-// no current way to not remove quest items ***************************************
 Item* Character::removeRandomFromInventory(){
     std::vector<std::pair<EquipmentSlot, Item*>> allItems = getInventory();
+    std::vector<Item*> allNonQuestItems;
     int itemToRemove  = -1;
     Item *anItem = nullptr;
     Area *location = getLocation();
 
-    if (allItems.size() != 0){
-        itemToRemove = GameLogic::rollDice(allItems.size(), 1);
-        anItem = allItems[itemToRemove - 1].second;
+    for (auto item : allItems){
+        if (item.second->getType()->getRarity() != ItemRarity::QUEST){
+            allNonQuestItems.push_back(item.second);
+        }
+    }
+
+    if (allNonQuestItems.size() != 0){
+        itemToRemove = GameLogic::rollDice(allNonQuestItems.size(), 1);
+        anItem = allNonQuestItems[itemToRemove - 1];
         removeFromInventory(anItem);
         anItem->setLocation(location);
         anItem->setPosition(ItemPosition::GROUND);

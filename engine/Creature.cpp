@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions)  
  * \created     02/09/2017
- * \modified    03/15/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Creature.cpp
  *
@@ -31,7 +31,7 @@
 
 namespace legacymud { namespace engine {
 
-const int RESPAWN_TIME = 60;
+const int RESPAWN_TIME = 180;
 
 Creature::Creature()
 : Combatant()
@@ -177,6 +177,29 @@ bool Creature::setType(CreatureType *aType){
 
 bool Creature::setAmbulatory(bool ambulatory){
     this->ambulatory.store(ambulatory);
+    return true;
+}
+
+
+bool Creature::removeAllAndCopyFromInventory(GameObjectManager *manager){
+    Area *location = getLocation();
+    std::vector<std::pair<EquipmentSlot, Item*>> allItems = getInventory();
+    Item *anItem = nullptr;
+
+    for (auto item : allItems){
+        // copy item 
+        anItem = new Item(*(item.second));
+        manager->addObject(anItem, -1);
+        anItem->setPosition(ItemPosition::INVENTORY);
+        addToInventory(anItem);
+
+        // drop one copy
+        removeFromInventory(item.second);
+        item.second->setLocation(location);
+        item.second->setPosition(ItemPosition::GROUND);
+        location->addItem(item.second);
+    }
+
     return true;
 }
 
@@ -645,15 +668,12 @@ int Creature::getAttackDamage(Player *aPlayer, int critMultiplier, int attackDam
         // long-range weapon attack - add dexterity modifier to attack bonus
         attackBonus += getDexterityModifier();
     }
-//std::cout << "creature attack bonus = " << std::to_string(attackBonus) << "\n";
 
     // check armor class of player
     armorClass = 10 + aPlayer->getArmorBonus() + aPlayer->getDexterityModifier() + aPlayer->getSizeModifier();
-//std::cout << "player armor class = " << std::to_string(armorClass) << "\n";
 
     // roll for attack success
     attackRoll = GameLogic::rollDice(20, 1);
-//std::cout << "creature attack roll = " << std::to_string(attackRoll) << "\n";
 
     if (attackRoll == 20){
         // natural 20
@@ -673,7 +693,6 @@ int Creature::getAttackDamage(Player *aPlayer, int critMultiplier, int attackDam
     // roll attack again to see if crit
     if (possibleCrit){
         attackRoll = GameLogic::rollDice(20, 1) + attackBonus;
-//std::cout << "creature crit roll = " << std::to_string(attackRoll) << "\n";
         if (attackRoll <= armorClass){
             // no crit
             critMultiplier = 1;
@@ -699,7 +718,6 @@ int Creature::getAttackDamage(Player *aPlayer, int critMultiplier, int attackDam
             totalDamage += GameLogic::rollDice(3, 1);
         }
     }
-//std::cout << "creature totalDamage = " << std::to_string(totalDamage) << "\n";
 
     if (totalDamage < 1){
         totalDamage = 1;

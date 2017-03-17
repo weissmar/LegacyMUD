@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/15/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Creature.hpp
  *
@@ -87,6 +87,18 @@ class Creature: public Combatant {
          *          ambularoty nature of the creature was successful.
          */
         bool setAmbulatory(bool ambulatory);
+
+        /*!
+         * \brief   Copies all items in the creature's inventory and drops
+         *          one copy on the ground.
+         * 
+         * \param[in] manager   Speficifies the object manager to add the 
+         *                      newly created items to.
+         *
+         * \return  Returns a bool indicating whether or not copying and 
+         *          removing the items was successful.
+         */
+        bool removeAllAndCopyFromInventory(GameObjectManager *manager);
 
         /*!
          * \brief   Adds the specified noun alias to this interactive noun.

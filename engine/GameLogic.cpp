@@ -4322,7 +4322,7 @@ void GameLogic::checkEndCombat(Player *aPlayer, Creature *aCreature){
             messagePlayer(aPlayer, message);
 
             // remove all items from creature
-            aCreature->removeAllFromInventory();
+            aCreature->removeAllAndCopyFromInventory(manager);
 
             // remove creature from area
             deathLocation = aCreature->getLocation();
@@ -6267,17 +6267,21 @@ bool GameLogic::attackCommand(Player *aPlayer, InteractiveNoun *directObj, Inter
     } else {
         // start combat with specified attack
         if ((directObj != nullptr) && (directObj->getObjectType() == ObjectType::CREATURE)){
-            startCombat(aPlayer, static_cast<Creature*>(directObj));
-            // if indirectObj is not null
-            if (indirectObj != nullptr){
-                // attack with indirectObj
-                message = indirectObj->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
-                sendMessage = true;
-            } else {
-                // default attack
-                message = aPlayer->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
+            if (aCreature->getInCombat() == nullptr){
+                startCombat(aPlayer, aCreature);
+                // if indirectObj is not null
+                if (indirectObj != nullptr){
+                    // attack with indirectObj
+                    message = indirectObj->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
+                    sendMessage = true;
+                } else {
+                    // default attack
+                    message = aPlayer->attack(aPlayer, nullptr, nullptr, directObj, true, &effects);
 
-                sendMessage = true;
+                    sendMessage = true;
+                }
+            } else {
+                message = "You can't attack creatures that are fighting another player.";
             }
         } else {
             message = "You can only attack creatures.";
@@ -7080,6 +7084,9 @@ bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
                 endCombat(dynamic_cast<Player*>(aCreature->getInCombat()), aCreature);
             }
 
+            // remove any contained items
+            aCreature->removeAll();
+
             success = true;
         } else if (anObjectType == ObjectType::FEATURE){
             // remove from area
@@ -7103,7 +7110,7 @@ bool GameLogic::deleteCommand(Player *aPlayer, InteractiveNoun *directObj){
             manager->removeObject(directObj, -1);
         }
     } else {
-        message = "You must be in editmode to create.";
+        message = "You must be in editmode to delete.";
     }
 
     if ((!success) && (aPlayer != nullptr)){

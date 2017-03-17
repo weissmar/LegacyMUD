@@ -2,7 +2,7 @@
  * \author      Rachel Weissman-Hohler
  * \author      Keith Adkins (serialize and deserialize functions) 
  * \created     02/10/2017
- * \modified    03/15/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Player.cpp
  *
@@ -113,8 +113,10 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 }
 
 
-Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+Player::Player(/*int XP, int level,*/ CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
 : Combatant(maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID)
+/*, experiencePoints(XP)
+, level(level)*/
 , experiencePoints(0)
 , level(1)
 , size(size)
@@ -886,7 +888,7 @@ std::string Player::transfer(Player *aPlayer, Item *anItem, InteractiveNoun *aCh
     EffectType anEffect = EffectType::NONE;
 
     if (anItem != nullptr){
-        if (aPlayer == this){
+        if ((aPlayer == this) && (destination == nullptr)){
             // item is being removed from this player
             success = removeFromInventory(anItem);
         } else if ((destination != nullptr) && (destination->getID() == this->getID())){
@@ -1058,15 +1060,12 @@ int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackD
         // long-range weapon attack - add dexterity modifier to attack bonus
         attackBonus += getDexterityModifier();
     }
-//std::cout << "player attack bonus = " << std::to_string(attackBonus) << "\n";
 
     // check armor class of creature
     armorClass = 10 + aCreature->getArmorBonus() + aCreature->getDexterityModifier() + aCreature->getSizeModifier();
-//std::cout << "creature armor class = " << std::to_string(armorClass) << "\n";
 
     // roll for attack success
     attackRoll = GameLogic::rollDice(20, 1);
-//std::cout << "player attack roll = " << std::to_string(attackRoll) << "\n";
 
     if (attackRoll == 20){
         // natural 20
@@ -1086,7 +1085,6 @@ int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackD
     // roll attack again to see if crit
     if (possibleCrit){
         attackRoll = GameLogic::rollDice(20, 1) + attackBonus;
-//std::cout << "player crit roll = " << std::to_string(attackRoll) << "\n";
         if (attackRoll <= armorClass){
             // no crit
             critMultiplier = 1;
@@ -1111,7 +1109,6 @@ int Player::getAttackDamage(Creature *aCreature, int critMultiplier, int attackD
             totalDamage += GameLogic::rollDice(3, 1);
         }
     }
-//std::cout << "player totalDamage = " << std::to_string(totalDamage) << "\n";
 
     if (totalDamage < 1){
         totalDamage = 1;

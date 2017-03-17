@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/11/2017
+ * \modified    03/16/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -265,7 +265,7 @@ class Character: public InteractiveNoun {
         virtual std::string serialize();
 
         /*!
-         * \brief   Removes all items from this character's inventory.
+         * \brief   Removes all items from this character's inventory, except quest items.
          *
          * \return  Returns a bool indicating whether or not removing the items was 
          *          successful.
@@ -273,7 +273,15 @@ class Character: public InteractiveNoun {
         virtual bool removeAllFromInventory();
 
         /*!
-         * \brief   Removes a random item from this character's inventory.
+         * \brief   Removes all items from this character's inventory, including quest items.
+         *
+         * \return  Returns a bool indicating whether or not removing the items was 
+         *          successful.
+         */
+        virtual bool removeAll();
+
+        /*!
+         * \brief   Removes a random non-quest item from this character's inventory.
          *
          * \note    If the item is equipped, this function unequips the item and
          *          removes it from inventory.
