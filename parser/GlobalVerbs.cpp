@@ -246,6 +246,10 @@ void setGlobalVerbs() {
     parser::WordManager::addGlobalVerb("search", vi);
     vi.description = "open";
     parser::WordManager::addGlobalVerb("open", vi);
+    vi.description = "look in";
+    parser::WordManager::addGlobalVerb("look in", vi);
+    vi.description = "look inside";
+    parser::WordManager::addGlobalVerb("look inside", vi);
 
     // USE_SKILL command
     vi = parser::VerbInfo();
@@ -259,6 +263,61 @@ void setGlobalVerbs() {
     vi.description = "use on";
     parser::WordManager::addGlobalVerb("use", vi);
 
+    // EAT command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::EAT;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "eat";
+    parser::WordManager::addGlobalVerb("eat", vi);
+
+    // DRINK command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::DRINK;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "drink";
+    parser::WordManager::addGlobalVerb("drink", vi);
+
+    // PUSH command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::PUSH;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "push";
+    parser::WordManager::addGlobalVerb("push", vi);
+
+    // PULL command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::PULL;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "pull";
+    parser::WordManager::addGlobalVerb("pull", vi);
+
+    // CLIMB command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::CLIMB;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "climb";
+    parser::WordManager::addGlobalVerb("climb", vi);
+
+    // BREAK command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::BREAK;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "break";
+    parser::WordManager::addGlobalVerb("break", vi);
+
+    // READ command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::READ;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "read";
+    parser::WordManager::addGlobalVerb("read", vi);
+
+    // TURN command
+    vi = parser::VerbInfo();
+    vi.command = engine::CommandEnum::TURN;
+    vi.grammar = parser::Grammar(parser::Grammar::YES, false, parser::Grammar::NO);
+    vi.description = "turn";
+    parser::WordManager::addGlobalVerb("turn", vi);
 }
 
 void setBuilderVerbs() {
