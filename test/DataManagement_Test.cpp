@@ -638,14 +638,14 @@ TEST(DataManagementTest, SerializePlayer) {
     legacymud::engine::Area* area2 = new legacymud::engine::Area("name of area", "short description of area", "longer description", 
                                                                  legacymud::engine::AreaSize::SMALL, 4);        
    
-    //  Player (size, playerClass, username, FD, maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID);
-    legacymud::engine::Player* player = new legacymud::engine::Player(legacymud::engine::CharacterSize::MEDIUM, playerClass, 
+    //  Player (xp, level, size, playerClass, username, FD, maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID);
+    legacymud::engine::Player* player = new legacymud::engine::Player(10, 2, legacymud::engine::CharacterSize::MEDIUM, playerClass, 
                                                                       "a user name", -1, 100, area1, 100, 10,20,30,
                                                                       "a name", "a description", 1000, area2, 120, 5);
 
     // Serialize and Test
     std::string serializedJsonStr = player->serialize();         
-    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
+    std::string expectedJsonStr = "{\"object\":{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":10,\"level\":2,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[],\"actions\":[]}}}";
     EXPECT_EQ(expectedJsonStr, serializedJsonStr ); 
     
     // Clean-up. 
@@ -690,7 +690,7 @@ TEST(DataManagementTest, SerializeDeserializePlayer) {
     EXPECT_TRUE(gom->addObject(area2,-1) ); 
        
     // Deserialize, re-serialize, and test.
-    std::string inputJsonStr = "{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":0,\"level\":1,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}";  
+    std::string inputJsonStr = "{\"class\":\"PLAYER\",\"character_size\":\"MEDIUM\",\"player_class_id\":2,\"username\":\"a user name\",\"experience_points\":10,\"level\":2,\"quest_list\":[],\"max_health\":100,\"spawn_location_id\":3,\"max_special_points\":100,\"dexterity\":10,\"strength\":20,\"intelligence\":30,\"name\":\"a name\",\"description\":\"a description\",\"money\":1000,\"location_area_id\":4,\"max_inventory_weight\":120,\"interactive_noun_data\":{\"id\":5,\"noun_aliases\":[\"character 5\",\"a name\"],\"actions\":[]}}";  
     legacymud::engine::Player *rebuiltPlayer = legacymud::engine::Player::deserialize(inputJsonStr, gom);  
     std::string reserializedJsonStr = rebuiltPlayer->serialize(); 
     std::string newExpectedJsonStr = "{\"object\":" + inputJsonStr + "}";
@@ -1235,8 +1235,8 @@ TEST(DataManagementTest, SaveAllData) {
     legacymud::engine::Area* area8 = new legacymud::engine::Area("name of area", "short description of area", "longer description", 
                                                                  legacymud::engine::AreaSize::SMALL);        
    
-    //  Player (size, playerClass, username, FD, maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID);
-    legacymud::engine::Player* player1 = new legacymud::engine::Player(legacymud::engine::CharacterSize::MEDIUM, playerClass1, 
+    //  Player (xp, level, size, playerClass, username, FD, maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID);
+    legacymud::engine::Player* player1 = new legacymud::engine::Player(10, 2, legacymud::engine::CharacterSize::MEDIUM, playerClass1, 
                                                                       "a user name", -1, 100, area7, 100, 10,20,30,
                                                                       "a name", "a description", 1000, area8, 120, 31);                                                                          
     
