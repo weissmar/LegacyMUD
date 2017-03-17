@@ -1369,21 +1369,25 @@ std::string Item::eat(Player *aPlayer, std::vector<EffectType> *effects){
     std::string message, resultMessage;
     EffectType anEffect = EffectType::NONE;
 
-    // get results of eat for this object
-    message = getTextAndEffect(CommandEnum::EAT, anEffect);
-    if (anEffect != EffectType::NONE){
-        effects->push_back(anEffect);
-    }
-
-    // call this function on ItemType
-    resultMessage = getType()->eat(aPlayer, effects);
-
-    if (resultMessage.compare("false") != 0){
-        if (message.compare("false") != 0){
-            message += " " + resultMessage;
-        } else {
-            message = resultMessage;
+    if (getLocation()->getID() == aPlayer->getID()){
+        // get results of eat for this object
+        message = getTextAndEffect(CommandEnum::EAT, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
         }
+
+        // call this function on ItemType
+        resultMessage = getType()->eat(aPlayer, effects);
+
+        if (resultMessage.compare("false") != 0){
+            if (message.compare("false") != 0){
+                message += " " + resultMessage;
+            } else {
+                message = resultMessage;
+            }
+        }
+    } else {
+        message = "false";
     }
 
     return message;
@@ -1394,21 +1398,25 @@ std::string Item::drink(Player *aPlayer, std::vector<EffectType> *effects){
     std::string message, resultMessage;
     EffectType anEffect = EffectType::NONE;
 
-    // get results of drink for this object
-    message = getTextAndEffect(CommandEnum::DRINK, anEffect);
-    if (anEffect != EffectType::NONE){
-        effects->push_back(anEffect);
-    }
-
-    // call this function on ItemType
-    resultMessage = getType()->drink(aPlayer, effects);
-
-    if (resultMessage.compare("false") != 0){
-        if (message.compare("false") != 0){
-            message += " " + resultMessage;
-        } else {
-            message = resultMessage;
+    if (getLocation()->getID() == aPlayer->getID()){
+        // get results of drink for this object
+        message = getTextAndEffect(CommandEnum::DRINK, anEffect);
+        if (anEffect != EffectType::NONE){
+            effects->push_back(anEffect);
         }
+
+        // call this function on ItemType
+        resultMessage = getType()->drink(aPlayer, effects);
+
+        if (resultMessage.compare("false") != 0){
+            if (message.compare("false") != 0){
+                message += " " + resultMessage;
+            } else {
+                message = resultMessage;
+            }
+        }
+    } else {
+        message = "false";
     }
 
     return message;
