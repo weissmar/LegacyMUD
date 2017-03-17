@@ -113,12 +113,10 @@ Player::Player(CharacterSize size, PlayerClass *aClass, std::string username, in
 }
 
 
-Player::Player(/*int XP, int level,*/ CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
+Player::Player(int XP, int level, CharacterSize size, PlayerClass *aClass, std::string username, int FD, int maxHealth, Area *spawnLocation, int maxSpecialPts, int dexterity, int strength, int intelligence, std::string name, std::string description, int money, Area *aLocation, int maxInventoryWeight, int anID)
 : Combatant(maxHealth, spawnLocation, maxSpecialPts, dexterity, strength, intelligence, name, description, money, aLocation, maxInventoryWeight, anID)
-/*, experiencePoints(XP)
-, level(level)*/
-, experiencePoints(0)
-, level(1)
+, experiencePoints(XP)
+, level(level)
 , size(size)
 , playerClass(aClass)
 , inConversation(nullptr)

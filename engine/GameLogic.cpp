@@ -647,7 +647,11 @@ bool GameLogic::updateCreatures(){
                                 cooldown = 1;
                             }
                             creature->setCooldown(cooldown);
+                        } else {
+                            endCombat(aPlayer, creature);
                         }
+                    } else {
+                        endCombat(aPlayer, creature);
                     }
                 } else {
                     // end combat
