@@ -5577,13 +5577,15 @@ std::string GameLogic::handleEffects(Player *aPlayer, std::vector<EffectType> ef
                 message = "You trip and drop everything you were carrying.";
                 break;
             case EffectType::GAIN_MONEY:
-                money = aPlayer->addMoney(10);
+                aPlayer->addMoney(10);
+                money = aPlayer->getMoney();
                 message = "You gain 10 coins, bringing your total money to ";
                 message += std::to_string(money);
                 message += " coins.";
                 break;
             case EffectType::LOSE_MONEY:
-                money = aPlayer->subtractMoney(10);
+                aPlayer->subtractMoney(10);
+                money = aPlayer->getMoney();
                 message = "You lose 10 coins, bringing your total money to ";
                 message += std::to_string(money);
                 message += " coins.";

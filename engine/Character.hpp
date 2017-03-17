@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/16/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        Character.hpp
  *
@@ -179,7 +179,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not adding the money 
          *          was successful.
          */
-        int addMoney(int money);
+        bool addMoney(int money);
 
         /*!
          * \brief   Subtracts the specified amount from the money this character 
@@ -191,7 +191,7 @@ class Character: public InteractiveNoun {
          * \return  Returns a bool indicating whether or not subtracting the money 
          *          was successful.
          */
-        int subtractMoney(int money);
+        bool subtractMoney(int money);
 
         /*!
          * \brief   Sets the location of this character.

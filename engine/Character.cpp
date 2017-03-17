@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/09/2017
- * \modified    03/16/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        Character.cpp
  *
@@ -188,22 +188,42 @@ bool Character::setDescription(std::string description){
 
 
 bool Character::setMoney(int money){
-    this->money.store(money);
-    return true;
+    bool success = false;
+
+    if (money >= 0){
+        this->money.store(money);
+        success = true;
+    }
+    
+    return success;
 }
 
 
-int Character::addMoney(int money){
-    this->money += money;
+bool Character::addMoney(int money){
+    bool success = false; 
 
-    return this->money;
+    if (money >= 0){
+        this->money += money;
+        success = true;
+    }
+    
+    return success;
 }
 
 
-int Character::subtractMoney(int money){
-    this->money -= money;
+bool Character::subtractMoney(int money){
+    bool success = false;
 
-    return this->money;
+    if (money >= 0){
+        this->money -= money;
+        success = true;
+
+        if (this->money < 0){
+            this->money = 0;
+        }
+    }
+
+    return success;
 }
 
 
