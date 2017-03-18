@@ -1,7 +1,7 @@
 /*********************************************************************//**
  * \author      Rachel Weissman-Hohler
  * \created     02/01/2017
- * \modified    03/15/2017
+ * \modified    03/17/2017
  * \course      CS467, Winter 2017
  * \file        GameLogic.hpp
  *
@@ -1122,7 +1122,6 @@ class GameLogic {
         telnet::Server* theServer;
         Area *startArea;
         std::string currentFilename;
-        display::Display displayModule;
 };
 
 }}

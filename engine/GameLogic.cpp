@@ -51,6 +51,7 @@ namespace legacymud { namespace engine {
 
 const std::string ADMIN_PASSWORD = "default";
 const int SAVE_TIMEOUT = 60;
+display::Display displayModule;
 const display::Display::Color CREATURE_ATTACK_COLOR = display::Display::Color::RED;
 const display::Display::Color PLAYER_ATTACK_COLOR = display::Display::Color::MAGENTA;
 const display::Display::Style BRIGHT_STYLE = display::Display::Style::BRIGHT;
@@ -5579,9 +5580,13 @@ std::string GameLogic::handleEffects(Player *aPlayer, std::vector<EffectType> ef
                 break;
             case EffectType::LOST_ITEM:
                 anItem = aPlayer->removeRandomFromInventory();
-                message = "You trip and drop your ";
-                message += anItem->getName();
-                message += ".";
+                if (anItem != nullptr){
+                    message = "You trip and drop your ";
+                    message += anItem->getName();
+                    message += ".";
+                } else {
+                    message = "You trip, but don't drop anything.";
+                }
                 break;
             case EffectType::DROP_ALL_ITEMS:
                 aPlayer->removeAllFromInventory();
@@ -6987,8 +6992,9 @@ bool GameLogic::saveCommand(Player *aPlayer, const std::string &stringParam){
 
 
 bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
+    std::string message;
     bool success = false;
-    int startAreaId = -1;
+    /*int startAreaId = -1;
 
     if (aPlayer->isEditMode()) {
         gamedata::DataManager dm;
@@ -7039,7 +7045,11 @@ bool GameLogic::loadCommand(Player *aPlayer, const std::string &stringParam){
     }
     else {
         messagePlayer(aPlayer, "You must be in edit mode to do this.");
-    }
+    }*/
+
+    message = "You can't load in the middle of an active game. If you'd like to load a different ";
+    message += "file, please save, quit, shut down the server, and restart the server with the desired file.";
+    messagePlayer(aPlayer, message);
     
     return success;
 }
