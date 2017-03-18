@@ -65,6 +65,13 @@ std::map<int, int> Player::xpLevelMap = {
     {20, 190000},
 };
 
+Command::Command()
+: commandE(CommandEnum::INVALID)
+, firstParam(nullptr)
+, secondParam(nullptr)
+, aPosition(ItemPosition::NONE)
+{ }
+
 bool Command::operator==(const Command &otherCommand) const{
     bool success = true;
 

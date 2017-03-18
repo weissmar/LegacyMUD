@@ -49,6 +49,7 @@ struct Command {
     InteractiveNoun *secondParam;
     ItemPosition aPosition;
 
+    Command();
     bool operator==(const Command &otherCommand) const;
 };
 
